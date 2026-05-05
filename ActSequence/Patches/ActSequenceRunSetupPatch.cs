@@ -30,11 +30,10 @@ namespace STS2RitsuLib.ActSequence.Patches
             ];
         }
 
-        // ReSharper disable once InconsistentNaming
+        // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Harmony prefix: applies any matching <see cref="ActSequenceTrigger.OnRunSetupBeforeGenerateRooms" /> rules.
         /// </summary>
-        // ReSharper disable once InconsistentNaming
         public static void Prefix(MethodBase __originalMethod, RunManager __instance, RunState state)
         {
             if (!ModActSequenceRegistry.HasAnyRegistration)
@@ -50,5 +49,6 @@ namespace STS2RitsuLib.ActSequence.Patches
                 isMultiplayer
             );
         }
+        // ReSharper restore InconsistentNaming
     }
 }

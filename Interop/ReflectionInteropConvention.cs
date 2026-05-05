@@ -18,14 +18,29 @@ namespace STS2RitsuLib.Interop
         public required string ObjectSetMethodName { get; init; }
 
         /// <summary>
-        ///     Optional static method name for RFC 7386 merge-patch retrieval: <c>(string key) → JsonObject?</c>.
+        ///     Optional static method name for RFC 7386 merge-patch retrieval: <c>(string key) → JsonNode?</c>.
+        ///     https://www.rfc-editor.org/rfc/rfc7386
         /// </summary>
         public string? MergePatchGetMethodName { get; init; }
 
         /// <summary>
-        ///     Optional static method name for applying a merge patch: <c>(string key, JsonObject patch) → void</c>.
+        ///     Optional static method name for applying a merge patch: <c>(string key, JsonNode? patch) → void</c>.
+        ///     https://www.rfc-editor.org/rfc/rfc7386
         /// </summary>
         public string? MergePatchApplyMethodName { get; init; }
+
+        /// <summary>
+        ///     Optional static method name for JSON Patch (RFC 6902) retrieval: <c>(string key) → JsonNode?</c>.
+        ///     https://www.rfc-editor.org/rfc/rfc6902
+        /// </summary>
+        public string? JsonPatchGetMethodName { get; init; }
+
+        /// <summary>
+        ///     Optional static method name for applying a JSON Patch (RFC 6902):
+        ///     <c>(string key, JsonNode? patch) → void</c>.
+        ///     https://www.rfc-editor.org/rfc/rfc6902
+        /// </summary>
+        public string? JsonPatchApplyMethodName { get; init; }
 
         /// <summary>
         ///     Optional static method name for JSON Pointer node read:
@@ -77,6 +92,8 @@ namespace STS2RitsuLib.Interop
             ObjectSetMethodName = "SetRitsuLibModDataValue",
             MergePatchGetMethodName = "GetRitsuLibModDataMergePatch",
             MergePatchApplyMethodName = "ApplyRitsuLibModDataMergePatch",
+            JsonPatchGetMethodName = "GetRitsuLibModDataJsonPatch",
+            JsonPatchApplyMethodName = "ApplyRitsuLibModDataJsonPatch",
             NodeGetMethodName = "GetRitsuLibModDataNode",
             NodeSetMethodName = "SetRitsuLibModDataNode",
             ObjectMergeAtMethodName = "MergeRitsuLibModDataObject",

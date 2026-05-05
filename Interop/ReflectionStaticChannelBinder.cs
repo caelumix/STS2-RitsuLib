@@ -37,7 +37,20 @@ namespace STS2RitsuLib.Interop
             var mergePatchApply = string.IsNullOrWhiteSpace(convention.MergePatchApplyMethodName)
                 ? null
                 : providerType.GetMethod(convention.MergePatchApplyMethodName.Trim(), flags,
-                    [typeof(string), typeof(JsonObject)]);
+                      [typeof(string), typeof(JsonNode)]) ??
+                  providerType.GetMethod(convention.MergePatchApplyMethodName.Trim(), flags,
+                      [typeof(string), typeof(JsonObject)]);
+            var jsonPatchGet = string.IsNullOrWhiteSpace(convention.JsonPatchGetMethodName)
+                ? null
+                : providerType.GetMethod(convention.JsonPatchGetMethodName.Trim(), flags, [typeof(string)]);
+            var jsonPatchApply = string.IsNullOrWhiteSpace(convention.JsonPatchApplyMethodName)
+                ? null
+                : providerType.GetMethod(convention.JsonPatchApplyMethodName.Trim(), flags,
+                      [typeof(string), typeof(JsonNode)]) ??
+                  providerType.GetMethod(convention.JsonPatchApplyMethodName.Trim(), flags,
+                      [typeof(string), typeof(JsonObject)]) ??
+                  providerType.GetMethod(convention.JsonPatchApplyMethodName.Trim(), flags,
+                      [typeof(string), typeof(JsonArray)]);
             var nodeGet = string.IsNullOrWhiteSpace(convention.NodeGetMethodName)
                 ? null
                 : providerType.GetMethod(convention.NodeGetMethodName.Trim(), flags,
@@ -70,13 +83,15 @@ namespace STS2RitsuLib.Interop
                 TryBindRootJsonGetter(getRootObj),
                 TryBindNodeGetter(nodeGet),
                 TryBindMergePatchApply(mergePatchApply),
+                TryBindJsonPatchGetter(jsonPatchGet),
                 TryBindRootJsonSetter(setRootObj),
                 TryBindNodeSetter(nodeSet),
                 TryBindMergeAt(mergeAt),
                 getJson == null ? null : CompileStaticStringToNullableStringGetter(getJson),
                 setJson == null
                     ? null
-                    : (Action<string, string>)Delegate.CreateDelegate(typeof(Action<string, string>), setJson));
+                    : (Action<string, string>)Delegate.CreateDelegate(typeof(Action<string, string>), setJson),
+                TryBindJsonPatchApply(jsonPatchApply));
 
             return new(
                 providerType,
@@ -85,7 +100,7 @@ namespace STS2RitsuLib.Interop
                 json);
         }
 
-        private static Func<string, JsonObject?>? TryBindMergePatchGetter(MethodInfo? method)
+        private static Func<string, JsonNode?>? TryBindMergePatchGetter(MethodInfo? method)
         {
             if (method == null ||
                 method.GetParameters().Length != 1 ||
@@ -93,17 +108,28 @@ namespace STS2RitsuLib.Interop
                 return null;
 
             var rt = method.ReturnType;
-            if (rt == typeof(JsonObject))
-                return (Func<string, JsonObject?>)Delegate.CreateDelegate(typeof(Func<string, JsonObject?>), method);
+            if (rt == typeof(JsonObject) || rt == typeof(JsonNode))
+                return (Func<string, JsonNode?>)Delegate.CreateDelegate(typeof(Func<string, JsonNode?>), method);
 
-            if (!typeof(JsonNode).IsAssignableFrom(rt))
+            return typeof(JsonNode).IsAssignableFrom(rt)
+                ? (Func<string, JsonNode?>)(key => method.Invoke(null, [key]) as JsonNode)
+                : null;
+        }
+
+        private static Func<string, JsonNode?>? TryBindJsonPatchGetter(MethodInfo? method)
+        {
+            if (method == null ||
+                method.GetParameters().Length != 1 ||
+                method.GetParameters()[0].ParameterType != typeof(string))
                 return null;
 
-            return key =>
-            {
-                var n = method.Invoke(null, [key]) as JsonNode;
-                return n as JsonObject;
-            };
+            var rt = method.ReturnType;
+            if (rt == typeof(JsonNode) || rt == typeof(JsonArray) || rt == typeof(JsonObject))
+                return (Func<string, JsonNode?>)Delegate.CreateDelegate(typeof(Func<string, JsonNode?>), method);
+
+            return typeof(JsonNode).IsAssignableFrom(rt)
+                ? (Func<string, JsonNode?>)(key => method.Invoke(null, [key]) as JsonNode)
+                : null;
         }
 
         private static Func<string, JsonObject?>? TryBindRootJsonGetter(MethodInfo? method)
@@ -132,16 +158,51 @@ namespace STS2RitsuLib.Interop
             return (Action<string, JsonObject>)Delegate.CreateDelegate(typeof(Action<string, JsonObject>), method);
         }
 
-        private static Action<string, JsonObject>? TryBindMergePatchApply(MethodInfo? method)
+        private static Action<string, JsonNode?>? TryBindMergePatchApply(MethodInfo? method)
         {
             if (method == null || method.ReturnType != typeof(void))
                 return null;
 
             var ps = method.GetParameters();
-            if (ps.Length != 2 || ps[0].ParameterType != typeof(string) || ps[1].ParameterType != typeof(JsonObject))
+            if (ps.Length != 2 || ps[0].ParameterType != typeof(string))
                 return null;
 
-            return (Action<string, JsonObject>)Delegate.CreateDelegate(typeof(Action<string, JsonObject>), method);
+            if (ps[1].ParameterType == typeof(JsonNode))
+                return (Action<string, JsonNode?>)Delegate.CreateDelegate(typeof(Action<string, JsonNode?>), method);
+
+            if (ps[1].ParameterType != typeof(JsonObject))
+                return null;
+
+            var objDelegate =
+                (Action<string, JsonObject>)Delegate.CreateDelegate(typeof(Action<string, JsonObject>), method);
+            return (k, n) => objDelegate(k, n as JsonObject ?? new JsonObject());
+        }
+
+        private static Action<string, JsonNode?>? TryBindJsonPatchApply(MethodInfo? method)
+        {
+            if (method == null || method.ReturnType != typeof(void))
+                return null;
+
+            var ps = method.GetParameters();
+            if (ps.Length != 2 || ps[0].ParameterType != typeof(string))
+                return null;
+
+            if (ps[1].ParameterType == typeof(JsonNode))
+                return (Action<string, JsonNode?>)Delegate.CreateDelegate(typeof(Action<string, JsonNode?>), method);
+
+            if (ps[1].ParameterType == typeof(JsonArray))
+            {
+                var arrDelegate =
+                    (Action<string, JsonArray>)Delegate.CreateDelegate(typeof(Action<string, JsonArray>), method);
+                return (k, n) => arrDelegate(k, n as JsonArray ?? []);
+            }
+
+            if (ps[1].ParameterType != typeof(JsonObject))
+                return null;
+
+            var objDelegate =
+                (Action<string, JsonObject>)Delegate.CreateDelegate(typeof(Action<string, JsonObject>), method);
+            return (k, n) => objDelegate(k, n as JsonObject ?? new JsonObject());
         }
 
         private static Func<string, string, JsonNode?>? TryBindNodeGetter(MethodInfo? method)
@@ -225,8 +286,8 @@ namespace STS2RitsuLib.Interop
         {
             var p1 = Expression.Parameter(typeof(string), "k");
             var p2 = Expression.Parameter(typeof(object), "v");
-            var arg2 = method.GetParameters()[1].ParameterType == typeof(object)
-                ? (Expression)p2
+            Expression arg2 = method.GetParameters()[1].ParameterType == typeof(object)
+                ? p2
                 : Expression.Convert(p2, method.GetParameters()[1].ParameterType);
             var body = Expression.Call(method, p1, arg2);
             return Expression.Lambda<Action<string, object?>>(body, p1, p2).Compile();
@@ -236,8 +297,8 @@ namespace STS2RitsuLib.Interop
         {
             var param = Expression.Parameter(typeof(string), "k");
             var call = Expression.Call(method, param);
-            var body = method.ReturnType == typeof(string)
-                ? (Expression)call
+            Expression body = method.ReturnType == typeof(string)
+                ? call
                 : Expression.TypeAs(Expression.Convert(call, typeof(object)), typeof(string));
             return Expression.Lambda<Func<string, string?>>(body, param).Compile();
         }

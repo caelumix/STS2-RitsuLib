@@ -838,7 +838,7 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
         {
             var routing = new KeyedJsonPathRouting(slot.JsonPathPull, slot.JsonPathPush, slot.JsonPathMergePush);
             store.Modify<ModDataInteropJsonDocument>(slot.Key, holder =>
-                KeyedJsonDomTransport.PullFromProviderIntoRoot(slot.Key, channel, holder.Root, routing));
+                holder.Root = KeyedJsonDomTransport.PullFromProviderIntoRoot(slot.Key, channel, holder.Root, routing));
         }
 
         private static void PushJsonChannel(ModDataStore store, InteropSlot slot, ReflectionStaticChannel channel)

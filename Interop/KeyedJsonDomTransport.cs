@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using STS2RitsuLib.Utils.Persistence.Interop;
+using STS2RitsuLib.Utils.Json;
 
 namespace STS2RitsuLib.Interop
 {
@@ -22,25 +22,27 @@ namespace STS2RitsuLib.Interop
         };
 
         /// <summary>
-        ///     Applies provider → document pull semantics into <paramref name="documentRoot" />.
+        ///     Applies provider → document pull semantics and returns the updated root node.
         /// </summary>
         /// <param name="key">Interop key passed to provider static methods.</param>
         /// <param name="channel">Bound reflection channel for the provider.</param>
-        /// <param name="documentRoot">In-memory document root to mutate in place.</param>
+        /// <param name="documentRoot">In-memory document root to update.</param>
         /// <param name="pathRouting">
         ///     Optional pull/push/merge pointer lists; required when using node getters with partial paths.
         /// </param>
-        /// <param name="jsonOptions">Serializer options when falling back to object round-trip; defaults to
-        ///     <see cref="DefaultJsonSerializerOptions" />.</param>
-        public static void PullFromProviderIntoRoot(
+        /// <param name="jsonOptions">
+        ///     Serializer options when falling back to object round-trip; defaults to
+        ///     <see cref="DefaultJsonSerializerOptions" />.
+        /// </param>
+        public static JsonNode? PullFromProviderIntoRoot(
             string key,
             ReflectionStaticChannel channel,
-            JsonObject documentRoot,
+            JsonNode? documentRoot,
             KeyedJsonPathRouting? pathRouting,
             JsonSerializerOptions? jsonOptions = null)
         {
             ArgumentNullException.ThrowIfNull(channel);
-            ArgumentNullException.ThrowIfNull(documentRoot);
+            documentRoot ??= new JsonObject();
 
             var opts = jsonOptions ?? DefaultJsonSerializerOptions;
             var json = channel.Json;
@@ -48,52 +50,42 @@ namespace STS2RitsuLib.Interop
             if (json.GetMergePatch != null)
             {
                 var patch = json.GetMergePatch(key);
-                if (patch != null)
-                    ModDataJsonInteropPrimitives.MergePatch7386(documentRoot,
-                        patch.DeepClone() as JsonObject ?? new JsonObject());
+                return patch == null ? documentRoot : JsonMergePatch.Apply(documentRoot, patch);
+            }
 
-                return;
+            if (json.GetJsonPatch != null)
+            {
+                var patch = json.GetJsonPatch(key);
+                return patch == null ? documentRoot : JsonPatch.Apply(documentRoot, patch);
             }
 
             if (json.GetRootObject != null)
             {
                 var incoming = json.GetRootObject(key) ?? new JsonObject();
-                documentRoot.Clear();
-                foreach (var p in incoming)
-                    documentRoot[p.Key] = p.Value?.DeepClone();
-
-                return;
+                return incoming.DeepClone();
             }
 
             if (json.GetNode != null && pathRouting?.PullPaths is { Length: > 0 } paths)
             {
+                if (documentRoot is not JsonObject docObj)
+                    docObj = new();
+
                 foreach (var rawPath in paths)
                 {
-                    var ptr = NormalizeJsonPointer(rawPath);
+                    var ptr = JsonPointer.Normalize(rawPath);
                     var n = json.GetNode(key, ptr);
                     if (n != null)
-                        ModDataJsonInteropPrimitives.SetNodeAt(documentRoot, ptr, n);
+                        JsonPointer.Set(docObj, ptr, n);
                 }
 
-                return;
+                return docObj;
             }
 
-            if (json.GetJson != null)
-            {
-                var incoming = ParseIncomingJsonObject(json.GetJson(key) ?? "{}");
-                documentRoot.Clear();
-                foreach (var p in incoming)
-                    documentRoot[p.Key] = p.Value?.DeepClone();
-
-                return;
-            }
+            if (json.GetJson != null) return JsonNode.Parse(json.GetJson(key) ?? "{}") ?? new JsonObject();
 
             var obj = channel.GetObject(key);
             var jsonText = obj == null ? "{}" : JsonSerializer.Serialize(obj, opts);
-            var incomingRoot = ParseIncomingJsonObject(jsonText);
-            documentRoot.Clear();
-            foreach (var p in incomingRoot)
-                documentRoot[p.Key] = p.Value?.DeepClone();
+            return JsonNode.Parse(jsonText) ?? new JsonObject();
         }
 
         /// <summary>
@@ -105,17 +97,19 @@ namespace STS2RitsuLib.Interop
         /// <param name="pathRouting">
         ///     Optional pull/push/merge pointer lists; required when using node or merge-at setters with partial paths.
         /// </param>
-        /// <param name="jsonOptions">Serializer options when using the JSON text setter tier; defaults to
-        ///     <see cref="DefaultJsonSerializerOptions" />.</param>
+        /// <param name="jsonOptions">
+        ///     Serializer options when using the JSON text setter tier; defaults to
+        ///     <see cref="DefaultJsonSerializerOptions" />.
+        /// </param>
         public static void PushRootToProvider(
             string key,
             ReflectionStaticChannel channel,
-            JsonObject documentRoot,
+            JsonNode? documentRoot,
             KeyedJsonPathRouting? pathRouting,
             JsonSerializerOptions? jsonOptions = null)
         {
             ArgumentNullException.ThrowIfNull(channel);
-            ArgumentNullException.ThrowIfNull(documentRoot);
+            documentRoot ??= new JsonObject();
 
             var opts = jsonOptions ?? DefaultJsonSerializerOptions;
             var json = channel.Json;
@@ -129,17 +123,35 @@ namespace STS2RitsuLib.Interop
 
             if (json.ApplyMergePatch != null)
             {
-                var clone = documentRoot.DeepClone() as JsonObject ?? new JsonObject();
-                json.ApplyMergePatch(key, clone);
+                json.ApplyMergePatch(key, documentRoot.DeepClone());
+                return;
+            }
+
+            if (json.ApplyJsonPatch != null)
+            {
+                var patch = new JsonArray
+                {
+                    new JsonObject
+                    {
+                        ["op"] = "replace",
+                        ["path"] = "",
+                        ["value"] = documentRoot.DeepClone(),
+                    },
+                };
+
+                json.ApplyJsonPatch(key, patch);
                 return;
             }
 
             if (json.SetNode != null && pathRouting?.PushPaths is { Length: > 0 } pushPaths)
             {
+                if (documentRoot is not JsonObject docObj)
+                    docObj = new();
+
                 foreach (var rawPath in pushPaths)
                 {
-                    var ptr = NormalizeJsonPointer(rawPath);
-                    var n = ModDataJsonInteropPrimitives.GetNodeAt(documentRoot, ptr);
+                    var ptr = JsonPointer.Normalize(rawPath);
+                    var n = JsonPointer.Get(docObj, ptr);
                     json.SetNode(key, ptr, n?.DeepClone());
                 }
 
@@ -148,10 +160,13 @@ namespace STS2RitsuLib.Interop
 
             if (json.MergeObjectAt != null && pathRouting?.MergePushPaths is { Length: > 0 } mergePaths)
             {
+                if (documentRoot is not JsonObject docObj)
+                    docObj = new();
+
                 foreach (var rawPath in mergePaths)
                 {
-                    var ptr = NormalizeJsonPointer(rawPath);
-                    if (ModDataJsonInteropPrimitives.GetNodeAt(documentRoot, ptr) is JsonObject sub)
+                    var ptr = JsonPointer.Normalize(rawPath);
+                    if (JsonPointer.Get(docObj, ptr) is JsonObject sub)
                         json.MergeObjectAt(key, ptr, sub.DeepClone() as JsonObject ?? new JsonObject());
                 }
 
@@ -165,33 +180,6 @@ namespace STS2RitsuLib.Interop
             }
 
             channel.SetObject(key, documentRoot);
-        }
-
-        /// <summary>
-        ///     Normalizes a JSON Pointer fragment for DOM navigation (leading slash optional when authoring).
-        /// </summary>
-        /// <param name="rawPath">Pointer from schema or config, with or without a leading slash.</param>
-        /// <returns>A normalized pointer beginning with <c>/</c>.</returns>
-        public static string NormalizeJsonPointer(string rawPath)
-        {
-            var t = rawPath.Trim();
-            if (t.Length == 0 || t == "/")
-                return "/";
-
-            return t.StartsWith('/') ? t : "/" + t;
-        }
-
-        private static JsonObject ParseIncomingJsonObject(string jsonText)
-        {
-            try
-            {
-                var node = JsonNode.Parse(jsonText);
-                return node as JsonObject ?? new JsonObject();
-            }
-            catch
-            {
-                return new();
-            }
         }
     }
 }

@@ -93,6 +93,11 @@
         <EmbeddedResource Remove="sts-2-source\**"/>
 
         <Compile Remove="build\**\*.cs"/>
+        <!-- Loader is a separate assembly; keep it out of Godot.Sdk default globs. -->
+        <Compile Remove="Loader\**"/>
+        <None Remove="Loader\**"/>
+        <Content Remove="Loader\**"/>
+        <EmbeddedResource Remove="Loader\**"/>
     </ItemGroup>
     <Target Name="Copy Mod" AfterTargets="Build" Condition="'$(Sts2ApiCompat)' == '$(RitsuLibLatestApiCompat)'">
         <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high"/>

@@ -44,6 +44,14 @@ Windows 下设置文件路径:
 
 `%appdata%\SlayTheSpire2\steam\<user_id>\mod_data\com.ritsukage.sts2-RitsuLib\settings.json`
 
+## 运行时 Bundle（多 API，临时方案）
+
+希望**只装一份** RitsuLib、由运行时按游戏选择对应构建的最终用户，请使用 GitHub Release 中的
+`STS2-RitsuLib.<version>.bundle.zip`（不要用各 compat 的 `*.github.zip`）。解压到 `mods/STS2-RitsuLib/`：根目录的
+`STS2-RitsuLib.dll` 为轻量加载器；各版本实际 DLL 在 `lib/<api-version>/` 下，程序集名与现有一致。下游 mod 的
+`dependencies` 仍写 `STS2-RitsuLib`，NuGet 引用方式（`STS2.RitsuLib` / `STS2.RitsuLib.Compat.*`）不变。该形态在创意工坊 /
+按游戏版本分支安装成熟后预计可退役。
+
 ## 许可证
 
 MIT

@@ -13,7 +13,13 @@ NUGET_ORG_V3_INDEX_URL = "https://api.nuget.org/v3/index.json"
 ARTIFACTS_NUGET = Path("artifacts") / "nuget"
 ARTIFACTS_GITHUB = Path("artifacts") / "github"
 
+ARTIFACTS_BUNDLE_STAGING = Path("artifacts") / "bundle-staging"
+
+RITSULIB_LOADER_CSPROJ_REL = Path("Loader") / "STS2-RitsuLib-Loader.csproj"
+
 GITHUB_ZIP_FILENAME_SUFFIX = ".github.zip"
+
+GITHUB_BUNDLE_ZIP_SUFFIX = ".bundle.zip"
 
 SNUPKG_SUFFIX = ".snupkg"
 

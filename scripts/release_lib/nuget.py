@@ -25,6 +25,35 @@ from release_lib.repo_layout import (
 )
 
 
+def prepare_bundle_staging(bundle_staging_root: Path) -> None:
+    shutil.rmtree(bundle_staging_root, ignore_errors=True)
+    bundle_staging_root.mkdir(parents=True, exist_ok=True)
+
+
+def snapshot_bundle_variant_after_pack(
+    ritsulib_root: Path,
+    *,
+    configuration: str,
+    compat_target: str,
+    bundle_staging_root: Path,
+    latest_compat: str,
+) -> None:
+    """After dotnet pack for a compat target, copy RitsuLib bin outputs into bundle staging."""
+    bin_dir = ritsulib_root / GODOT_MONO_BIN_PREFIX / configuration
+    lib_dest = bundle_staging_root / "lib" / compat_target
+    lib_dest.mkdir(parents=True, exist_ok=True)
+    for name in (ritsulib_built_dll_name(), ritsulib_built_doc_xml_name(), ritsulib_built_pdb_name()):
+        src = bin_dir / name
+        if src.is_file():
+            shutil.copy2(src, lib_dest / name)
+
+    if compat_target == latest_compat:
+        obj_dir = ritsulib_root / GODOT_MONO_OBJ_PREFIX / configuration
+        gen = obj_dir / "mod_manifest.generated.json"
+        if gen.is_file():
+            shutil.copy2(gen, bundle_staging_root / MOD_MANIFEST_NAME)
+
+
 def run_pack(
     ritsulib_root: Path,
     *,
@@ -147,12 +176,25 @@ def publish_nugets(
     version_override: str | None = None,
     sts2_api_signature_root: Path | None = None,
     sts2_dir: Path | None = None,
+    bundle_staging_root: Path | None = None,
 ) -> tuple[list[Path], list[Path]]:
     artifacts_dir = ritsulib_root / ARTIFACTS_NUGET
     github_dir = ritsulib_root / ARTIFACTS_GITHUB
     key = _resolve_api_key(api_key)
     published: list[Path] = []
     zips: list[Path] = []
+    latest_compat: str | None = None
+    if bundle_staging_root is not None:
+        prepare_bundle_staging(bundle_staging_root)
+        csproj_path = ritsulib_root / RITSULIB_CSPROJ_NAME
+        try:
+            latest_compat = get_csproj_property(csproj_path, "RitsuLibLatestApiCompat").strip() or None
+        except (OSError, RuntimeError):
+            latest_compat = None
+        if not latest_compat:
+            msg = "bundle_staging_root set but RitsuLibLatestApiCompat could not be evaluated."
+            raise RuntimeError(msg)
+
     for compat_target in compat_targets:
         package = run_pack(
             ritsulib_root,
@@ -171,6 +213,14 @@ def publish_nugets(
             compat_target=compat_target,
             output_dir=github_dir,
         )
+        if bundle_staging_root is not None and latest_compat is not None:
+            snapshot_bundle_variant_after_pack(
+                ritsulib_root,
+                configuration=configuration,
+                compat_target=compat_target,
+                bundle_staging_root=bundle_staging_root,
+                latest_compat=latest_compat,
+            )
         run_push(package, source=source, api_key=key)
         symbol_package = package.with_suffix(SNUPKG_SUFFIX)
         if symbol_package.is_file():
@@ -189,11 +239,24 @@ def build_artifacts(
     version_override: str | None = None,
     sts2_api_signature_root: Path | None = None,
     sts2_dir: Path | None = None,
+    bundle_staging_root: Path | None = None,
 ) -> tuple[list[Path], list[Path]]:
     artifacts_dir = ritsulib_root / ARTIFACTS_NUGET
     github_dir = ritsulib_root / ARTIFACTS_GITHUB
     packages: list[Path] = []
     zips: list[Path] = []
+    latest_compat: str | None = None
+    if bundle_staging_root is not None:
+        prepare_bundle_staging(bundle_staging_root)
+        csproj_path = ritsulib_root / RITSULIB_CSPROJ_NAME
+        try:
+            latest_compat = get_csproj_property(csproj_path, "RitsuLibLatestApiCompat").strip() or None
+        except (OSError, RuntimeError):
+            latest_compat = None
+        if not latest_compat:
+            msg = "bundle_staging_root set but RitsuLibLatestApiCompat could not be evaluated."
+            raise RuntimeError(msg)
+
     for compat_target in compat_targets:
         package = run_pack(
             ritsulib_root,
@@ -212,6 +275,14 @@ def build_artifacts(
             compat_target=compat_target,
             output_dir=github_dir,
         )
+        if bundle_staging_root is not None and latest_compat is not None:
+            snapshot_bundle_variant_after_pack(
+                ritsulib_root,
+                configuration=configuration,
+                compat_target=compat_target,
+                bundle_staging_root=bundle_staging_root,
+                latest_compat=latest_compat,
+            )
         packages.append(package)
         zips.append(zip_path)
     return packages, zips
@@ -242,6 +313,7 @@ def publish_nuget(
         version_override=version_override,
         sts2_api_signature_root=sts2_api_signature_root,
         sts2_dir=sts2_dir,
+        bundle_staging_root=None,
     )
     return packages[0]
 

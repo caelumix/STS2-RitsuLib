@@ -43,6 +43,14 @@ namespace STS2RitsuLib.Models
                 return;
             }
 
+            if ((receiveRunHooks && RunHookSubscriptionDelegateType == null) ||
+                (receiveCombatHooks && CombatHookSubscriptionDelegateType == null))
+            {
+                RitsuLibFramework.Logger.Warn(
+                    $"[HookedSingletonModel] Singleton created but hook subscription delegate type is unavailable on this game branch: {GetType().FullName}");
+                return;
+            }
+
             if (receiveRunHooks)
                 SubscribeRunState.Invoke(null,
                 [
@@ -69,12 +77,22 @@ namespace STS2RitsuLib.Models
         /// <inheritdoc />
         public override bool ShouldReceiveCombatHooks { get; }
 
-        private IEnumerable<AbstractModel> RunSubModels(RunState runState)
+        /// <summary>
+        ///     Provides the run-scoped sub-models that should receive run-state hook callbacks for this singleton.
+        /// </summary>
+        /// <param name="runState">The current run state.</param>
+        /// <returns>The models to subscribe for run hooks.</returns>
+        protected IEnumerable<AbstractModel> RunSubModels(RunState runState)
         {
             return [this];
         }
 
-        private IEnumerable<AbstractModel> CombatSubModels(CombatState combatState)
+        /// <summary>
+        ///     Provides the combat-scoped sub-models that should receive combat-state hook callbacks for this singleton.
+        /// </summary>
+        /// <param name="combatState">The current combat state.</param>
+        /// <returns>The models to subscribe for combat hooks.</returns>
+        protected IEnumerable<AbstractModel> CombatSubModels(CombatState combatState)
         {
             return [this];
         }

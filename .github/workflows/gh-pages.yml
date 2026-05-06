@@ -9,17 +9,21 @@ on:
       - ".github/workflows/gh-pages.yml"
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  deploy:
+    runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [lts/*]
-        os: [ubuntu-latest]
-      fail-fast: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@v6
@@ -29,10 +33,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
           cache: pnpm
           cache-dependency-path: docs/pnpm-lock.yaml
 
@@ -44,10 +48,19 @@ jobs:
         working-directory: docs
         run: pnpm build
 
-      - name: 🪤 Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: 🏷️ Write CNAME
+        working-directory: docs
+        run: |
+          echo "sts2-ritsulib.ritsukage.com" > dist/CNAME
+
+      - name: ⚙️ Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: ⬆️ Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/dist
-          cname: sts2-ritsulib.ritsukage.com
-          force_orphan: true
+          path: docs/dist
+
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

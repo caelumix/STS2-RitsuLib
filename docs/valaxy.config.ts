@@ -7,7 +7,7 @@ export default defineValaxyConfig<ThemeConfig>({
 
   siteConfig: {
     title: 'RitsuLib',
-    url: 'https://bakaolc.github.io/STS2-RitsuLib/',
+    url: 'https://sts2-ritsulib.ritsukage.com/',
     description:
       'RitsuLib — Slay the Spire 2 mod framework: patching, persistence, lifecycle, localization, and authoring helpers',
     lang: 'en',

@@ -78,4 +78,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/dist
+          cname: sts2-ritsulib.ritsukage.com
           force_orphan: true

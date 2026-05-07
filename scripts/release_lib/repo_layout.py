@@ -19,7 +19,7 @@ RITSULIB_LOADER_CSPROJ_REL = Path("Loader") / "STS2-RitsuLib-Loader.csproj"
 
 GITHUB_ZIP_FILENAME_SUFFIX = ".github.zip"
 
-GITHUB_BUNDLE_ZIP_SUFFIX = ".bundle.zip"
+GITHUB_BUNDLE_ZIP_SUFFIX = ".variant-pack.zip"
 
 SNUPKG_SUFFIX = ".snupkg"
 

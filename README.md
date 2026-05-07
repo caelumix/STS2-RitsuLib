@@ -51,7 +51,7 @@ Windows settings path:
 
 End users who want **one mod folder** that picks the correct RitsuLib build for the running game should install the
 GitHub
-asset `STS2-RitsuLib.<version>.bundle.zip` (not the per-compat `*.github.zip` files). Extract it under
+asset `STS2-RitsuLib.<version>.variant-pack.zip` (not the per-compat `*.github.zip` files). Extract it under
 `mods/STS2-RitsuLib/`: the root `STS2-RitsuLib.dll` is a small loader; real builds live under `lib/<api-version>/` with
 the same assembly name as today. Downstream mods keep declaring `dependencies: ["STS2-RitsuLib"]` and continue to
 reference NuGet (`STS2.RitsuLib` / `STS2.RitsuLib.Compat.*`) unchanged. This path is expected to be temporary until

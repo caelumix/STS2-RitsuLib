@@ -22,6 +22,11 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
         BottomLeft,
 
         /// <summary>
+        ///     Bottom-right band (built-in layout per host kind).
+        /// </summary>
+        BottomRight,
+
+        /// <summary>
         ///     Use <see cref="ExtraIconAmountLabelSlot.CustomRect" />; horizontal and vertical alignment are centered.
         /// </summary>
         Custom,

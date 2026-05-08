@@ -1,4 +1,5 @@
 using System.Text.Json;
+using STS2RitsuLib.Utils.Persistence.Context;
 using STS2RitsuLib.Utils.Persistence.Migration;
 
 namespace STS2RitsuLib.Utils.Persistence
@@ -9,6 +10,7 @@ namespace STS2RitsuLib.Utils.Persistence
     public class PersistentDataEntry<T> where T : class, new()
     {
         private readonly bool _autoCreateIfMissing;
+        private readonly Func<StorageContext>? _contextProvider;
         private readonly T _defaultValues;
         private readonly string _fileName;
         private readonly JsonSerializerOptions _jsonOptions;
@@ -25,7 +27,8 @@ namespace STS2RitsuLib.Utils.Persistence
             T defaultValues,
             JsonSerializerOptions jsonOptions,
             MigrationManager migrationManager,
-            bool autoCreateIfMissing = false)
+            bool autoCreateIfMissing = false,
+            Func<StorageContext>? contextProvider = null)
         {
             _modId = modId;
             _fileName = fileName;
@@ -34,6 +37,7 @@ namespace STS2RitsuLib.Utils.Persistence
             _jsonOptions = jsonOptions;
             _migrationManager = migrationManager;
             _autoCreateIfMissing = autoCreateIfMissing;
+            _contextProvider = contextProvider;
             Data = DeepClone(defaultValues);
         }
 
@@ -45,7 +49,8 @@ namespace STS2RitsuLib.Utils.Persistence
         /// <summary>
         ///     Resolved absolute path for this entry using the active profile.
         /// </summary>
-        public string FilePath => ProfileManager.Instance.GetFilePath(_fileName, Scope, _modId);
+        public string FilePath =>
+            StoragePathResolver.ResolveFilePathUser(_modId, _fileName, Scope, _contextProvider?.Invoke());
 
         /// <summary>
         ///     Whether this file lives under global account storage or a profile subdirectory.

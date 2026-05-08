@@ -1386,12 +1386,8 @@ namespace STS2RitsuLib.Settings
             return value?.Trim().ToLowerInvariant() switch
             {
                 "profile" => SaveScope.Profile,
-                "runsidecar" => SaveScope.RunSidecar,
-                "run-sidecar" => SaveScope.RunSidecar,
-                "run_sidecar" => SaveScope.RunSidecar,
-                "inmemory" => SaveScope.InMemory,
-                "in-memory" => SaveScope.InMemory,
-                "in_memory" => SaveScope.InMemory,
+                "runsidecar" or "run-sidecar" or "run_sidecar" => SaveScope.RunSidecar,
+                "inmemory" or "in-memory" or "in_memory" => SaveScope.InMemory,
                 _ => SaveScope.Global,
             };
         }

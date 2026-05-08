@@ -125,8 +125,27 @@ namespace STS2RitsuLib.Utils.Persistence
             {
                 SaveScope.Global => accountBase,
                 SaveScope.Profile => $"{accountBase}/{GetProfileDirectory(profileId)}",
-                _ => StoragePathResolver.ResolveBasePathUser(modId, scope,
-                    StorageContext.Empty.With(StorageContextKeys.ProfileId, profileId)),
+                _ => accountBase,
+            };
+        }
+
+        /// <summary>
+        ///     Resolves the base storage path for <paramref name="scope" /> using a supplied
+        ///     <paramref name="context" /> (e.g. run fingerprint stem for <see cref="SaveScope.RunSidecar" />).
+        /// </summary>
+        public static string GetBasePath(SaveScope scope, StorageContext context, string modId = Const.ModId)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+
+            return scope switch
+            {
+                SaveScope.Global => GetAccountBasePath(modId),
+                SaveScope.Profile => GetBasePath(SaveScope.Profile,
+                    context.TryGet(StorageContextKeys.ProfileId, out var pid)
+                        ? pid
+                        : Instance.CurrentProfileId,
+                    modId),
+                _ => StoragePathResolver.ResolveBasePathUser(modId, scope, context),
             };
         }
 
@@ -162,6 +181,19 @@ namespace STS2RitsuLib.Utils.Persistence
         public static string GetFilePath(string fileName, SaveScope scope, int profileId, string modId)
         {
             return $"{GetBasePath(scope, profileId, modId)}/{fileName}";
+        }
+
+        /// <summary>
+        ///     Returns the full path for <paramref name="fileName" /> using a supplied
+        ///     <paramref name="context" /> (e.g. run fingerprint stem for <see cref="SaveScope.RunSidecar" />).
+        /// </summary>
+        public static string GetFilePath(string fileName, SaveScope scope, StorageContext context,
+            string modId = Const.ModId)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
+            ArgumentNullException.ThrowIfNull(context);
+
+            return StoragePathResolver.ResolveFilePathUser(modId, fileName, scope, context);
         }
 
         /// <summary>

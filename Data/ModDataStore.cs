@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using MegaCrit.Sts2.Core.Logging;
 using STS2RitsuLib.Utils;
 using STS2RitsuLib.Utils.Persistence;
+using STS2RitsuLib.Utils.Persistence.Context;
 using STS2RitsuLib.Utils.Persistence.Migration;
 
 namespace STS2RitsuLib.Data
@@ -73,7 +74,7 @@ namespace STS2RitsuLib.Data
         public bool HasRunSidecarScopedEntries => _entries.Values.Any(e => e.Scope == SaveScope.RunSidecar);
 
         /// <summary>
-        ///     Defers eager initialization of newly <see cref="Register{T}" /> calls until the scope is disposed.
+        ///     Defers eager initialization of newly registered entries until the scope is disposed.
         /// </summary>
         /// <param name="initializeProfileIfReady">
         ///     When true and profile data is already initialized, profile-scoped registrations initialize on scope end.
@@ -208,11 +209,17 @@ namespace STS2RitsuLib.Data
 
             ConfigureMigration<T>(migrationConfig, migrations);
 
-            if (scope == SaveScope.InMemory)
+            switch (scope)
             {
-                var memory = new InMemoryDataEntry<T>(key, scope, defaultFactory ?? (() => new()));
-                _entries[key] = memory;
-                return;
+                case SaveScope.InMemory:
+                {
+                    var memory = new InMemoryDataEntry<T>(key, scope, defaultFactory ?? (() => new()));
+                    _entries[key] = memory;
+                    return;
+                }
+                case SaveScope.RunSidecar:
+                    throw new InvalidOperationException(
+                        "SaveScope.RunSidecar requires a run fingerprint stem context. Use ModRunSidecarStore or a future ModDataStore overload that supplies StorageContext.");
             }
 
             var registration = new RegisteredDataEntry<T>(
@@ -223,6 +230,55 @@ namespace STS2RitsuLib.Data
                 defaultFactory ?? (() => new()),
                 autoCreateIfMissing,
                 _logger
+            );
+
+            _entries[key] = registration;
+            ModCloudSyncPathRegistry.RegisterModDataSlot(ModId, fileName, scope);
+
+            if (_registrationScopeDepth > 0)
+                return;
+
+            if (!IsGlobalInitialized && scope == SaveScope.Global) return;
+            if (!IsProfileInitialized && scope == SaveScope.Profile) return;
+            registration.Initialize(_jsonOptions, _migrationManager);
+            registration.Load();
+        }
+
+        /// <summary>
+        ///     Registers a JSON-backed persistence slot identified by <paramref name="key" /> using an explicit
+        ///     <see cref="StorageContext" /> provider for path resolution (e.g. run fingerprint stem for
+        ///     <see cref="SaveScope.RunSidecar" />).
+        /// </summary>
+        public void Register<T>(
+            string key,
+            string fileName,
+            SaveScope scope,
+            Func<StorageContext> contextProvider,
+            Func<T>? defaultFactory = null,
+            bool autoCreateIfMissing = false,
+            ModDataMigrationConfig? migrationConfig = null,
+            IEnumerable<IMigration>? migrations = null)
+            where T : class, new()
+        {
+            ArgumentNullException.ThrowIfNull(contextProvider);
+
+            if (_entries.ContainsKey(key))
+                throw new InvalidOperationException($"Data key '{key}' is already registered.");
+
+            ConfigureMigration<T>(migrationConfig, migrations);
+
+            if (scope == SaveScope.InMemory)
+                throw new InvalidOperationException("SaveScope.InMemory does not support contextProvider overload.");
+
+            var registration = new RegisteredDataEntry<T>(
+                ModId,
+                key,
+                fileName,
+                scope,
+                defaultFactory ?? (() => new()),
+                autoCreateIfMissing,
+                _logger,
+                contextProvider
             );
 
             _entries[key] = registration;
@@ -500,7 +556,8 @@ namespace STS2RitsuLib.Data
             SaveScope scope,
             Func<T> defaultFactory,
             bool autoCreateIfMissing,
-            Logger logger)
+            Logger logger,
+            Func<StorageContext>? contextProvider = null)
             : IRegisteredDataEntry where T : class, new()
         {
             private PersistentDataEntry<T>? _entry;
@@ -525,7 +582,8 @@ namespace STS2RitsuLib.Data
                     defaultFactory(),
                     jsonOptions,
                     migrationManager,
-                    autoCreateIfMissing
+                    autoCreateIfMissing,
+                    contextProvider
                 );
             }
 
@@ -534,7 +592,7 @@ namespace STS2RitsuLib.Data
                 if (_entry == null)
                     throw new InvalidOperationException($"Data entry '{key}' is not initialized.");
 
-                var currentPath = ProfileManager.Instance.GetFilePath(fileName, Scope, modId);
+                var currentPath = _entry.FilePath;
                 _lastLoadedPath = currentPath;
                 HadExistingData = FileOperations.FileExists(currentPath);
                 _entry.Load();
@@ -545,7 +603,7 @@ namespace STS2RitsuLib.Data
                 if (_entry == null)
                     throw new InvalidOperationException($"Data entry '{key}' is not initialized.");
 
-                var currentPath = ProfileManager.Instance.GetFilePath(fileName, Scope, modId);
+                var currentPath = _entry.FilePath;
                 if (string.Equals(_lastLoadedPath, currentPath, StringComparison.Ordinal))
                     return false;
 

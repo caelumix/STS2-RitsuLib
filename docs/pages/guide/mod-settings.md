@@ -348,6 +348,45 @@ All visible UI text fields (e.g. `modDisplayName`, page/section `title` / `descr
   - `i18n`: mod-owned I18N key lookup (requires `i18nSource` on the schema root; can be overridden by page/section/entry)
   - `locString`: game-native LocString lookup
 
+### Default values (runtime-interop schema)
+
+Editable entries can declare `defaultValue`.
+When `GetRitsuLibSettingValue(key)` returns `null`, RitsuLib will:
+
+- write back the default value via `SetRitsuLibSettingValue(key, value)`
+- call `SaveRitsuLibSettings()` when present
+- and then use that value for UI display
+
+Missing detection is **null-only** (so `false`, `0`, and `\"\"` are treated as real values).
+
+Example:
+
+```json
+{
+  "modId": "MyMod",
+  "pages": [
+    {
+      "pageId": "interop",
+      "sections": [
+        {
+          "id": "general",
+          "entries": [
+            { "id": "enable_feature", "type": "toggle", "defaultValue": true },
+            { "id": "player_name", "type": "string", "defaultValue": "Anonymous" },
+            {
+              "id": "difficulty",
+              "type": "choice",
+              "options": ["normal", "hard"],
+              "defaultValue": "normal"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
 Minimal JSON snippet:
 
 ```json
@@ -373,6 +412,44 @@ Minimal JSON snippet:
               "id": "enable_feature",
               "type": "toggle",
               "label": { "locString": { "table": "settings_ui", "key": "my_mod.enable_feature.title", "fallback": "Enable feature" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 运行时 schema 的默认值（defaultValue）
+
+可编辑 entry 支持声明 `defaultValue`。当 `GetRitsuLibSettingValue(key)` 返回 `null` 时，RitsuLib 会：
+
+- 通过 `SetRitsuLibSettingValue(key, value)` 写回默认值
+- 若 provider 实现了 `SaveRitsuLibSettings()`，则调用保存
+- 并使用该默认值作为 UI 显示值
+
+缺失判定是**仅 null**（所以 `false`、`0`、`\"\"` 都会被视为真实值，不会被默认值覆盖）。
+
+示例：
+
+```json
+{
+  "modId": "MyMod",
+  "pages": [
+    {
+      "pageId": "interop",
+      "sections": [
+        {
+          "id": "general",
+          "entries": [
+            { "id": "enable_feature", "type": "toggle", "defaultValue": true },
+            { "id": "player_name", "type": "string", "defaultValue": "Anonymous" },
+            {
+              "id": "difficulty",
+              "type": "choice",
+              "options": ["normal", "hard"],
+              "defaultValue": "normal"
             }
           ]
         }

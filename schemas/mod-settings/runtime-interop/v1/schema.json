@@ -255,6 +255,17 @@
         "description": {
           "$ref": "#/$defs/text"
         },
+        "defaultValue": {
+          "description": "Optional default value. When GetRitsuLibSettingValue(key) returns null, RitsuLib may write back this value and save, then use it for UI display.",
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "number" },
+            { "type": "string" },
+            { "type": "array" },
+            { "type": "object" },
+            { "type": "null" }
+          ]
+        },
         "scope": {
           "type": "string",
           "description": "Only \"profile\" (case-insensitive) selects profile scope; any other value is treated as global."
@@ -406,6 +417,11 @@
               "properties": {
                 "type": {
                   "const": "choice"
+                },
+                "defaultValue": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Optional default option value written back when missing (Get returns null). Must match one of options[].value (or string option)."
                 },
                 "presentation": {
                   "type": "string",

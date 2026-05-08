@@ -27,6 +27,8 @@ namespace STS2RitsuLib.Settings
         private static readonly Lock Gate = new();
         private static readonly HashSet<string> SchemaPayloadWarningDedup = new(StringComparer.Ordinal);
         private static readonly HashSet<string> InteropMethodWarningDedup = new(StringComparer.Ordinal);
+        private static readonly Lock DefaultWriteGate = new();
+        private static readonly HashSet<string> DefaultWriteDedup = new(StringComparer.Ordinal);
 
         private static readonly Dictionary<string, string?> RuntimeRegisteredProviderTypes =
             new(StringComparer.Ordinal);
@@ -308,6 +310,7 @@ namespace STS2RitsuLib.Settings
             var label = entry.Label;
             var description = entry.Description;
             var dataKey = $"interop::{entry.Key}";
+            var defaultWriteKey = $"{modId}::{entry.Scope}::{entry.Key}";
 
             switch (entry.Type)
             {
@@ -335,7 +338,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.Toggle:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadBool(entry.Key, access),
+                        () => ReadBoolWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteBool(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -346,7 +349,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.Slider:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadDouble(entry.Key, access),
+                        () => ReadDoubleWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteDouble(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -357,7 +360,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.IntSlider:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadInt(entry.Key, access),
+                        () => ReadIntWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteInt(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -370,7 +373,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.String:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadString(entry.Key, access),
+                        () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -382,7 +385,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.MultilineString:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadString(entry.Key, access),
+                        () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -394,7 +397,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.Color:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadString(entry.Key, access),
+                        () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -407,7 +410,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.KeyBinding:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadString(entry.Key, access),
+                        () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -452,11 +455,8 @@ namespace STS2RitsuLib.Settings
                         .ToArray();
                     var firstValue = options[0].Value;
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () =>
-                        {
-                            var current = ReadString(entry.Key, access);
-                            return string.IsNullOrWhiteSpace(current) ? firstValue : current;
-                        },
+                        () => ReadChoiceWithDefault(defaultWriteKey, entry, options, firstValue, access,
+                            saveAction),
                         value => WriteString(entry.Key, string.IsNullOrWhiteSpace(value) ? firstValue : value, access),
                         saveAction,
                         entry.Scope);
@@ -631,6 +631,22 @@ namespace STS2RitsuLib.Settings
             return access.GetBool?.Invoke(key) ?? CoerceBool(access.GetObject(key));
         }
 
+        private static bool ReadBoolWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+                return ReadBool(entry.Key, access);
+
+            if (!TryCoerceDefaultBool(entry.DefaultValue, out var dv))
+                return false;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteBool(entry.Key, dv, access), saveAction);
+            return dv;
+        }
+
         private static void WriteBool(string key, bool value, InteropAccessor access)
         {
             if (access.SetBool != null)
@@ -645,6 +661,22 @@ namespace STS2RitsuLib.Settings
         private static double ReadDouble(string key, InteropAccessor access)
         {
             return access.GetDouble?.Invoke(key) ?? CoerceDouble(access.GetObject(key));
+        }
+
+        private static double ReadDoubleWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+                return ReadDouble(entry.Key, access);
+
+            if (!TryCoerceDefaultDouble(entry.DefaultValue, out var dv))
+                return 0d;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteDouble(entry.Key, dv, access), saveAction);
+            return dv;
         }
 
         private static void WriteDouble(string key, double value, InteropAccessor access)
@@ -663,6 +695,22 @@ namespace STS2RitsuLib.Settings
             return access.GetInt?.Invoke(key) ?? CoerceInt(access.GetObject(key));
         }
 
+        private static int ReadIntWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+                return ReadInt(entry.Key, access);
+
+            if (!TryCoerceDefaultInt(entry.DefaultValue, out var dv))
+                return 0;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteInt(entry.Key, dv, access), saveAction);
+            return dv;
+        }
+
         private static void WriteInt(string key, int value, InteropAccessor access)
         {
             if (access.SetInt != null)
@@ -679,6 +727,22 @@ namespace STS2RitsuLib.Settings
             if (access.GetString != null)
                 return access.GetString(key) ?? string.Empty;
             return access.GetObject(key)?.ToString() ?? string.Empty;
+        }
+
+        private static string ReadStringWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+                return ReadString(entry.Key, access);
+
+            if (!TryCoerceDefaultString(entry.DefaultValue, out var dv))
+                return string.Empty;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteString(entry.Key, dv, access), saveAction);
+            return dv;
         }
 
         private static void WriteString(string key, string value, InteropAccessor access)
@@ -747,6 +811,173 @@ namespace STS2RitsuLib.Settings
             catch
             {
                 return 0;
+            }
+        }
+
+        private static string ReadChoiceWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            ModSettingsChoiceOption<string>[] options,
+            string firstValue,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+            {
+                var current = ReadString(entry.Key, access);
+                return string.IsNullOrWhiteSpace(current) ? firstValue : current;
+            }
+
+            var chosen = firstValue;
+            if (TryCoerceDefaultString(entry.DefaultValue, out var dv) &&
+                options.Any(o => string.Equals(o.Value, dv, StringComparison.OrdinalIgnoreCase)))
+                chosen = dv;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteString(entry.Key, chosen, access), saveAction);
+            return chosen;
+        }
+
+        private static bool IsMissing(string key, InteropAccessor access)
+        {
+            try
+            {
+                return access.GetObject(key) == null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static void EnsureDefaultWritten(string dedupKey, Action writeDefault, Action saveAction)
+        {
+            lock (DefaultWriteGate)
+            {
+                if (!DefaultWriteDedup.Add(dedupKey))
+                    return;
+            }
+
+            try
+            {
+                writeDefault();
+                saveAction();
+            }
+            catch
+            {
+                // If write/save fails, allow retry later.
+                lock (DefaultWriteGate)
+                {
+                    DefaultWriteDedup.Remove(dedupKey);
+                }
+            }
+        }
+
+        private static bool TryCoerceDefaultBool(object? raw, out bool value)
+        {
+            value = false;
+            try
+            {
+                switch (raw)
+                {
+                    case null:
+                        return false;
+                    case bool b:
+                        value = b;
+                        return true;
+                    case string s when bool.TryParse(s, out var parsed):
+                        value = parsed;
+                        return true;
+                    default:
+                        value = Convert.ToBoolean(raw);
+                        return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryCoerceDefaultDouble(object? raw, out double value)
+        {
+            value = 0d;
+            try
+            {
+                switch (raw)
+                {
+                    case null:
+                        return false;
+                    case double d:
+                        value = d;
+                        return true;
+                    case float f:
+                        value = f;
+                        return true;
+                    case int i:
+                        value = i;
+                        return true;
+                    case long l:
+                        value = l;
+                        return true;
+                    default:
+                        value = Convert.ToDouble(raw);
+                        return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryCoerceDefaultInt(object? raw, out int value)
+        {
+            value = 0;
+            try
+            {
+                switch (raw)
+                {
+                    case null:
+                        return false;
+                    case int i:
+                        value = i;
+                        return true;
+                    case long l:
+                        value = (int)l;
+                        return true;
+                    case double d:
+                        value = (int)Math.Round(d);
+                        return true;
+                    case float f:
+                        value = (int)Math.Round(f);
+                        return true;
+                    default:
+                        value = Convert.ToInt32(raw);
+                        return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryCoerceDefaultString(object? raw, out string value)
+        {
+            value = "";
+            if (raw == null)
+                return false;
+            try
+            {
+                var s = raw.ToString();
+                if (string.IsNullOrWhiteSpace(s))
+                    return false;
+                value = s.Trim();
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -1072,6 +1303,7 @@ namespace STS2RitsuLib.Settings
             var distinguishModifierSides = TryGetNullableBool(map, "distinguishModifierSides");
             var hotkeyBindings = ParseTextList(map, "bindings", i18N);
             var summaryIdSuffix = ReadTextOrNull(map, "idSuffix", "", i18N);
+            map.TryGetValue("defaultValue", out var defaultValue);
 
             entry = new(
                 id,
@@ -1099,6 +1331,7 @@ namespace STS2RitsuLib.Settings
                 placeholder,
                 hotkeyBindings,
                 summaryIdSuffix,
+                defaultValue,
                 visibleWhenMethod,
                 optionsMethod);
             return true;
@@ -1591,6 +1824,7 @@ namespace STS2RitsuLib.Settings
             ModSettingsText? Placeholder,
             List<ModSettingsText> HotkeyBindings,
             ModSettingsText? SummaryIdSuffix,
+            object? DefaultValue,
             string? VisibleWhenMethod,
             string? OptionsMethod);
 

@@ -19,7 +19,7 @@ namespace STS2RitsuLib.Utils.Persistence
             {
                 SaveScope.Global => accountBase,
                 SaveScope.Profile => $"{accountBase}/{ProfileManager.GetProfileDirectory(profileId)}",
-                SaveScope.RunSidecar => ResolveRunSidecarBasePathUser(modId, context, accountBase, profileId),
+                SaveScope.RunSidecar => ResolveRunSidecarBasePathUser(modId, context, profileId),
                 _ => accountBase,
             };
         }
@@ -29,7 +29,13 @@ namespace STS2RitsuLib.Utils.Persistence
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
             var basePath = ResolveBasePathUser(modId, scope, context);
-            return $"{basePath}/{fileName}";
+            if (scope != SaveScope.RunSidecar)
+                return $"{basePath}/{fileName}";
+
+            // RunSidecar is rooted under the framework's profile tree. Each consumer mod gets its own subdirectory
+            // to avoid collisions (different mods can reuse the same fileName).
+            var safeModId = SanitizePathSegment(modId);
+            return $"{basePath}/{safeModId}/{fileName}";
         }
 
         private static int ResolveProfileId(StorageContext context)
@@ -39,15 +45,24 @@ namespace STS2RitsuLib.Utils.Persistence
                 : ProfileManager.Instance.CurrentProfileId;
         }
 
-        private static string ResolveRunSidecarBasePathUser(string modId, StorageContext context, string accountBase,
-            int profileId)
+        private static string ResolveRunSidecarBasePathUser(string modId, StorageContext context, int profileId)
         {
             if (!context.TryGet(StorageContextKeys.RunFingerprintStem, out var stem) || string.IsNullOrWhiteSpace(stem))
                 throw new InvalidOperationException(
                     $"SaveScope.RunSidecar requires StorageContextKeys.RunFingerprintStem. ({modId})");
 
-            var profileBase = $"{accountBase}/{ProfileManager.GetProfileDirectory(profileId)}";
-            return $"{profileBase}/{RunSidecarSegment}/{stem.Trim()}";
+            var frameworkAccountBase = ProfileManager.GetAccountBasePath();
+            var frameworkProfileBase = $"{frameworkAccountBase}/{ProfileManager.GetProfileDirectory(profileId)}";
+            return $"{frameworkProfileBase}/{RunSidecarSegment}/{stem.Trim()}";
+        }
+
+        private static string SanitizePathSegment(string id)
+        {
+            var chars = id
+                .Select(ch => char.IsLetterOrDigit(ch) || ch is '_' or '-' ? ch : '_')
+                .ToArray();
+            var s = new string(chars).Trim('_');
+            return string.IsNullOrEmpty(s) ? "mod" : s;
         }
     }
 }

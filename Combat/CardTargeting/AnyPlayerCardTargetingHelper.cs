@@ -9,7 +9,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
         internal static bool IsAnyPlayerMultiplayer(CardModel? card)
         {
             return card is { TargetType: TargetType.AnyPlayer }
-                   && card.Owner.RunState.Players.Count > 1;
+                   && (card.Owner?.RunState?.Players?.Count ?? 0) > 1;
         }
 
         internal static bool IsAnyPlayerTargetValid(Creature? target)

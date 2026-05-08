@@ -29,7 +29,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
         public static void Prefix(CardModel card, ref Creature? target)
             // ReSharper restore InconsistentNaming
         {
-            if (card.TargetType != TargetType.AnyPlayer || target != null)
+            if (!AnyPlayerCardTargetingHelper.IsAnyPlayerMultiplayer(card) || target != null)
                 return;
 
             var combatState = card.CombatState ?? card.Owner.Creature.CombatState;

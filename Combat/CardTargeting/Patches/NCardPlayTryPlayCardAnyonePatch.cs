@@ -1,8 +1,6 @@
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Nodes.Combat;
-using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
-using MegaCrit.Sts2.Core.Nodes.Rooms;
 using STS2RitsuLib.Patching.Models;
 
 namespace STS2RitsuLib.Combat.CardTargeting.Patches
@@ -64,7 +62,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
                 }
 
                 InvokeCleanup(__instance, true);
-                NCombatRoom.Instance?.Ui.Hand.TryGrabFocus();
+                CardPlayUiFocus.AfterCardPlayFinished();
             }
             else
             {

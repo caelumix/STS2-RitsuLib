@@ -27,6 +27,8 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
         private static readonly Dictionary<ulong, PowerHostState> PowerStates = [];
         private static readonly Dictionary<ulong, RelicHostState> RelicStates = [];
         private static readonly Dictionary<ulong, IntentHostState> IntentStates = [];
+        private static readonly Lock CornerErrorSync = new();
+        private static readonly HashSet<string> CornerErrorOnceKeys = [];
 
         internal static void SyncPower(NPower node)
         {
@@ -162,6 +164,9 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
             ExtraCornerHostKind hostKind,
             Action<MegaLabel> applyHostStyle)
         {
+            var reserved = GetReservedCorners(hostKind);
+            var occupied = reserved.Count == 0 ? [] : new HashSet<ExtraIconAmountLabelCorner>(reserved);
+
             var writeIndex = 0;
             foreach (var slot in specs)
             {
@@ -171,6 +176,13 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
                 if (slot.Corner == ExtraIconAmountLabelCorner.Custom &&
                     (slot.CustomRect.Size.X <= 0f || slot.CustomRect.Size.Y <= 0f))
                     continue;
+
+                if (slot.Corner != ExtraIconAmountLabelCorner.Custom)
+                    if (!occupied.Add(slot.Corner))
+                    {
+                        ReportCornerRejectedOnce(host, hostKind, in slot, reserved);
+                        continue;
+                    }
 
                 while (pool.Count <= writeIndex)
                     pool.Add(new());
@@ -206,6 +218,39 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
             for (var j = writeIndex; j < pool.Count; j++)
                 if (GodotObject.IsInstanceValid(pool[j].Label))
                     pool[j].Label!.Visible = false;
+        }
+
+        private static IReadOnlyList<ExtraIconAmountLabelCorner> GetReservedCorners(ExtraCornerHostKind hostKind)
+        {
+            return hostKind switch
+            {
+                ExtraCornerHostKind.Power or ExtraCornerHostKind.Relic => [ExtraIconAmountLabelCorner.BottomRight],
+                ExtraCornerHostKind.Intent => [ExtraIconAmountLabelCorner.BottomLeft],
+                _ => [],
+            };
+        }
+
+        private static void ReportCornerRejectedOnce(
+            Control host,
+            ExtraCornerHostKind hostKind,
+            in ExtraIconAmountLabelSlot slot,
+            IReadOnlyList<ExtraIconAmountLabelCorner> reservedCorners)
+        {
+            var hostId = host.GetInstanceId();
+            var text = slot.Text.Trim();
+            var reason = reservedCorners.Contains(slot.Corner)
+                ? "requested corner is reserved by vanilla UI"
+                : "requested corner is already occupied by another extra badge";
+
+            var key = $"{hostId}:{hostKind}:{slot.Corner}:{text}";
+            lock (CornerErrorSync)
+            {
+                if (!CornerErrorOnceKeys.Add(key))
+                    return;
+            }
+
+            RitsuLibFramework.Logger.Error(
+                $"[ExtraCornerAmountLabels] Rejected badge slot on {hostKind} host (id={hostId}): corner={slot.Corner}, text='{text}', reason={reason}.");
         }
 
         private static void FreeAnchoredSlotHosts(List<AnchoredSlotHost> pool)

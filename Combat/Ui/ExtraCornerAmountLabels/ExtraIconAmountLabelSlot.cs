@@ -7,8 +7,9 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
     /// </summary>
     /// <param name="Text">Badge text. Whitespace-only entries are skipped.</param>
     /// <param name="Corner">
-    ///     <see cref="ExtraIconAmountLabelCorner.TopLeft" />, <see cref="ExtraIconAmountLabelCorner.TopRight" />, or
-    ///     <see cref="ExtraIconAmountLabelCorner.BottomLeft" /> for built-in layout, or
+    ///     <see cref="ExtraIconAmountLabelCorner.TopLeft" />, <see cref="ExtraIconAmountLabelCorner.TopRight" />,
+    ///     <see cref="ExtraIconAmountLabelCorner.BottomLeft" />, or <see cref="ExtraIconAmountLabelCorner.BottomRight" />
+    ///     for built-in layout, or
     ///     <see cref="ExtraIconAmountLabelCorner.Custom" /> with <paramref name="CustomRect" />.
     /// </param>
     /// <param name="CustomRect">

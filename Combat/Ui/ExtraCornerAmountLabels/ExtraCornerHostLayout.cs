@@ -36,7 +36,8 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
             label.HorizontalAlignment = slot.Corner switch
             {
                 ExtraIconAmountLabelCorner.TopLeft or ExtraIconAmountLabelCorner.BottomLeft => HorizontalAlignment.Left,
-                ExtraIconAmountLabelCorner.TopRight => HorizontalAlignment.Right,
+                ExtraIconAmountLabelCorner.TopRight or ExtraIconAmountLabelCorner.BottomRight => HorizontalAlignment
+                    .Right,
                 _ => HorizontalAlignment.Center,
             };
 
@@ -55,12 +56,15 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
                     (ExtraCornerHostKind.Power, ExtraIconAmountLabelCorner.TopLeft) => (0f, 0f, 22f, 24f),
                     (ExtraCornerHostKind.Power, ExtraIconAmountLabelCorner.TopRight) => (18f, 0f, 44f, 24f),
                     (ExtraCornerHostKind.Power, ExtraIconAmountLabelCorner.BottomLeft) => (0f, 21f, 22f, 40f),
+                    (ExtraCornerHostKind.Power, ExtraIconAmountLabelCorner.BottomRight) => (18f, 21f, 44f, 40f),
                     (ExtraCornerHostKind.Relic, ExtraIconAmountLabelCorner.TopLeft) => (4f, 4f, 34f, 32f),
                     (ExtraCornerHostKind.Relic, ExtraIconAmountLabelCorner.TopRight) => (34f, 4f, 64f, 32f),
                     (ExtraCornerHostKind.Relic, ExtraIconAmountLabelCorner.BottomLeft) => (4f, 36f, 32f, 67f),
+                    (ExtraCornerHostKind.Relic, ExtraIconAmountLabelCorner.BottomRight) => (36f, 36f, 64f, 67f),
                     (ExtraCornerHostKind.Intent, ExtraIconAmountLabelCorner.TopLeft) => (2f, 2f, 32f, 36f),
                     (ExtraCornerHostKind.Intent, ExtraIconAmountLabelCorner.TopRight) => (32f, 2f, 64f, 36f),
                     (ExtraCornerHostKind.Intent, ExtraIconAmountLabelCorner.BottomLeft) => (2f, 40f, 32f, 63f),
+                    (ExtraCornerHostKind.Intent, ExtraIconAmountLabelCorner.BottomRight) => (32f, 40f, 64f, 63f),
                     _ => throw new ArgumentOutOfRangeException(nameof(slot), slot.Corner,
                         "Unexpected corner for host."),
                 };

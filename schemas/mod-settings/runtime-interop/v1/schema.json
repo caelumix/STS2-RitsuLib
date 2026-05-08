@@ -268,7 +268,7 @@
         },
         "scope": {
           "type": "string",
-          "description": "Only \"profile\" (case-insensitive) selects profile scope; any other value is treated as global."
+          "description": "Optional persistence scope hint. Only \"global\" or \"profile\" (case-insensitive) are recognized. Any other value is treated as \"global\"."
         },
         "visibleWhenMethod": {
           "type": "string",

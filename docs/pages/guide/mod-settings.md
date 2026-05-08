@@ -336,6 +336,7 @@ Structure:
   - `slider/int-slider`: `min`, `max`, `step`
   - `string`: `maxLength`
   - `button`: `buttonText`, `tone`
+  - `scope`: informational label only (does not affect persistence)
 
 ### Localized text fields (runtime-interop schema)
 
@@ -515,6 +516,7 @@ Provider 约定（全部为 `static` 方法）：
   - `slider/int-slider`：`min`, `max`, `step`
   - `string`：`maxLength`
   - `button`：`buttonText`, `tone`
+  - `scope`：仅信息标注（不影响持久化）
 
 ### 运行时 schema 的多语言文本字段
 

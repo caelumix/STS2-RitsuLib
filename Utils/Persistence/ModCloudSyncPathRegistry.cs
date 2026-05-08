@@ -29,20 +29,27 @@ namespace STS2RitsuLib.Utils.Persistence
                             continue;
                     }
 
-                    if (slot.Scope == SaveScope.Global)
+                    switch (slot.Scope)
                     {
-                        var godot = ProfileManager.GetFilePath(slot.FileName, SaveScope.Global, 0, slot.ModId);
-                        if (ModAccountRelativePath.TryGetRelativeAccountPath(godot, out var rel))
-                            sink.Add(rel);
-                    }
-                    else
-                    {
-                        if (profileId < 0)
+                        case SaveScope.RunSidecar or SaveScope.InMemory:
                             continue;
-                        var godot = ProfileManager.GetFilePath(slot.FileName, SaveScope.Profile, profileId,
-                            slot.ModId);
-                        if (ModAccountRelativePath.TryGetRelativeAccountPath(godot, out var rel))
-                            sink.Add(rel);
+                        case SaveScope.Global:
+                        {
+                            var godot = ProfileManager.GetFilePath(slot.FileName, SaveScope.Global, 0, slot.ModId);
+                            if (ModAccountRelativePath.TryGetRelativeAccountPath(godot, out var rel))
+                                sink.Add(rel);
+                            break;
+                        }
+                        default:
+                        {
+                            if (profileId < 0)
+                                continue;
+                            var godot = ProfileManager.GetFilePath(slot.FileName, SaveScope.Profile, profileId,
+                                slot.ModId);
+                            if (ModAccountRelativePath.TryGetRelativeAccountPath(godot, out var rel))
+                                sink.Add(rel);
+                            break;
+                        }
                     }
                 }
             }
@@ -62,6 +69,8 @@ namespace STS2RitsuLib.Utils.Persistence
                     }
                     else
                     {
+                        if (slot.Scope is SaveScope.RunSidecar or SaveScope.InMemory)
+                            continue;
                         if (activeProfileId < 0)
                             continue;
                         var godot = ProfileManager.GetFilePath(slot.FileName, SaveScope.Profile, activeProfileId,

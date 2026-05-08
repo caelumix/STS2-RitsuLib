@@ -27,6 +27,8 @@ namespace STS2RitsuLib.Settings
         private static readonly Lock Gate = new();
         private static readonly HashSet<string> SchemaPayloadWarningDedup = new(StringComparer.Ordinal);
         private static readonly HashSet<string> InteropMethodWarningDedup = new(StringComparer.Ordinal);
+        private static readonly Lock DefaultWriteGate = new();
+        private static readonly HashSet<string> DefaultWriteDedup = new(StringComparer.Ordinal);
 
         private static readonly Dictionary<string, string?> RuntimeRegisteredProviderTypes =
             new(StringComparer.Ordinal);
@@ -229,7 +231,7 @@ namespace STS2RitsuLib.Settings
                 return false;
             }
 
-            if (TryParseSchema(root, out schema)) return true;
+            if (TryParseSchema(root, provider.ProviderType, out schema)) return true;
             RitsuLibFramework.Logger.Warn(
                 $"[RuntimeInteropMirrorSource] Schema parse failed for {provider.ProviderType.FullName}.");
             return false;
@@ -261,24 +263,24 @@ namespace STS2RitsuLib.Settings
                 {
                     ModSettingsRegistry.Register(schema.ModId, page =>
                     {
-                        page.WithTitle(ModSettingsText.Literal(pageSchema.Title));
-                        if (!string.IsNullOrWhiteSpace(pageSchema.Description))
-                            page.WithDescription(ModSettingsText.Literal(pageSchema.Description));
+                        page.WithTitle(pageSchema.Title);
+                        if (pageSchema.Description != null)
+                            page.WithDescription(pageSchema.Description);
                         page.WithSortOrder(pageSchema.SortOrder);
                         if (!string.IsNullOrWhiteSpace(pageSchema.ParentPageId))
                             page.AsChildOf(pageSchema.ParentPageId);
-                        if (!string.IsNullOrWhiteSpace(schema.ModDisplayName))
-                            page.WithModDisplayName(ModSettingsText.Literal(schema.ModDisplayName));
+                        if (schema.ModDisplayName != null)
+                            page.WithModDisplayName(schema.ModDisplayName);
                         if (schema.ModSidebarOrder is { } sidebarOrder)
                             page.WithModSidebarOrder(sidebarOrder);
 
                         foreach (var section in pageSchema.Sections)
                             page.AddSection(section.Id, sb =>
                             {
-                                if (!string.IsNullOrWhiteSpace(section.Title))
-                                    sb.WithTitle(ModSettingsText.Literal(section.Title));
-                                if (!string.IsNullOrWhiteSpace(section.Description))
-                                    sb.WithDescription(ModSettingsText.Literal(section.Description));
+                                if (section.Title != null)
+                                    sb.WithTitle(section.Title);
+                                if (section.Description != null)
+                                    sb.WithDescription(section.Description);
 
                                 foreach (var entry in section.Entries)
                                     AppendEntry(sb, schema.ModId, entry, access, saveAction);
@@ -305,11 +307,10 @@ namespace STS2RitsuLib.Settings
             InteropAccessor access,
             Action saveAction)
         {
-            var label = ModSettingsText.Literal(entry.Label);
-            var description = string.IsNullOrWhiteSpace(entry.Description)
-                ? null
-                : ModSettingsText.Literal(entry.Description);
+            var label = entry.Label;
+            var description = entry.Description;
             var dataKey = $"interop::{entry.Key}";
+            var defaultWriteKey = $"{modId}::{entry.Scope}::{entry.Key}";
 
             switch (entry.Type)
             {
@@ -330,14 +331,14 @@ namespace STS2RitsuLib.Settings
                     }
 
                     section.AddSubpage(entry.Id, label, entry.TargetPageId,
-                        string.IsNullOrWhiteSpace(entry.ButtonText) ? null : ModSettingsText.Literal(entry.ButtonText),
+                        entry.ButtonText,
                         description);
                     ApplyEntryVisibilityHook(section, entry, access);
                     return;
                 case InteropEntryType.Toggle:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadBool(entry.Key, access),
+                        () => ReadBoolWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteBool(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -348,7 +349,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.Slider:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadDouble(entry.Key, access),
+                        () => ReadDoubleWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteDouble(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -359,7 +360,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.IntSlider:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadInt(entry.Key, access),
+                        () => ReadIntWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteInt(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -372,14 +373,11 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.String:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadString(entry.Key, access),
+                        () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
-                    var placeholder = string.IsNullOrWhiteSpace(entry.Placeholder)
-                        ? null
-                        : ModSettingsText.Literal(entry.Placeholder);
-                    section.AddString(entry.Id, label, binding, placeholder, NormalizeMaxLength(entry.MaxLength),
+                    section.AddString(entry.Id, label, binding, entry.Placeholder, NormalizeMaxLength(entry.MaxLength),
                         description);
                     ApplyEntryVisibilityHook(section, entry, access);
                     return;
@@ -387,14 +385,11 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.MultilineString:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadString(entry.Key, access),
+                        () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
-                    var placeholder = string.IsNullOrWhiteSpace(entry.Placeholder)
-                        ? null
-                        : ModSettingsText.Literal(entry.Placeholder);
-                    section.AddMultilineString(entry.Id, label, binding, placeholder,
+                    section.AddMultilineString(entry.Id, label, binding, entry.Placeholder,
                         NormalizeMaxLength(entry.MaxLength), description);
                     ApplyEntryVisibilityHook(section, entry, access);
                     return;
@@ -402,7 +397,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.Color:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadString(entry.Key, access),
+                        () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -415,7 +410,7 @@ namespace STS2RitsuLib.Settings
                 case InteropEntryType.KeyBinding:
                 {
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () => ReadString(entry.Key, access),
+                        () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
@@ -429,9 +424,7 @@ namespace STS2RitsuLib.Settings
                 }
                 case InteropEntryType.InfoCard:
                 {
-                    var bodyText = string.IsNullOrWhiteSpace(entry.Body)
-                        ? ModSettingsText.Literal(string.Empty)
-                        : ModSettingsText.Literal(entry.Body);
+                    var bodyText = entry.Body ?? ModSettingsText.Literal(string.Empty);
                     section.AddInfoCard(entry.Id, label, bodyText, description);
                     ApplyEntryVisibilityHook(section, entry, access);
                     return;
@@ -445,13 +438,9 @@ namespace STS2RitsuLib.Settings
                         return;
                     }
 
-                    var bodyText = string.IsNullOrWhiteSpace(entry.Body)
-                        ? ModSettingsText.Literal(string.Empty)
-                        : ModSettingsText.Literal(entry.Body);
-                    var bindingChips = entry.HotkeyBindings.Select(static b => ModSettingsText.Literal(b)).ToArray();
-                    var idSuffix = string.IsNullOrWhiteSpace(entry.SummaryIdSuffix)
-                        ? null
-                        : ModSettingsText.Literal(entry.SummaryIdSuffix);
+                    var bodyText = entry.Body ?? ModSettingsText.Literal(string.Empty);
+                    var bindingChips = entry.HotkeyBindings.ToArray();
+                    var idSuffix = entry.SummaryIdSuffix;
                     section.AddRuntimeHotkeySummary(entry.Id, label, bodyText, bindingChips, idSuffix);
                     ApplyEntryVisibilityHook(section, entry, access);
                     return;
@@ -462,15 +451,12 @@ namespace STS2RitsuLib.Settings
                     if (optionsSource.Count == 0)
                         return;
                     var options = optionsSource
-                        .Select(o => new ModSettingsChoiceOption<string>(o.Value, ModSettingsText.Literal(o.Label)))
+                        .Select(o => new ModSettingsChoiceOption<string>(o.Value, o.Label))
                         .ToArray();
                     var firstValue = options[0].Value;
                     var binding = ModSettingsBindings.Callback(modId, dataKey,
-                        () =>
-                        {
-                            var current = ReadString(entry.Key, access);
-                            return string.IsNullOrWhiteSpace(current) ? firstValue : current;
-                        },
+                        () => ReadChoiceWithDefault(defaultWriteKey, entry, options, firstValue, access,
+                            saveAction),
                         value => WriteString(entry.Key, string.IsNullOrWhiteSpace(value) ? firstValue : value, access),
                         saveAction,
                         entry.Scope);
@@ -483,9 +469,7 @@ namespace STS2RitsuLib.Settings
                 }
                 case InteropEntryType.Button:
                 {
-                    var buttonText = ModSettingsText.Literal(string.IsNullOrWhiteSpace(entry.ButtonText)
-                        ? entry.Label
-                        : entry.ButtonText);
+                    var buttonText = entry.ButtonText ?? label;
                     section.AddButton(entry.Id, label, buttonText, () => access.InvokeAction(entry.Key),
                         entry.ButtonTone, description);
                     ApplyEntryVisibilityHook(section, entry, access);
@@ -571,14 +555,14 @@ namespace STS2RitsuLib.Settings
                                 !string.IsNullOrWhiteSpace(optionLabel)
                         ? optionLabel
                         : value;
-                    options.Add(new(value, label));
+                    options.Add(new(value, ModSettingsText.Literal(label)));
                     continue;
                 }
 
                 var str = optionRaw.ToString();
                 if (string.IsNullOrWhiteSpace(str))
                     continue;
-                options.Add(new(str, str));
+                options.Add(new(str, ModSettingsText.Literal(str)));
             }
 
             return options;
@@ -647,6 +631,22 @@ namespace STS2RitsuLib.Settings
             return access.GetBool?.Invoke(key) ?? CoerceBool(access.GetObject(key));
         }
 
+        private static bool ReadBoolWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+                return ReadBool(entry.Key, access);
+
+            if (!TryCoerceDefaultBool(entry.DefaultValue, out var dv))
+                return false;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteBool(entry.Key, dv, access), saveAction);
+            return dv;
+        }
+
         private static void WriteBool(string key, bool value, InteropAccessor access)
         {
             if (access.SetBool != null)
@@ -661,6 +661,22 @@ namespace STS2RitsuLib.Settings
         private static double ReadDouble(string key, InteropAccessor access)
         {
             return access.GetDouble?.Invoke(key) ?? CoerceDouble(access.GetObject(key));
+        }
+
+        private static double ReadDoubleWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+                return ReadDouble(entry.Key, access);
+
+            if (!TryCoerceDefaultDouble(entry.DefaultValue, out var dv))
+                return 0d;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteDouble(entry.Key, dv, access), saveAction);
+            return dv;
         }
 
         private static void WriteDouble(string key, double value, InteropAccessor access)
@@ -679,6 +695,22 @@ namespace STS2RitsuLib.Settings
             return access.GetInt?.Invoke(key) ?? CoerceInt(access.GetObject(key));
         }
 
+        private static int ReadIntWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+                return ReadInt(entry.Key, access);
+
+            if (!TryCoerceDefaultInt(entry.DefaultValue, out var dv))
+                return 0;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteInt(entry.Key, dv, access), saveAction);
+            return dv;
+        }
+
         private static void WriteInt(string key, int value, InteropAccessor access)
         {
             if (access.SetInt != null)
@@ -695,6 +727,22 @@ namespace STS2RitsuLib.Settings
             if (access.GetString != null)
                 return access.GetString(key) ?? string.Empty;
             return access.GetObject(key)?.ToString() ?? string.Empty;
+        }
+
+        private static string ReadStringWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+                return ReadString(entry.Key, access);
+
+            if (!TryCoerceDefaultString(entry.DefaultValue, out var dv))
+                return string.Empty;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteString(entry.Key, dv, access), saveAction);
+            return dv;
         }
 
         private static void WriteString(string key, string value, InteropAccessor access)
@@ -766,6 +814,173 @@ namespace STS2RitsuLib.Settings
             }
         }
 
+        private static string ReadChoiceWithDefault(
+            string defaultWriteKey,
+            InteropEntry entry,
+            ModSettingsChoiceOption<string>[] options,
+            string firstValue,
+            InteropAccessor access,
+            Action saveAction)
+        {
+            if (!IsMissing(entry.Key, access))
+            {
+                var current = ReadString(entry.Key, access);
+                return string.IsNullOrWhiteSpace(current) ? firstValue : current;
+            }
+
+            var chosen = firstValue;
+            if (TryCoerceDefaultString(entry.DefaultValue, out var dv) &&
+                options.Any(o => string.Equals(o.Value, dv, StringComparison.OrdinalIgnoreCase)))
+                chosen = dv;
+
+            EnsureDefaultWritten(defaultWriteKey, () => WriteString(entry.Key, chosen, access), saveAction);
+            return chosen;
+        }
+
+        private static bool IsMissing(string key, InteropAccessor access)
+        {
+            try
+            {
+                return access.GetObject(key) == null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static void EnsureDefaultWritten(string dedupKey, Action writeDefault, Action saveAction)
+        {
+            lock (DefaultWriteGate)
+            {
+                if (!DefaultWriteDedup.Add(dedupKey))
+                    return;
+            }
+
+            try
+            {
+                writeDefault();
+                saveAction();
+            }
+            catch
+            {
+                // If write/save fails, allow retry later.
+                lock (DefaultWriteGate)
+                {
+                    DefaultWriteDedup.Remove(dedupKey);
+                }
+            }
+        }
+
+        private static bool TryCoerceDefaultBool(object? raw, out bool value)
+        {
+            value = false;
+            try
+            {
+                switch (raw)
+                {
+                    case null:
+                        return false;
+                    case bool b:
+                        value = b;
+                        return true;
+                    case string s when bool.TryParse(s, out var parsed):
+                        value = parsed;
+                        return true;
+                    default:
+                        value = Convert.ToBoolean(raw);
+                        return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryCoerceDefaultDouble(object? raw, out double value)
+        {
+            value = 0d;
+            try
+            {
+                switch (raw)
+                {
+                    case null:
+                        return false;
+                    case double d:
+                        value = d;
+                        return true;
+                    case float f:
+                        value = f;
+                        return true;
+                    case int i:
+                        value = i;
+                        return true;
+                    case long l:
+                        value = l;
+                        return true;
+                    default:
+                        value = Convert.ToDouble(raw);
+                        return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryCoerceDefaultInt(object? raw, out int value)
+        {
+            value = 0;
+            try
+            {
+                switch (raw)
+                {
+                    case null:
+                        return false;
+                    case int i:
+                        value = i;
+                        return true;
+                    case long l:
+                        value = (int)l;
+                        return true;
+                    case double d:
+                        value = (int)Math.Round(d);
+                        return true;
+                    case float f:
+                        value = (int)Math.Round(f);
+                        return true;
+                    default:
+                        value = Convert.ToInt32(raw);
+                        return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryCoerceDefaultString(object? raw, out string value)
+        {
+            value = "";
+            if (raw == null)
+                return false;
+            try
+            {
+                var s = raw.ToString();
+                if (string.IsNullOrWhiteSpace(s))
+                    return false;
+                value = s.Trim();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static InteropAccessor BuildAccessor(Type providerType)
         {
             ReflectionStaticChannel channel;
@@ -820,13 +1035,17 @@ namespace STS2RitsuLib.Settings
                 key => action?.Invoke(null, [key]));
         }
 
-        private static bool TryParseSchema(IDictionary<string, object?> root, out InteropSchemaRoot schema)
+        private static bool TryParseSchema(
+            IDictionary<string, object?> root,
+            Type providerType,
+            out InteropSchemaRoot schema)
         {
             schema = null!;
             if (!TryGetString(root, "modId", out var modId) || string.IsNullOrWhiteSpace(modId))
                 return false;
 
-            var modDisplayName = TryGetString(root, "modDisplayName", out var mdn) ? mdn : null;
+            var i18N = TryResolveI18N(root, providerType, modId);
+            var modDisplayName = TryGetText(root, "modDisplayName", modId, i18N, out var mdn) ? mdn : null;
             var modSidebarOrder = TryGetInt(root, "modSidebarOrder", out var mso) ? mso : null;
 
             var pages = new List<InteropPage>();
@@ -835,11 +1054,13 @@ namespace STS2RitsuLib.Settings
                 {
                     if (pageRaw == null || !TryAsMap(pageRaw, out var pageMap))
                         continue;
-                    if (!TryParsePage(pageMap, out var page))
+                    var pageI18N = TryResolveI18NOverride(pageMap, providerType, modId, i18N);
+                    if (!TryParsePage(pageMap, providerType, modId, pageI18N, out var page))
                         continue;
                     pages.Add(page);
                 }
-            else if (TryParseLegacySinglePage(root, out var legacyPage)) pages.Add(legacyPage);
+            else if (TryParseLegacySinglePage(root, providerType, modId, i18N, out var legacyPage))
+                pages.Add(legacyPage);
 
             if (pages.Count == 0)
                 return false;
@@ -925,14 +1146,19 @@ namespace STS2RitsuLib.Settings
             };
         }
 
-        private static bool TryParseLegacySinglePage(IDictionary<string, object?> root, out InteropPage page)
+        private static bool TryParseLegacySinglePage(
+            IDictionary<string, object?> root,
+            Type providerType,
+            string modId,
+            I18N? i18N,
+            out InteropPage page)
         {
             page = null!;
             var pageId = TryGetString(root, "pageId", out var p) && !string.IsNullOrWhiteSpace(p)
                 ? p
                 : "interop";
-            var title = TryGetString(root, "title", out var t) && !string.IsNullOrWhiteSpace(t) ? t : "Settings";
-            var description = TryGetString(root, "description", out var d) ? d : null;
+            var title = ReadTextOrDefault(root, "title", "Settings", i18N);
+            var description = ReadTextOrNull(root, "description", "", i18N);
             var sortOrder = TryGetInt(root, "sortOrder", out var so) ? so ?? 10_040 : 10_040;
 
             if (!TryGetEnumerable(root, "sections", out var sectionsRaw))
@@ -943,7 +1169,8 @@ namespace STS2RitsuLib.Settings
             {
                 if (sectionRaw == null || !TryAsMap(sectionRaw, out var sectionMap))
                     continue;
-                if (!TryParseSection(sectionMap, out var section))
+                var sectionI18N = TryResolveI18NOverride(sectionMap, providerType, modId, i18N);
+                if (!TryParseSection(sectionMap, providerType, modId, sectionI18N, out var section))
                     continue;
                 sections.Add(section);
             }
@@ -955,14 +1182,19 @@ namespace STS2RitsuLib.Settings
             return true;
         }
 
-        private static bool TryParsePage(IDictionary<string, object?> map, out InteropPage page)
+        private static bool TryParsePage(
+            IDictionary<string, object?> map,
+            Type providerType,
+            string modId,
+            I18N? i18N,
+            out InteropPage page)
         {
             page = null!;
             var pageId = TryGetString(map, "pageId", out var p) && !string.IsNullOrWhiteSpace(p)
                 ? p
                 : "interop";
-            var title = TryGetString(map, "title", out var t) && !string.IsNullOrWhiteSpace(t) ? t : "Settings";
-            var description = TryGetString(map, "description", out var d) ? d : null;
+            var title = ReadTextOrDefault(map, "title", "Settings", i18N);
+            var description = ReadTextOrNull(map, "description", "", i18N);
             var parentPageId = TryGetString(map, "parentPageId", out var parent) && !string.IsNullOrWhiteSpace(parent)
                 ? parent
                 : null;
@@ -976,7 +1208,8 @@ namespace STS2RitsuLib.Settings
             {
                 if (sectionRaw == null || !TryAsMap(sectionRaw, out var sectionMap))
                     continue;
-                if (!TryParseSection(sectionMap, out var section))
+                var sectionI18N = TryResolveI18NOverride(sectionMap, providerType, modId, i18N);
+                if (!TryParseSection(sectionMap, providerType, modId, sectionI18N, out var section))
                     continue;
                 sections.Add(section);
             }
@@ -988,14 +1221,19 @@ namespace STS2RitsuLib.Settings
             return true;
         }
 
-        private static bool TryParseSection(IDictionary<string, object?> map, out InteropSection section)
+        private static bool TryParseSection(
+            IDictionary<string, object?> map,
+            Type providerType,
+            string modId,
+            I18N? i18N,
+            out InteropSection section)
         {
             section = null!;
             if (!TryGetString(map, "id", out var id) || string.IsNullOrWhiteSpace(id))
                 return false;
 
-            var title = TryGetString(map, "title", out var t) ? t : null;
-            var description = TryGetString(map, "description", out var d) ? d : null;
+            var title = ReadTextOrNull(map, "title", "", i18N);
+            var description = ReadTextOrNull(map, "description", "", i18N);
             if (!TryGetEnumerable(map, "entries", out var entriesRaw))
                 return false;
 
@@ -1004,7 +1242,8 @@ namespace STS2RitsuLib.Settings
             {
                 if (entryRaw == null || !TryAsMap(entryRaw, out var entryMap))
                     continue;
-                if (!TryParseEntry(entryMap, out var entry))
+                var entryI18N = TryResolveI18NOverride(entryMap, providerType, modId, i18N);
+                if (!TryParseEntry(entryMap, providerType, modId, entryI18N, out var entry))
                     continue;
                 entries.Add(entry);
             }
@@ -1016,7 +1255,12 @@ namespace STS2RitsuLib.Settings
             return true;
         }
 
-        private static bool TryParseEntry(IDictionary<string, object?> map, out InteropEntry entry)
+        private static bool TryParseEntry(
+            IDictionary<string, object?> map,
+            Type providerType,
+            string modId,
+            I18N? i18N,
+            out InteropEntry entry)
         {
             entry = null!;
             if (!TryGetString(map, "id", out var id) || string.IsNullOrWhiteSpace(id))
@@ -1025,9 +1269,9 @@ namespace STS2RitsuLib.Settings
                 return false;
 
             var key = TryGetString(map, "key", out var k) && !string.IsNullOrWhiteSpace(k) ? k : id;
-            var label = TryGetString(map, "label", out var l) && !string.IsNullOrWhiteSpace(l) ? l : id;
-            var description = TryGetString(map, "description", out var d) ? d : null;
-            var buttonText = TryGetString(map, "buttonText", out var bt) ? bt : null;
+            var label = ReadTextOrDefault(map, "label", id, i18N);
+            var description = ReadTextOrNull(map, "description", "", i18N);
+            var buttonText = ReadTextOrNull(map, "buttonText", "", i18N);
             var targetPageId = TryGetString(map, "targetPageId", out var target) ? target : null;
             var min = TryGetDouble(map, "min", out var minValue) ? minValue : 0d;
             var max = TryGetDouble(map, "max", out var maxValue) ? maxValue : 100d;
@@ -1043,22 +1287,23 @@ namespace STS2RitsuLib.Settings
             var scope = ParseScope(TryGetString(map, "scope", out var scopeRaw) ? scopeRaw : null);
             var presentation = TryGetString(map, "presentation", out var p) ? p : "stepper";
             var tone = ParseButtonTone(TryGetString(map, "tone", out var toneRaw) ? toneRaw : null);
-            var options = ParseOptions(map);
+            var options = ParseOptions(map, providerType, modId, i18N);
             var visibleWhenMethod = TryGetString(map, "visibleWhenMethod", out var visibleWhenMethodRaw)
                 ? visibleWhenMethodRaw
                 : null;
             var optionsMethod = TryGetString(map, "optionsMethod", out var optionsMethodRaw)
                 ? optionsMethodRaw
                 : null;
-            var body = TryGetString(map, "body", out var bodyStr) ? bodyStr : null;
-            var placeholder = TryGetString(map, "placeholder", out var phStr) ? phStr : null;
+            var body = ReadTextOrNull(map, "body", "", i18N);
+            var placeholder = ReadTextOrNull(map, "placeholder", "", i18N);
             var editAlpha = TryGetNullableBool(map, "editAlpha");
             var editIntensity = TryGetNullableBool(map, "editIntensity");
             var allowModifierCombos = TryGetNullableBool(map, "allowModifierCombos");
             var allowModifierOnly = TryGetNullableBool(map, "allowModifierOnly");
             var distinguishModifierSides = TryGetNullableBool(map, "distinguishModifierSides");
-            var hotkeyBindings = ParseStringList(map, "bindings");
-            var summaryIdSuffix = TryGetString(map, "idSuffix", out var idSuf) ? idSuf : null;
+            var hotkeyBindings = ParseTextList(map, "bindings", i18N);
+            var summaryIdSuffix = ReadTextOrNull(map, "idSuffix", "", i18N);
+            map.TryGetValue("defaultValue", out var defaultValue);
 
             entry = new(
                 id,
@@ -1086,6 +1331,7 @@ namespace STS2RitsuLib.Settings
                 placeholder,
                 hotkeyBindings,
                 summaryIdSuffix,
+                defaultValue,
                 visibleWhenMethod,
                 optionsMethod);
             return true;
@@ -1119,17 +1365,18 @@ namespace STS2RitsuLib.Settings
             }
         }
 
-        private static List<string> ParseStringList(IDictionary<string, object?> map, string key)
+        private static List<ModSettingsText> ParseTextList(IDictionary<string, object?> map, string key, I18N? i18N)
         {
-            var list = new List<string>();
+            var list = new List<ModSettingsText>();
             if (!TryGetEnumerable(map, key, out var raw))
                 return list;
 
-            list.AddRange(from item in raw.OfType<object>()
-                select item.ToString()
+            list.AddRange(from item in raw
+                let fallback = item?.ToString() ?? string.Empty
+                select ReadTextFromRaw(item, fallback, i18N)
                 into text
-                where !string.IsNullOrWhiteSpace(text)
-                select text.Trim());
+                where !string.IsNullOrWhiteSpace(text.Resolve())
+                select text);
 
             return list;
         }
@@ -1139,6 +1386,8 @@ namespace STS2RitsuLib.Settings
             return value?.Trim().ToLowerInvariant() switch
             {
                 "profile" => SaveScope.Profile,
+                "runsidecar" or "run-sidecar" or "run_sidecar" => SaveScope.RunSidecar,
+                "inmemory" or "in-memory" or "in_memory" => SaveScope.InMemory,
                 _ => SaveScope.Global,
             };
         }
@@ -1153,7 +1402,11 @@ namespace STS2RitsuLib.Settings
             };
         }
 
-        private static List<InteropChoiceOption> ParseOptions(IDictionary<string, object?> entryMap)
+        private static List<InteropChoiceOption> ParseOptions(
+            IDictionary<string, object?> entryMap,
+            Type providerType,
+            string modId,
+            I18N? i18N)
         {
             var options = new List<InteropChoiceOption>();
             if (!TryGetEnumerable(entryMap, "options", out var optionsRaw))
@@ -1168,10 +1421,9 @@ namespace STS2RitsuLib.Settings
                 {
                     if (!TryGetString(optionMap, "value", out var value) || string.IsNullOrWhiteSpace(value))
                         continue;
-                    var label = TryGetString(optionMap, "label", out var optionLabel) &&
-                                !string.IsNullOrWhiteSpace(optionLabel)
-                        ? optionLabel
-                        : value;
+                    var optionI18N = TryResolveI18NOverride(optionMap, providerType, modId, i18N);
+                    optionMap.TryGetValue("label", out var labelRaw);
+                    var label = ReadTextFromRaw(labelRaw, value, optionI18N);
                     options.Add(new(value, label));
                     continue;
                 }
@@ -1179,10 +1431,185 @@ namespace STS2RitsuLib.Settings
                 var str = optionRaw.ToString();
                 if (string.IsNullOrWhiteSpace(str))
                     continue;
-                options.Add(new(str, str));
+                options.Add(new(str, ModSettingsText.Literal(str)));
             }
 
             return options;
+        }
+
+        private static ModSettingsText ReadTextOrDefault(
+            IDictionary<string, object?> map,
+            string key,
+            string fallback,
+            I18N? i18N)
+        {
+            map.TryGetValue(key, out var raw);
+            return ReadTextFromRaw(raw, fallback, i18N);
+        }
+
+        private static ModSettingsText? ReadTextOrNull(
+            IDictionary<string, object?> map,
+            string key,
+            string fallback,
+            I18N? i18N)
+        {
+            if (!map.TryGetValue(key, out var raw) || raw == null)
+                return null;
+
+            var text = ReadTextFromRaw(raw, fallback, i18N);
+            return string.IsNullOrWhiteSpace(text.Resolve()) ? null : text;
+        }
+
+        private static bool TryGetText(
+            IDictionary<string, object?> map,
+            string key,
+            string fallback,
+            I18N? i18N,
+            out ModSettingsText text)
+        {
+            if (!map.TryGetValue(key, out var raw) || raw == null)
+            {
+                text = null!;
+                return false;
+            }
+
+            text = ReadTextFromRaw(raw, fallback, i18N);
+            return true;
+        }
+
+        private static ModSettingsText ReadTextFromRaw(object? raw, string fallback, I18N? i18N)
+        {
+            fallback ??= string.Empty;
+
+            return raw switch
+            {
+                null => ModSettingsText.Literal(fallback),
+                string s => ModSettingsText.Literal(string.IsNullOrWhiteSpace(s) ? fallback : s),
+                IDictionary dict => BuildTextFromMap(dict, fallback, i18N),
+                _ => ModSettingsText.Literal(raw.ToString() ?? fallback),
+            };
+        }
+
+        private static ModSettingsText BuildTextFromMap(IDictionary map, string fallback, I18N? i18N)
+        {
+            var fb = fallback;
+            var dict = map;
+
+            if (dict.Contains("locString") && dict["locString"] is { } locObj && TryAsMap(locObj, out var locMap))
+            {
+                var table = TryGetString(locMap, "table", out var t) && !string.IsNullOrWhiteSpace(t)
+                    ? t.Trim()
+                    : "settings_ui";
+                var key = TryGetString(locMap, "key", out var k) && !string.IsNullOrWhiteSpace(k) ? k.Trim() : "";
+                var locFallback = TryGetString(locMap, "fallback", out var lf) ? lf : fb;
+                return string.IsNullOrWhiteSpace(key)
+                    ? ModSettingsText.Literal(locFallback)
+                    : ModSettingsText.LocString(table, key, locFallback);
+            }
+
+            if (dict.Contains("i18n") && dict["i18n"] is { } i18NObj && TryAsMap(i18NObj, out var i18NMap))
+            {
+                var key = TryGetString(i18NMap, "key", out var k) && !string.IsNullOrWhiteSpace(k) ? k.Trim() : "";
+                var innerFallback = TryGetString(i18NMap, "fallback", out var ifb) ? ifb : null;
+                var outerFallback = dict.Contains("fallback") && dict["fallback"] is string ofb ? ofb : null;
+                var resolvedFallback = innerFallback ?? outerFallback ?? fb;
+
+                if (string.IsNullOrWhiteSpace(key) || i18N == null)
+                    return ModSettingsText.Literal(resolvedFallback);
+
+                return ModSettingsText.I18N(i18N, key, resolvedFallback);
+            }
+
+            if (!dict.Contains("langMap") || dict["langMap"] is not IDictionary langMap)
+                return ModSettingsText.Dynamic(() =>
+                    ModSettingsMirrorTextPolicy.ResolveLangMap(dict, fb, TryResolveCurrentLang));
+            {
+                var outerFallback = dict.Contains("fallback") && dict["fallback"] is string ofb ? ofb : null;
+                var resolvedFallback = outerFallback ?? fb;
+                return ModSettingsText.Dynamic(() =>
+                    ModSettingsMirrorTextPolicy.ResolveLangMap(langMap, resolvedFallback, TryResolveCurrentLang));
+            }
+        }
+
+        private static I18N? TryResolveI18N(IDictionary<string, object?> root, Type providerType, string modId)
+        {
+            if (!root.TryGetValue("i18nSource", out var rawSource) || rawSource == null)
+                return null;
+
+            if (!TryAsMap(rawSource, out var map))
+                return null;
+
+            var instanceName = TryGetString(map, "instanceName", out var name) && !string.IsNullOrWhiteSpace(name)
+                ? name.Trim()
+                : $"{modId}-Settings-I18N";
+
+            var fsFolders = TryGetStringArray(map, "fsFolders");
+            var resourceFolders = TryGetStringArray(map, "resourceFolders");
+            var pckFolders = TryGetStringArray(map, "pckFolders");
+
+            var resourceAssembly = ResolveResourceAssembly(map, providerType.Assembly) ?? providerType.Assembly;
+
+            if (fsFolders.Length == 0 && resourceFolders.Length == 0 && pckFolders.Length == 0)
+                return null;
+
+            return new(
+                instanceName,
+                fsFolders,
+                resourceFolders,
+                pckFolders,
+                resourceAssembly);
+        }
+
+        private static I18N? TryResolveI18NOverride(
+            IDictionary<string, object?> node,
+            Type providerType,
+            string modId,
+            I18N? inherited)
+        {
+            if (!node.ContainsKey("i18nSource"))
+                return inherited;
+
+            // If i18nSource is explicitly present but invalid/empty, treat it as "disable i18n here".
+            var resolved = TryResolveI18N(node, providerType, modId);
+            return resolved;
+        }
+
+        private static Assembly? ResolveResourceAssembly(IDictionary<string, object?> map, Assembly providerAssembly)
+        {
+            if (!TryGetString(map, "resourceAssembly", out var name) || string.IsNullOrWhiteSpace(name))
+                return null;
+
+            var trimmed = name.Trim();
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                try
+                {
+                    var asmName = asm.GetName().Name;
+                    if (string.Equals(asmName, trimmed, StringComparison.OrdinalIgnoreCase))
+                        return asm;
+                }
+                catch
+                {
+                    // ignored
+                }
+
+            return providerAssembly;
+        }
+
+        private static string[] TryGetStringArray(IDictionary<string, object?> map, string key)
+        {
+            if (!TryGetEnumerable(map, key, out var raw))
+                return [];
+
+            return raw
+                .Select(static v => v?.ToString())
+                .Where(static s => !string.IsNullOrWhiteSpace(s))
+                .Select(static s => s!.Trim())
+                .ToArray();
+        }
+
+        private static string TryResolveCurrentLang()
+        {
+            return I18N.ResolveCurrentLanguageCode();
         }
 
         private static bool TryParseEntryType(string raw, out InteropEntryType type)
@@ -1355,50 +1782,55 @@ namespace STS2RitsuLib.Settings
 
         private sealed record InteropSchemaRoot(
             string ModId,
-            string? ModDisplayName,
+            ModSettingsText? ModDisplayName,
             int? ModSidebarOrder,
             List<InteropPage> Pages);
 
         private sealed record InteropPage(
             string PageId,
             string? ParentPageId,
-            string Title,
-            string? Description,
+            ModSettingsText Title,
+            ModSettingsText? Description,
             int SortOrder,
             List<InteropSection> Sections);
 
-        private sealed record InteropSection(string Id, string? Title, string? Description, List<InteropEntry> Entries);
+        private sealed record InteropSection(
+            string Id,
+            ModSettingsText? Title,
+            ModSettingsText? Description,
+            List<InteropEntry> Entries);
 
         private sealed record InteropEntry(
             string Id,
             InteropEntryType Type,
             string Key,
-            string Label,
-            string? Description,
+            ModSettingsText Label,
+            ModSettingsText? Description,
             double Min,
             double Max,
             double Step,
             int? MaxLength,
             float? MaxBodyHeight,
             List<InteropChoiceOption> Options,
-            string? ButtonText,
+            ModSettingsText? ButtonText,
             string? TargetPageId,
             ModSettingsButtonTone ButtonTone,
             SaveScope Scope,
             string ChoicePresentation,
-            string? Body,
+            ModSettingsText? Body,
             bool? EditAlpha,
             bool? EditIntensity,
             bool? AllowModifierCombos,
             bool? AllowModifierOnly,
             bool? DistinguishModifierSides,
-            string? Placeholder,
-            List<string> HotkeyBindings,
-            string? SummaryIdSuffix,
+            ModSettingsText? Placeholder,
+            List<ModSettingsText> HotkeyBindings,
+            ModSettingsText? SummaryIdSuffix,
+            object? DefaultValue,
             string? VisibleWhenMethod,
             string? OptionsMethod);
 
-        private sealed record InteropChoiceOption(string Value, string Label);
+        private sealed record InteropChoiceOption(string Value, ModSettingsText Label);
 
         private enum InteropEntryType
         {

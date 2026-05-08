@@ -336,6 +336,129 @@ Structure:
   - `slider/int-slider`: `min`, `max`, `step`
   - `string`: `maxLength`
   - `button`: `buttonText`, `tone`
+  - `scope`: informational label only (does not affect persistence)
+
+### Localized text fields (runtime-interop schema)
+
+All visible UI text fields (e.g. `modDisplayName`, page/section `title` / `description`, entry `label` / `description`,
+`buttonText`, `placeholder`, `body`, choice `options[].label`, hotkey `bindings[]`) accept either:
+
+- a plain string (literal, backward compatible), or
+- a `text` object describing a localized source:
+  - `langMap`: inline language map
+  - `i18n`: mod-owned I18N key lookup (requires `i18nSource` on the schema root; can be overridden by page/section/entry)
+  - `locString`: game-native LocString lookup
+
+### Default values (runtime-interop schema)
+
+Editable entries can declare `defaultValue`.
+When `GetRitsuLibSettingValue(key)` returns `null`, RitsuLib will:
+
+- write back the default value via `SetRitsuLibSettingValue(key, value)`
+- call `SaveRitsuLibSettings()` when present
+- and then use that value for UI display
+
+Missing detection is **null-only** (so `false`, `0`, and `\"\"` are treated as real values).
+
+Example:
+
+```json
+{
+  "modId": "MyMod",
+  "pages": [
+    {
+      "pageId": "interop",
+      "sections": [
+        {
+          "id": "general",
+          "entries": [
+            { "id": "enable_feature", "type": "toggle", "defaultValue": true },
+            { "id": "player_name", "type": "string", "defaultValue": "Anonymous" },
+            {
+              "id": "difficulty",
+              "type": "choice",
+              "options": ["normal", "hard"],
+              "defaultValue": "normal"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Minimal JSON snippet:
+
+```json
+{
+  "modId": "MyMod",
+  "i18nSource": {
+    "instanceName": "MyMod-Settings",
+    "fsFolders": ["user://mod-configs/MyMod/localization"],
+    "pckFolders": ["res://MyMod/localization"],
+    "resourceFolders": ["MyMod.Localization.Settings"],
+    "resourceAssembly": "MyMod"
+  },
+  "pages": [
+    {
+      "pageId": "interop",
+      "title": { "i18n": { "key": "page.title", "fallback": "Settings" } },
+      "sections": [
+        {
+          "id": "general",
+          "title": { "langMap": { "eng": "General", "zhs": "常规" }, "fallback": "General" },
+          "entries": [
+            {
+              "id": "enable_feature",
+              "type": "toggle",
+              "label": { "locString": { "table": "settings_ui", "key": "my_mod.enable_feature.title", "fallback": "Enable feature" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 运行时 schema 的默认值（defaultValue）
+
+可编辑 entry 支持声明 `defaultValue`。当 `GetRitsuLibSettingValue(key)` 返回 `null` 时，RitsuLib 会：
+
+- 通过 `SetRitsuLibSettingValue(key, value)` 写回默认值
+- 若 provider 实现了 `SaveRitsuLibSettings()`，则调用保存
+- 并使用该默认值作为 UI 显示值
+
+缺失判定是**仅 null**（所以 `false`、`0`、`\"\"` 都会被视为真实值，不会被默认值覆盖）。
+
+示例：
+
+```json
+{
+  "modId": "MyMod",
+  "pages": [
+    {
+      "pageId": "interop",
+      "sections": [
+        {
+          "id": "general",
+          "entries": [
+            { "id": "enable_feature", "type": "toggle", "defaultValue": true },
+            { "id": "player_name", "type": "string", "defaultValue": "Anonymous" },
+            {
+              "id": "difficulty",
+              "type": "choice",
+              "options": ["normal", "hard"],
+              "defaultValue": "normal"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
 
 ---
 
@@ -393,6 +516,53 @@ Provider 约定（全部为 `static` 方法）：
   - `slider/int-slider`：`min`, `max`, `step`
   - `string`：`maxLength`
   - `button`：`buttonText`, `tone`
+  - `scope`：仅信息标注（不影响持久化）
+
+### 运行时 schema 的多语言文本字段
+
+所有会显示在设置 UI 上的文本字段（例如 `modDisplayName`、page/section 的 `title/description`、entry 的
+`label/description`、`buttonText`、`placeholder`、`body`、choice 的 `options[].label`、hotkey 的 `bindings[]`）
+都支持两种写法：
+
+- 直接写字符串（literal，完全兼容旧协议）
+- 写 `text` 对象，声明文本来源：
+  - `langMap`：内联语言映射
+  - `i18n`：按 I18N key 查表（需要在 schema 根上提供 `i18nSource`；page/section/entry 可覆盖）
+  - `locString`：走游戏原生 LocString 表
+
+最小 JSON 示例（同上）：
+
+```json
+{
+  "modId": "MyMod",
+  "i18nSource": {
+    "instanceName": "MyMod-Settings",
+    "fsFolders": ["user://mod-configs/MyMod/localization"],
+    "pckFolders": ["res://MyMod/localization"],
+    "resourceFolders": ["MyMod.Localization.Settings"],
+    "resourceAssembly": "MyMod"
+  },
+  "pages": [
+    {
+      "pageId": "interop",
+      "title": { "i18n": { "key": "page.title", "fallback": "Settings" } },
+      "sections": [
+        {
+          "id": "general",
+          "title": { "langMap": { "eng": "General", "zhs": "常规" }, "fallback": "General" },
+          "entries": [
+            {
+              "id": "enable_feature",
+              "type": "toggle",
+              "label": { "locString": { "table": "settings_ui", "key": "my_mod.enable_feature.title", "fallback": "Enable feature" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
 
 ---
 

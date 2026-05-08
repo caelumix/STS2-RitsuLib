@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Text.Json;
 using STS2RitsuLib.Data;
 using STS2RitsuLib.Interop;
+using STS2RitsuLib.Settings.RunSidecar;
+using STS2RitsuLib.Utils.Persistence.Context;
 using STS2RitsuLib.Utils.Persistence.Migration;
 
 namespace STS2RitsuLib.Utils.Persistence.Interop
@@ -36,6 +38,15 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
                     m.GetParameters().Length == 7 &&
                     m.GetParameters()[0].ParameterType == typeof(string));
 
+        private static readonly MethodInfo ModDataStoreRegisterWithContextOpen =
+            typeof(ModDataStore).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Single(m =>
+                    m is { Name: nameof(ModDataStore.Register), IsGenericMethodDefinition: true } &&
+                    m.GetGenericArguments().Length == 1 &&
+                    m.GetParameters().Length == 8 &&
+                    m.GetParameters()[0].ParameterType == typeof(string) &&
+                    m.GetParameters()[3].ParameterType == typeof(Func<StorageContext>));
+
         private static readonly MethodInfo ModDataStoreGetOpen =
             typeof(ModDataStore).GetMethods(BindingFlags.Public | BindingFlags.Instance)
                 .Single(m =>
@@ -50,6 +61,9 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
 
         private static readonly MethodInfo RegisterJsonDocumentClosed =
             ModDataStoreRegisterOpen.MakeGenericMethod(typeof(ModDataInteropJsonDocument));
+
+        private static readonly MethodInfo RegisterJsonDocumentWithContextClosed =
+            ModDataStoreRegisterWithContextOpen.MakeGenericMethod(typeof(ModDataInteropJsonDocument));
 
         private static readonly ConcurrentDictionary<Type, MethodInfo> RegisterClosedByDataType = new();
 
@@ -146,8 +160,12 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
                         continue;
 
                     var store = ModDataStore.For(slot.ModId);
-                    if (slot.Scope == SaveScope.Profile && !store.IsProfileInitialized)
-                        continue;
+                    switch (slot.Scope)
+                    {
+                        case SaveScope.Profile when !store.IsProfileInitialized:
+                        case SaveScope.RunSidecar when !ModRunSidecarFingerprint.TryGetLive(out _):
+                            continue;
+                    }
 
                     if (slot.IsJsonChannel)
                         SyncJsonSlot(store, slot, channel);
@@ -177,8 +195,12 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
                         continue;
 
                     var store = ModDataStore.For(slot.ModId);
-                    if (slot.Scope == SaveScope.Profile && !store.IsProfileInitialized)
-                        continue;
+                    switch (slot.Scope)
+                    {
+                        case SaveScope.Profile when !store.IsProfileInitialized:
+                        case SaveScope.RunSidecar when !ModRunSidecarFingerprint.TryGetLive(out _):
+                            continue;
+                    }
 
                     if (slot.IsJsonChannel)
                     {
@@ -583,8 +605,20 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
             return value?.Trim().ToLowerInvariant() switch
             {
                 "profile" => SaveScope.Profile,
+                "runsidecar" or "run-sidecar" or "run_sidecar" => SaveScope.RunSidecar,
+                "inmemory" or "in-memory" or "in_memory" => SaveScope.InMemory,
                 _ => SaveScope.Global,
             };
+        }
+
+        private static StorageContext BuildRunSidecarContext()
+        {
+            if (!ModRunSidecarFingerprint.TryGetLive(out var fp))
+                throw new InvalidOperationException("No active run fingerprint is available for RunSidecar ModData.");
+
+            return StorageContext.Empty
+                .With(StorageContextKeys.ProfileId, fp.ProfileId)
+                .With(StorageContextKeys.RunFingerprintStem, fp.ComputeFileStem());
         }
 
         private static bool TryRegisterFromSchema(InteropProvider provider, InteropSchemaRoot schema)
@@ -685,16 +719,29 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
                     }
             }
 
-            RegisterJsonDocumentClosed.Invoke(store,
-            [
-                entry.Key,
-                entry.FileName,
-                entry.Scope,
-                defaultFactory,
-                entry.AutoCreateIfMissing,
-                entry.MigrationConfig,
-                entry.Migrations,
-            ]);
+            if (entry.Scope == SaveScope.RunSidecar)
+                RegisterJsonDocumentWithContextClosed.Invoke(store,
+                [
+                    entry.Key,
+                    entry.FileName,
+                    SaveScope.RunSidecar,
+                    (Func<StorageContext>)BuildRunSidecarContext,
+                    defaultFactory,
+                    entry.AutoCreateIfMissing,
+                    entry.MigrationConfig,
+                    entry.Migrations,
+                ]);
+            else
+                RegisterJsonDocumentClosed.Invoke(store,
+                [
+                    entry.Key,
+                    entry.FileName,
+                    entry.Scope,
+                    defaultFactory,
+                    entry.AutoCreateIfMissing,
+                    entry.MigrationConfig,
+                    entry.Migrations,
+                ]);
 
             lock (Gate)
             {
@@ -724,16 +771,34 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
 
             var defaultFactory = BuildDefaultFactory(providerKey, dataType, entry.DefaultFactoryMethodName);
 
-            typedRegister.Invoke(store,
-            [
-                entry.Key,
-                entry.FileName,
-                entry.Scope,
-                defaultFactory,
-                entry.AutoCreateIfMissing,
-                entry.MigrationConfig,
-                entry.Migrations,
-            ]);
+            if (entry.Scope == SaveScope.RunSidecar)
+            {
+                var typedRegisterWithContext = ModDataStoreRegisterWithContextOpen.MakeGenericMethod(dataType);
+                typedRegisterWithContext.Invoke(store,
+                [
+                    entry.Key,
+                    entry.FileName,
+                    SaveScope.RunSidecar,
+                    (Func<StorageContext>)BuildRunSidecarContext,
+                    defaultFactory,
+                    entry.AutoCreateIfMissing,
+                    entry.MigrationConfig,
+                    entry.Migrations,
+                ]);
+            }
+            else
+            {
+                typedRegister.Invoke(store,
+                [
+                    entry.Key,
+                    entry.FileName,
+                    entry.Scope,
+                    defaultFactory,
+                    entry.AutoCreateIfMissing,
+                    entry.MigrationConfig,
+                    entry.Migrations,
+                ]);
+            }
 
             lock (Gate)
             {

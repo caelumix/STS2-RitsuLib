@@ -1222,6 +1222,7 @@ namespace STS2RitsuLib.Settings
             Action<TValue> writeMember)
         {
             EnsureScopedStoreRegistration(modId, dataKey, scope, readMember);
+            // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
             var storeBinding = scope switch
             {
                 SaveScope.Global => ModSettingsBindings.Global<ReflectionBindingBox<TValue>, TValue>(

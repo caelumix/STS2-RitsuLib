@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using MegaCrit.Sts2.Core.Logging;
 using STS2RitsuLib.Utils;
 using STS2RitsuLib.Utils.Persistence;
+using STS2RitsuLib.Utils.Persistence.Context;
 using STS2RitsuLib.Utils.Persistence.Migration;
 
 namespace STS2RitsuLib.Data
@@ -68,7 +69,12 @@ namespace STS2RitsuLib.Data
         public bool HasProfileScopedEntries => _entries.Values.Any(e => e.Scope == SaveScope.Profile);
 
         /// <summary>
-        ///     Defers eager initialization of newly <see cref="Register{T}" /> calls until the scope is disposed.
+        ///     Whether this store has at least one <see cref="SaveScope.RunSidecar" /> registration.
+        /// </summary>
+        public bool HasRunSidecarScopedEntries => _entries.Values.Any(e => e.Scope == SaveScope.RunSidecar);
+
+        /// <summary>
+        ///     Defers eager initialization of newly registered entries until the scope is disposed.
         /// </summary>
         /// <param name="initializeProfileIfReady">
         ///     When true and profile data is already initialized, profile-scoped registrations initialize on scope end.
@@ -152,14 +158,15 @@ namespace STS2RitsuLib.Data
                 _profileEventsSubscribed = true;
             }
 
-            foreach (var entry in _entries.Values.Where(e => e is { Scope: SaveScope.Profile, IsInitialized: false }))
+            foreach (var entry in _entries.Values.Where(e =>
+                         e is { IsInitialized: false, Scope: SaveScope.Profile or SaveScope.RunSidecar }))
             {
                 entry.Initialize(_jsonOptions, _migrationManager);
                 entry.Load();
             }
 
             IsProfileInitialized = _entries.Values
-                .Where(e => e.Scope == SaveScope.Profile)
+                .Where(e => e.Scope is SaveScope.Profile or SaveScope.RunSidecar)
                 .All(e => e.IsInitialized);
         }
 
@@ -202,6 +209,19 @@ namespace STS2RitsuLib.Data
 
             ConfigureMigration<T>(migrationConfig, migrations);
 
+            switch (scope)
+            {
+                case SaveScope.InMemory:
+                {
+                    var memory = new InMemoryDataEntry<T>(key, scope, defaultFactory ?? (() => new()));
+                    _entries[key] = memory;
+                    return;
+                }
+                case SaveScope.RunSidecar:
+                    throw new InvalidOperationException(
+                        "SaveScope.RunSidecar requires a run fingerprint stem context. Use ModRunSidecarStore or a future ModDataStore overload that supplies StorageContext.");
+            }
+
             var registration = new RegisteredDataEntry<T>(
                 ModId,
                 key,
@@ -220,6 +240,55 @@ namespace STS2RitsuLib.Data
 
             if (!IsGlobalInitialized && scope == SaveScope.Global) return;
             if (!IsProfileInitialized && scope == SaveScope.Profile) return;
+            registration.Initialize(_jsonOptions, _migrationManager);
+            registration.Load();
+        }
+
+        /// <summary>
+        ///     Registers a JSON-backed persistence slot identified by <paramref name="key" /> using an explicit
+        ///     <see cref="StorageContext" /> provider for path resolution (e.g. run fingerprint stem for
+        ///     <see cref="SaveScope.RunSidecar" />).
+        /// </summary>
+        public void Register<T>(
+            string key,
+            string fileName,
+            SaveScope scope,
+            Func<StorageContext> contextProvider,
+            Func<T>? defaultFactory = null,
+            bool autoCreateIfMissing = false,
+            ModDataMigrationConfig? migrationConfig = null,
+            IEnumerable<IMigration>? migrations = null)
+            where T : class, new()
+        {
+            ArgumentNullException.ThrowIfNull(contextProvider);
+
+            if (_entries.ContainsKey(key))
+                throw new InvalidOperationException($"Data key '{key}' is already registered.");
+
+            ConfigureMigration<T>(migrationConfig, migrations);
+
+            if (scope == SaveScope.InMemory)
+                throw new InvalidOperationException("SaveScope.InMemory does not support contextProvider overload.");
+
+            var registration = new RegisteredDataEntry<T>(
+                ModId,
+                key,
+                fileName,
+                scope,
+                defaultFactory ?? (() => new()),
+                autoCreateIfMissing,
+                _logger,
+                contextProvider
+            );
+
+            _entries[key] = registration;
+            ModCloudSyncPathRegistry.RegisterModDataSlot(ModId, fileName, scope);
+
+            if (_registrationScopeDepth > 0)
+                return;
+
+            if (!IsGlobalInitialized && scope == SaveScope.Global) return;
+            if (!IsProfileInitialized && scope is SaveScope.Profile or SaveScope.RunSidecar) return;
             registration.Initialize(_jsonOptions, _migrationManager);
             registration.Load();
         }
@@ -252,7 +321,14 @@ namespace STS2RitsuLib.Data
         /// </summary>
         public T Get<T>(string key) where T : class, new()
         {
-            return GetEntry<T>(key).Data;
+            var entry = GetEntry(key);
+            return entry switch
+            {
+                RegisteredDataEntry<T> persisted => persisted.Data,
+                InMemoryDataEntry<T> memory => memory.Data,
+                _ => throw new InvalidOperationException(
+                    $"Data key '{key}' is registered as '{entry.DataType.Name}', not '{typeof(T).Name}'."),
+            };
         }
 
         /// <summary>
@@ -260,7 +336,19 @@ namespace STS2RitsuLib.Data
         /// </summary>
         public void Modify<T>(string key, Action<T> modifier) where T : class, new()
         {
-            GetEntry<T>(key).Modify(modifier);
+            var entry = GetEntry(key);
+            switch (entry)
+            {
+                case RegisteredDataEntry<T> persisted:
+                    persisted.Modify(modifier);
+                    break;
+                case InMemoryDataEntry<T> memory:
+                    memory.Modify(modifier);
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"Data key '{key}' is registered as '{entry.DataType.Name}', not '{typeof(T).Name}'.");
+            }
         }
 
         /// <summary>
@@ -268,7 +356,10 @@ namespace STS2RitsuLib.Data
         /// </summary>
         public void Save(string key)
         {
-            GetEntry(key).Save();
+            var entry = GetEntry(key);
+            if (entry.Scope == SaveScope.InMemory)
+                return;
+            entry.Save();
         }
 
         /// <summary>
@@ -314,7 +405,7 @@ namespace STS2RitsuLib.Data
             _logger.Info(
                 $"[{ModId}] Profile changed from {oldProfileId} to {newProfileId}, handling data transition...");
 
-            foreach (var entry in _entries.Values.Where(e => e.Scope == SaveScope.Profile))
+            foreach (var entry in _entries.Values.Where(e => e.Scope is SaveScope.Profile or SaveScope.RunSidecar))
             {
                 entry.SaveToProfilePath(oldProfileId);
                 entry.Load();
@@ -369,6 +460,16 @@ namespace STS2RitsuLib.Data
             return typed;
         }
 
+        private InMemoryDataEntry<T> GetMemoryEntry<T>(string key) where T : class, new()
+        {
+            var entry = GetEntry(key);
+            if (entry is not InMemoryDataEntry<T> typed)
+                throw new InvalidOperationException(
+                    $"Data key '{key}' is registered as '{entry.DataType.Name}', not '{typeof(T).Name}'.");
+
+            return typed;
+        }
+
         private sealed class RegistrationScope(ModDataStore store) : IDisposable
         {
             private bool _disposed;
@@ -380,6 +481,58 @@ namespace STS2RitsuLib.Data
 
                 _disposed = true;
                 store.EndRegistrationScope();
+            }
+        }
+
+        private sealed class InMemoryDataEntry<T>(string key, SaveScope scope, Func<T> defaultFactory)
+            : IRegisteredDataEntry where T : class, new()
+        {
+            private T _data = defaultFactory();
+
+            public T Data => IsInitialized
+                ? _data
+                : throw new InvalidOperationException(
+                    $"Data entry '{key}' is not initialized.");
+
+            public SaveScope Scope { get; } = scope;
+            public Type DataType => typeof(T);
+            public bool HadExistingData => false;
+            public bool IsInitialized { get; private set; }
+
+            public void Initialize(JsonSerializerOptions jsonOptions, MigrationManager migrationManager)
+            {
+                if (IsInitialized) return;
+                _data = defaultFactory();
+                IsInitialized = true;
+            }
+
+            public void Load()
+            {
+                if (!IsInitialized)
+                    throw new InvalidOperationException($"Data entry '{key}' is not initialized.");
+            }
+
+            public void Save()
+            {
+                // no-op (in-memory)
+            }
+
+            public void SaveToProfilePath(int profileId)
+            {
+                // no-op (in-memory)
+            }
+
+            public bool ReloadIfPathChanged()
+            {
+                return false;
+            }
+
+            public void Modify(Action<T> modifier)
+            {
+                if (!IsInitialized)
+                    throw new InvalidOperationException($"Data entry '{key}' is not initialized.");
+
+                modifier(_data);
             }
         }
 
@@ -403,7 +556,8 @@ namespace STS2RitsuLib.Data
             SaveScope scope,
             Func<T> defaultFactory,
             bool autoCreateIfMissing,
-            Logger logger)
+            Logger logger,
+            Func<StorageContext>? contextProvider = null)
             : IRegisteredDataEntry where T : class, new()
         {
             private PersistentDataEntry<T>? _entry;
@@ -428,7 +582,8 @@ namespace STS2RitsuLib.Data
                     defaultFactory(),
                     jsonOptions,
                     migrationManager,
-                    autoCreateIfMissing
+                    autoCreateIfMissing,
+                    contextProvider
                 );
             }
 
@@ -437,7 +592,7 @@ namespace STS2RitsuLib.Data
                 if (_entry == null)
                     throw new InvalidOperationException($"Data entry '{key}' is not initialized.");
 
-                var currentPath = ProfileManager.Instance.GetFilePath(fileName, Scope, modId);
+                var currentPath = _entry.FilePath;
                 _lastLoadedPath = currentPath;
                 HadExistingData = FileOperations.FileExists(currentPath);
                 _entry.Load();
@@ -448,7 +603,7 @@ namespace STS2RitsuLib.Data
                 if (_entry == null)
                     throw new InvalidOperationException($"Data entry '{key}' is not initialized.");
 
-                var currentPath = ProfileManager.Instance.GetFilePath(fileName, Scope, modId);
+                var currentPath = _entry.FilePath;
                 if (string.Equals(_lastLoadedPath, currentPath, StringComparison.Ordinal))
                     return false;
 

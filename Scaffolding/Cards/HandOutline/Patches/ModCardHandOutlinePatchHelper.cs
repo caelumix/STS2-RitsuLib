@@ -3,6 +3,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
+using STS2RitsuLib.Scaffolding.Combat;
 
 namespace STS2RitsuLib.Scaffolding.Cards.HandOutline.Patches
 {
@@ -30,7 +31,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline.Patches
             if (CombatManager.Instance is not { IsInProgress: true })
                 return;
 
-            var inPlayPhase = model.Owner?.PlayerCombatState?.Phase == PlayerTurnPhase.Play;
+            var inPlayPhase = model.IsOwnerPlayPhase();
             var shouldGlowRed = inPlayPhase && model.ShouldGlowRed;
             var shouldGlowGold = inPlayPhase && model.CanPlay() && model.ShouldGlowGold;
             var vanillaShow = model.CanPlay() || shouldGlowRed || shouldGlowGold;
@@ -52,7 +53,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline.Patches
                 !GodotObject.IsInstanceValid(flash))
                 return;
 
-            var inPlayPhase = model.Owner?.PlayerCombatState?.Phase == PlayerTurnPhase.Play;
+            var inPlayPhase = model.IsOwnerPlayPhase();
             var shouldGlowRed = inPlayPhase && model.ShouldGlowRed;
             var shouldGlowGold = inPlayPhase && model.CanPlay() && model.ShouldGlowGold;
             var vanillaShow = model.CanPlay() || shouldGlowRed || shouldGlowGold;

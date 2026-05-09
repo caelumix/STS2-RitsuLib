@@ -74,9 +74,6 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeFactories
                 case "%EnergyVfxFront":
                     target.AddUniqueChild(CreateParticlesContainer(null, "EnergyVfxFront"));
                     break;
-                case "%StarAnchor":
-                    target.AddUniqueChild(CreateParticlesContainer(null, "StarAnchor"));
-                    break;
             }
         }
 

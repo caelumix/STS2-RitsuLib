@@ -124,7 +124,7 @@ namespace STS2RitsuLib.Combat.HandSize
                     "[MaxHandSize] RitsuLib hand-size patch set installed (compat 0.104.0 profile).");
 #else
                 RitsuLibFramework.Logger.Info(
-                    "[MaxHandSize] RitsuLib hand-size patch set installed (0.105.0 profile).");
+                    "[MaxHandSize] RitsuLib hand-size patch set installed (0.105.1 profile).");
 #endif
             }
         }

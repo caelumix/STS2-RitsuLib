@@ -46,7 +46,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             if (!ResourceLoader.Exists(energyCounterPath))
                 return true;
 
-            var created = RitsuGodotNodeFactories.CreateFromScenePath<NEnergyCounter>(energyCounterPath);
+            var created = RitsuGodotNodeFactories.CreateFromScenePath<NEnergyCounter>(
+                energyCounterPath,
+                PackedScene.GenEditState.Disabled);
             PlayerField.SetValue(created, player);
             __result = created;
             return false;

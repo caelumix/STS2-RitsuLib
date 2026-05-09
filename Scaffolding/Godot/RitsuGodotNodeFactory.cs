@@ -136,6 +136,7 @@ namespace STS2RitsuLib.Scaffolding.Godot
                     foreach (var child in source.GetChildren())
                     {
                         source.RemoveChild(child);
+                        ClearSubtreeOwnersForReparent(child);
                         target.AddChild(child);
                         child.Owner = target;
                         SetChildrenOwner(target, child);
@@ -219,6 +220,19 @@ namespace STS2RitsuLib.Scaffolding.Godot
         }
 
         protected abstract void GenerateNode(T target, IRitsuGodotNodeSlot required);
+
+        /// <summary>
+        ///     Packed-scene children often still reference the old root as <see cref="Node.Owner" /> after
+        ///     <c>RemoveChild</c>. Godot warns and can break unique-name resolution if reparenting under a new root with
+        ///     the same scene name without clearing first (matches Godot log: inconsistent owner).
+        /// </summary>
+        private static void ClearSubtreeOwnersForReparent(Node node)
+        {
+            foreach (var descendant in node.GetChildren())
+                ClearSubtreeOwnersForReparent(descendant);
+
+            node.Owner = null;
+        }
 
         protected static void SetChildrenOwner(Node target, Node child)
         {

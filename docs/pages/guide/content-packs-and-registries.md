@@ -153,12 +153,14 @@ RitsuLibFramework.CreateContentPack("MyMod")
 
 - `Content`
 - `Keywords`
+- `CardTags`
+- `CardPiles`
 - `Timeline`
 - `Unlocks`
 
-`CreateContentPack(modId)` batches the **four** registries exposed on `ModContentPackContext` (`Content`, `Keywords`, `Timeline`, `Unlocks`). Card piles and top-bar buttons are registered through `ModCardPileRegistry.For(modId)` and `ModTopBarButtonRegistry.For(modId)` (or optional CLR attributes under `STS2RitsuLib.Interop.AutoRegistration`) — same mod id, but not properties on `ModContentPackContext`.
+`CreateContentPack(modId)` batches the registries exposed on `ModContentPackContext` (`Content`, `Keywords`, `CardTags`, `CardPiles`, `Timeline`, `Unlocks`). Card piles can be queued directly with `.CardPileOwned(...)` / `.CardPile(...)`, or registered through `ctx.CardPiles` inside a `Custom(...)` step. Top-bar buttons stay separate: use `ModTopBarButtonRegistry.For(modId)` or optional CLR attributes under `STS2RitsuLib.Interop.AutoRegistration`.
 
-`ModCardPileRegistry` and `ModTopBarButtonRegistry` are **not** on this struct; call `ModCardPileRegistry.For(ctx.ModId)` / `ModTopBarButtonRegistry.For(ctx.ModId)` inside a `Custom(...)` step (or register piles/buttons from your initializer) when you need them.
+For ad-hoc access, `ctx.CardPiles` is the same singleton as `ModCardPileRegistry.For(ctx.ModId)` and `RitsuLibFramework.GetCardPileRegistry(ctx.ModId)`. `ModTopBarButtonRegistry` is still not on this struct; call `ModTopBarButtonRegistry.For(ctx.ModId)` inside a `Custom(...)` step (or register buttons from your initializer) when you need it.
 
 That means the fluent builder can be your main registration path for model/keyword/timeline/unlock work, while still letting you access every registry afterward.
 
@@ -174,12 +176,14 @@ That means the fluent builder can be your main registration path for model/keywo
 
 - `Content`
 - `Keywords`
+- `CardTags`
+- `CardPiles`
 - `Timeline`
 - `Unlocks`
 
-`CreateContentPack(modId)` 本质上只批量协调 `ModContentPackContext` 暴露的 **四个** 注册入口（`Content`、`Keywords`、`Timeline`、`Unlocks`）。卡牌堆与顶栏按钮需要通过 `ModCardPileRegistry.For(modId)` / `ModTopBarButtonRegistry.For(modId)`（或 `STS2RitsuLib.Interop.AutoRegistration` 下的可选 CLR 特性）来注册——同一个 mod id，但不在 `ModContentPackContext` 结构体内。
+`CreateContentPack(modId)` 会批量协调 `ModContentPackContext` 暴露的注册入口（`Content`、`Keywords`、`CardTags`、`CardPiles`、`Timeline`、`Unlocks`）。卡牌堆可以直接通过 `.CardPileOwned(...)` / `.CardPile(...)` 排队，也可以在 `Custom(...)` 步骤里通过 `ctx.CardPiles` 注册。顶栏按钮仍然是独立入口：使用 `ModTopBarButtonRegistry.For(modId)`，或 `STS2RitsuLib.Interop.AutoRegistration` 下的可选 CLR 特性。
 
-`ModCardPileRegistry` 与 `ModTopBarButtonRegistry` **不在** 该结构体上；需要时请在 `Custom(...)` 步骤里调用 `ModCardPileRegistry.For(ctx.ModId)` / `ModTopBarButtonRegistry.For(ctx.ModId)`（或在初始化器中直接注册卡牌堆/按钮）。
+临时访问时，`ctx.CardPiles` 与 `ModCardPileRegistry.For(ctx.ModId)`、`RitsuLibFramework.GetCardPileRegistry(ctx.ModId)` 是同一个 singleton。`ModTopBarButtonRegistry` 仍然不在这个结构体上；需要时请在 `Custom(...)` 步骤里调用 `ModTopBarButtonRegistry.For(ctx.ModId)`（或在初始化器中直接注册按钮）。
 
 也就是说，构建器可以作为主要入口，同时你在需要时仍然可以拿到各个注册器继续操作。
 

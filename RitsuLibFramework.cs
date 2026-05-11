@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
+using STS2RitsuLib.CardPiles;
 using STS2RitsuLib.Cards.FreePlay;
 using STS2RitsuLib.CardTags;
 using STS2RitsuLib.Combat.HandSize;
@@ -446,6 +447,14 @@ namespace STS2RitsuLib
         }
 
         /// <summary>
+        ///     Returns the custom card-pile registry for <paramref name="modId" />.
+        /// </summary>
+        public static ModCardPileRegistry GetCardPileRegistry(string modId)
+        {
+            return ModCardPileRegistry.For(modId);
+        }
+
+        /// <summary>
         ///     Returns the timeline (epoch/story) registry for <paramref name="modId" />.
         /// </summary>
         public static ModTimelineRegistry GetTimelineRegistry(string modId)
@@ -553,7 +562,8 @@ namespace STS2RitsuLib
                     GetKeywordRegistry(registration.ModId),
                     GetTimelineRegistry(registration.ModId),
                     GetUnlockRegistry(registration.ModId),
-                    GetCardTagRegistry(registration.ModId));
+                    GetCardTagRegistry(registration.ModId),
+                    GetCardPileRegistry(registration.ModId));
                 registration.Apply(context);
             }
 

@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Timeline;
+using STS2RitsuLib.CardPiles;
 using STS2RitsuLib.CardTags;
 using STS2RitsuLib.Combat.HealthBars;
 using STS2RitsuLib.Content;
@@ -51,10 +52,34 @@ namespace STS2RitsuLib.Scaffolding.Content
         }
 
         /// <summary>
+        ///     Same as the 6-parameter compatibility constructor, accepting a card-pile registry so call sites can
+        ///     mirror <see cref="RitsuLibFramework.GetCardPileRegistry" /> style alongside content / keywords /
+        ///     card tags. The value is not read; <see cref="CardPiles" /> is always the per-mod singleton.
+        /// </summary>
+        public ModContentPackContext(
+            string modId,
+            ModContentRegistry content,
+            ModKeywordRegistry keywords,
+            ModTimelineRegistry timeline,
+            ModUnlockRegistry unlocks,
+            ModCardTagRegistry cardTagRegistry,
+            ModCardPileRegistry cardPileRegistry) : this(modId, content, keywords, timeline, unlocks,
+            cardTagRegistry)
+        {
+            _ = cardPileRegistry;
+        }
+
+        /// <summary>
         ///     Custom <see cref="CardTag" /> surface for <see cref="ModId" />; same singleton as
         ///     <c>ModCardTagRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetCardTagRegistry</c>.
         /// </summary>
         public ModCardTagRegistry CardTags => ModCardTagRegistry.For(ModId);
+
+        /// <summary>
+        ///     Custom <see cref="CardPile" /> surface for <see cref="ModId" />; same singleton as
+        ///     <c>ModCardPileRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetCardPileRegistry</c>.
+        /// </summary>
+        public ModCardPileRegistry CardPiles => ModCardPileRegistry.For(ModId);
     }
 
     /// <summary>
@@ -1054,6 +1079,44 @@ namespace STS2RitsuLib.Scaffolding.Content
         }
 
         /// <summary>
+        ///     Queues <see cref="ModCardPileRegistry.RegisterOwned" /> for a local stem under this pack’s mod id.
+        /// </summary>
+        public ModContentPackBuilder CardPileOwned(string localPileStem, ModCardPileSpec? spec = null)
+        {
+            return AddStep(ctx => ctx.CardPiles.RegisterOwned(localPileStem, spec ?? new ModCardPileSpec()));
+        }
+
+        /// <summary>
+        ///     Appends a <see cref="CardPileRegistrationEntry" /> registration step.
+        /// </summary>
+        public ModContentPackBuilder CardPile(CardPileRegistrationEntry entry)
+        {
+            ArgumentNullException.ThrowIfNull(entry);
+            return AddStep(ctx => entry.Register(ctx.CardPiles));
+        }
+
+        /// <summary>
+        ///     Queues <see cref="ModCardPileRegistry.Register" /> for a raw global id.
+        /// </summary>
+        public ModContentPackBuilder CardPile(string id, ModCardPileSpec spec)
+        {
+            return AddStep(ctx => ctx.CardPiles.Register(id, spec));
+        }
+
+        /// <summary>
+        ///     Appends each card-pile registration entry in order.
+        /// </summary>
+        public ModContentPackBuilder CardPiles(IEnumerable<CardPileRegistrationEntry> entries)
+        {
+            ArgumentNullException.ThrowIfNull(entries);
+
+            foreach (var entry in entries)
+                CardPile(entry);
+
+            return this;
+        }
+
+        /// <summary>
         ///     Registers <see cref="ModContentRegistry" /> entries (character, cards, relics, powers, …).
         /// </summary>
         public ModContentPackBuilder ContentManifest(IEnumerable<IContentRegistrationEntry>? entries)
@@ -1075,6 +1138,14 @@ namespace STS2RitsuLib.Scaffolding.Content
         public ModContentPackBuilder CardTagManifest(IEnumerable<CardTagRegistrationEntry>? entries)
         {
             return entries != null ? CardTags(entries) : this;
+        }
+
+        /// <summary>
+        ///     Registers <see cref="ModCardPileRegistry" /> entries (custom <c>CardPile</c> ids separate from ModelDb).
+        /// </summary>
+        public ModContentPackBuilder CardPileManifest(IEnumerable<CardPileRegistrationEntry>? entries)
+        {
+            return entries != null ? CardPiles(entries) : this;
         }
 
         /// <summary>
@@ -1220,7 +1291,8 @@ namespace STS2RitsuLib.Scaffolding.Content
                 RitsuLibFramework.GetKeywordRegistry(_modId),
                 RitsuLibFramework.GetTimelineRegistry(_modId),
                 RitsuLibFramework.GetUnlockRegistry(_modId),
-                RitsuLibFramework.GetCardTagRegistry(_modId));
+                RitsuLibFramework.GetCardTagRegistry(_modId),
+                RitsuLibFramework.GetCardPileRegistry(_modId));
         }
 
         /// <summary>

@@ -414,6 +414,17 @@ namespace STS2RitsuLib.Keywords
         }
 
         /// <summary>
+        ///     Resolves either a registered mod keyword id or a vanilla <see cref="CardKeyword" /> enum name.
+        ///     Mod ids take precedence when a string could match both.
+        /// </summary>
+        public static bool TryResolveCardKeyword(string idOrEnumName, out CardKeyword value)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(idOrEnumName);
+
+            return TryGetCardKeyword(idOrEnumName, out value) || Enum.TryParse(idOrEnumName.Trim(), true, out value);
+        }
+
+        /// <summary>
         ///     Returns the <see cref="CardKeyword" /> minted for <paramref name="id" /> or throws
         ///     <see cref="KeyNotFoundException" /> when unregistered.
         /// </summary>

@@ -220,6 +220,17 @@ namespace STS2RitsuLib.CardPiles
         }
 
         /// <summary>
+        ///     Resolves either a registered mod card-pile id or a vanilla <see cref="PileType" /> enum name.
+        ///     Mod ids take precedence when a string could match both.
+        /// </summary>
+        public static bool TryResolvePileType(string idOrEnumName, out PileType value)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(idOrEnumName);
+
+            return TryGetPileType(idOrEnumName, out value) || Enum.TryParse(idOrEnumName.Trim(), true, out value);
+        }
+
+        /// <summary>
         ///     Tries to resolve the string id that minted <paramref name="value" />.
         /// </summary>
         public static bool TryGetId(PileType value, out string id)

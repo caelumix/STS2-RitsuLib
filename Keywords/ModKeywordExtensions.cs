@@ -177,14 +177,26 @@ namespace STS2RitsuLib.Keywords
         {
             ArgumentNullException.ThrowIfNull(keywords);
 
-            return keywords
-                .Where(static id => !string.IsNullOrWhiteSpace(id))
-                .Select(static id => id.Trim())
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .Where(static id =>
-                    ModKeywordRegistry.TryGet(id, out var def) && def.IncludeInCardHoverTip)
-                .Select(ModKeywordRegistry.CreateHoverTip)
-                .ToArray();
+            var tips = new List<IHoverTip>();
+            foreach (var id in keywords
+                         .Where(static id => !string.IsNullOrWhiteSpace(id))
+                         .Select(static id => id.Trim())
+                         .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                if (!ModKeywordRegistry.TryResolveCardKeyword(id, out var value) || value == CardKeyword.None)
+                    continue;
+
+                if (ModKeywordRegistry.TryGetByCardKeyword(value, out var def))
+                {
+                    if (def.IncludeInCardHoverTip)
+                        tips.Add(ModKeywordRegistry.CreateHoverTip(def.Id));
+                    continue;
+                }
+
+                tips.Add(HoverTipFactory.FromKeyword(value));
+            }
+
+            return tips;
         }
 
         /// <summary>

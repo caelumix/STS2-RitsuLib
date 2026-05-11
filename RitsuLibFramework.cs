@@ -18,6 +18,7 @@ using STS2RitsuLib.Diagnostics.CompendiumExport;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Localization;
+using STS2RitsuLib.Localization.SmartFormat;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.RuntimeInput;
 using STS2RitsuLib.Scaffolding.Ancients.Options;
@@ -426,6 +427,14 @@ namespace STS2RitsuLib
         public static ModKeywordRegistry GetKeywordRegistry(string modId)
         {
             return ModKeywordRegistry.For(modId);
+        }
+
+        /// <summary>
+        ///     Returns the SmartFormat extension registry for <paramref name="modId" />.
+        /// </summary>
+        public static ModSmartFormatExtensionRegistry GetSmartFormatRegistry(string modId)
+        {
+            return ModSmartFormatExtensionRegistry.For(modId);
         }
 
         /// <summary>

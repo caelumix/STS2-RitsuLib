@@ -2,6 +2,7 @@ using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary;
@@ -279,6 +280,10 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             reticle.UniqueNameInOwner = true;
             filter.AddChild(reticle);
             reticle.Owner = filter;
+
+            var id = registration.StableId.ToUpperInvariant();
+            if (LocManager.Instance.GetTable("card_library").HasEntry(id))
+                filter.Loc = new LocString("card_library", id);
 
             return filter;
         }

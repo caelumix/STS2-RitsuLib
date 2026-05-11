@@ -281,7 +281,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             filter.AddChild(reticle);
             reticle.Owner = filter;
 
-            var id = registration.StableId.ToUpperInvariant();
+            var id = ModContentRegistry.GetCompoundId(registration.OwningModId, "POOLFILTER",registration.StableId);
             if (LocManager.Instance.GetTable("card_library").HasEntry(id))
                 filter.Loc = new LocString("card_library", id);
 

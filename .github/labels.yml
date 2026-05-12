@@ -1,79 +1,134 @@
 - name: type/bug
   color: d73a4a
-  description: Something isn't working.
+  description: Defect or incorrect behavior in RitsuLib.
 - name: type/feature
   color: a2eeef
-  description: New feature or request.
+  description: Feature request or behavior improvement.
 - name: type/question
   color: d876e3
-  description: Further information is requested.
+  description: Usage, design, or contribution question.
 - name: type/docs
   color: 0075ca
-  description: Documentation related changes.
+  description: Documentation, examples, or README work.
 - name: type/chore
   color: cfd3d7
-  description: Maintenance / refactor / build tooling.
+  description: Maintenance, refactor, tooling, or dependency work.
+
+- name: bug
+  color: d73a4a
+  description: Something is broken or behaving incorrectly.
+- name: enhancement
+  color: a2eeef
+  description: Feature request or behavior improvement.
+- name: documentation
+  color: 0075ca
+  description: Documentation, examples, or README changes.
+- name: question
+  color: d876e3
+  description: Question or discussion; may need clarification before action.
+- name: duplicate
+  color: cfd3d7
+  description: Duplicates an existing issue or pull request.
+- name: invalid
+  color: e4e669
+  description: Not actionable, not reproducible, or outside project scope.
+- name: wontfix
+  color: ffffff
+  description: Accepted as not planned for this project.
+- name: noise
+  color: eeeeee
+  description: Low-value automated/noisy report; usually safe to close after review.
+- name: spam
+  color: "000000"
+  description: Spam or abusive content.
+- name: help wanted
+  color: 008672
+  description: Maintainer welcomes external help.
+- name: good first issue
+  color: 7057ff
+  description: Good for a first external contribution.
 
 - name: status/needs-triage
-  color: fbca04
-  description: Needs initial review and routing.
+  color: ededed
+  description: Needs maintainer or analyzer triage.
 - name: status/needs-info
+  color: d4c5f9
+  description: Waiting for more information from reporter or author.
+- name: status/confirmed
+  color: 0e8a16
+  description: Confirmed and actionable.
+- name: status/in-progress
   color: fbca04
-  description: Reporter input needed to proceed.
+  description: Work is actively in progress.
 - name: status/blocked
   color: b60205
-  description: Blocked by external dependency or upstream changes.
+  description: Blocked by missing dependency, upstream issue, or decision.
+- name: status/needs-review
+  color: 1d76db
+  description: Ready for maintainer review.
 
 - name: priority/p0
   color: b60205
-  description: Drop everything.
+  description: Emergency; blocks releases or core workflows.
 - name: priority/p1
   color: d93f0b
-  description: High priority.
+  description: High priority regression or high-impact work.
 - name: priority/p2
   color: fbca04
-  description: Medium priority.
+  description: Normal priority; useful but not urgent.
 - name: priority/p3
-  color: 0e8a16
-  description: Low priority.
+  color: c5def5
+  description: Low priority or backlog.
 
-- name: area/combat
-  color: 1d76db
-  description: Combat-related.
-- name: area/cards
-  color: 1d76db
-  description: Cards-related.
-- name: area/powers
-  color: 1d76db
-  description: Powers-related.
-- name: area/relics
-  color: 1d76db
-  description: Relics-related.
-- name: area/ui
-  color: 1d76db
-  description: UI-related.
-- name: area/localization
-  color: 1d76db
-  description: Localization-related.
-- name: area/build
-  color: 1d76db
-  description: Build/CI tooling.
-- name: area/docs
-  color: 1d76db
-  description: Documentation.
-- name: area/other
-  color: 1d76db
-  description: Other / unclear area.
-
-- name: severity/crash
+- name: severity/critical
   color: b60205
-  description: Crash / hard failure.
+  description: Crash, data loss, or unusable core behavior.
 - name: severity/broken
+  color: d73a4a
+  description: A feature path is effectively unusable.
+- name: severity/major
   color: d93f0b
-  description: Broken feature.
+  description: Significant bug with workaround or limited scope.
 - name: severity/regression
   color: fbca04
   description: Regression from previous behavior.
 - name: severity/minor
-  color: 0e8a16
-  description: Minor issue.
+  color: fbca04
+  description: Minor defect, polish issue, or low-impact bug.
+
+- name: area/api
+  color: bfdadc
+  description: Public API, contracts, or compatibility surface.
+- name: area/settings
+  color: bfdadc
+  description: Mod settings UI, config entries, persistence, or input handling.
+- name: area/ui
+  color: bfdadc
+  description: User interface, layout, controls, or visual behavior.
+- name: area/assets
+  color: bfdadc
+  description: Textures, atlases, resource paths, or asset loading.
+- name: area/audio
+  color: bfdadc
+  description: FMOD, banks, sound events, or audio playback.
+- name: area/localization
+  color: bfdadc
+  description: Localization loading, text keys, translations, or language data.
+- name: area/mod-loading
+  color: bfdadc
+  description: Initialization, assembly loading, content registration, or patch lifecycle.
+- name: area/compatibility
+  color: bfdadc
+  description: Compatibility with game versions, other mods, or runtime environments.
+- name: area/build
+  color: bfdadc
+  description: Build, packaging, CI, NuGet, or project setup.
+- name: area/docs
+  color: bfdadc
+  description: Documentation site, examples, README, or guide content.
+- name: area/tests
+  color: bfdadc
+  description: Tests, analyzers, samples, or validation tooling.
+- name: area/other
+  color: ededed
+  description: Area is unclear or does not fit existing categories.

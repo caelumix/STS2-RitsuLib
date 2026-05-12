@@ -10,9 +10,12 @@ body:
       label: 范围
       options:
         - Usage（使用）
-        - API design（API 设计）
+        - Public API / API design（公开 API / API 设计）
+        - Mod settings（模组设置）
+        - Compatibility（兼容性）
         - Build/CI（构建/CI）
         - Docs（文档）
+        - Tests / samples（测试 / 示例）
         - Other（其他）
     validations:
       required: true

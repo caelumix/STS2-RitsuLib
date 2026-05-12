@@ -13,14 +13,17 @@ body:
     attributes:
       label: Area
       options:
-        - Combat
-        - Cards
-        - Powers
-        - Relics
+        - Public API
+        - Mod settings
         - UI
+        - Assets
+        - Audio
         - Localization
+        - Mod loading
+        - Compatibility
         - Build/CI
         - Docs
+        - Tests / samples
         - Other
     validations:
       required: true

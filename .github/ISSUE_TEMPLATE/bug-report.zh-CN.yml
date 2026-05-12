@@ -16,14 +16,17 @@ body:
       label: 模块范围
       description: 问题发生在哪个模块？
       options:
-        - Combat（战斗）
-        - Cards（卡牌）
-        - Powers（能力）
-        - Relics（遗物）
+        - Public API（公开 API）
+        - Mod settings（模组设置）
         - UI
+        - Assets（资源）
+        - Audio（音频）
         - Localization（本地化）
+        - Mod loading（模组加载）
+        - Compatibility（兼容性）
         - Build/CI（构建/CI）
         - Docs（文档）
+        - Tests / samples（测试 / 示例）
         - Other（其他）
     validations:
       required: true
@@ -32,9 +35,9 @@ body:
     attributes:
       label: 严重程度
       options:
-        - Crash（崩溃）
+        - Critical / crash（严重 / 崩溃）
         - Broken feature（功能不可用）
-        - Regression（回归）
+        - Major / regression（主要问题 / 回归）
         - Minor（轻微）
     validations:
       required: true

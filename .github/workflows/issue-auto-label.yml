@@ -37,13 +37,16 @@ jobs:
             function addArea(v) {
               if (!v) return;
               const x = v.toLowerCase();
-              if (x.includes("combat") || x.includes("战斗")) return labels.add("area/combat");
-              if (x.includes("cards") || x.includes("卡牌")) return labels.add("area/cards");
-              if (x.includes("powers") || x.includes("能力")) return labels.add("area/powers");
-              if (x.includes("relics") || x.includes("遗物")) return labels.add("area/relics");
+              if (x.includes("api") || x.includes("usage") || x.includes("公开")) return labels.add("area/api");
+              if (x.includes("settings") || x.includes("设置")) return labels.add("area/settings");
+              if (x.includes("assets") || x.includes("资源")) return labels.add("area/assets");
+              if (x.includes("audio") || x.includes("音频")) return labels.add("area/audio");
               if (x.includes("localization") || x.includes("本地化")) return labels.add("area/localization");
+              if (x.includes("mod loading") || x.includes("模组加载")) return labels.add("area/mod-loading");
+              if (x.includes("compatibility") || x.includes("兼容")) return labels.add("area/compatibility");
               if (x.includes("build") || x.includes("构建")) return labels.add("area/build");
               if (x.includes("docs") || x.includes("文档")) return labels.add("area/docs");
+              if (x.includes("tests") || x.includes("samples") || x.includes("测试") || x.includes("示例")) return labels.add("area/tests");
               if (x.includes("ui")) return labels.add("area/ui");
               return labels.add("area/other");
             }
@@ -51,8 +54,8 @@ jobs:
             function addSeverity(v) {
               if (!v) return;
               const x = v.toLowerCase();
-              if (x.includes("crash") || x.includes("崩溃")) {
-                labels.add("severity/crash");
+              if (x.includes("critical") || x.includes("crash") || x.includes("严重") || x.includes("崩溃")) {
+                labels.add("severity/critical");
                 labels.add("priority/p0");
                 return;
               }
@@ -61,8 +64,8 @@ jobs:
                 labels.add("priority/p1");
                 return;
               }
-              if (x.includes("regression") || x.includes("回归")) {
-                labels.add("severity/regression");
+              if (x.includes("major") || x.includes("regression") || x.includes("主要") || x.includes("回归")) {
+                labels.add("severity/major");
                 labels.add("priority/p1");
                 return;
               }

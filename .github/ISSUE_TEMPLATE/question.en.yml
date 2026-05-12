@@ -10,9 +10,12 @@ body:
       label: Area
       options:
         - Usage
-        - API design
+        - Public API / API design
+        - Mod settings
+        - Compatibility
         - Build/CI
         - Docs
+        - Tests / samples
         - Other
     validations:
       required: true

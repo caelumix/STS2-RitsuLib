@@ -135,6 +135,7 @@ namespace STS2RitsuLib.Settings.Patches
         /// </summary>
         public static void Postfix(NSettingsScreen __instance)
         {
+            RitsuLibModSettingsBootstrap.EnsureFrameworkPagesRegistered();
             if (!ModSettingsRegistry.HasPages)
                 return;
 

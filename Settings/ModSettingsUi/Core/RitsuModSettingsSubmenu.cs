@@ -1141,6 +1141,7 @@ namespace STS2RitsuLib.Settings
 
         private void EnsureUiUpToDate(bool forceStructure = false, bool includeAllPagesRefresh = false)
         {
+            RitsuLibModSettingsBootstrap.EnsureFrameworkPagesRegistered();
             ModSettingsMirrorRegistrarBootstrap.TryRegisterMirroredPages();
             RitsuLibModSettingsBootstrap.RefreshDynamicPages();
             ApplyStaticTexts();

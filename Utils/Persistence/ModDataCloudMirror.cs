@@ -2,9 +2,9 @@ using System.Reflection;
 using Godot;
 using MegaCrit.Sts2.Core.Platform.Steam;
 using MegaCrit.Sts2.Core.Saves;
-using Steamworks;
 using STS2RitsuLib.Data;
 using STS2RitsuLib.Platform;
+using STS2RitsuLib.Platform.Steam;
 using STS2RitsuLib.Settings.RunSidecar;
 
 namespace STS2RitsuLib.Utils.Persistence
@@ -17,7 +17,9 @@ namespace STS2RitsuLib.Utils.Persistence
         private static FieldInfo? _saveStoreField;
 
         private static bool MayEnumerateSteamRemoteStorage =>
-            !RitsuLibMobileSteamRuntime.SuppressNativeSteamIntegration && SteamInitializer.Initialized;
+            !RitsuLibMobileSteamRuntime.SuppressNativeSteamIntegration &&
+            SteamInitializer.Initialized &&
+            RitsuLibSteamworks.IsAvailable;
 
         internal static CloudSaveStore? TryGetCloudSaveStore()
         {
@@ -381,13 +383,18 @@ namespace STS2RitsuLib.Utils.Persistence
             if (ModAccountRelativePath.TryGetRelativeAccountPath(sidecarRootUser, out var sidecarRootRel))
                 sidecarPrefix = sidecarRootRel + "/";
 
-            var n = SteamRemoteStorage.GetFileCount();
+            if (!RitsuLibSteamworks.TryGetRemoteFileCount(out var n))
+                return;
+
             for (var i = 0; i < n; i++)
             {
                 if (i > 0 && i % SteamRemoteScanYieldEvery == 0)
                     await WaitProcessFramesAsync(tree, 1);
 
-                var path = SteamRemoteStorage.GetFileNameAndSize(i, out _).Replace('\\', '/');
+                if (!RitsuLibSteamworks.TryGetRemoteFileNameAndSize(i, out var path))
+                    continue;
+
+                path = path.Replace('\\', '/');
                 if (string.IsNullOrEmpty(path))
                     continue;
 
@@ -423,14 +430,19 @@ namespace STS2RitsuLib.Utils.Persistence
             if (!MayEnumerateSteamRemoteStorage)
                 return [];
 
-            var n = SteamRemoteStorage.GetFileCount();
+            if (!RitsuLibSteamworks.TryGetRemoteFileCount(out var n))
+                return [];
+
             for (var i = 0; i < n; i++)
             {
                 ct.ThrowIfCancellationRequested();
                 if (i > 0 && i % SteamRemoteScanYieldEvery == 0)
                     await WaitProcessFramesAsync(tree, 1, ct);
 
-                var name = SteamRemoteStorage.GetFileNameAndSize(i, out _).Replace('\\', '/');
+                if (!RitsuLibSteamworks.TryGetRemoteFileNameAndSize(i, out var name))
+                    continue;
+
+                name = name.Replace('\\', '/');
                 if (string.IsNullOrEmpty(name))
                     continue;
                 if (!name.StartsWith("mod_data/", StringComparison.Ordinal))

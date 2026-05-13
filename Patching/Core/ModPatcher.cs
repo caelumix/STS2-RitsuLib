@@ -263,6 +263,35 @@ namespace STS2RitsuLib.Patching.Core
         }
 
         /// <summary>
+        ///     Applies additional static patches after <see cref="PatchAll" /> (e.g. Android hosts that must wait until
+        ///     <c>ModelDb.Init</c> completes). Failures are logged; optional patches do not throw.
+        /// </summary>
+        public void ApplyLateStaticPatches(ReadOnlySpan<ModPatchInfo> patches)
+        {
+            if (!IsApplied)
+                throw new InvalidOperationException(
+                    $"{nameof(PatchAll)} must complete before applying late static patches.");
+
+            foreach (var modPatchInfo in patches)
+            {
+                if (_patchedStatus.GetValueOrDefault(modPatchInfo.Id, false))
+                    continue;
+
+                var result = ApplyPatch(modPatchInfo);
+                if (result.Success)
+                    continue;
+
+                var importance = modPatchInfo.IsCritical ? "Critical" : "Optional";
+                if (modPatchInfo.IsCritical)
+                    logger.Error(
+                        $"{_logPrefix}[Late][{importance}] {modPatchInfo.Id} failed: {result.ErrorMessage}");
+                else
+                    logger.Warn(
+                        $"{_logPrefix}[Late][{importance}] {modPatchInfo.Id} failed: {result.ErrorMessage}");
+            }
+        }
+
+        /// <summary>
         ///     Removes all applied patches tracked by this instance from the underlying Harmony id.
         ///     从底层 Harmony id 移除此实例跟踪的所有已应用补丁。
         /// </summary>

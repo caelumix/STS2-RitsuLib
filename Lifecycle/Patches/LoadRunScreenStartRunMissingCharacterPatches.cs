@@ -208,14 +208,14 @@ namespace STS2RitsuLib.Lifecycle.Patches
     /// </summary>
     public class NDailyRunLoadScreenBeginRunMissingCharacterPatch : IPatchMethod
     {
-        private static readonly AccessTools.FieldRef<NDailyRunLoadScreen, LoadRunLobby?> LobbyRef =
-            AccessTools.FieldRefAccess<NDailyRunLoadScreen, LoadRunLobby?>("_lobby");
+        private static readonly Lazy<AccessTools.FieldRef<NDailyRunLoadScreen, LoadRunLobby?>> LobbyRefLazy =
+            new(() => AccessTools.FieldRefAccess<NDailyRunLoadScreen, LoadRunLobby?>("_lobby"));
 
-        private static readonly AccessTools.FieldRef<NDailyRunLoadScreen, NConfirmButton> EmbarkRef =
-            AccessTools.FieldRefAccess<NDailyRunLoadScreen, NConfirmButton>("_embarkButton");
+        private static readonly Lazy<AccessTools.FieldRef<NDailyRunLoadScreen, NConfirmButton>> EmbarkRefLazy =
+            new(() => AccessTools.FieldRefAccess<NDailyRunLoadScreen, NConfirmButton>("_embarkButton"));
 
-        private static readonly AccessTools.FieldRef<NDailyRunLoadScreen, NBackButton> UnreadyRef =
-            AccessTools.FieldRefAccess<NDailyRunLoadScreen, NBackButton>("_unreadyButton");
+        private static readonly Lazy<AccessTools.FieldRef<NDailyRunLoadScreen, NBackButton>> UnreadyRefLazy =
+            new(() => AccessTools.FieldRefAccess<NDailyRunLoadScreen, NBackButton>("_unreadyButton"));
 
         /// <inheritdoc />
         public static string PatchId => "ndaily_run_load_begin_run_missing_character";
@@ -240,15 +240,15 @@ namespace STS2RitsuLib.Lifecycle.Patches
         public static bool Prefix(NDailyRunLoadScreen __instance)
         {
             NAudioManager.Instance?.StopMusic();
-            EmbarkRef(__instance).Disable();
-            UnreadyRef(__instance).Disable();
+            EmbarkRefLazy.Value(__instance).Disable();
+            UnreadyRefLazy.Value(__instance).Disable();
             TaskHelper.RunSafely(StartRunAsync(__instance));
             return false;
         }
 
         private static async Task StartRunAsync(NDailyRunLoadScreen screen)
         {
-            var lobby = LobbyRef(screen);
+            var lobby = LobbyRefLazy.Value(screen);
             if (lobby == null)
                 return;
 
@@ -258,8 +258,8 @@ namespace STS2RitsuLib.Lifecycle.Patches
                 RitsuLibFramework.Logger.Warn(
                     "[Saves] Daily run load blocked: missing CharacterModel; run save not deleted.");
                 RunResumeMissingCharacterSupport.TryShowInvalidRunSaveModal();
-                EmbarkRef(screen).Enable();
-                UnreadyRef(screen).Enable();
+                EmbarkRefLazy.Value(screen).Enable();
+                UnreadyRefLazy.Value(screen).Enable();
                 return;
             }
 
@@ -268,8 +268,8 @@ namespace STS2RitsuLib.Lifecycle.Patches
             if (cid == null)
             {
                 RunResumeMissingCharacterSupport.TryShowInvalidRunSaveModal();
-                EmbarkRef(screen).Enable();
-                UnreadyRef(screen).Enable();
+                EmbarkRefLazy.Value(screen).Enable();
+                UnreadyRefLazy.Value(screen).Enable();
                 return;
             }
 

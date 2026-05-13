@@ -148,6 +148,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers an <see cref="EpochModel" /> type into vanilla epoch discovery.
+    ///     将一个 <see cref="EpochModel" /> 类型注册到原版 epoch 发现流程。
     /// </summary>
     public sealed class EpochPackEntry<TEpoch> : IModContentPackEntry
         where TEpoch : EpochModel, new()
@@ -161,6 +162,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a <see cref="StoryModel" /> type into vanilla story discovery.
+    ///     将一个 <see cref="StoryModel" /> 类型注册到原版 story 发现流程。
     /// </summary>
     public sealed class StoryPackEntry<TStory> : IModContentPackEntry
         where TStory : StoryModel, new()
@@ -174,6 +176,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers an epoch and appends it to a story column.
+    ///     注册一个 epoch，并将它追加到 story 列中。
     /// </summary>
     public sealed class StoryEpochPackEntry<TStory, TEpoch> : IModContentPackEntry
         where TStory : StoryModel, new()
@@ -188,6 +191,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.RequireEpoch{TModel, TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.RequireEpoch{TModel, TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class RequireEpochPackEntry<TModel, TEpoch> : IModContentPackEntry
         where TModel : AbstractModel
@@ -206,6 +210,11 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     registers <see cref="ModUnlockRegistry.RequireEpoch(Type,string)" />. Prefer
     ///     <see cref="TimelineColumnPackEntry{TStory}" /> (e.g. <c>.Epoch&lt;TEpoch&gt;(e =&gt; e.Cards(...))</c>) with
     ///     <see cref="PackDeclaredCardUnlockEpochTemplate" /> when you want card lists on the pack manifest only.
+    ///     对 <typeparamref name="TEpoch" /> 的 <see cref="CardUnlockEpochTemplate.EnumerateUnlockCardTypes" />
+    ///     中每个 CLR 类型注册 <see cref="ModUnlockRegistry.RequireEpoch(Type,string)" />。如果你只想在 pack manifest
+    ///     上声明卡牌列表，优先使用 <see cref="TimelineColumnPackEntry{TStory}" />
+    ///     （例如 <c>.Epoch&lt;TEpoch&gt;(e =&gt; e.Cards(...))</c>）配合
+    ///     <see cref="PackDeclaredCardUnlockEpochTemplate" />。
     /// </summary>
     public sealed class BindCardUnlockEpochPackEntry<TEpoch> : IModContentPackEntry
         where TEpoch : CardUnlockEpochTemplate, new()
@@ -226,6 +235,11 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     registers <see cref="ModUnlockRegistry.RequireEpoch(Type,string)" />. Prefer
     ///     <see cref="TimelineColumnPackEntry{TStory}" /> (e.g. <c>.Epoch&lt;TEpoch&gt;(e =&gt; e.Relics(...))</c>) with
     ///     <see cref="PackDeclaredRelicUnlockEpochTemplate" /> when you want relic lists on the pack manifest only.
+    ///     对 <typeparamref name="TEpoch" /> 的 <see cref="RelicUnlockEpochTemplate.EnumerateUnlockRelicTypes" />
+    ///     中每个遗物类型注册 <see cref="ModUnlockRegistry.RequireEpoch(Type,string)" />。如果你只想在 pack manifest
+    ///     上声明遗物列表，优先使用 <see cref="TimelineColumnPackEntry{TStory}" />
+    ///     （例如 <c>.Epoch&lt;TEpoch&gt;(e =&gt; e.Relics(...))</c>）配合
+    ///     <see cref="PackDeclaredRelicUnlockEpochTemplate" />。
     /// </summary>
     public sealed class BindRelicUnlockEpochPackEntry<TEpoch> : IModContentPackEntry
         where TEpoch : RelicUnlockEpochTemplate, new()
@@ -242,6 +256,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.UnlockEpochAfterRunAs{TCharacter, TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.UnlockEpochAfterRunAs{TCharacter, TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class UnlockEpochAfterRunAsPackEntry<TCharacter, TEpoch> : IModContentPackEntry
         where TCharacter : CharacterModel
@@ -256,6 +271,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.UnlockEpochAfterWinAs{TCharacter, TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.UnlockEpochAfterWinAs{TCharacter, TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class UnlockEpochAfterWinAsPackEntry<TCharacter, TEpoch> : IModContentPackEntry
         where TCharacter : CharacterModel
@@ -270,6 +286,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.UnlockEpochAfterAscensionWin{TCharacter, TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.UnlockEpochAfterAscensionWin{TCharacter, TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class UnlockEpochAfterAscensionWinPackEntry<TCharacter, TEpoch> : IModContentPackEntry
         where TCharacter : CharacterModel
@@ -279,6 +296,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Creates a rule with the given minimum ascension level.
+        ///     创建一条使用给定最低进阶等级的规则。
         /// </summary>
         public UnlockEpochAfterAscensionWinPackEntry(int ascensionLevel)
         {
@@ -294,6 +312,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.UnlockEpochAfterRunCount{TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.UnlockEpochAfterRunCount{TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class UnlockEpochAfterRunCountPackEntry<TEpoch> : IModContentPackEntry
         where TEpoch : EpochModel, new()
@@ -303,6 +322,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Creates a rule with the given run threshold.
+        ///     创建一条使用给定 run 次数阈值的规则。
         /// </summary>
         public UnlockEpochAfterRunCountPackEntry(int requiredRuns, bool requireVictory = false)
         {
@@ -319,6 +339,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.UnlockEpochAfterEliteVictories{TCharacter, TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.UnlockEpochAfterEliteVictories{TCharacter, TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class UnlockEpochAfterEliteVictoriesPackEntry<TCharacter, TEpoch> : IModContentPackEntry
         where TCharacter : CharacterModel
@@ -328,6 +349,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Creates a rule with the given elite-win threshold (default 15).
+        ///     创建一条使用给定精英胜利阈值的规则（默认 15）。
         /// </summary>
         public UnlockEpochAfterEliteVictoriesPackEntry(int requiredEliteWins = 15)
         {
@@ -343,6 +365,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.UnlockEpochAfterBossVictories{TCharacter, TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.UnlockEpochAfterBossVictories{TCharacter, TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class UnlockEpochAfterBossVictoriesPackEntry<TCharacter, TEpoch> : IModContentPackEntry
         where TCharacter : CharacterModel
@@ -352,6 +375,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Creates a rule with the given boss-win threshold (default 15).
+        ///     创建一条使用给定 Boss 胜利阈值的规则（默认 15）。
         /// </summary>
         public UnlockEpochAfterBossVictoriesPackEntry(int requiredBossWins = 15)
         {
@@ -367,6 +391,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.UnlockEpochAfterAscensionOneWin{TCharacter, TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.UnlockEpochAfterAscensionOneWin{TCharacter, TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class UnlockEpochAfterAscensionOneWinPackEntry<TCharacter, TEpoch> : IModContentPackEntry
         where TCharacter : CharacterModel
@@ -381,6 +406,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.RevealAscensionAfterEpoch{TCharacter, TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.RevealAscensionAfterEpoch{TCharacter, TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class RevealAscensionAfterEpochPackEntry<TCharacter, TEpoch> : IModContentPackEntry
         where TCharacter : CharacterModel
@@ -395,6 +421,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     <see cref="ModUnlockRegistry.UnlockCharacterAfterRunAs{TCharacter, TEpoch}" />.
+    ///     <see cref="ModUnlockRegistry.UnlockCharacterAfterRunAs{TCharacter, TEpoch}" /> 的 pack entry。
     /// </summary>
     public sealed class UnlockCharacterAfterRunAsPackEntry<TCharacter, TEpoch> : IModContentPackEntry
         where TCharacter : CharacterModel

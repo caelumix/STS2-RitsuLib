@@ -4,6 +4,7 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Fluent builder for a registered mod settings page: metadata, optional parent page, and sections.
+    ///     已注册 Mod 设置页的流式构建器：用于配置元数据、可选父页面和 sections。
     /// </summary>
     public sealed class ModSettingsPageBuilder
     {
@@ -22,6 +23,7 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Initializes a builder for mod <paramref name="modId" />; <paramref name="pageId" /> defaults to the mod id when
         ///     null or whitespace.
+        ///     为 <paramref name="modId" /> 初始化构建器；当 <paramref name="pageId" /> 为 null 或空白时默认使用 Mod id。
         /// </summary>
         public ModSettingsPageBuilder(string modId, string? pageId = null)
         {
@@ -32,41 +34,49 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Owning mod identifier.
+        ///     所属 Mod 标识符。
         /// </summary>
         public string ModId { get; }
 
         /// <summary>
         ///     Stable page id (used for navigation and chrome clipboard).
+        ///     稳定页面 id（用于导航和 chrome 剪贴板）。
         /// </summary>
         public string PageId { get; }
 
         /// <summary>
         ///     When set, this page appears as a child of the given parent page id.
+        ///     设置后，此页面会作为给定父页面 id 的子页面显示。
         /// </summary>
         public string? ParentPageId { get; private set; }
 
         /// <summary>
         ///     Localized title shown in tabs and headers.
+        ///     显示在标签页和标题区域的本地化标题。
         /// </summary>
         public ModSettingsText? Title { get; private set; }
 
         /// <summary>
         ///     Optional subtitle or long description for the page.
+        ///     页面可选副标题或长描述。
         /// </summary>
         public ModSettingsText? Description { get; private set; }
 
         /// <summary>
         ///     Display name for the mod in the settings sidebar (separate from page titles).
+        ///     设置侧边栏中的 Mod 显示名称（独立于页面标题）。
         /// </summary>
         public ModSettingsText? ModDisplayName { get; private set; }
 
         /// <summary>
         ///     Ordering among sibling pages (lower first).
+        ///     同级页面之间的排序（数值越小越靠前）。
         /// </summary>
         public int SortOrder { get; private set; }
 
         /// <summary>
         ///     Nests this page under <paramref name="parentPageId" /> in the UI hierarchy.
+        ///     在 UI 层级中将此页面嵌套到 <paramref name="parentPageId" /> 下。
         /// </summary>
         public ModSettingsPageBuilder AsChildOf(string parentPageId)
         {
@@ -76,6 +86,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Sets the page title.
+        ///     设置页面标题。
         /// </summary>
         public ModSettingsPageBuilder WithTitle(ModSettingsText title)
         {
@@ -85,6 +96,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Sets the page description.
+        ///     设置页面描述。
         /// </summary>
         public ModSettingsPageBuilder WithDescription(ModSettingsText description)
         {
@@ -95,6 +107,7 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Sets the mod display name in the sidebar and registers it with <see cref="ModSettingsRegistry" /> on
         ///     <see cref="Build" />.
+        ///     设置侧边栏中的 Mod 显示名称，并在 <see cref="Build" /> 时将其注册到 <see cref="ModSettingsRegistry" />。
         /// </summary>
         public ModSettingsPageBuilder WithModDisplayName(ModSettingsText displayName)
         {
@@ -104,6 +117,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Sets <see cref="SortOrder" />.
+        ///     设置 <see cref="SortOrder" />。
         /// </summary>
         public ModSettingsPageBuilder WithSortOrder(int sortOrder)
         {
@@ -114,6 +128,8 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Registers <see cref="ModSettingsRegistry.RegisterModSidebarOrder" /> for <see cref="ModId" /> when this page
         ///     is built (repeat calls from the same mod should use the same value).
+        ///     在此页面构建时为 <see cref="ModId" /> 注册 <see cref="ModSettingsRegistry.RegisterModSidebarOrder" />
+        ///     （同一 Mod 的重复调用应使用相同值）。
         /// </summary>
         public ModSettingsPageBuilder WithModSidebarOrder(int order)
         {
@@ -124,6 +140,8 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Hides the page in the sidebar and main content when <paramref name="predicate" /> returns false (re-evaluated
         ///     on settings UI refresh).
+        ///     当 <paramref name="predicate" /> 返回 false 时，在侧边栏和主内容中隐藏此页面
+        ///     （设置 UI 刷新时会重新计算）。
         /// </summary>
         public ModSettingsPageBuilder WithVisibleWhen(Func<bool> predicate)
         {
@@ -134,6 +152,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Disables the page (dimmed, non-interactive) while <paramref name="predicate" /> is false.
+        ///     当 <paramref name="predicate" /> 为 false 时禁用此页面（变暗且不可交互）。
         /// </summary>
         public ModSettingsPageBuilder WithEnabledWhen(Func<bool> predicate)
         {
@@ -144,6 +163,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Limits where this page appears (main menu vs run pause vs combat pause). Defaults to all surfaces.
+        ///     限制此页面出现的位置（主菜单、run 暂停、战斗暂停）。默认显示在所有 surface。
         /// </summary>
         public ModSettingsPageBuilder WithVisibleOnHostSurfaces(ModSettingsHostSurface surfaces)
         {
@@ -153,6 +173,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Host surfaces where controls on this page are read-only (combined with per-section masks).
+        ///     此页面控件只读的宿主 surface（会与每个 section 的掩码组合）。
         /// </summary>
         public ModSettingsPageBuilder WithReadOnlyOnHostSurfaces(ModSettingsHostSurface surfaces)
         {
@@ -162,6 +183,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Restricts which chrome menu actions are exposed for the page itself.
+        ///     限制页面自身暴露哪些 chrome 菜单操作。
         /// </summary>
         public ModSettingsPageBuilder WithMenuCapabilities(ModSettingsMenuCapabilities capabilities)
         {
@@ -171,6 +193,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a section built by <paramref name="configure" />; <paramref name="id" /> must be unique on this page.
+        ///     添加一个由 <paramref name="configure" /> 构建的 section；<paramref name="id" /> 在此页面内必须唯一。
         /// </summary>
         public ModSettingsPageBuilder AddSection(string id, Action<ModSettingsSectionBuilder> configure)
         {
@@ -188,6 +211,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Materializes the page; throws if no sections were added.
+        ///     生成页面对象；如果没有添加任何 section，则抛出异常。
         /// </summary>
         public ModSettingsPage Build()
         {
@@ -219,6 +243,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Fluent builder for a settings section: collapsible chrome and typed entries (toggles, sliders, lists, etc.).
+    ///     设置 section 的流式构建器：配置可折叠 chrome 和类型化条目（开关、滑条、列表等）。
     /// </summary>
     public sealed class ModSettingsSectionBuilder
     {
@@ -244,16 +269,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Stable section id within the page.
+        ///     页面内稳定的 section id。
         /// </summary>
         public string Id { get; }
 
         /// <summary>
         ///     Optional section heading.
+        ///     可选 section 标题。
         /// </summary>
         public ModSettingsText? Title { get; private set; }
 
         /// <summary>
         ///     Optional body text under the title.
+        ///     标题下方的可选正文。
         /// </summary>
         public ModSettingsText? Description { get; private set; }
 

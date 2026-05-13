@@ -4,6 +4,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 {
     /// <summary>
     ///     Fluent builder for <see cref="VisualCueSet" /> (single textures and frame sequences per cue).
+    ///     <see cref="VisualCueSet" /> 的流式 builder（每个 cue 可绑定单贴图或帧序列）。
     /// </summary>
     public sealed class VisualCueSetBuilder
     {
@@ -19,6 +20,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Starts a new cue set definition.
+        ///     开始一个新的 cue set 定义。
         /// </summary>
         public static VisualCueSetBuilder Create()
         {
@@ -28,6 +30,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
         /// <summary>
         ///     Binds one static texture to a cue (e.g. <c>idle</c>, <c>die</c>). Removes a frame sequence for the same
         ///     cue key if present.
+        ///     将一个静态贴图绑定到 cue（例如 <c>idle</c>、<c>die</c>）。如果同一 cue key 已有帧序列，则移除该帧序列。
         /// </summary>
         public VisualCueSetBuilder Single(string cueKey, string texturePath)
         {
@@ -41,6 +44,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Binds a built frame sequence to a cue. Removes a single-texture entry for the same cue key if present.
+        ///     将已构建的帧序列绑定到 cue。如果同一 cue key 已有单贴图条目，则移除该条目。
         /// </summary>
         public VisualCueSetBuilder Sequence(string cueKey, VisualFrameSequence sequence)
         {
@@ -54,6 +58,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Binds a frame sequence configured via <paramref name="configure" />.
+        ///     绑定一个通过 <paramref name="configure" /> 配置的帧序列。
         /// </summary>
         public VisualCueSetBuilder Sequence(string cueKey, Action<VisualFrameSequenceBuilder> configure)
         {
@@ -66,6 +71,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Produces an immutable cue set (empty dictionaries become <see langword="null" /> fields).
+        ///     生成不可变 cue set（空字典会变成 <see langword="null" /> 字段）。
         /// </summary>
         public VisualCueSet Build()
         {

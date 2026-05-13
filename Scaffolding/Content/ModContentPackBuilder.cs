@@ -22,12 +22,28 @@ namespace STS2RitsuLib.Scaffolding.Content
 {
     /// <summary>
     ///     Immutable snapshot of registries and ids used while applying a content pack.
+    ///     应用内容包时使用的注册表和 id 的不可变快照。
     /// </summary>
-    /// <param name="ModId">Owning mod identifier string.</param>
-    /// <param name="Content">Content registry for models and pools.</param>
-    /// <param name="Keywords">Keyword registration surface.</param>
-    /// <param name="Timeline">Epoch/story timeline registry.</param>
-    /// <param name="Unlocks">Unlock rule registry.</param>
+    /// <param name="ModId">
+    ///     Owning mod identifier string.
+    ///     所属 Mod 标识符字符串。
+    /// </param>
+    /// <param name="Content">
+    ///     Content registry for models and pools.
+    ///     模型和池使用的内容注册表。
+    /// </param>
+    /// <param name="Keywords">
+    ///     Keyword registration surface.
+    ///     关键词注册入口。
+    /// </param>
+    /// <param name="Timeline">
+    ///     Epoch/story timeline registry.
+    ///     纪元/故事时间线注册表。
+    /// </param>
+    /// <param name="Unlocks">
+    ///     Unlock rule registry.
+    ///     解锁规则注册表。
+    /// </param>
     public readonly record struct ModContentPackContext(
         string ModId,
         ModContentRegistry Content,
@@ -42,6 +58,12 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     / … style: pass <c>ModCardTagRegistry.For(<paramref name="modId" />)</c> or
         ///     <see cref="RitsuLibFramework.GetCardTagRegistry" />. The value is not read; <see cref="CardTags" /> is
         ///     always the per-mod singleton from <c>ModCardTagRegistry.For</c>.
+        ///     与 5 参数 <see cref="ModContentPackContext" /> 主构造函数相同。接受
+        ///     <paramref name="cardTagRegistry" /> 参数是为了让调用点可以镜像
+        ///     <see cref="RitsuLibFramework.GetContentRegistry" /> / <see cref="RitsuLibFramework.GetKeywordRegistry" />
+        ///     等风格：可传入 <c>ModCardTagRegistry.For(<paramref name="modId" />)</c> 或
+        ///     <see cref="RitsuLibFramework.GetCardTagRegistry" />。该值不会被读取；<see cref="CardTags" /> 始终来自
+        ///     <c>ModCardTagRegistry.For</c> 的每 Mod 单例。
         /// </summary>
         public ModContentPackContext(
             string modId,
@@ -58,6 +80,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     Same as the 6-parameter compatibility constructor, accepting a card-pile registry so call sites can
         ///     mirror <see cref="RitsuLibFramework.GetCardPileRegistry" /> style alongside content / keywords /
         ///     card tags. The value is not read; <see cref="CardPiles" /> is always the per-mod singleton.
+        ///     与 6 参数兼容构造函数相同，接受牌堆注册表，使调用点可以在 content / keywords / card tags 旁边
+        ///     镜像 <see cref="RitsuLibFramework.GetCardPileRegistry" /> 风格。该值不会被读取；
+        ///     <see cref="CardPiles" /> 始终是每 Mod 单例。
         /// </summary>
         public ModContentPackContext(
             string modId,
@@ -75,30 +100,40 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Custom <see cref="CardTag" /> surface for <see cref="ModId" />; same singleton as
         ///     <c>ModCardTagRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetCardTagRegistry</c>.
+        ///     <see cref="ModId" /> 的自定义 <see cref="CardTag" /> 入口；与
+        ///     <c>ModCardTagRegistry.For(ModId)</c> 和 <c>RitsuLibFramework.GetCardTagRegistry</c> 是同一个单例。
         /// </summary>
         public ModCardTagRegistry CardTags => ModCardTagRegistry.For(ModId);
 
         /// <summary>
         ///     Custom <see cref="CardPile" /> surface for <see cref="ModId" />; same singleton as
         ///     <c>ModCardPileRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetCardPileRegistry</c>.
+        ///     <see cref="ModId" /> 的自定义 <see cref="CardPile" /> 入口；与
+        ///     <c>ModCardPileRegistry.For(ModId)</c> 和 <c>RitsuLibFramework.GetCardPileRegistry</c> 是同一个单例。
         /// </summary>
         public ModCardPileRegistry CardPiles => ModCardPileRegistry.For(ModId);
 
         /// <summary>
         ///     SmartFormat extension surface for <see cref="ModId" />; same singleton as
         ///     <c>ModSmartFormatExtensionRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetSmartFormatRegistry</c>.
+        ///     <see cref="ModId" /> 的 SmartFormat 扩展入口；与
+        ///     <c>ModSmartFormatExtensionRegistry.For(ModId)</c> 和 <c>RitsuLibFramework.GetSmartFormatRegistry</c>
+        ///     是同一个单例。
         /// </summary>
         public ModSmartFormatExtensionRegistry SmartFormat => ModSmartFormatExtensionRegistry.For(ModId);
 
         /// <summary>
         ///     Top-bar button surface for <see cref="ModId" />; same singleton as
         ///     <c>ModTopBarButtonRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetTopBarButtonRegistry</c>.
+        ///     <see cref="ModId" /> 的顶部栏按钮入口；与 <c>ModTopBarButtonRegistry.For(ModId)</c> 和
+        ///     <c>RitsuLibFramework.GetTopBarButtonRegistry</c> 是同一个单例。
         /// </summary>
         public ModTopBarButtonRegistry TopBarButtons => ModTopBarButtonRegistry.For(ModId);
     }
 
     /// <summary>
     ///     Fluent registration helper that batches common mod-author setup into a single readable flow.
+    ///     流式注册辅助类，将常见 Mod 作者设置批处理为一个可读流程。
     /// </summary>
     public sealed class ModContentPackBuilder
     {
@@ -112,6 +147,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Starts a builder for the given <paramref name="modId" />.
+        ///     为给定 <paramref name="modId" /> 启动构建器。
         /// </summary>
         public static ModContentPackBuilder For(string modId)
         {
@@ -121,6 +157,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacter{TCharacter}" />.
+        ///     将 <see cref="ModContentRegistry.RegisterCharacter{TCharacter}" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder Character<TCharacter>() where TCharacter : CharacterModel
         {
@@ -129,6 +166,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterBadge{TBadge}" />.
+        ///     将 <see cref="ModContentRegistry.RegisterBadge{TBadge}" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder Badge<TBadge>() where TBadge : ModBadgeTemplate
         {
@@ -137,6 +175,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues character registration plus additive starter content configuration in one place.
+        ///     在一个位置将角色注册和追加初始内容配置加入队列。
         /// </summary>
         public ModContentPackBuilder Character<TCharacter>(Action<CharacterRegistrationEntry<TCharacter>> configure)
             where TCharacter : CharacterModel
@@ -150,6 +189,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int)" />.
+        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int)" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterCard<TCharacter, TCard>(int count = 1)
             where TCharacter : CharacterModel
@@ -160,6 +200,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int,int)" />.
+        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int,int)" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterCard<TCharacter, TCard>(int count, int order)
             where TCharacter : CharacterModel
@@ -170,6 +211,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int)" />.
+        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int)" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterRelic<TCharacter, TRelic>(int count = 1)
             where TCharacter : CharacterModel
@@ -180,6 +222,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int,int)" />.
+        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int,int)" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterRelic<TCharacter, TRelic>(int count, int order)
             where TCharacter : CharacterModel
@@ -190,6 +233,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int)" />.
+        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int)" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterPotion<TCharacter, TPotion>(int count = 1)
             where TCharacter : CharacterModel
@@ -200,6 +244,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int,int)" />.
+        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int,int)" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterPotion<TCharacter, TPotion>(int count, int order)
             where TCharacter : CharacterModel
@@ -210,6 +255,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues direct character asset replacement registration by character id.
+        ///     按角色 id 将直接角色资源替换注册加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterAssetReplacement(string characterEntry,
             CharacterAssetProfile assetProfile)
@@ -221,6 +267,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterAct{TAct}" />.
+        ///     将 <see cref="ModContentRegistry.RegisterAct{TAct}" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder Act<TAct>() where TAct : ActModel
         {
@@ -229,6 +276,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEnterForce{TAct}" />.
+        ///     将 <see cref="ModContentRegistry.RegisterActEnterForce{TAct}" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder ActEnterForce<TAct>(int slotIndex, int priority,
             Func<ActEnterResolveContext, bool> eligibility)
@@ -239,6 +287,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEnterUniformPool" />.
+        ///     将 <see cref="ModContentRegistry.RegisterActEnterUniformPool" /> 加入队列。
         /// </summary>
         public ModContentPackBuilder ActEnterUniformPool(int slotIndex)
         {

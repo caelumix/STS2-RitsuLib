@@ -6,17 +6,23 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     ///     <see cref="IAnimationBackend" /> multiplexer that keeps one backend active at a time and allows runtime
     ///     form switching (for example, swapping between multiple child visuals under one persistent
     ///     <see cref="MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals" /> root).
+    ///     <see cref="IAnimationBackend" /> 多路复用器：同一时间保持一个后端激活，并允许运行时切换形态
+    ///     （例如在一个持久 <see cref="MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals" /> 根节点下切换多个子视觉）。
     /// </summary>
     /// <remarks>
     ///     <para>
     ///         This backend is intended for the "single visuals root, switch child form" pattern: each form gets its
     ///         own child backend (Spine, animated sprite, animation player, ...), and
     ///         <see cref="SwitchForm" /> swaps the active backend without rebuilding the creature node.
+    ///         此后端用于“单一视觉根节点，切换子形态”模式：每个形态都有自己的子后端（Spine、animated sprite、
+    ///         animation player 等），<see cref="SwitchForm" /> 会在不重建生物节点的情况下切换激活后端。
     ///     </para>
     ///     <para>
     ///         If <c>replayCurrent</c> is <see langword="true" />, switching replays the current logical
     ///         animation id on the newly selected form when possible; otherwise callers typically follow with an
     ///         explicit trigger (for example <c>SetTrigger("Idle")</c>).
+    ///         如果 <c>replayCurrent</c> 为 <see langword="true" />，切换时会尽可能在新选择的形态上重播当前逻辑动画 id；
+    ///         否则调用方通常会随后发出显式 trigger（例如 <c>SetTrigger("Idle")</c>）。
     ///     </para>
     /// </remarks>
     public sealed class FormSwitchingAnimationBackend : IAnimationBackend
@@ -28,10 +34,20 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 
         /// <summary>
         ///     Creates a switchable backend over prebuilt per-form backends.
+        ///     基于预先构建的逐形态后端创建可切换后端。
         /// </summary>
-        /// <param name="backendsByForm">Map from stable form id to backend instance.</param>
-        /// <param name="initialFormId">Initially active form id.</param>
-        /// <param name="ownerNode">Optional owner node override.</param>
+        /// <param name="backendsByForm">
+        ///     Map from stable form id to backend instance.
+        ///     从稳定形态 id 到后端实例的映射。
+        /// </param>
+        /// <param name="initialFormId">
+        ///     Initially active form id.
+        ///     初始激活的形态 id。
+        /// </param>
+        /// <param name="ownerNode">
+        ///     Optional owner node override.
+        ///     可选拥有者节点覆盖。
+        /// </param>
         public FormSwitchingAnimationBackend(
             IReadOnlyDictionary<string, IAnimationBackend> backendsByForm,
             string initialFormId,
@@ -68,6 +84,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 
         /// <summary>
         ///     Active form id.
+        ///     当前激活形态 id。
         /// </summary>
         public string ActiveFormId { get; private set; }
 
@@ -116,12 +133,20 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 
         /// <summary>
         ///     Switches the active form backend.
+        ///     切换激活的形态后端。
         /// </summary>
-        /// <param name="formId">Target form id.</param>
+        /// <param name="formId">
+        ///     Target form id.
+        ///     目标形态 id。
+        /// </param>
         /// <param name="replayCurrent">
         ///     When true, replays current animation id on the new form if available.
+        ///     为 true 时，如果新形态可用，则在新形态上重播当前动画 id。
         /// </param>
-        /// <returns><see langword="true" /> when the active form changed.</returns>
+        /// <returns>
+        ///     <see langword="true" /> when the active form changed.
+        ///     激活形态发生变化时返回 <see langword="true" />。
+        /// </returns>
         public bool SwitchForm(string formId, bool replayCurrent = true)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(formId);

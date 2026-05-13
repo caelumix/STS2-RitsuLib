@@ -2,6 +2,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 {
     /// <summary>
     ///     Fluent builder for <see cref="VisualFrameSequence" /> with per-frame durations.
+    ///     带逐帧时长的 <see cref="VisualFrameSequence" /> 流式 builder。
     /// </summary>
     public sealed class VisualFrameSequenceBuilder
     {
@@ -14,6 +15,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Starts a new frame sequence.
+        ///     开始一个新的帧序列。
         /// </summary>
         public static VisualFrameSequenceBuilder Create()
         {
@@ -22,6 +24,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Appends a frame.
+        ///     追加一帧。
         /// </summary>
         public VisualFrameSequenceBuilder Frame(string texturePath, float durationSeconds)
         {
@@ -36,6 +39,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Sets whether the sequence should loop after the last frame (default <see langword="false" />).
+        ///     设置序列是否在最后一帧后循环（默认 <see langword="false" />）。
         /// </summary>
         public VisualFrameSequenceBuilder Loop(bool loop = true)
         {
@@ -45,6 +49,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Produces an immutable sequence (must contain at least one frame).
+        ///     生成不可变序列（必须至少包含一帧）。
         /// </summary>
         public VisualFrameSequence Build()
         {

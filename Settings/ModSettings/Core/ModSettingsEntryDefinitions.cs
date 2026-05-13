@@ -4,11 +4,13 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Base type for one settings row: stable <see cref="Id" />, label, optional description, and UI factory hook.
+    ///     单个设置行的基类型：包含稳定 <see cref="Id" />、标签、可选描述和 UI 工厂钩子。
     /// </summary>
     public abstract class ModSettingsEntryDefinition
     {
         /// <summary>
         ///     Initializes <see cref="Id" />, <see cref="Label" />, and <see cref="Description" />.
+        ///     初始化 <see cref="Id" />、<see cref="Label" /> 和 <see cref="Description" />。
         /// </summary>
         protected ModSettingsEntryDefinition(string id, ModSettingsText label, ModSettingsText? description)
         {
@@ -22,32 +24,38 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Chrome menu actions available for this entry.
+        ///     此条目可用的 chrome 菜单操作。
         /// </summary>
         public ModSettingsMenuCapabilities MenuCapabilities { get; internal set; } = ModSettingsMenuCapabilities.All;
 
         /// <summary>
         ///     Unique entry id within its section (used for chrome clipboard and anchors).
+        ///     section 内唯一的条目 id（用于 chrome 剪贴板和锚点）。
         /// </summary>
         public string Id { get; }
 
         /// <summary>
         ///     Primary label or body text depending on entry kind.
+        ///     主要标签或正文文本，具体取决于条目类型。
         /// </summary>
         public ModSettingsText Label { get; }
 
         /// <summary>
         ///     Optional secondary description shown in the UI.
+        ///     UI 中显示的可选次级描述。
         /// </summary>
         public ModSettingsText? Description { get; }
 
         /// <summary>
         ///     When non-null, the entry row is hidden while the predicate returns false (re-evaluated on UI refresh).
+        ///     非 null 时，当谓词返回 false 会隐藏该条目行（UI 刷新时重新计算）。
         /// </summary>
         public virtual Func<bool>? VisibilityPredicate => null;
 
         /// <summary>
         ///     When non-null, the entry row is disabled (dimmed, non-interactive) while the predicate returns false
         ///     (re-evaluated on UI refresh).
+        ///     非 null 时，当谓词返回 false 会禁用该条目行（变暗且不可交互；UI 刷新时重新计算）。
         /// </summary>
         public virtual Func<bool>? EnabledPredicate => null;
 
@@ -66,6 +74,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Boolean on/off toggle bound to <see cref="Binding" />.
+    ///     绑定到 <see cref="Binding" /> 的布尔开关。
     /// </summary>
     public sealed class ToggleModSettingsEntryDefinition(
         string id,
@@ -77,6 +86,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Backing binding for the toggle.
+        ///     开关的后端绑定。
         /// </summary>
         public IModSettingsValueBinding<bool> Binding { get; } = binding;
 
@@ -108,6 +118,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Floating-point slider with range and optional formatter (<see cref="double" /> domain).
+    ///     带范围和可选格式化器的浮点滑条（<see cref="double" /> 域）。
     /// </summary>
     public sealed class SliderModSettingsEntryDefinition(
         string id,
@@ -122,26 +133,31 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Backing binding for the slider value.
+        ///     滑条值的后端绑定。
         /// </summary>
         public IModSettingsValueBinding<double> Binding { get; } = binding;
 
         /// <summary>
         ///     Minimum slider value (inclusive).
+        ///     滑条最小值（含）。
         /// </summary>
         public double MinValue { get; } = minValue;
 
         /// <summary>
         ///     Maximum slider value (inclusive).
+        ///     滑条最大值（含）。
         /// </summary>
         public double MaxValue { get; } = maxValue;
 
         /// <summary>
         ///     Step between valid values.
+        ///     有效值之间的步进。
         /// </summary>
         public double Step { get; } = step;
 
         /// <summary>
         ///     Optional formatter for the displayed value string.
+        ///     显示值字符串的可选格式化器。
         /// </summary>
         public Func<double, string>? ValueFormatter { get; } = valueFormatter;
 
@@ -173,6 +189,9 @@ namespace STS2RitsuLib.Settings
     ///     <c>ModSettingsSectionBuilder.AddSlider</c> overload taking <see cref="IModSettingsValueBinding{T}" /> of
     ///     <see cref="float" />; separate from <see cref="SliderModSettingsEntryDefinition" /> to avoid float/double
     ///     drift and refresh feedback loops.
+    ///     内部 <see cref="float" /> 滑条条目（旧管线）。仅由已废弃的 <c>ModSettingsSectionBuilder.AddSlider</c>
+    ///     重载产生，该重载接收 <see cref="float" /> 的 <see cref="IModSettingsValueBinding{T}" />；它与
+    ///     <see cref="SliderModSettingsEntryDefinition" /> 分离，以避免 float/double 漂移和刷新反馈循环。
     /// </summary>
     public sealed class FloatSliderModSettingsEntryDefinition(
         string id,
@@ -187,26 +206,31 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Backing binding for the slider value.
+        ///     滑条值的后端绑定。
         /// </summary>
         public IModSettingsValueBinding<float> Binding { get; } = binding;
 
         /// <summary>
         ///     Minimum slider value (inclusive).
+        ///     滑条最小值（含）。
         /// </summary>
         public float MinValue { get; } = minValue;
 
         /// <summary>
         ///     Maximum slider value (inclusive).
+        ///     滑条最大值（含）。
         /// </summary>
         public float MaxValue { get; } = maxValue;
 
         /// <summary>
         ///     Step between valid values.
+        ///     有效值之间的步进。
         /// </summary>
         public float Step { get; } = step;
 
         /// <summary>
         ///     Optional formatter for the displayed value string.
+        ///     显示值字符串的可选格式化器。
         /// </summary>
         public Func<float, string>? ValueFormatter { get; } = valueFormatter;
 
@@ -235,6 +259,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Discrete choice control over <typeparamref name="TValue" /> with fixed <see cref="Options" />.
+    ///     针对 <typeparamref name="TValue" /> 的离散选择控件，使用固定 <see cref="Options" />。
     /// </summary>
     public sealed class ChoiceModSettingsEntryDefinition<TValue>(
         string id,
@@ -247,16 +272,19 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Backing binding for the selected option value.
+        ///     所选选项值的后端绑定。
         /// </summary>
         public IModSettingsValueBinding<TValue> Binding { get; } = binding;
 
         /// <summary>
         ///     Ordered choices shown in the UI.
+        ///     UI 中显示的有序选项。
         /// </summary>
         public IReadOnlyList<ModSettingsChoiceOption<TValue>> Options { get; } = options;
 
         /// <summary>
         ///     Visual presentation (stepper, dropdown, etc.).
+        ///     视觉呈现方式（步进器、下拉菜单等）。
         /// </summary>
         public ModSettingsChoicePresentation Presentation { get; } = presentation;
 

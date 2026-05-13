@@ -10,16 +10,19 @@ namespace STS2RitsuLib.Content
 {
     /// <summary>
     ///     Whether <see cref="ModContentRegistry" /> still accepts new registrations from mods.
+    ///     表示 <see cref="ModContentRegistry" /> 是否仍接受来自 Mod 的新注册。
     /// </summary>
     public enum ContentRegistrationState
     {
         /// <summary>
         ///     Registrations are allowed until the framework freezes them.
+        ///     在框架冻结注册之前允许继续注册。
         /// </summary>
         Open = 0,
 
         /// <summary>
         ///     Further registration throws; game content lists are considered sealed.
+        ///     继续注册会抛出异常；游戏内容列表视为已封闭。
         /// </summary>
         Frozen = 1,
     }
@@ -27,6 +30,8 @@ namespace STS2RitsuLib.Content
     /// <summary>
     ///     Per-mod content registration surface: pool models, standalone models, act-scoped content, and stable public
     ///     entry overrides used by patched <see cref="ModelDb" /> identity.
+    ///     每个 Mod 独立的内容注册入口：池模型、独立模型、按 Act 作用域的内容，以及补丁版
+    ///     <see cref="ModelDb" /> 身份逻辑使用的稳定公开 entry 覆盖。
     /// </summary>
     public sealed partial class ModContentRegistry
     {
@@ -74,16 +79,19 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Mod identifier this registry instance was created for (<see cref="For" />).
+        ///     创建此注册表实例时对应的 Mod 标识符（参见 <see cref="For" />）。
         /// </summary>
         public string ModId { get; }
 
         /// <summary>
         ///     True after <c>FreezeRegistrations</c> has run globally.
+        ///     当全局 <c>FreezeRegistrations</c> 已运行后为 true。
         /// </summary>
         public static bool IsFrozen { get; private set; }
 
         /// <summary>
         ///     Convenience view of <see cref="IsFrozen" /> as <see cref="ContentRegistrationState" />.
+        ///     将 <see cref="IsFrozen" /> 以 <see cref="ContentRegistrationState" /> 形式暴露的便捷视图。
         /// </summary>
         public static ContentRegistrationState State => IsFrozen
             ? ContentRegistrationState.Frozen
@@ -91,6 +99,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Resolves which mod registered <paramref name="modelType" />, if any.
+        ///     解析 <paramref name="modelType" /> 是由哪个 Mod 注册的（如果存在）。
         /// </summary>
         public static bool TryGetOwnerModId(Type modelType, out string modId)
         {
@@ -104,6 +113,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Returns the stable public entry string for a RitsuLib-registered model type (override or generated).
+        ///     返回 RitsuLib 注册模型类型的稳定公开 entry 字符串（覆盖值或生成值）。
         /// </summary>
         public static bool TryGetFixedPublicEntry(Type modelType, out string entry)
         {
@@ -131,6 +141,7 @@ namespace STS2RitsuLib.Content
         /// <summary>
         ///     Builds the default normalized entry <c>MOD_CATEGORY_TYPENAME</c> for a type owned by
         ///     <paramref name="modId" />.
+        ///     为 <paramref name="modId" /> 拥有的类型构建默认规范化 entry：<c>MOD_CATEGORY_TYPENAME</c>。
         /// </summary>
         public static string GetFixedPublicEntry(string modId, Type modelType)
         {
@@ -147,6 +158,9 @@ namespace STS2RitsuLib.Content
         ///     Builds a stable three-segment compound id: <c>{normalizedModId}_{TYPE}_{normalizedName}</c>
         ///     (underscore-separated). Mod and name use <see cref="NormalizePublicStem" />; the type segment is only
         ///     trimmed then uppercased with <c>ToUpperInvariant</c> (no stem normalization).
+        ///     构建稳定的三段式复合 id：<c>{normalizedModId}_{TYPE}_{normalizedName}</c>（以下划线分隔）。
+        ///     Mod 和名称段使用 <see cref="NormalizePublicStem" />；类型段只会 trim 后用
+        ///     <c>ToUpperInvariant</c> 转大写（不做 stem 规范化）。
         /// </summary>
         public static string GetCompoundId(string modId, string typeStem, string nameStem)
         {
@@ -169,6 +183,10 @@ namespace STS2RitsuLib.Content
         ///     three-segment convention used by <see cref="GetQualifiedCardPileId" /> and
         ///     <see cref="GetQualifiedTopBarButtonId" /> (all uppercase). Other mods can reference a provider’s keyword
         ///     by passing the same <paramref name="modId" /> and <paramref name="localKeywordStem" />.
+        ///     构建 Mod 作用域关键词 id：<c>{normalizedModId}_KEYWORD_{normalizedStem}</c>，与
+        ///     <see cref="GetQualifiedCardPileId" /> 和 <see cref="GetQualifiedTopBarButtonId" /> 使用的三段式约定一致
+        ///     （全大写）。其他 Mod 可通过传入同一个 <paramref name="modId" /> 和
+        ///     <paramref name="localKeywordStem" /> 引用提供方的关键词。
         /// </summary>
         public static string GetQualifiedKeywordId(string modId, string localKeywordStem)
         {
@@ -183,12 +201,19 @@ namespace STS2RitsuLib.Content
         ///     convention — three uppercase segments separated by underscores, aligning with
         ///     <see cref="GetFixedPublicEntry(string, Type)" /> and the vanilla <c>static_hover_tips</c> key
         ///     style (<c>DRAW_PILE</c>, <c>EXHAUST_PILE</c>, ...).
+        ///     使用 RitsuLib 的 <c>MODID_CATEGORY_TYPENAME</c> 公开 entry 约定构建 Mod 作用域牌堆 id，
+        ///     即三个以下划线分隔的大写段；它与 <see cref="GetFixedPublicEntry(string, Type)" /> 以及原版
+        ///     <c>static_hover_tips</c> 键风格（<c>DRAW_PILE</c>、<c>EXHAUST_PILE</c> 等）保持一致。
         /// </summary>
         /// <remarks>
         ///     The returned string is the stem for <c>static_hover_tips.json</c> keys, so a pile registered by
         ///     mod <c>com.example.my-mod</c> with local stem <c>overflow_pile</c> uses id
         ///     <c>MYMOD_CARDPILE_OVERFLOW_PILE</c> and loc keys <c>MYMOD_CARDPILE_OVERFLOW_PILE.title</c> /
         ///     <c>.description</c> / <c>.empty</c>.
+        ///     返回的字符串会作为 <c>static_hover_tips.json</c> 键的 stem。例如 Mod
+        ///     <c>com.example.my-mod</c> 使用本地 stem <c>overflow_pile</c> 注册牌堆时，id 为
+        ///     <c>MYMOD_CARDPILE_OVERFLOW_PILE</c>，本地化键为 <c>MYMOD_CARDPILE_OVERFLOW_PILE.title</c> /
+        ///     <c>.description</c> / <c>.empty</c>。
         /// </remarks>
         public static string GetQualifiedCardPileId(string modId, string localPileStem)
         {
@@ -202,6 +227,9 @@ namespace STS2RitsuLib.Content
         ///     Builds a mod-scoped <see cref="MegaCrit.Sts2.Core.Entities.Cards.CardTag" /> id using the ritsulib
         ///     <c>MODID_CATEGORY_TYPENAME</c> convention with middle segment <c>CARDTAG</c>, aligned with
         ///     <see cref="GetQualifiedKeywordId" /> and <see cref="GetQualifiedCardPileId" />.
+        ///     使用 RitsuLib 的 <c>MODID_CATEGORY_TYPENAME</c> 约定构建 Mod 作用域
+        ///     <see cref="MegaCrit.Sts2.Core.Entities.Cards.CardTag" /> id，中间段固定为 <c>CARDTAG</c>，
+        ///     与 <see cref="GetQualifiedKeywordId" /> 和 <see cref="GetQualifiedCardPileId" /> 对齐。
         /// </summary>
         public static string GetQualifiedCardTagId(string modId, string localTagStem)
         {
@@ -216,6 +244,10 @@ namespace STS2RitsuLib.Content
         ///     entry style (uppercase, three segments, underscore-separated, middle segment fixed to
         ///     <c>TOPBARBUTTON</c>). Used by <see cref="STS2RitsuLib.TopBar.ModTopBarButtonRegistry" />; the
         ///     returned string is the stem for <c>static_hover_tips.json</c> title / description keys.
+        ///     以 RitsuLib 的 <c>MODID_CATEGORY_TYPENAME</c> 公开 entry 风格构建 Mod 作用域顶部栏按钮 id
+        ///     （大写、三段、以下划线分隔，中间段固定为 <c>TOPBARBUTTON</c>）。该 id 由
+        ///     <see cref="STS2RitsuLib.TopBar.ModTopBarButtonRegistry" /> 使用；返回字符串会作为
+        ///     <c>static_hover_tips.json</c> 标题/描述键的 stem。
         /// </summary>
         public static string GetQualifiedTopBarButtonId(string modId, string localButtonStem)
         {
@@ -227,6 +259,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Returns the singleton registry for <paramref name="modId" /> (created on first use).
+        ///     返回 <paramref name="modId" /> 对应的单例注册表（首次使用时创建）。
         /// </summary>
         public static ModContentRegistry For(string modId)
         {
@@ -246,6 +279,7 @@ namespace STS2RitsuLib.Content
         /// <summary>
         ///     Registers <typeparamref name="TCard" /> into <typeparamref name="TPool" /> with default public entry
         ///     naming.
+        ///     使用默认公开 entry 命名，将 <typeparamref name="TCard" /> 注册到 <typeparamref name="TPool" />。
         /// </summary>
         public void RegisterCard<TPool, TCard>()
             where TPool : CardPoolModel
@@ -256,6 +290,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers <paramref name="cardType" /> into <paramref name="poolType" /> with default public entry naming.
+        ///     使用默认公开 entry 命名，将 <paramref name="cardType" /> 注册到 <paramref name="poolType" />。
         /// </summary>
         public void RegisterCard(Type poolType, Type cardType)
         {

@@ -4,10 +4,13 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 {
     /// <summary>
     ///     <see cref="IAnimationBackend" /> driver for Godot <see cref="AnimatedSprite2D" />.
+    ///     Godot <see cref="AnimatedSprite2D" /> 的 <see cref="IAnimationBackend" /> 驱动。
     /// </summary>
     /// <remarks>
     ///     Loop flag is written back to <see cref="SpriteFrames" /> when it differs from the stored value so the
     ///     state machine's intent wins; completion is reported through <see cref="AnimatedSprite2D.AnimationFinished" />.
+    ///     当循环标记与 <see cref="SpriteFrames" /> 中存储的值不同时，会写回该值，以状态机意图为准；完成事件通过
+    ///     <see cref="AnimatedSprite2D.AnimationFinished" /> 报告。
     /// </remarks>
     public sealed class AnimatedSprite2DBackend : IAnimationBackend
     {
@@ -19,6 +22,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 
         /// <summary>
         ///     Wraps <paramref name="sprite" /> and hooks <see cref="AnimatedSprite2D.AnimationFinished" />.
+        ///     包装 <paramref name="sprite" /> 并挂接 <see cref="AnimatedSprite2D.AnimationFinished" />。
         /// </summary>
         public AnimatedSprite2DBackend(AnimatedSprite2D sprite)
         {
@@ -94,6 +98,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 
         /// <summary>
         ///     Detaches the signal connection. Safe to call more than once.
+        ///     断开信号连接。可安全多次调用。
         /// </summary>
         public void Dispose()
         {

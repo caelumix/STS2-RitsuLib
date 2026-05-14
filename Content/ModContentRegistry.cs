@@ -240,6 +240,20 @@ namespace STS2RitsuLib.Content
         }
 
         /// <summary>
+        ///     Builds a mod-scoped reward id using the ritsulib <c>MODID_CATEGORY_TYPENAME</c> convention
+        ///     with middle segment <c>REWARD</c>.
+        ///     使用 RitsuLib 的 <c>MODID_CATEGORY_TYPENAME</c> 约定构建 Mod 作用域 reward id，
+        ///     中间段固定为 <c>REWARD</c>。
+        /// </summary>
+        public static string GetQualifiedRewardId(string modId, string localRewardStem)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(modId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(localRewardStem);
+
+            return GetCompoundId(modId, "REWARD", localRewardStem);
+        }
+
+        /// <summary>
         ///     Builds a mod-scoped top-bar-button id in the ritsulib <c>MODID_CATEGORY_TYPENAME</c> public
         ///     entry style (uppercase, three segments, underscore-separated, middle segment fixed to
         ///     <c>TOPBARBUTTON</c>). Used by <see cref="STS2RitsuLib.TopBar.ModTopBarButtonRegistry" />; the

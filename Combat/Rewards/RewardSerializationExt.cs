@@ -7,12 +7,10 @@ namespace STS2RitsuLib.Combat.Rewards
 {
     /// <summary>
     ///     Sideband storage for extended reward serialization data.
-    ///     Sideband storage 用于 extended reward serialization data.
-    ///     Attached to <see cref="SerializableReward" /> instances via <see cref="ConditionalWeakTable{TKey,TValue}" />.
-    ///     中文说明：Attached to <c>SerializableReward</c> instances via <c>ConditionalWeakTable{TKey,TValue}</c>.
-    ///     Persisted in <see cref="SerializableRoom.EncounterState" /> under keys prefixed with
-    ///     Persisted in <c>SerializableRoom.EncounterState</c> under keys prefixed 带有
-    ///     <see cref="KeyPrefix" />.
+    ///     Data is first attached to <see cref="SerializableReward" /> instances via
+    ///     <see cref="ConditionalWeakTable{TKey,TValue}" />, then persisted into
+    ///     <see cref="SerializableRoom.EncounterState" /> with keys prefixed by <see cref="KeyPrefix" />.
+    ///     扩展数据先挂到 <c>SerializableReward</c> 实例上，再通过 <c>EncounterState</c> 保存。
     /// </summary>
     internal static class RewardSerializationExt
     {
@@ -86,6 +84,8 @@ namespace STS2RitsuLib.Combat.Rewards
 
     internal sealed class RewardExtData
     {
+        internal bool HasCustomRewardData => CustomRewardJson != null;
+
         [JsonPropertyName("flags")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Flags { get; set; }
@@ -105,6 +105,10 @@ namespace STS2RitsuLib.Combat.Rewards
         [JsonPropertyName("rarity_odds")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int RarityOdds { get; set; }
+
+        [JsonPropertyName("custom_reward_json")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? CustomRewardJson { get; set; }
     }
 
     [JsonSerializable(typeof(RewardExtData))]

@@ -9,16 +9,16 @@ using STS2RitsuLib.Patching.Models;
 namespace STS2RitsuLib.Combat.Rewards.Patches
 {
     /// <summary>
-    ///     Extends <see cref="Reward.FromSerializable" /> to reconstruct
-    ///     中文说明：Extends <c>Reward.FromSerializable</c> to reconstruct
-    ///     <see cref="CardCreationOptions" /> with Flags and CustomCardPool from sideband data.
+    ///     Extends <see cref="Reward.FromSerializable" /> to reconstruct registered custom reward types
+    ///     and card reward serialization-fix sideband data.
+    ///     扩展 <c>Reward.FromSerializable</c>，用于重建已注册的 custom reward，以及 CardReward 修正数据。
     /// </summary>
     internal sealed class RewardFromSerializableExtPatch : IPatchMethod
     {
         public static string PatchId => "reward_from_serializable_ext";
 
         public static string Description =>
-            "Extend Reward.FromSerializable with sideband ext data and RewardType.None fallback";
+            "Extend Reward.FromSerializable with sideband ext data and registered custom reward types";
 
         public static bool IsCritical => false;
 
@@ -35,12 +35,21 @@ namespace STS2RitsuLib.Combat.Rewards.Patches
         public static bool Prefix(SerializableReward save, Player player, ref Reward __result)
             // ReSharper restore InconsistentNaming
         {
+            RewardSerializationExt.TryGetExtData(save, out var ext);
+
+            if (ModRewardRegistry.TryCreate(save.RewardType, save, player, ext?.CustomRewardJson, out var customReward)
+                && customReward != null)
+            {
+                __result = customReward;
+                return false;
+            }
+
             if (RewardSerializationExt.IsBaselibRewardPatchLoaded())
                 return true;
 
-            if (save.RewardType != RewardType.Card
-                || !RewardSerializationExt.TryGetExtData(save, out var ext)
-                || ext == null) return true;
+            if (save.RewardType != RewardType.Card || ext == null)
+                return true;
+
             __result = RebuildCardReward(save, ext, player);
             return false;
         }

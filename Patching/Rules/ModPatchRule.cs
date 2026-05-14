@@ -68,8 +68,15 @@ namespace STS2RitsuLib.Patching.Rules
                     .OrderBy(static m => m.Name, StringComparer.Ordinal)
                     .ThenBy(static m => m.ToString(), StringComparer.Ordinal)
                 from method in methods
-                select new ModPatchInfo($"{Id}_{type.Name}_{method.Name}", type, method.Name, PatchType, IsCritical,
-                    $"{Description} -> {type.Name}.{method.Name}")).ToArray();
+                let parameterTypes = method.GetParameters().Select(static p => p.ParameterType).ToArray()
+                select new ModPatchInfo(
+                    $"{Id}_{type.Name}_{method.Name}_{FormatPatchIdSignature(parameterTypes)}",
+                    type,
+                    method.Name,
+                    PatchType,
+                    IsCritical,
+                    $"{Description} -> {type.Name}.{FormatDescriptionSignature(method)}",
+                    parameterTypes)).ToArray();
         }
 
         /// <summary>
@@ -88,6 +95,36 @@ namespace STS2RitsuLib.Patching.Rules
         public override string ToString()
         {
             return $"Rule: {Id} - {Description}";
+        }
+
+        private static string FormatDescriptionSignature(MethodInfo method)
+        {
+            var parameters = method.GetParameters();
+            if (parameters.Length == 0)
+                return $"{method.Name}()";
+
+            var signature = string.Join(", ", parameters.Select(static p => p.ParameterType.Name));
+            return $"{method.Name}({signature})";
+        }
+
+        private static string FormatPatchIdSignature(IReadOnlyList<Type> parameterTypes)
+        {
+            if (parameterTypes.Count == 0)
+                return "NoArgs";
+
+            return string.Join("_", parameterTypes.Select(static type =>
+                new string(GetStableTypeName(type).Select(static ch =>
+                    char.IsLetterOrDigit(ch) ? ch : '_').ToArray()).Trim('_')));
+        }
+
+        private static string GetStableTypeName(Type type)
+        {
+            if (!type.IsGenericType)
+                return type.FullName ?? type.Name;
+
+            var genericTypeName = type.GetGenericTypeDefinition().FullName ?? type.Name;
+            var genericArguments = string.Join("_", type.GetGenericArguments().Select(GetStableTypeName));
+            return $"{genericTypeName}_{genericArguments}";
         }
     }
 

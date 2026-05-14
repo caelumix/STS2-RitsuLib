@@ -24,13 +24,15 @@ namespace STS2RitsuLib.Audio.Internal
 
         internal static void StopAllMappedLoops()
         {
+            LoopSlot[] slots;
             lock (Gate)
             {
-                foreach (var path in LoopQueues.Keys)
-                    StopMappedLoopCore(path);
-
+                slots = LoopQueues.Values.SelectMany(static list => list).ToArray();
                 LoopQueues.Clear();
             }
+
+            foreach (var slot in slots)
+                StopSlot(slot);
         }
 
         internal static bool TryEnqueueMappedLoop(string path, bool usesLoopParam)
@@ -82,6 +84,13 @@ namespace STS2RitsuLib.Audio.Internal
             if (list.Count == 0)
                 LoopQueues.Remove(path);
 
+            StopSlot(slot);
+
+            return true;
+        }
+
+        private static void StopSlot(LoopSlot slot)
+        {
             try
             {
                 if (slot.UsesLoopParam)
@@ -93,8 +102,6 @@ namespace STS2RitsuLib.Audio.Internal
             {
                 RitsuLibFramework.Logger.Error($"[Audio] mapped StopLoop: {ex.Message}");
             }
-
-            return true;
         }
 
         internal static bool TrySetParamOnFirstMappedLoop(string path, string param, float value)

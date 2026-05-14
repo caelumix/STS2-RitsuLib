@@ -429,10 +429,7 @@ namespace STS2RitsuLib.Utils.Persistence
             CancellationToken ct = default)
         {
             var set = new HashSet<string>(StringComparer.Ordinal);
-            if (!MayEnumerateSteamRemoteStorage)
-                return [];
-
-            if (!RitsuLibSteamworks.TryGetRemoteFileCount(out var n))
+            if (!MayEnumerateSteamRemoteStorage || !RitsuLibSteamworks.TryGetRemoteFileCount(out var n))
                 return [];
 
             for (var i = 0; i < n; i++)

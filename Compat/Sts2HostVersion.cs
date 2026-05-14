@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Text.Json;
 using MegaCrit.Sts2.Core.Debug;
 using MegaCrit.Sts2.Core.Saves;
 
@@ -27,27 +29,146 @@ namespace STS2RitsuLib.Compat
 
         private static HostVersionSnapshot Resolve()
         {
+            string? fallbackLabel = null;
+
             try
             {
                 var ri = ReleaseInfoManager.Instance.ReleaseInfo;
-                if (ri?.Version is { Length: > 0 } label && TryParseVersionCore(label, out var v))
-                    return new(v, label);
+                if (TryCaptureVersionLabel(ri?.Version, ref fallbackLabel, out var snapshot))
+                    return snapshot;
             }
             catch
             {
                 // ReleaseInfoManager or file IO may fail in unusual environments
             }
 
+            if (TryResolveLauncherDownloadedReleaseInfo(ref fallbackLabel, out var fileSnapshot))
+                return fileSnapshot;
+
+            if (TryResolveLauncherCacheStamp(ref fallbackLabel, out var stampSnapshot))
+                return stampSnapshot;
+
             var av = typeof(SerializableRun).Assembly.GetName().Version;
             if (av != null && !IsAllZero(av))
-                return new(av, null);
+                return new(av, fallbackLabel);
 
-            return new(null, null);
+            return new(null, fallbackLabel);
         }
 
         private static bool IsAllZero(Version v)
         {
             return v.Major == 0 && v is { Minor: 0, Build: 0, Revision: 0 };
+        }
+
+        private static bool TryCaptureVersionLabel(
+            string? label,
+            ref string? fallbackLabel,
+            out HostVersionSnapshot snapshot)
+        {
+            snapshot = default;
+            if (string.IsNullOrWhiteSpace(label))
+                return false;
+
+            fallbackLabel ??= label;
+            if (!TryParseVersionCore(label, out var v))
+                return false;
+
+            snapshot = new(v, label);
+            return true;
+        }
+
+        private static bool TryResolveLauncherDownloadedReleaseInfo(
+            ref string? fallbackLabel,
+            out HostVersionSnapshot snapshot)
+        {
+            snapshot = default;
+            var dataDir = TryGetGodotDataDir();
+            if (string.IsNullOrWhiteSpace(dataDir))
+                return false;
+
+            return TryReadJsonVersion(Path.Combine(dataDir, "game", "release_info.json"),
+                "version",
+                ref fallbackLabel,
+                out snapshot);
+        }
+
+        private static bool TryResolveLauncherCacheStamp(
+            ref string? fallbackLabel,
+            out HostVersionSnapshot snapshot)
+        {
+            snapshot = default;
+            var dataDir = TryGetGodotDataDir();
+            if (string.IsNullOrWhiteSpace(dataDir))
+                return false;
+
+            var stampPath = Path.Combine(dataDir, ".cache_stamp");
+            if (TryReadJsonVersion(stampPath, "version", ref fallbackLabel, out snapshot))
+                return true;
+
+            try
+            {
+                if (!File.Exists(stampPath))
+                    return false;
+
+                using var doc = JsonDocument.Parse(File.ReadAllText(stampPath));
+                if (!doc.RootElement.TryGetProperty("buildId", out var buildIdElement))
+                    return false;
+
+                var buildId = buildIdElement.GetString();
+                if (string.IsNullOrWhiteSpace(buildId))
+                    return false;
+
+                fallbackLabel ??= $"buildid:{buildId}";
+            }
+            catch
+            {
+                // Cache stamp is best-effort metadata only.
+            }
+
+            return false;
+        }
+
+        private static bool TryReadJsonVersion(
+            string path,
+            string propertyName,
+            ref string? fallbackLabel,
+            out HostVersionSnapshot snapshot)
+        {
+            snapshot = default;
+            try
+            {
+                if (!File.Exists(path))
+                    return false;
+
+                using var doc = JsonDocument.Parse(File.ReadAllText(path));
+                return doc.RootElement.TryGetProperty(propertyName, out var versionElement) &&
+                       TryCaptureVersionLabel(versionElement.GetString(), ref fallbackLabel, out snapshot);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static string? TryGetGodotDataDir()
+        {
+            try
+            {
+                var osType =
+                    Type.GetType("Godot.OS, GodotSharp", false) ??
+                    Type.GetType("Godot.OS, GodotSharpEditor", false) ??
+                    AppDomain.CurrentDomain
+                        .GetAssemblies()
+                        .Select(static asm => asm.GetType("Godot.OS", false))
+                        .FirstOrDefault(static type => type != null);
+
+                var method = osType?.GetMethod("GetDataDir", BindingFlags.Public | BindingFlags.Static);
+                return method?.Invoke(null, null) as string;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>

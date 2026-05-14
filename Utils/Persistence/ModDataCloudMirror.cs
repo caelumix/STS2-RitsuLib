@@ -1,9 +1,6 @@
-using System.Reflection;
 using Godot;
-using MegaCrit.Sts2.Core.Platform.Steam;
 using MegaCrit.Sts2.Core.Saves;
 using STS2RitsuLib.Data;
-using STS2RitsuLib.Platform;
 using STS2RitsuLib.Platform.Steam;
 using STS2RitsuLib.Settings.RunSidecar;
 
@@ -14,37 +11,18 @@ namespace STS2RitsuLib.Utils.Persistence
         private const string RunSidecarSegment = "run_sidecar/v1";
         private const int SteamRemoteScanYieldEvery = 32;
         private const int LocalPathCollectYieldEvery = 64;
-        private static FieldInfo? _saveStoreField;
 
         private static bool MayEnumerateSteamRemoteStorage =>
-            !RitsuLibMobileSteamRuntime.SuppressNativeSteamIntegration &&
-            SteamInitializer.Initialized &&
-            RitsuLibSteamworks.IsAvailable;
+            ModDataCloudHost.MayEnumerateNativeSteamRemoteStorage;
 
         internal static CloudSaveStore? TryGetCloudSaveStore()
         {
-            try
-            {
-                _saveStoreField ??= typeof(SaveManager).GetField("_saveStore",
-                    BindingFlags.Instance | BindingFlags.NonPublic);
-                var store = _saveStoreField?.GetValue(SaveManager.Instance);
-                return store as CloudSaveStore;
-            }
-            catch
-            {
-                return null;
-            }
+            return ModDataCloudHost.TryGetCloudSaveStore();
         }
 
         internal static bool ShouldRunCloudMirror()
         {
-            if (!RitsuLibSettingsStore.IsSyncModDataToCloudEnabled())
-                return false;
-            if (RitsuLibMobileSteamRuntime.SuppressNativeSteamIntegration)
-                return false;
-            if (!SteamInitializer.Initialized)
-                return false;
-            return TryGetCloudSaveStore() != null;
+            return RitsuLibSettingsStore.IsSyncModDataToCloudEnabled() && ModDataCloudHost.CanUseModDataCloud();
         }
 
         internal static void MirrorLocalFileAfterWriteIfEnabled(string godotUserPath)
@@ -90,7 +68,7 @@ namespace STS2RitsuLib.Utils.Persistence
                 if (cloud == null)
                     return;
 
-                await cloud.OverwriteCloudWithLocal(relative);
+                await QueueCloudWriteFromLocalAsync(cloud, relative);
             }
             catch (Exception ex)
             {
@@ -208,14 +186,14 @@ namespace STS2RitsuLib.Utils.Persistence
             return (clearedCloud, fail);
         }
 
-        internal static async Task<(int uploaded, int skipped, int fail)> PushPathsAsync(
+        internal static async Task<(int queued, int skipped, int fail)> PushPathsAsync(
             CloudSaveStore cloud,
             IReadOnlyList<string> paths,
             SceneTree tree,
             Action<int, int, string?> reportProgress,
             CancellationToken ct = default)
         {
-            var uploaded = 0;
+            var queued = 0;
             var skipped = 0;
             var fail = 0;
             var total = paths.Count;
@@ -237,8 +215,8 @@ namespace STS2RitsuLib.Utils.Persistence
                         continue;
                     }
 
-                    await cloud.OverwriteCloudWithLocal(path);
-                    uploaded++;
+                    await QueueCloudWriteFromLocalAsync(cloud, path);
+                    queued++;
                 }
                 catch (Exception ex)
                 {
@@ -250,7 +228,7 @@ namespace STS2RitsuLib.Utils.Persistence
                 await WaitProcessFramesAsync(tree, 1, ct);
             }
 
-            return (uploaded, skipped, fail);
+            return (queued, skipped, fail);
         }
 
         internal static async Task<(int ok, int fail)> PullPathsAsync(
@@ -332,15 +310,6 @@ namespace STS2RitsuLib.Utils.Persistence
             if (TryGetCloudSaveStore() == null)
                 return;
 
-            if (RitsuLibMobileSteamRuntime.SuppressNativeSteamIntegration)
-            {
-                Callable.From(() => { _ = DeleteCloudModDataForProfileAsync(profileId); }).CallDeferred();
-                return;
-            }
-
-            if (!SteamInitializer.Initialized)
-                return;
-
             Callable.From(() => { _ = DeleteCloudModDataForProfileAsync(profileId); }).CallDeferred();
         }
 
@@ -356,7 +325,7 @@ namespace STS2RitsuLib.Utils.Persistence
             var exact = new HashSet<string>(StringComparer.Ordinal);
             ModCloudSyncPathRegistry.CollectProfileScopedRegisteredRelativePaths(profileId, exact);
 
-            if (RitsuLibMobileSteamRuntime.SuppressNativeSteamIntegration)
+            if (!MayEnumerateSteamRemoteStorage)
             {
                 foreach (var path in exact)
                     try
@@ -373,9 +342,6 @@ namespace STS2RitsuLib.Utils.Persistence
 
                 return;
             }
-
-            if (!SteamInitializer.Initialized)
-                return;
 
             string? sidecarPrefix = null;
             var profileBase = ProfileManager.GetBasePath(SaveScope.Profile, profileId);
@@ -483,7 +449,7 @@ namespace STS2RitsuLib.Utils.Persistence
                             continue;
                         }
                         case false when localExists:
-                            await cloud.OverwriteCloudWithLocal(path);
+                            await QueueCloudWriteFromLocalAsync(cloud, path);
                             await WaitProcessFramesAsync(tree, 1);
                             continue;
                         case true when localExists:
@@ -504,7 +470,7 @@ namespace STS2RitsuLib.Utils.Persistence
                             }
                             else if (lt > ct)
                             {
-                                await cloud.OverwriteCloudWithLocal(path);
+                                await QueueCloudWriteFromLocalAsync(cloud, path);
                             }
 
                             break;
@@ -517,6 +483,31 @@ namespace STS2RitsuLib.Utils.Persistence
                 }
 
                 await WaitProcessFramesAsync(tree, 1);
+            }
+        }
+
+        private static async Task QueueCloudWriteFromLocalAsync(CloudSaveStore cloud, string path)
+        {
+            if (!cloud.LocalStore.FileExists(path))
+                throw new FileNotFoundException($"Local mod data file not found: {path}");
+
+            var content = await cloud.LocalStore.ReadFileAsync(path);
+            if (content == null)
+                throw new InvalidOperationException($"Local mod data file could not be read: {path}");
+
+            await cloud.CloudStore.WriteFileAsync(path, content);
+            TrySyncLocalTimestampFromCloud(cloud, path);
+        }
+
+        private static void TrySyncLocalTimestampFromCloud(CloudSaveStore cloud, string path)
+        {
+            try
+            {
+                cloud.LocalStore.SetLastModifiedTime(path, cloud.CloudStore.GetLastModifiedTime(path));
+            }
+            catch (Exception ex)
+            {
+                RitsuLibFramework.Logger.Warn($"[ModCloud] sync timestamp '{path}': {ex.Message}");
             }
         }
     }

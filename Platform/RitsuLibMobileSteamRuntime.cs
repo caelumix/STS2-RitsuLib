@@ -19,11 +19,8 @@ namespace STS2RitsuLib.Platform
                 return;
 
             RitsuLibFramework.Logger.Info(
-                "[MobileSteam] Native Steam integration is suppressed on this host (Android/iOS). " +
-                "Sidecar: Steam lobby capability route and SteamHost/SteamClient trailer Harmony patches are not registered; " +
-                "ENet sidecar is unchanged. " +
-                "Mod data cloud: automatic sync, SteamRemoteStorage enumeration, and the settings Steam Cloud section are disabled " +
-                "even if the game reports Steam initialized (launcher stub).");
+                "[MobileSteam] Native Steamworks calls are disabled on this mobile host. " +
+                "Mod data cloud sync remains available when the host provides the game's cloud save store.");
         }
     }
 }

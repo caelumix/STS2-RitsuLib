@@ -53,6 +53,12 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeFactories
             return root;
         }
 
+        protected override Node? ResolveDefaultStyleTarget(NCreatureVisuals root, bool fromResource)
+        {
+            return root.GetNodeOrNull("%Visuals") ??
+                   root.GetNodeOrNull("Visuals") ?? base.ResolveDefaultStyleTarget(root, fromResource);
+        }
+
         protected override void GenerateNode(NCreatureVisuals target, IRitsuGodotNodeSlot required)
         {
             switch (required.Path)

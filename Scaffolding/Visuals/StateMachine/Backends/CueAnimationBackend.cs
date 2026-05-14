@@ -121,6 +121,10 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
                 return;
 
             _sprite.Texture = tex;
+            if (_cues.TextureStyleByCue is { Count: > 0 } styles &&
+                TryGetOrdinalIgnoreCase(styles, id, out var style))
+                style.ApplyTo(_sprite);
+
             Started?.Invoke(id);
 
             if (!loop)

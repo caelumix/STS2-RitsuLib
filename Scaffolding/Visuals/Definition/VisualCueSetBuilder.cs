@@ -14,6 +14,9 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
         private readonly Dictionary<string, string> _textures =
             new(StringComparer.OrdinalIgnoreCase);
 
+        private readonly Dictionary<string, VisualNodeStyle> _textureStyles =
+            new(StringComparer.OrdinalIgnoreCase);
+
         private VisualCueSetBuilder()
         {
         }
@@ -35,10 +38,23 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
         /// </summary>
         public VisualCueSetBuilder Single(string cueKey, string texturePath)
         {
+            return Single(cueKey, texturePath, null);
+        }
+
+        /// <summary>
+        ///     Binds one static texture to a cue and optionally applies style overrides whenever that cue is shown.
+        ///     将一个静态贴图绑定到 cue，并在显示该 cue 时可选应用样式覆盖。
+        /// </summary>
+        public VisualCueSetBuilder Single(string cueKey, string texturePath, VisualNodeStyle? style)
+        {
             ArgumentException.ThrowIfNullOrWhiteSpace(cueKey);
             ArgumentException.ThrowIfNullOrWhiteSpace(texturePath);
 
             _textures[cueKey] = texturePath;
+            if (style != null)
+                _textureStyles[cueKey] = style;
+            else
+                _textureStyles.Remove(cueKey);
             _sequences.Remove(cueKey);
             return this;
         }
@@ -54,11 +70,13 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
             _sequences[cueKey] = sequence;
             _textures.Remove(cueKey);
+            _textureStyles.Remove(cueKey);
             return this;
         }
 
         /// <summary>
         ///     Binds a frame sequence configured via <paramref name="configure" />.
+        ///     绑定一个通过 <paramref name="configure" /> 配置的帧序列。
         /// </summary>
         public VisualCueSetBuilder Sequence(string cueKey, Action<VisualFrameSequenceBuilder> configure)
         {
@@ -83,6 +101,10 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
                 _sequences.Count > 0
                     ? new ReadOnlyDictionary<string, VisualFrameSequence>(
                         new Dictionary<string, VisualFrameSequence>(_sequences, StringComparer.OrdinalIgnoreCase))
+                    : null,
+                _textureStyles.Count > 0
+                    ? new ReadOnlyDictionary<string, VisualNodeStyle>(
+                        new Dictionary<string, VisualNodeStyle>(_textureStyles, StringComparer.OrdinalIgnoreCase))
                     : null);
         }
     }

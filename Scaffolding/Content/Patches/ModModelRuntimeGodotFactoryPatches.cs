@@ -336,7 +336,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             {
                 if (__instance is IModAncientEventAssetOverrides
                     {
-                        AncientPresentationAssetProfile: { StageProcedural: not null },
+                        AncientPresentationAssetProfile.StageProcedural: not null,
                     })
                     return true;
 

@@ -2,6 +2,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Screens;
 using STS2RitsuLib.Scaffolding.Characters.Visuals;
+using STS2RitsuLib.Scaffolding.Visuals.Definition;
 
 namespace STS2RitsuLib.Scaffolding.Content.Visuals
 {
@@ -63,7 +64,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Visuals
             Control? fgLayer = null;
             if (stage.ForegroundCueSet != null)
             {
-                fgLayer = CreateSpriteLayer("RitsuAncientStageFg");
+                fgLayer = CreateSpriteLayer("RitsuAncientStageFg", stage.ForegroundLayerStyle);
                 outer.AddChild(fgLayer);
             }
 
@@ -112,14 +113,14 @@ namespace STS2RitsuLib.Scaffolding.Content.Visuals
 
         private static void MountBackgroundCues(Control outer, AncientEventStageProceduralVisualSet stage)
         {
-            var bgLayer = CreateSpriteLayer("RitsuAncientStageBg");
+            var bgLayer = CreateSpriteLayer("RitsuAncientStageBg", stage.BackgroundLayerStyle);
             outer.AddChild(bgLayer);
 
             var bgCue = string.IsNullOrWhiteSpace(stage.BackgroundLoopCueName) ? "loop" : stage.BackgroundLoopCueName!;
             ModCreatureVisualPlayback.TryPlayOnVisualRoot(bgLayer, null, bgCue, true, stage.BackgroundCueSet);
         }
 
-        private static Control CreateSpriteLayer(string layerName)
+        private static Control CreateSpriteLayer(string layerName, VisualNodeStyle? style = null)
         {
             var layer = new Control { Name = layerName };
             layer.SetAnchorsPreset(Control.LayoutPreset.FullRect);
@@ -132,18 +133,22 @@ namespace STS2RitsuLib.Scaffolding.Content.Visuals
             var sprite = new Sprite2D { Name = "Visuals", Centered = true };
             layer.AddChild(sprite);
 
-            layer.Resized += () => CenterSprite(layer, sprite);
-            Callable.From(() => CenterSprite(layer, sprite)).CallDeferred();
+            layer.Resized += () => CenterSprite(layer, sprite, style);
+            Callable.From(() => CenterSprite(layer, sprite, style)).CallDeferred();
 
             return layer;
         }
 
-        private static void CenterSprite(Control layer, Sprite2D sprite)
+        private static void CenterSprite(Control layer, Sprite2D sprite, VisualNodeStyle? style)
         {
             if (!GodotObject.IsInstanceValid(layer) || !GodotObject.IsInstanceValid(sprite))
                 return;
 
-            sprite.Position = layer.Size * 0.5f;
+            var center = layer.Size * 0.5f;
+            if (style == null)
+                sprite.Position = center;
+            else
+                style.ApplyTo(sprite, center);
         }
     }
 }

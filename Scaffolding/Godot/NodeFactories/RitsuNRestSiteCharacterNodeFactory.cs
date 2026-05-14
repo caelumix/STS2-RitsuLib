@@ -78,6 +78,14 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeFactories
             base.ConvertScene(target, source);
         }
 
+        protected override Node? ResolveDefaultStyleTarget(NRestSiteCharacter root, bool fromResource)
+        {
+            return root.GetNodeOrNull("ControlRoot/Visuals")
+                   ?? root.GetNodeOrNull("%Visuals")
+                   ?? root.GetNodeOrNull("Visuals")
+                   ?? base.ResolveDefaultStyleTarget(root, fromResource);
+        }
+
         protected override void GenerateNode(NRestSiteCharacter target, IRitsuGodotNodeSlot required)
         {
             switch (required.Path)

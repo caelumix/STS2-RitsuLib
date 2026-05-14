@@ -16,5 +16,26 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
     /// </param>
     public sealed record VisualCueSet(
         IReadOnlyDictionary<string, string>? TexturePathByCue = null,
-        IReadOnlyDictionary<string, VisualFrameSequence>? FrameSequenceByCue = null);
+        IReadOnlyDictionary<string, VisualFrameSequence>? FrameSequenceByCue = null)
+    {
+        /// <summary>
+        ///     Constructor with optional style metadata. The two-parameter constructor remains the binary-compatible
+        ///     baseline for older mods.
+        ///     带可选样式元数据的构造器；双参数构造器仍保留为旧 mod 的二进制兼容基线。
+        /// </summary>
+        public VisualCueSet(
+            IReadOnlyDictionary<string, string>? TexturePathByCue,
+            IReadOnlyDictionary<string, VisualFrameSequence>? FrameSequenceByCue,
+            IReadOnlyDictionary<string, VisualNodeStyle>? TextureStyleByCue)
+            : this(TexturePathByCue, FrameSequenceByCue)
+        {
+            this.TextureStyleByCue = TextureStyleByCue;
+        }
+
+        /// <summary>
+        ///     Optional per-cue style applied when a static texture cue is shown.
+        ///     显示静态贴图 cue 时应用的可选逐 cue 样式。
+        /// </summary>
+        public IReadOnlyDictionary<string, VisualNodeStyle>? TextureStyleByCue { get; init; }
+    }
 }

@@ -1,5 +1,6 @@
 using Godot;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
+using STS2RitsuLib.Scaffolding.Visuals.Definition;
 
 namespace STS2RitsuLib.Scaffolding.Godot
 {
@@ -11,9 +12,16 @@ namespace STS2RitsuLib.Scaffolding.Godot
     {
         public abstract Node CreateFromNode(Node source);
 
+        public virtual Node CreateFromNode(Node source, VisualNodeStyle? style)
+        {
+            var node = CreateFromNode(source);
+            style.ApplyTo(node);
+            return node;
+        }
+
         /// <summary>
-        ///     Builds a root node without running <see cref="CompleteBareRoot" /> (used for <c>Texture2D</c> → visuals).
-        ///     构建一个根节点，而不运行 <see cref="CompleteBareRoot" />（用于 <c>Texture2D</c> → 视觉）。
+        ///     Builds a root node without running <c>CompleteBareRoot</c> (used for <c>Texture2D</c> → visuals).
+        ///     构建一个根节点，而不运行 <c>CompleteBareRoot</c>（用于 <c>Texture2D</c> → 视觉）。
         /// </summary>
         public abstract Node CreateBareFromResource(object resource);
 
@@ -22,6 +30,12 @@ namespace STS2RitsuLib.Scaffolding.Godot
         ///     为裸根节点填充唯一槽位 / 子节点（与 <c>ConvertScene(target, null)</c> 相同）。
         /// </summary>
         public abstract void CompleteBareRoot(Node bare);
+
+        public virtual void CompleteBareRoot(Node bare, VisualNodeStyle? style)
+        {
+            CompleteBareRoot(bare);
+            style.ApplyTo(bare);
+        }
     }
 
     /// <summary>
@@ -93,6 +107,20 @@ namespace STS2RitsuLib.Scaffolding.Godot
             return target;
         }
 
+        public override Node CreateFromNode(Node source, VisualNodeStyle? style)
+        {
+            if (source is T typed)
+            {
+                ApplyStyle(typed, false, style);
+                return typed;
+            }
+
+            var target = new T();
+            ConvertScene(target, source);
+            ApplyStyle(target, false, style);
+            return target;
+        }
+
         public override Node CreateBareFromResource(object resource)
         {
             return CreateBareFromResourceImpl(resource);
@@ -103,11 +131,27 @@ namespace STS2RitsuLib.Scaffolding.Godot
             ConvertScene((T)bare, null);
         }
 
+        public override void CompleteBareRoot(Node bare, VisualNodeStyle? style)
+        {
+            CompleteBareRoot(bare);
+            ApplyStyle((T)bare, true, style);
+        }
+
         /// <summary>
         ///     When <paramref name="resource" /> is unsupported, throw with a clear message.
         ///     当 <paramref name="resource" /> 不受支持时，抛出清晰的消息。
         /// </summary>
         protected abstract T CreateBareFromResourceImpl(object resource);
+
+        protected virtual Node? ResolveDefaultStyleTarget(T root, bool fromResource)
+        {
+            return root;
+        }
+
+        private void ApplyStyle(T root, bool fromResource, VisualNodeStyle? style)
+        {
+            style?.ApplyTo(ResolveDefaultStyleTarget(root, fromResource) ?? root);
+        }
 
         protected virtual void ConvertScene(T target, Node? source)
         {

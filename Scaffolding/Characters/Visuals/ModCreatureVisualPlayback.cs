@@ -273,7 +273,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
                 return false;
 
             return TryApplyFrameSequences(visualsRoot, cues, names)
-                   || TryApplySingleTextureCues(visualsRoot, cues.TexturePathByCue, names);
+                   || TryApplySingleTextureCues(visualsRoot, cues, names);
         }
 
         private static bool TryApplyFrameSequences(Node visualsRoot, VisualCueSet cues,
@@ -306,8 +306,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
         }
 
         private static bool TryApplySingleTextureCues(Node visualsRoot,
-            IReadOnlyDictionary<string, string>? map, ReadOnlySpan<string> names)
+            VisualCueSet cues, ReadOnlySpan<string> names)
         {
+            var map = cues.TexturePathByCue;
             if (map == null || map.Count == 0)
                 return false;
 
@@ -328,6 +329,10 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
                     continue;
 
                 sprite.Texture = tex;
+                if (cues.TextureStyleByCue is { Count: > 0 } styles &&
+                    TryGetCueStyle(styles, name, out var style))
+                    style.ApplyTo(sprite);
+
                 return true;
             }
 
@@ -369,6 +374,26 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
                 }
 
             path = null;
+            return false;
+        }
+
+        private static bool TryGetCueStyle(IReadOnlyDictionary<string, VisualNodeStyle> map, string key,
+            out VisualNodeStyle? style)
+        {
+            if (map.TryGetValue(key, out var found))
+            {
+                style = found;
+                return true;
+            }
+
+            foreach (var kv in map)
+                if (string.Equals(kv.Key, key, StringComparison.OrdinalIgnoreCase))
+                {
+                    style = kv.Value;
+                    return true;
+                }
+
+            style = null;
             return false;
         }
 

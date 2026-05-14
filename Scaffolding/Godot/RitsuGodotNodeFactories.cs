@@ -1,5 +1,6 @@
 using Godot;
 using MegaCrit.Sts2.Core.Assets;
+using STS2RitsuLib.Scaffolding.Visuals.Definition;
 
 namespace STS2RitsuLib.Scaffolding.Godot
 {
@@ -27,12 +28,32 @@ namespace STS2RitsuLib.Scaffolding.Godot
         }
 
         /// <summary>
+        ///     Creates <typeparamref name="TNode" /> from a loaded resource and applies optional style overrides to the
+        ///     factory's default visual target.
+        ///     从已加载资源创建 <typeparamref name="TNode" />，并将可选样式覆盖应用到工厂的默认视觉目标。
+        /// </summary>
+        public static TNode CreateFromResource<TNode>(object resource, VisualNodeStyle? style) where TNode : Node, new()
+        {
+            return RitsuGodotNodeFactoryRegistry.CreateFromResource<TNode>(resource, style);
+        }
+
+        /// <summary>
         ///     Instantiates <paramref name="scene" /> and runs the registered factory to produce <typeparamref name="TNode" />.
         ///     实例化 <paramref name="scene" /> 并运行已注册工厂来生成 <typeparamref name="TNode" />。
         /// </summary>
         public static TNode CreateFromScene<TNode>(PackedScene scene) where TNode : Node, new()
         {
             return RitsuGodotNodeFactoryRegistry.CreateFromScene<TNode>(scene);
+        }
+
+        /// <summary>
+        ///     Instantiates <paramref name="scene" />, converts it through the registered factory, and applies optional
+        ///     style overrides to the factory's default visual target.
+        ///     实例化 <paramref name="scene" />，通过已注册工厂转换，并将可选样式覆盖应用到工厂的默认视觉目标。
+        /// </summary>
+        public static TNode CreateFromScene<TNode>(PackedScene scene, VisualNodeStyle? style) where TNode : Node, new()
+        {
+            return RitsuGodotNodeFactoryRegistry.CreateFromScene<TNode>(scene, style);
         }
 
         /// <summary>
@@ -45,6 +66,14 @@ namespace STS2RitsuLib.Scaffolding.Godot
             where TNode : Node, new()
         {
             return RitsuGodotNodeFactoryRegistry.CreateFromScene<TNode>(scene, editState);
+        }
+
+        /// <inheritdoc cref="CreateFromScene{TNode}(PackedScene, PackedScene.GenEditState)" />
+        public static TNode CreateFromScene<TNode>(PackedScene scene, PackedScene.GenEditState editState,
+            VisualNodeStyle? style)
+            where TNode : Node, new()
+        {
+            return RitsuGodotNodeFactoryRegistry.CreateFromScene<TNode>(scene, editState, style);
         }
 
         /// <summary>
@@ -72,11 +101,30 @@ namespace STS2RitsuLib.Scaffolding.Godot
             return RitsuGodotNodeFactoryRegistry.CreateFromScenePath<TNode>(scenePath);
         }
 
+        /// <summary>
+        ///     Loads <paramref name="scenePath" />, converts it through the registered factory, and applies optional style
+        ///     overrides to the factory's default visual target.
+        ///     加载 <paramref name="scenePath" />，通过已注册工厂转换，并将可选样式覆盖应用到工厂的默认视觉目标。
+        /// </summary>
+        public static TNode CreateFromScenePath<TNode>(string scenePath, VisualNodeStyle? style)
+            where TNode : Node, new()
+        {
+            return RitsuGodotNodeFactoryRegistry.CreateFromScenePath<TNode>(scenePath, style);
+        }
+
         /// <inheritdoc cref="CreateFromScene{TNode}(PackedScene, PackedScene.GenEditState)" />
         public static TNode CreateFromScenePath<TNode>(string scenePath, PackedScene.GenEditState editState)
             where TNode : Node, new()
         {
             return RitsuGodotNodeFactoryRegistry.CreateFromScenePath<TNode>(scenePath, editState);
+        }
+
+        /// <inheritdoc cref="CreateFromScenePath{TNode}(string, PackedScene.GenEditState)" />
+        public static TNode CreateFromScenePath<TNode>(string scenePath, PackedScene.GenEditState editState,
+            VisualNodeStyle? style)
+            where TNode : Node, new()
+        {
+            return RitsuGodotNodeFactoryRegistry.CreateFromScenePath<TNode>(scenePath, editState, style);
         }
     }
 }

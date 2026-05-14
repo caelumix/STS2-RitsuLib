@@ -2287,7 +2287,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         {
             if (__instance is IModAncientEventAssetOverrides
                 {
-                    AncientPresentationAssetProfile: { StageProcedural: not null },
+                    AncientPresentationAssetProfile.StageProcedural: not null,
                 })
                 return true;
 
@@ -2441,30 +2441,34 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             var suppressAncientBackgroundScene = __instance.LayoutType == EventLayoutType.Ancient &&
                                                  proceduralAncientStage != null;
 
-            if (suppressAncientBackgroundScene)
+            switch (suppressAncientBackgroundScene)
             {
-                var entry = __instance.Id.Entry.ToLowerInvariant();
-                var vanillaBg = SceneHelper.GetScenePath($"events/background_scenes/{entry}");
-                paths = RemovePath(paths, vanillaBg);
+                case true:
+                {
+                    var entry = __instance.Id.Entry.ToLowerInvariant();
+                    var vanillaBg = SceneHelper.GetScenePath($"events/background_scenes/{entry}");
+                    paths = RemovePath(paths, vanillaBg);
 
-                if (__instance is IModEventAssetOverrides proceduralEventOverrides)
-                    paths = RemovePath(paths, proceduralEventOverrides.CustomBackgroundScenePath);
+                    if (__instance is IModEventAssetOverrides proceduralEventOverrides)
+                        paths = RemovePath(paths, proceduralEventOverrides.CustomBackgroundScenePath);
 
-                if (ExternalAssetOverrideRegistry.TryGetEventBackgroundScenePath(__instance,
-                        out var proceduralExternalBackgroundPath))
-                    paths = RemovePath(paths, proceduralExternalBackgroundPath);
-            }
-
-            if (!suppressAncientBackgroundScene
-                && __instance is IModEventAssetOverrides evo
-                && __instance.LayoutType == EventLayoutType.Ancient
-                && !string.IsNullOrWhiteSpace(evo.CustomBackgroundScenePath)
-                && AssetPathDiagnostics.Exists(evo.CustomBackgroundScenePath, __instance,
-                    nameof(IModEventAssetOverrides.CustomBackgroundScenePath)))
-            {
-                var entry = __instance.Id.Entry.ToLowerInvariant();
-                var vanillaBg = SceneHelper.GetScenePath($"events/background_scenes/{entry}");
-                paths = paths.Where(p => p != vanillaBg);
+                    if (ExternalAssetOverrideRegistry.TryGetEventBackgroundScenePath(__instance,
+                            out var proceduralExternalBackgroundPath))
+                        paths = RemovePath(paths, proceduralExternalBackgroundPath);
+                    break;
+                }
+                case false
+                    when __instance is IModEventAssetOverrides evo
+                         && __instance.LayoutType == EventLayoutType.Ancient
+                         && !string.IsNullOrWhiteSpace(evo.CustomBackgroundScenePath)
+                         && AssetPathDiagnostics.Exists(evo.CustomBackgroundScenePath, __instance,
+                             nameof(IModEventAssetOverrides.CustomBackgroundScenePath)):
+                {
+                    var entry = __instance.Id.Entry.ToLowerInvariant();
+                    var vanillaBg = SceneHelper.GetScenePath($"events/background_scenes/{entry}");
+                    paths = paths.Where(p => p != vanillaBg);
+                    break;
+                }
             }
 
             if (!suppressAncientBackgroundScene
@@ -2556,10 +2560,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         private static IEnumerable<string> RemovePath(IEnumerable<string> paths, string? pathToRemove)
         {
-            if (string.IsNullOrWhiteSpace(pathToRemove))
-                return paths;
-
-            return paths.Where(path => !string.Equals(path, pathToRemove, StringComparison.Ordinal));
+            return string.IsNullOrWhiteSpace(pathToRemove)
+                ? paths
+                : paths.Where(path => !string.Equals(path, pathToRemove, StringComparison.Ordinal));
         }
     }
 

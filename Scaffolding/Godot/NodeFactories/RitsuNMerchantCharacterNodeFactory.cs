@@ -34,6 +34,12 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeFactories
             return node;
         }
 
+        protected override Node? ResolveDefaultStyleTarget(NMerchantCharacter root, bool fromResource)
+        {
+            return root.GetNodeOrNull("%Visuals") ??
+                   root.GetNodeOrNull("Visuals") ?? base.ResolveDefaultStyleTarget(root, fromResource);
+        }
+
         protected override void GenerateNode(NMerchantCharacter target, IRitsuGodotNodeSlot required)
         {
         }

@@ -37,7 +37,40 @@ namespace STS2RitsuLib.Scaffolding.Content
         string? BackgroundLoopCueName = null,
         string? BackgroundVideoPath = null,
         VisualCueSet? ForegroundCueSet = null,
-        string? ForegroundLoopCueName = null);
+        string? ForegroundLoopCueName = null)
+    {
+        /// <summary>
+        ///     Constructor with optional layer style metadata. The five-parameter constructor remains the
+        ///     binary-compatible baseline for older mods.
+        ///     带可选图层样式元数据的构造器；五参数构造器仍保留为旧 mod 的二进制兼容基线。
+        /// </summary>
+        public AncientEventStageProceduralVisualSet(
+            VisualCueSet? BackgroundCueSet,
+            string? BackgroundLoopCueName,
+            string? BackgroundVideoPath,
+            VisualCueSet? ForegroundCueSet,
+            string? ForegroundLoopCueName,
+            VisualNodeStyle? BackgroundLayerStyle,
+            VisualNodeStyle? ForegroundLayerStyle)
+            : this(BackgroundCueSet, BackgroundLoopCueName, BackgroundVideoPath, ForegroundCueSet,
+                ForegroundLoopCueName)
+        {
+            this.BackgroundLayerStyle = BackgroundLayerStyle;
+            this.ForegroundLayerStyle = ForegroundLayerStyle;
+        }
+
+        /// <summary>
+        ///     Optional style applied to the background sprite layer's primary <c>Visuals</c> node.
+        ///     应用于背景 sprite 图层主 <c>Visuals</c> 节点的可选样式。
+        /// </summary>
+        public VisualNodeStyle? BackgroundLayerStyle { get; init; }
+
+        /// <summary>
+        ///     Optional style applied to the foreground sprite layer's primary <c>Visuals</c> node.
+        ///     应用于前景 sprite 图层主 <c>Visuals</c> 节点的可选样式。
+        /// </summary>
+        public VisualNodeStyle? ForegroundLayerStyle { get; init; }
+    }
 
     /// <summary>
     ///     Fluent builder for <see cref="AncientEventStageProceduralVisualSet" />.
@@ -46,9 +79,11 @@ namespace STS2RitsuLib.Scaffolding.Content
     public sealed class AncientEventStageProceduralVisualSetBuilder
     {
         private VisualCueSet? _backgroundCueSet;
+        private VisualNodeStyle? _backgroundLayerStyle;
         private string? _backgroundLoopCue;
         private string? _backgroundVideoPath;
         private VisualCueSet? _foregroundCueSet;
+        private VisualNodeStyle? _foregroundLayerStyle;
         private string? _foregroundLoopCue;
 
         private AncientEventStageProceduralVisualSetBuilder()
@@ -106,6 +141,17 @@ namespace STS2RitsuLib.Scaffolding.Content
         }
 
         /// <summary>
+        ///     Applies style overrides to the background sprite layer. Ignored for video backgrounds.
+        ///     将样式覆盖应用到背景 sprite 图层；视频背景会忽略该设置。
+        /// </summary>
+        public AncientEventStageProceduralVisualSetBuilder BackgroundStyle(VisualNodeStyle style)
+        {
+            ArgumentNullException.ThrowIfNull(style);
+            _backgroundLayerStyle = style;
+            return this;
+        }
+
+        /// <summary>
         ///     Sets an optional front layer (e.g. character) drawn above the background.
         ///     设置绘制在背景之上的可选前层（例如角色）。
         /// </summary>
@@ -131,6 +177,17 @@ namespace STS2RitsuLib.Scaffolding.Content
         }
 
         /// <summary>
+        ///     Applies style overrides to the foreground sprite layer.
+        ///     将样式覆盖应用到前景 sprite 图层。
+        /// </summary>
+        public AncientEventStageProceduralVisualSetBuilder ForegroundStyle(VisualNodeStyle style)
+        {
+            ArgumentNullException.ThrowIfNull(style);
+            _foregroundLayerStyle = style;
+            return this;
+        }
+
+        /// <summary>
         ///     Materializes the set. Requires either background cues or <see cref="BackgroundVideo" />.
         ///     实体化该集合。必须提供背景 cue 或 <see cref="BackgroundVideo" />。
         /// </summary>
@@ -144,8 +201,10 @@ namespace STS2RitsuLib.Scaffolding.Content
                 false when _backgroundCueSet == null => throw new InvalidOperationException(
                     "Set Background(...) or BackgroundVideo(...)."),
                 _ => hasVideo
-                    ? new(null, null, _backgroundVideoPath, _foregroundCueSet, _foregroundLoopCue)
-                    : new(_backgroundCueSet, _backgroundLoopCue, null, _foregroundCueSet, _foregroundLoopCue),
+                    ? new(null, null, _backgroundVideoPath, _foregroundCueSet, _foregroundLoopCue, null,
+                        _foregroundLayerStyle)
+                    : new(_backgroundCueSet, _backgroundLoopCue, null, _foregroundCueSet, _foregroundLoopCue,
+                        _backgroundLayerStyle, _foregroundLayerStyle),
             };
         }
     }

@@ -5,13 +5,13 @@ namespace STS2RitsuLib.Ui.Shell
 {
     /// <summary>
     ///     StyleBox factories for dense editor/list/toolbar chrome shared across mod settings and modal overlays.
-    ///     StyleBox factories 用于 dense editor/list/toolbar chrome shared across mod 设置 和 modal overlays.
+    ///     StyleBox 工厂，用于 mod 设置和模态覆盖层共享的密集编辑器 / 列表 / 工具栏 chrome。
     /// </summary>
     public static class RitsuShellChromeStyles
     {
         /// <summary>
         ///     Builds a rounded flat panel for generic content surfaces (background, border, soft shadow).
-        ///     Builds a rounded flat panel 用于 generic content surfaces (背景, border, soft shadow).
+        ///     为通用内容表面构建圆角平面面板（背景、边框、柔和阴影）。
         /// </summary>
         public static StyleBoxFlat CreateSurfaceStyle()
         {
@@ -48,11 +48,11 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a frame around an entry or form field, optionally with a stronger border and shadow.
-        ///     Builds a frame around an entry 或 用于m field, 可选ly 带有 a stronger border 和 shadow.
+        ///     围绕条目或表单字段构建边框，可选使用更强的边框和阴影。
         /// </summary>
         /// <param name="emphasized">
         ///     When <see langword="true" />, uses a thicker border and stronger shadow.
-        ///     当 <see langword="true" />, 使用 a thicker border 和 stronger shadow.
+        ///     当 <see langword="true" /> 时，使用更粗的边框和更强的阴影。
         /// </param>
         public static StyleBoxFlat CreateEntryFieldFrameStyle(bool emphasized)
         {
@@ -97,7 +97,7 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a tight inset frame around a color swatch preview.
-        ///     Builds a tight in设置 frame around a color swatch preview.
+        ///     构建 a 紧凑内嵌边框 around a 颜色样本预览。
         /// </summary>
         public static StyleBoxFlat CreateColorPickerSwatchFrameStyle()
         {
@@ -129,7 +129,7 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a recessed panel (inset background) for secondary content blocks.
-        ///     Builds a recessed panel (in设置 背景) 用于 secondary content blocks.
+        ///     为次级内容块构建凹陷面板（内嵌背景）。
         /// </summary>
         public static StyleBoxFlat CreateInsetSurfaceStyle()
         {
@@ -165,11 +165,11 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a compact menu row or popup action item (background and border from chrome tokens).
-        ///     Builds a compact menu row 或 popup action item (背景 和 border 从 chrome tokens).
+        ///     构建紧凑菜单行或弹出动作项（背景和边框来自 chrome 令牌）。
         /// </summary>
         /// <param name="highlighted">
         ///     When <see langword="true" />, uses hover chrome colors.
-        ///     当 <see langword="true" />, 使用 hover chrome colors.
+        ///     当 <see langword="true" />, 使用 悬停 chrome 颜色。
         /// </param>
         public static StyleBoxFlat CreateChromeActionsMenuStyle(bool highlighted)
         {
@@ -206,9 +206,8 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds the tray behind per-page toolbar controls (search, actions).
-        ///     中文说明：Builds the tray behind per-page toolbar controls (search, actions).
-        ///     Builds the tray behind per-page toolbar controls (search, actions).
-        ///     中文说明：Builds the tray behind per-page toolbar controls (search, actions).
+        ///     构建每页工具栏控件（搜索、动作）后方的托盘。
+        ///     构建每页工具栏控件（搜索、动作）后方的托盘。
         /// </summary>
         public static StyleBoxFlat CreatePageToolbarTrayStyle()
         {
@@ -246,7 +245,7 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds the outer container for scrollable list content (list shell with shadow).
-        ///     Builds the outer container 用于 scrollable list content (list shell 带有 shadow).
+        ///     为可滚动列表内容构建外层容器（带阴影的列表外壳）。
         /// </summary>
         public static StyleBoxFlat CreateListShellStyle()
         {
@@ -279,11 +278,11 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a card row inside a list (optional accent styling for selection or emphasis).
-        ///     Builds a 卡牌 row inside a list (可选 accent styling 用于 selection 或 emphasis).
+        ///     在列表内构建卡片行（可选为选中或强调使用 accent 样式）。
         /// </summary>
         /// <param name="accent">
         ///     When <see langword="true" />, uses accent background and border tokens.
-        ///     当 <see langword="true" />, 使用 accent 背景 和 border tokens.
+        ///     当 <see langword="true" />, 使用 强调背景和边框 token。
         /// </param>
         public static StyleBoxFlat CreateListItemCardStyle(bool accent = false)
         {
@@ -317,7 +316,7 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds the inner editor surface for inline list editing (e.g. path or text rows).
-        ///     Builds the inner editor surface 用于 inline list editing (e.g. 路径 或 text rows).
+        ///     为内联列表编辑构建内部编辑器表面（例如路径或文本行）。
         /// </summary>
         public static StyleBoxFlat CreateListEditorSurfaceStyle()
         {
@@ -355,11 +354,11 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a pill-shaped control (tags, compact buttons) with optional hover emphasis.
-        ///     Builds a pill-shaped control (tags, compact buttons) 带有 可选 hover emphasis.
+        ///     构建 a 胶囊形控件 (标签, 紧凑按钮) 与 可选 悬停强调。
         /// </summary>
         /// <param name="highlighted">
         ///     When <see langword="true" />, uses hover background and border colors.
-        ///     当 <see langword="true" />, 使用 hover 背景 和 border colors.
+        ///     当 <see langword="true" /> 时，使用悬停背景和边框颜色。
         /// </param>
         public static StyleBoxFlat CreatePillStyle(bool highlighted = false)
         {
@@ -395,9 +394,9 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Compact panel backing Godot TooltipPanel (<see cref="Control.TooltipText" /> popups), aligned with entry
-        ///     Comp章节 panel backing Godot TooltipPanel (<c>Control.TooltipText</c> popups), aligned 带有 entry
         ///     chrome tokens.
-        ///     中文说明：chrome tokens.
+        ///     Godot TooltipPanel（<see cref="Control.TooltipText" /> 弹窗）的紧凑面板底板，与条目
+        ///     chrome 令牌对齐。
         /// </summary>
         public static StyleBoxFlat CreateTooltipPanelStyle()
         {

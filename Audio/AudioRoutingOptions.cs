@@ -2,37 +2,37 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Higher-level playback routing options such as singleton channels and tagged groups.
-    ///     Higher-level playback routing options such as singleton channels 和 tagged groups.
+    ///     高级播放路由选项，例如单例通道和带标签的组。
     /// </summary>
     public sealed class AudioRoutingOptions
     {
         /// <summary>
         ///     Optional singleton channel name. New playback can keep or replace the current channel owner.
-        ///     可选 singleton channel name. New playback can keep 或 replace the current channel owner.
+        ///     可选单例通道名称。新播放可以保留或替换当前通道所有者。
         /// </summary>
         public string? Channel { get; init; }
 
         /// <summary>
         ///     Optional group tag for bulk stop or replacement patterns.
-        ///     可选 group tag 用于 bulk stop 或 replacement patterns.
+        ///     用于批量停止或替换模式的可选组标签。
         /// </summary>
         public string? Tag { get; init; }
 
         /// <summary>
         ///     Channel collision behavior when <see cref="Channel" /> is already occupied.
-        ///     Channel collision behavior 当 <c>Channel</c> is already occupied.
+        ///     <see cref="Channel" /> 已被占用时的通道冲突行为。
         /// </summary>
         public AudioChannelMode ChannelMode { get; init; } = AudioChannelMode.ReplaceExisting;
 
         /// <summary>
         ///     Whether replacement should allow fade-out for the previous owner.
-        ///     表示是否 replacement should allow fade-out for the previous owner。
+        ///     替换是否应允许上一所有者淡出。
         /// </summary>
         public bool AllowFadeOutOnReplace { get; init; } = true;
 
         /// <summary>
         ///     When true and <see cref="Tag" /> is set, existing handles in that tag stop before the new handle is attached.
-        ///     当 true 和 <c>Tag</c> is 设置, existing handles in that tag stop 之前 the new handle is attached.
+        ///     为 true 且设置了 <see cref="Tag" /> 时，新句柄附加前会先停止该标签中的现有句柄。
         /// </summary>
         public bool ReplaceTaggedGroup { get; init; }
     }

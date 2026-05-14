@@ -11,9 +11,10 @@ namespace STS2RitsuLib.Unlocks.Patches
     ///     <see cref="EpochModel.GetTimelineExpansion" /> BFS. Mod story roots are not in that graph, so obtained mod slots
     ///     never count for <see cref="SaveManager.GetDiscoveredEpochCount" />, main-menu timeline cues, or related UX even
     ///     when the UI slot is already in the obtained (click-to-reveal) state.
-    ///     原版 <c>ProgressSaveManager.GetRevealableEpochs</c> 只会标记可从 Neow 通过
-    ///     <c>EpochModel.GetTimelineExpansion</c> BFS 到达的 epoch。mod 故事根不在该图中，因此已取得的 mod 槽位即使
-    ///     UI 已处于取得（点击揭示）状态，也不会计入 <c>SaveManager.GetDiscoveredEpochCount</c>、主菜单时间线提示或相关体验。
+    ///     原版 <see cref="ProgressSaveManager.GetRevealableEpochs" /> 只会标记可通过
+    ///     <see cref="EpochModel.GetTimelineExpansion" /> BFS 从 Neow 到达的纪元。mod 故事根节点不在该图中，因此已获得的 mod 槽位
+    ///     即使 UI 槽位已处于已获得（点击显示）状态，也永远不会计入 <see cref="SaveManager.GetDiscoveredEpochCount" />、主菜单时间线提示或相关 UX，
+    ///     即便 UI 槽位已处于已获得（点击显示）状态。
     /// </summary>
     public sealed class ProgressSaveManagerGetRevealableEpochsModTemplatePatch : IPatchMethod
     {
@@ -37,7 +38,8 @@ namespace STS2RitsuLib.Unlocks.Patches
         /// <summary>
         ///     Appends mod template epochs that satisfy vanilla's satisfied-state filter but were dropped for lack of
         ///     reachability from Neow.
-        ///     追加满足原版已满足状态过滤、但因无法从 Neow 到达而被丢弃的 mod 模板 epoch。
+        ///     追加满足原版已满足状态过滤器、但因缺少
+        ///     从 Neow 的可达性而被丢弃的 mod 模板纪元。
         /// </summary>
         public static IEnumerable<SerializableEpoch> Postfix(
                 IEnumerable<SerializableEpoch> __result,

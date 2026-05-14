@@ -5,7 +5,7 @@ namespace STS2RitsuLib.Patching.Core
 {
     /// <summary>
     ///     Logger registry for IPatchMethod types.
-    ///     IPatchMethod 类型的日志器注册表。
+    ///     IPatchMethod 类型的 logger 注册表。
     /// </summary>
     public static class PatchLog
     {
@@ -13,7 +13,7 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Associates <paramref name="logger" /> with <paramref name="patchType" /> for <see cref="For(Type)" />.
-        ///     将 <c>logger</c> 与 <c>patchType</c> 关联，供 <c>For(Type)</c> 使用。
+        ///     将 <paramref name="logger" /> 与 <paramref name="patchType" /> 关联，供 <see cref="For(Type)" /> 使用。
         /// </summary>
         public static void Bind(Type patchType, Logger logger)
         {
@@ -25,7 +25,7 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Returns the bound logger for <paramref name="patchType" />, or <see cref="RitsuLibFramework.Logger" />.
-        ///     返回 <c>patchType</c> 绑定的日志器；未绑定时返回 <c>RitsuLibFramework.Logger</c>。
+        ///     返回绑定到 <paramref name="patchType" /> 的 logger；否则返回 <see cref="RitsuLibFramework.Logger" />。
         /// </summary>
         public static Logger For(Type patchType)
         {
@@ -37,7 +37,7 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     <see cref="For(Type)" /> for <typeparamref name="TPatch" />.
-        ///     面向 <c>TPatch</c> 的 <c>For(Type)</c> 简写。
+        ///     <see cref="For(Type)" />，用于 <typeparamref name="TPatch" />。
         /// </summary>
         public static Logger For<TPatch>()
         {

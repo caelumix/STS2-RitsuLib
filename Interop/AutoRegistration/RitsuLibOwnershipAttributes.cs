@@ -9,7 +9,7 @@ namespace STS2RitsuLib.Interop.AutoRegistration
     {
         /// <summary>
         ///     Manifest id that owns auto-registered entries on the annotated type.
-        ///     拥有带注解类型上 auto-registered entry 的 manifest id。
+        ///     拥有带注解类型上自动注册条目的 manifest id。
         /// </summary>
         public string ModId { get; } = string.IsNullOrWhiteSpace(modId)
             ? throw new ArgumentException("Mod id must not be null or whitespace.", nameof(modId))

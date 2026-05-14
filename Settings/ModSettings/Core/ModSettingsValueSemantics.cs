@@ -27,7 +27,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Optional marker on <see cref="IModSettingsBinding" /> implementations to refine scope chip text.
-    ///     <c>IModSettingsBinding</c> 实现上的可选标记，用于细化作用域 chip 文本。
+    ///     <see cref="IModSettingsBinding" /> 实现上的可选标记，用于细化作用域 chip 文本。
     /// </summary>
     public interface IModSettingsBindingSemantics
     {

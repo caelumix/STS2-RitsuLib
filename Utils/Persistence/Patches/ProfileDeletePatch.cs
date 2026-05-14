@@ -6,7 +6,7 @@ namespace STS2RitsuLib.Utils.Persistence.Patches
 {
     /// <summary>
     ///     Cleans up mod persistence when the game deletes a save profile.
-    ///     Cleans up mod persistence 当 the game deletes a 保存 档案.
+    ///     游戏删除存档档案时清理 mod 持久化数据。
     /// </summary>
     public class ProfileDeletePatch : IPatchMethod
     {
@@ -27,7 +27,7 @@ namespace STS2RitsuLib.Utils.Persistence.Patches
 
         /// <summary>
         ///     Deletes mod data, notifies listeners, and invalidates the data-ready lifecycle for the profile.
-        ///     Deletes mod data, notifies listeners, 和 invalidates the data-ready lifecycle 用于 the 档案.
+        ///     删除 mod 数据，通知监听器，并使该档案的数据 ready 生命周期失效。
         /// </summary>
         public static void Prefix(int profileId)
         {

@@ -5,20 +5,20 @@ namespace STS2RitsuLib.Utils
 {
     /// <summary>
     ///     Optional contract for items that supply their own selection weight.
-    ///     可选 contract 用于 items that supply their own selection weight.
+    ///     供自行提供选择权重的项使用的可选契约。
     /// </summary>
     public interface IWeightedValue
     {
         /// <summary>
         ///     Relative weight used by <c>WeightedList&lt;T&gt;</c> when no explicit weight is provided.
-        ///     Relative weight used 通过 <c>WeightedList&lt;T&gt;</c> 当 no explicit weight is provided.
+        ///     未提供显式权重时，<c>WeightedList&lt;T&gt;</c> 使用的相对权重。
         /// </summary>
         int Weight { get; }
     }
 
     /// <summary>
     ///     Weighted random container with optional draw-without-replacement support.
-    ///     Weighted random container 带有 可选 draw-带有out-replacement support.
+    ///     带可选不放回抽取支持的加权随机容器。
     /// </summary>
     public class WeightedList<T> : IList<T>
     {
@@ -26,7 +26,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Sum of all entry weights (zero when empty).
-        ///     Sum of all entry weights (zero 当 empty).
+        ///     所有条目权重之和（为空时为零）。
         /// </summary>
         public int TotalWeight { get; private set; }
 
@@ -117,7 +117,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Appends <paramref name="item" /> with an explicit positive <paramref name="weight" />.
-        ///     Appends <c>item</c> 带有 an explicit positive <c>weight</c>.
+        ///     以显式正 <paramref name="weight" /> 追加 <paramref name="item" />。
         /// </summary>
         public void Add(T item, int weight)
         {
@@ -128,7 +128,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Appends each item using <paramref name="weightSelector" />, <see cref="IWeightedValue" />, or weight 1.
-        ///     Appends each item using <c>weightSelector</c>, <c>IWeightedValue</c>, 或 weight 1.
+        ///     使用 <paramref name="weightSelector" />、<see cref="IWeightedValue" /> 或权重 1 追加每一项。
         /// </summary>
         public void AddRange(IEnumerable<T> items, Func<T, int>? weightSelector = null)
         {
@@ -140,7 +140,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Rolls a weighted random entry using <paramref name="rng" />, optionally removing the chosen row.
-        ///     Rolls a weighted random entry using <c>rng</c>, 可选ly removing the chosen row.
+        ///     使用 <paramref name="rng" /> 抽取加权随机条目，并可移除选中的行。
         /// </summary>
         public T GetRandom(Rng rng, bool remove = false)
         {
@@ -170,9 +170,9 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns false when the list is empty or has non-positive total weight; otherwise performs a weighted
-        ///     返回 false 当 the list is empty 或 has non-positive total weight; otherwise performs a weighted
         ///     roll like <c>GetRandom</c>.
-        ///     中文说明：roll like <c>GetRandom</c>.
+        ///     当列表为空或总权重非正时返回 false；否则执行一次加权
+        ///     抽取，行为类似 <c>GetRandom</c>。
         /// </summary>
         public bool TryGetRandom(Rng rng, out T value, bool remove = false)
         {
@@ -188,8 +188,9 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Inserts <paramref name="item" /> at <paramref name="index" /> with explicit positive
-        ///     Inserts <c>item</c> at <c>index</c> 带有 explicit positive
         ///     <paramref name="weight" />.
+        ///     以显式正
+        ///     <paramref name="weight" /> 将 <paramref name="item" /> 插入到 <paramref name="index" />。
         /// </summary>
         public void Insert(int index, T item, int weight)
         {

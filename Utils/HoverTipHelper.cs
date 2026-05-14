@@ -20,7 +20,7 @@ namespace STS2RitsuLib
 
         /// <summary>
         ///     Appends a text hover tip to <paramref name="owner" />'s active hover tip set.
-        ///     向 <c>owner</c> 当前激活的悬停提示集合追加一个文本提示。
+        ///     向 <paramref name="owner" /> 的活动悬停提示集合追加文本悬停提示。
         /// </summary>
         /// <returns>
         ///     False when no hover tip set is bound to the control.
@@ -34,7 +34,7 @@ namespace STS2RitsuLib
 
         /// <summary>
         ///     Appends card preview hover tips for <paramref name="cards" /> to <paramref name="owner" />.
-        ///     将 <c>cards</c> 对应的卡牌预览悬停提示追加到 <c>owner</c>。
+        ///     向 <paramref name="owner" /> 追加 <paramref name="cards" /> 的卡牌预览悬停提示。
         /// </summary>
         /// <returns>
         ///     False when no hover tip set is bound or no tips were added.

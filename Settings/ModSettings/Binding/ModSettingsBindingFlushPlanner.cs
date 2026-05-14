@@ -4,9 +4,9 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     When several decorators for the same logical control are all marked dirty, only the roots of the save-forwarding
-        ///     当 several decorators 用于 the same logical control are all marked dirty, only the roots of the 保存-用于warding
         ///     DAG should run <see cref="IModSettingsBinding.Save" /> so inner persistence is not executed multiple times.
-        ///     DAG should 跑局 <c>IModSettingsBinding.保存</c> so inner persistence is not executed multiple times.
+        ///     当同一逻辑控件的多个装饰器都标记为 dirty 时，只有保存转发
+        ///     DAG 的根应运行 <see cref="IModSettingsBinding.Save" />，避免内部持久化被执行多次。
         /// </summary>
         internal static List<IModSettingsBinding> SelectEffectiveSaveRoots(HashSet<IModSettingsBinding> dirty)
         {

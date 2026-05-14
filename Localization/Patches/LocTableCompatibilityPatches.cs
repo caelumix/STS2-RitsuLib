@@ -50,9 +50,11 @@ namespace STS2RitsuLib.Localization.Patches
 
     /// <summary>
     ///     When <see cref="RitsuLibSettingsStore.IsLocTableCompatEnabled" /> is true, returns a placeholder
-    ///     当 <c>RitsuLibSettingsStore.IsLocTableCompatEnabled</c> is true, 返回 a placeholder
     ///     <c>LocString</c> and logs <c>[Localization][DebugCompat]</c> once per key for misses in
     ///     <c>LocTable.GetLocString</c>. When false, vanilla throw-on-miss behavior applies.
+    ///     当 <see cref="RitsuLibSettingsStore.IsLocTableCompatEnabled" /> 为 true 时，为
+    ///     <c>LocTable.GetLocString</c> 中的缺失项返回占位 <c>LocString</c>，并按每个键记录一次 <c>[Localization][DebugCompat]</c>。为 false
+    ///     时，使用原版缺失即抛出的行为。
     /// </summary>
     public class LocTableGetLocStringCompatibilityPatch : IPatchMethod
     {
@@ -78,7 +80,7 @@ namespace STS2RitsuLib.Localization.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Short-circuits the target method with a synthesized loc string when a placeholder is required.
-        ///     Short-circuits the target method 带有 a synthesized loc string 当 a placeholder is required.
+        ///     需要 placeholder 时，用合成的 loc string 短路目标方法。
         /// </summary>
         public static bool Prefix(LocTable __instance, string key, ref LocString __result)
             // ReSharper restore InconsistentNaming
@@ -97,11 +99,11 @@ namespace STS2RitsuLib.Localization.Patches
 
     /// <summary>
     ///     When <see cref="RitsuLibSettingsStore.IsLocTableCompatEnabled" /> is true, returns the raw key
-    ///     当 <c>RitsuLibSettingsStore.IsLocTableCompatEnabled</c> is true, 返回 the raw key
     ///     string and logs <c>[Localization][DebugCompat]</c> once per key for misses in <c>LocTable.GetRawText</c>.
-    ///     string 和 logs <c>[Localization][DebugCompat]</c> once per key 用于 misses in <c>LocTable.GetRawText</c>.
     ///     When false, vanilla throw-on-miss behavior applies.
-    ///     为 false 时，vanilla throw-on-miss behavior applies。
+    ///     当 <see cref="RitsuLibSettingsStore.IsLocTableCompatEnabled" /> 为 true 时，返回 raw key
+    ///     字符串，并为 <c>LocTable.GetRawText</c> 中的缺失项按每个键记录一次 <c>[Localization][DebugCompat]</c>。
+    ///     为 false 时，使用原版缺失即抛出的行为。
     /// </summary>
     public class LocTableGetRawTextCompatibilityPatch : IPatchMethod
     {
@@ -127,7 +129,7 @@ namespace STS2RitsuLib.Localization.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Short-circuits the target method with the key as raw text when a placeholder is required.
-        ///     Short-circuits the target method 带有 the key as raw text 当 a placeholder is required.
+        ///     需要占位时，以键作为 raw text 短路目标方法。
         /// </summary>
         public static bool Prefix(LocTable __instance, string key, ref string __result)
             // ReSharper restore InconsistentNaming

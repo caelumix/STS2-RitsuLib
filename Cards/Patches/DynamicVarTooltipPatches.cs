@@ -9,7 +9,7 @@ namespace STS2RitsuLib.Cards.Patches
 {
     /// <summary>
     ///     Harmony postfix on <see cref="CardModel.HoverTips" /> to append registered dynamic-var tooltips.
-    ///     Harmony 后置补丁 on <c>CardModel.HoverTips</c> to append 已注册 dynamic-var tooltips.
+    ///     <see cref="CardModel.HoverTips" /> 的 Harmony postfix，用于追加已注册的动态变量工具提示。
     /// </summary>
     public class CardDynamicVarTooltipPatch : IPatchMethod
     {
@@ -34,15 +34,15 @@ namespace STS2RitsuLib.Cards.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Appends tooltip instances built from each <see cref="CardModel.DynamicVars" /> entry that has a factory.
-        ///     Appends tooltip instances built 从 each <c>CardModel.DynamicVars</c> entry that has a factory.
+        ///     追加由每个带工厂的 <see cref="CardModel.DynamicVars" /> 条目构建的工具提示实例。
         /// </summary>
         /// <param name="__instance">
         ///     Card being queried for hover tips.
-        ///     卡牌 being queried 用于 hover tips.
+        ///     正在查询悬停提示的卡牌。
         /// </param>
         /// <param name="__result">
         ///     Original enumerable; replaced with a distinct concat when any extra tips exist.
-        ///     Original enumerable; replaced 带有 a distinct concat 当 any extra tips exist.
+        ///     原始 enumerable；存在额外提示时替换为去重拼接结果。
         /// </param>
         public static void Postfix(CardModel __instance, ref IEnumerable<IHoverTip> __result)
             // ReSharper restore InconsistentNaming
@@ -61,7 +61,7 @@ namespace STS2RitsuLib.Cards.Patches
 
     /// <summary>
     ///     Harmony postfix on <see cref="DynamicVar.Clone()" /> so tooltip registration survives cloning.
-    ///     Harmony 后置补丁 on <c>DynamicVar.Clone()</c> so tooltip 注册 survives cloning.
+    ///     <see cref="DynamicVar.Clone()" /> 的 Harmony postfix，使工具提示注册在克隆后仍保留。
     /// </summary>
     public class DynamicVarTooltipClonePatch : IPatchMethod
     {
@@ -86,15 +86,15 @@ namespace STS2RitsuLib.Cards.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Copies tooltip factory attachment from the source instance to the clone.
-        ///     Copies tooltip factory attachment 从 the source instance to the clone.
+        ///     将工具提示工厂附加项从源实例复制到克隆实例。
         /// </summary>
         /// <param name="__instance">
         ///     Original dynamic var.
-        ///     中文说明：Original dynamic var.
+        ///     原始动态变量。
         /// </param>
         /// <param name="__result">
         ///     Cloned dynamic var.
-        ///     中文说明：Cloned dynamic var.
+        ///     克隆后的动态变量。
         /// </param>
         public static void Postfix(DynamicVar __instance, DynamicVar __result)
             // ReSharper restore InconsistentNaming

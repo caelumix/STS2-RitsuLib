@@ -3,8 +3,8 @@ namespace STS2RitsuLib.Interop
     /// <summary>
     ///     Marks a class whose public methods, properties, and nested <see cref="InteropClassWrapper" /> types
     ///     are rewritten at runtime to call into another mod's assembly, avoiding a compile-time reference.
-    ///     标记一个类：其 public 方法、属性以及嵌套 <c>InteropClassWrapper</c> 类型会在运行时被重写，
-    ///     转而调用另一个 mod 的 assembly，从而避免编译期引用。
+    ///     标记一个类：其 public 方法、属性以及嵌套 <see cref="InteropClassWrapper" /> 类型
+    ///     会在运行时被重写为调用另一个 mod 的 assembly，从而避免编译期引用。
     /// </summary>
     /// <param name="modId">
     ///     Manifest id of the mod that must be loaded for this interop block.
@@ -12,7 +12,7 @@ namespace STS2RitsuLib.Interop
     /// </param>
     /// <param name="type">
     ///     Default target CLR type name for members that do not specify <see cref="InteropTargetAttribute" />.
-    ///     未指定 <c>InteropTargetAttribute</c> 的成员所使用的默认目标 CLR 类型名。
+    ///     未指定 <see cref="InteropTargetAttribute" /> 的成员所使用的默认目标 CLR 类型名。
     /// </param>
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class ModInteropAttribute(string modId, string? type = null) : Attribute
@@ -25,7 +25,7 @@ namespace STS2RitsuLib.Interop
 
         /// <summary>
         ///     Default remote CLR type name for members without <see cref="InteropTargetAttribute" />.
-        ///     没有 <c>InteropTargetAttribute</c> 的成员所使用的默认远端 CLR 类型名。
+        ///     没有 <see cref="InteropTargetAttribute" /> 的成员所使用的默认远端 CLR 类型名。
         /// </summary>
         public string? Type { get; } = type;
     }
@@ -60,7 +60,8 @@ namespace STS2RitsuLib.Interop
         /// <summary>
         ///     Overrides only the remote member name (type comes from <see cref="ModInteropAttribute.Type" /> or enclosing
         ///     context).
-        ///     仅覆盖远端成员名（类型来自 <c>ModInteropAttribute.Type</c> 或外层 context）。
+        ///     仅覆盖远端成员名（类型来自 <see cref="ModInteropAttribute.Type" /> 或外层
+        ///     上下文）。
         /// </summary>
         /// <param name="name">
         ///     Remote member name when different from the stub.
@@ -73,7 +74,7 @@ namespace STS2RitsuLib.Interop
 
         /// <summary>
         ///     Remote type name when specified; otherwise inferred from <see cref="ModInteropAttribute" />.
-        ///     显式指定时的远端类型名；否则从 <c>ModInteropAttribute</c> 推断。
+        ///     显式指定时的远端类型名；否则从 <see cref="ModInteropAttribute" /> 推断。
         /// </summary>
         public string? Type { get; }
 

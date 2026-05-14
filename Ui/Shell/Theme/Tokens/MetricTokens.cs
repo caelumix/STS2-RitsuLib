@@ -2,51 +2,51 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 {
     /// <summary>
     ///     Numeric metrics grouped by intent.
-    ///     Numeric metrics grouped 通过 intent.
+    ///     按意图分组的数值指标。
     /// </summary>
     /// <param name="Radius">
     ///     Corner radius scale.
-    ///     中文说明：Corner radius scale.
+    ///     圆角半径刻度。
     /// </param>
     /// <param name="BorderWidth">
     ///     Border width scale.
-    ///     中文说明：Border width scale.
+    ///     边框宽度刻度。
     /// </param>
     /// <param name="Entry">
     ///     Entry / row sizing.
-    ///     中文说明：Entry / row sizing.
+    ///     条目/行尺寸。
     /// </param>
     /// <param name="Slider">
     ///     Slider sizing.
-    ///     中文说明：Slider sizing.
+    ///     滑块尺寸。
     /// </param>
     /// <param name="Choice">
     ///     Choice / stepper row sizing.
-    ///     中文说明：Choice / stepper row sizing.
+    ///     选择/步进器行尺寸。
     /// </param>
     /// <param name="Color">
     ///     Color picker row sizing.
-    ///     中文说明：Color picker row sizing.
+    ///     颜色选择器行尺寸。
     /// </param>
     /// <param name="StringEntry">
     ///     String editor sizing.
-    ///     中文说明：String editor sizing.
+    ///     字符串编辑器尺寸。
     /// </param>
     /// <param name="Keybinding">
     ///     Keybinding capture sizing.
-    ///     中文说明：Keybinding capture sizing.
+    ///     按键绑定捕获尺寸。
     /// </param>
     /// <param name="Overlay">
     ///     Floating overlay sizing.
-    ///     中文说明：Floating overlay sizing.
+    ///     浮动覆盖层尺寸。
     /// </param>
     /// <param name="Sidebar">
     ///     Sidebar navigation sizing and behavior.
-    ///     Sidebar navigation sizing 和 behavior.
+    ///     侧边栏导航的尺寸和行为。
     /// </param>
     /// <param name="FontSize">
     ///     Font size scale.
-    ///     中文说明：Font size scale.
+    ///     字体大小刻度。
     /// </param>
     public sealed record MetricTokens(
         RadiusMetrics Radius,
@@ -63,81 +63,81 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
     /// <summary>
     ///     Corner radius scale.
-    ///     中文说明：Corner radius scale.
+    ///     圆角半径刻度。
     /// </summary>
     /// <param name="Default">
     ///     Shared StyleBox corner radius.
-    ///     中文说明：Shared StyleBox corner radius.
+    ///     共享 StyleBox 的圆角半径。
     /// </param>
     /// <param name="Validation">
     ///     Corner radius for validation chrome.
-    ///     Corner radius 用于 有效ation chrome.
+    ///     校验装饰区域的圆角半径。
     /// </param>
     /// <param name="Overlay">
     ///     Corner radius for floating overlay panels.
-    ///     Corner radius 用于 floating overlay panels.
+    ///     浮动叠加面板的圆角半径。
     /// </param>
     public sealed record RadiusMetrics(int Default, int Validation, int Overlay);
 
     /// <summary>
     ///     Border width scale.
-    ///     中文说明：Border width scale.
+    ///     边框宽度刻度。
     /// </summary>
     /// <param name="Thin">
     ///     Hairline border.
-    ///     中文说明：Hairline border.
+    ///     细线边框。
     /// </param>
     /// <param name="Normal">
     ///     Default emphasis border.
-    ///     默认 emphasis border。
+    ///     默认强调边框。
     /// </param>
     /// <param name="Thick">
     ///     Strong emphasis border.
-    ///     中文说明：Strong emphasis border.
+    ///     强强调边框。
     /// </param>
     /// <param name="Overlay">
     ///     Border width for floating overlay panels.
-    ///     Border width 用于 floating overlay panels.
+    ///     浮动叠加面板的边框宽度。
     /// </param>
     public sealed record BorderWidthMetrics(int Thin, int Normal, int Thick, int Overlay);
 
     /// <summary>
     ///     Entry / row sizing.
-    ///     中文说明：Entry / row sizing.
+    ///     条目 / 行尺寸。
     /// </summary>
     /// <param name="ValueMinWidth">
     ///     Default minimum width for compact value widgets.
-    ///     默认 minimum width for compact value widgets。
+    ///     紧凑值控件的默认最小宽度。
     /// </param>
     /// <param name="ValueMinHeight">
     ///     Fixed vertical size for value column widgets.
-    ///     Fixed vertical size 用于 value column widgets.
+    ///     值列控件的固定垂直尺寸。
     /// </param>
     /// <param name="MiniStepperButtonSize">
     ///     Square size for compact stepper buttons.
-    ///     Square size 用于 compact stepper buttons.
+    ///     紧凑步进按钮的正方形尺寸。
     /// </param>
     public sealed record EntryMetrics(float ValueMinWidth, float ValueMinHeight, int MiniStepperButtonSize);
 
     /// <summary>
     ///     Slider sizing.
-    ///     中文说明：Slider sizing.
+    ///     滑块尺寸。
     /// </summary>
     /// <param name="RowMinWidth">
     ///     Slider row minimum width.
-    ///     中文说明：Slider row minimum width.
+    ///     滑块行的最小宽度。
     /// </param>
     /// <param name="TrackMinWidth">
     ///     Minimum width reserved for the HSlider track.
-    ///     最小 width reserved for the HSlider track。
+    ///     为 HSlider 轨道预留的最小宽度。
     /// </param>
     /// <param name="ValueFieldWidth">
     ///     Width of the inline numeric field next to sliders.
-    ///     中文说明：Width of the inline numeric field next to sliders.
+    ///     滑块旁内联数值字段的宽度。
     /// </param>
     /// <param name="ValueFieldHeight">
     ///     Height of the inline numeric field next to sliders.
-    ///     中文说明：Height of the inline numeric field next to sliders.
+    ///     滑块旁内联数值字段的高度。
     /// </param>
     public sealed record SliderMetrics(
         float RowMinWidth,
@@ -147,117 +147,117 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
     /// <summary>
     ///     Choice (stepper) row sizing.
-    ///     中文说明：Choice (stepper) row sizing.
+    ///     选择（步进器）行尺寸。
     /// </summary>
     /// <param name="RowMinWidth">
     ///     Stepper row total width.
-    ///     中文说明：Stepper row total width.
+    ///     步进器行总宽度。
     /// </param>
     /// <param name="CenterMinWidth">
     ///     Minimum width for the center label area.
-    ///     最小 width for the center label area。
+    ///     中心标签区域的最小宽度。
     /// </param>
     public sealed record ChoiceMetrics(float RowMinWidth, float CenterMinWidth);
 
     /// <summary>
     ///     Color picker row sizing.
-    ///     中文说明：Color picker row sizing.
+    ///     颜色选择器行尺寸。
     /// </summary>
     /// <param name="RowMinWidth">
     ///     Color row minimum width.
-    ///     中文说明：Color row minimum width.
+    ///     颜色行的最小宽度。
     /// </param>
     /// <param name="SwatchSize">
     ///     Swatch size.
-    ///     中文说明：Swatch size.
+    ///     色块尺寸。
     /// </param>
     public sealed record ColorRowMetrics(float RowMinWidth, float SwatchSize);
 
     /// <summary>
     ///     String editor sizing.
-    ///     中文说明：String editor sizing.
+    ///     字符串编辑器尺寸。
     /// </summary>
     /// <param name="MinWidth">
     ///     Single-line string entry minimum width.
-    ///     中文说明：Single-line string entry minimum width.
+    ///     单行字符串条目的最小宽度。
     /// </param>
     /// <param name="MultilineMinHeight">
     ///     Multiline string entry minimum height.
-    ///     中文说明：Multiline string entry minimum height.
+    ///     多行字符串条目的最小高度。
     /// </param>
     public sealed record StringEntryMetrics(float MinWidth, float MultilineMinHeight);
 
     /// <summary>
     ///     Keybinding capture sizing.
-    ///     中文说明：Keybinding capture sizing.
+    ///     按键绑定捕获尺寸。
     /// </summary>
     /// <param name="BlockWidth">
     ///     Keybinding block width.
-    ///     中文说明：Keybinding block width.
+    ///     按键绑定块宽度。
     /// </param>
     /// <param name="CaptureMinWidth">
     ///     Minimum width of the keybinding capture button.
-    ///     最小 width of the keybinding capture button。
+    ///     按键绑定捕获按钮的最小宽度。
     /// </param>
     /// <param name="HintFontSize">
     ///     Font size for keybinding helper text.
-    ///     Font size 用于 keybinding helper text.
+    ///     按键绑定辅助文本的字体大小。
     /// </param>
     public sealed record KeybindingMetrics(float BlockWidth, float CaptureMinWidth, int HintFontSize);
 
     /// <summary>
     ///     Floating overlay panel sizing.
-    ///     中文说明：Floating overlay panel sizing.
+    ///     浮动叠加面板尺寸。
     /// </summary>
     /// <param name="PaddingH">
     ///     Horizontal padding.
-    ///     中文说明：Horizontal padding.
+    ///     水平内边距。
     /// </param>
     /// <param name="PaddingV">
     ///     Vertical padding.
-    ///     中文说明：Vertical padding.
+    ///     垂直内边距。
     /// </param>
     public sealed record OverlayMetrics(int PaddingH, int PaddingV);
 
     /// <summary>
     ///     Sidebar navigation sizing and behavior.
-    ///     Sidebar navigation sizing 和 behavior.
+    ///     侧边栏导航的尺寸和行为。
     /// </summary>
     /// <param name="Width">
     ///     Fixed sidebar column width.
-    ///     中文说明：Fixed sidebar column width.
+    ///     固定侧边栏列宽。
     /// </param>
     /// <param name="PageRowMinHeight">
     ///     Minimum row height for a page tab.
-    ///     最小 row height for a page tab。
+    ///     页面标签的最小行高。
     /// </param>
     /// <param name="SectionRowMinHeight">
     ///     Minimum row height for a section jump row.
-    ///     最小 row height for a section jump row。
+    ///     小节跳转行的最小行高。
     /// </param>
     /// <param name="ModListSeparation">
     ///     Vertical gap between mod cards.
-    ///     Vertical gap between mod 卡牌s.
+    ///     mod 卡片之间的垂直间距。
     /// </param>
     /// <param name="ModCardInnerSeparation">
     ///     Vertical gap inside an expanded mod card.
-    ///     Vertical gap inside an expanded mod 卡牌.
+    ///     展开的 mod 卡片内部垂直间距。
     /// </param>
     /// <param name="PageTreeSeparation">
     ///     Gap between stacked root page rows.
-    ///     中文说明：Gap between stacked root page rows.
+    ///     堆叠根页面行之间的间距。
     /// </param>
     /// <param name="SectionRailSeparation">
     ///     Gap between section rail rows.
-    ///     中文说明：Gap between section rail rows.
+    ///     小节导航栏行之间的间距。
     /// </param>
     /// <param name="CardInnerMargin">
     ///     Inner margin for compact sidebar mod cards.
-    ///     Inner margin 用于 compact sidebar mod 卡牌s.
+    ///     紧凑侧边栏 mod 卡片的内侧边距。
     /// </param>
     /// <param name="ShowInlinePageCount">
     ///     When true, expanded mod cards show an inline "N pages" line.
-    ///     为 true 时，expanded mod cards show an inline "N pages" line。
+    ///     为 true 时，展开的 mod 卡片会显示内联的 "N pages" 行。
     /// </param>
     public sealed record SidebarMetrics(
         float Width,
@@ -272,79 +272,78 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
     /// <summary>
     ///     Font size scale used across the shell.
-    ///     Font size scale used across the shell.
     /// </summary>
     /// <param name="Button">
     ///     Default font size for standard buttons.
-    ///     默认 font size for standard buttons。
+    ///     标准按钮的默认字体大小。
     /// </param>
     /// <param name="MiniButton">
     ///     Font size for compact (mini) buttons.
-    ///     Font size 用于 compact (mini) buttons.
+    ///     紧凑（迷你）按钮的字体大小。
     /// </param>
     /// <param name="ValueLabel">
     ///     Font size for dropdown faces and stepper center labels.
-    ///     Font size 用于 dropdown faces 和 stepper center labels.
+    ///     下拉框表面和步进器中心标签的字体大小。
     /// </param>
     /// <param name="PopupRow">
     ///     Font size for dropdown / popup rows.
-    ///     Font size 用于 dropdown / popup rows.
+    ///     下拉 / 弹出行的字体大小。
     /// </param>
     /// <param name="HintSmall">
     ///     Font size for small inline hints.
-    ///     Font size 用于 small inline hints.
+    ///     小型内联提示的字体大小。
     /// </param>
     /// <param name="Tooltip">
     ///     Font size for native control tooltips (TooltipLabel).
-    ///     Font size 用于 native control tooltips (TooltipLabel).
+    ///     原生控件工具提示（TooltipLabel）的字体大小。
     /// </param>
     /// <param name="Grip">
     ///     Font size for glyph-style grip labels.
-    ///     Font size 用于 glyph-style grip labels.
+    ///     字形样式拖拽柄标签的字体大小。
     /// </param>
     /// <param name="PillCount">
     ///     Font size for list count badges.
-    ///     Font size 用于 list count badges.
+    ///     列表计数徽标的字体大小。
     /// </param>
     /// <param name="Secondary">
     ///     Font size for secondary text.
-    ///     Font size 用于 secondary text.
+    ///     次要文本的字体大小。
     /// </param>
     /// <param name="HeaderArrow">
     ///     Font size for header arrow glyphs.
-    ///     Font size 用于 header arrow glyphs.
+    ///     标题箭头字形的字体大小。
     /// </param>
     /// <param name="HeaderTitle">
     ///     Font size for collapsible header titles.
-    ///     Font size 用于 collapsible header titles.
+    ///     可折叠标题栏标题的字体大小。
     /// </param>
     /// <param name="HeaderSubtitle">
     ///     Font size for header subtitles.
-    ///     Font size 用于 header subtitles.
+    ///     标题栏副标题的字体大小。
     /// </param>
     /// <param name="PageDescription">
     ///     Font size for page descriptions in the toolbar area.
-    ///     Font size 用于 page descriptions in the toolbar area.
+    ///     工具栏区域页面说明的字体大小。
     /// </param>
     /// <param name="OverlayTitle">
     ///     Font size for floating overlay titles.
-    ///     Font size 用于 floating overlay titles.
+    ///     浮动叠加层标题的字体大小。
     /// </param>
     /// <param name="OverlayBody">
     ///     Font size for floating overlay body lines.
-    ///     Font size 用于 floating overlay body lines.
+    ///     浮动叠加层正文行的字体大小。
     /// </param>
     /// <param name="OverlayPath">
     ///     Font size for floating overlay path labels.
-    ///     Font size 用于 floating overlay 路径 labels.
+    ///     浮动叠加层路径标签的字体大小。
     /// </param>
     /// <param name="SettingsEntryButton">
     ///     Font size for the vanilla settings entry button label.
-    ///     Font size 用于 the 原版 设置 entry button label.
+    ///     原版设置条目按钮标签的字体大小。
     /// </param>
     /// <param name="SettingLineTitle">
     ///     Primary title font size for each settings entry row label.
-    ///     Primary title font size 用于 each 设置 entry row label.
+    ///     每个设置条目行标签的主标题字体大小。
     /// </param>
     public sealed record FontSizeMetrics(
         int Button,

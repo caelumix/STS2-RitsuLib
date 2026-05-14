@@ -17,7 +17,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Standard On/Off toggle control used by mod settings entries.
-    ///     Standard On/Off toggle control used 通过 mod 设置 entries.
+    ///     mod 设置条目使用的标准 On/Off 切换控件。
     /// </summary>
     public sealed partial class ModSettingsToggleControl : ModSettingsGamepadCompatibleButton
     {
@@ -27,15 +27,15 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a toggle control with an initial value and change callback.
-        ///     创建 a toggle control with an initial value and change callback。
+        ///     创建带初始值和变更回调的切换控件。
         /// </summary>
         /// <param name="initialValue">
         ///     Whether the toggle starts enabled.
-        ///     表示是否 the toggle starts enabled。
+        ///     切换控件初始是否启用。
         /// </param>
         /// <param name="onChanged">
         ///     Callback invoked after the value changes.
-        ///     Callback invoked 之后 the value changes.
+        ///     值变化后调用的回调。
         /// </param>
         public ModSettingsToggleControl(bool initialValue, Action<bool> onChanged)
         {
@@ -62,7 +62,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates the toggle control for Godot scene instantiation.
-        ///     创建 the toggle control for Godot scene instantiation。
+        ///     创建用于 Godot 场景实例化的切换控件。
         /// </summary>
         public ModSettingsToggleControl()
         {
@@ -70,7 +70,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Initializes the visual state after the control enters the scene tree.
-        ///     初始化 the visual state after the control enters the scene tree。
+        ///     控件进入场景树后初始化视觉状态。
         /// </summary>
         public override void _Ready()
         {
@@ -80,11 +80,11 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Sets the current toggle value without recreating the control.
-        ///     设置 the current toggle value 带有out recreating the control.
+        ///     设置当前切换值而不重新创建控件。
         /// </summary>
         /// <param name="value">
         ///     The value to display.
-        ///     该 value to display。
+        ///     要显示的值。
         /// </param>
         public void SetValue(bool value)
         {
@@ -491,10 +491,11 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Legacy <see cref="float" /> slider row: Godot <see cref="HSlider" /> still uses <see cref="double" /> values,
-    ///     Legacy <c>float</c> slider row: Godot <c>HSlider</c> still 使用 <c>double</c> values,
     ///     but comparisons and binding I/O stay in <see cref="float" /> space to match obsolete
-    ///     but comparisons 和 binding I/O stay in <c>float</c> space to match obsolete
     ///     <c>AddSlider(..., IModSettingsValueBinding&lt;float&gt;, ...)</c> mods without double bridges.
+    ///     旧版 <see cref="float" /> 滑块行：Godot <see cref="HSlider" /> 仍使用 <see cref="double" /> 值，
+    ///     但比较和 binding I/O 保持在 <see cref="float" /> 空间，以匹配不带 double 桥接的过时
+    ///     <c>AddSlider(..., IModSettingsValueBinding&lt;float&gt;, ...)</c> mod。
     /// </summary>
     public sealed partial class ModSettingsFloatSliderControl : HBoxContainer
     {
@@ -508,31 +509,31 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a float-backed slider editor.
-        ///     创建 a float-backed slider editor。
+        ///     创建以 float 支持的滑块编辑器。
         /// </summary>
         /// <param name="initialValue">
         ///     The starting value shown by the slider.
-        ///     该 starting value shown by the slider。
+        ///     滑块显示的起始值。
         /// </param>
         /// <param name="minValue">
         ///     The minimum allowed value.
-        ///     该 minimum allowed value。
+        ///     允许的最小值。
         /// </param>
         /// <param name="maxValue">
         ///     The maximum allowed value.
-        ///     该 maximum allowed value。
+        ///     允许的最大值。
         /// </param>
         /// <param name="step">
         ///     The slider increment.
-        ///     该 slider increment。
+        ///     滑块增量。
         /// </param>
         /// <param name="formatter">
         ///     Formats committed values for the text field.
-        ///     Formats committed values 用于 the text field.
+        ///     为文本字段格式化已提交值。
         /// </param>
         /// <param name="onChanged">
         ///     Invoked when the effective value changes.
-        ///     Invoked 当 the effective value changes.
+        ///     有效值变化时调用。
         /// </param>
         public ModSettingsFloatSliderControl(
             float initialValue,
@@ -616,7 +617,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Godot serialization constructor.
-        ///     中文说明：Godot serialization constructor.
+        ///     Godot 序列化构造函数。
         /// </summary>
         public ModSettingsFloatSliderControl()
         {
@@ -693,11 +694,11 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Replaces the current slider value without leaving stale formatted text behind.
-        ///     Replaces the current slider value 带有out leaving stale 用于matted text behind.
+        ///     替换当前滑块值，且不留下过时的格式化文本。
         /// </summary>
         /// <param name="value">
         ///     The value to apply.
-        ///     该 value to apply。
+        ///     要应用的值。
         /// </param>
         public void SetValue(float value)
         {
@@ -829,11 +830,11 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Stepper-style choice editor that cycles through labeled values.
-    ///     中文说明：Stepper-style choice editor that cycles through labeled values.
+    ///     在带标签值之间循环的步进式选项编辑器。
     /// </summary>
     /// <typeparam name="TValue">
     ///     The stored option value type.
-    ///     该 stored option value type。
+    ///     存储的选项值类型。
     /// </typeparam>
     public sealed partial class ModSettingsChoiceControl<TValue> : HBoxContainer
     {
@@ -846,19 +847,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a stepper-style choice editor.
-        ///     创建 a stepper-style choice editor。
+        ///     创建步进式选项编辑器。
         /// </summary>
         /// <param name="options">
         ///     The labeled values available to the editor.
-        ///     该 labeled values available to the editor。
+        ///     编辑器可用的带标签值。
         /// </param>
         /// <param name="currentValue">
         ///     The value selected initially.
-        ///     该 value selected initially。
+        ///     初始选中的值。
         /// </param>
         /// <param name="onChanged">
         ///     Invoked after the user picks a different value.
-        ///     Invoked 之后 the 使用r picks a different value.
+        ///     用户选择不同值后调用。
         /// </param>
         public ModSettingsChoiceControl(
             IReadOnlyList<(TValue Value, string Label)> options,
@@ -930,7 +931,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Godot serialization constructor.
-        ///     中文说明：Godot serialization constructor.
+        ///     Godot 序列化构造函数。
         /// </summary>
         public ModSettingsChoiceControl()
         {
@@ -978,11 +979,11 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Selects the matching option without triggering the external change callback.
-        ///     Selects the matching option 带有out triggering the external change callback.
+        ///     选择匹配选项而不触发外部变更回调。
         /// </summary>
         /// <param name="value">
         ///     The value to select.
-        ///     该 value to select。
+        ///     要选择的值。
         /// </param>
         public void SetValue(TValue value)
         {
@@ -1000,7 +1001,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Replaces all choices and updates the selected value without invoking callbacks.
-        ///     Replaces all choices 和 更新 the selected value 带有out invoking callbacks.
+        ///     替换所有选项并更新选中值，且不调用回调。
         /// </summary>
         public void SetOptions(IReadOnlyList<(TValue Value, string Label)> options, TValue selectedValue)
         {
@@ -1028,11 +1029,11 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Dropdown-style choice editor for labeled values.
-    ///     Dropdown-style choice editor 用于 labeled values.
+    ///     用于带标签值的下拉式选项编辑器。
     /// </summary>
     /// <typeparam name="TValue">
     ///     The stored option value type.
-    ///     该 stored option value type。
+    ///     存储的选项值类型。
     /// </typeparam>
     public sealed partial class ModSettingsDropdownChoiceControl<TValue> : HBoxContainer,
         IModSettingsTransientPopupOwner
@@ -1065,19 +1066,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a dropdown-style choice editor.
-        ///     创建 a dropdown-style choice editor。
+        ///     创建下拉式选项编辑器。
         /// </summary>
         /// <param name="options">
         ///     The labeled values available to the editor.
-        ///     该 labeled values available to the editor。
+        ///     编辑器可用的带标签值。
         /// </param>
         /// <param name="currentValue">
         ///     The value selected initially.
-        ///     该 value selected initially。
+        ///     初始选中的值。
         /// </param>
         /// <param name="onChanged">
         ///     Invoked after the user picks a different value.
-        ///     Invoked 之后 the 使用r picks a different value.
+        ///     用户选择不同值后调用。
         /// </param>
         public ModSettingsDropdownChoiceControl(
             IReadOnlyList<(TValue Value, string Label)> options,
@@ -1135,7 +1136,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Godot serialization constructor.
-        ///     中文说明：Godot serialization constructor.
+        ///     Godot 序列化构造函数。
         /// </summary>
         public ModSettingsDropdownChoiceControl()
         {
@@ -1249,11 +1250,11 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Selects the matching option without reopening the dropdown or firing the external callback.
-        ///     Selects the matching option 带有out reopening the dropdown 或 firing the external callback.
+        ///     选择匹配选项而不重新打开下拉菜单，也不触发外部回调。
         /// </summary>
         /// <param name="value">
         ///     The value to select.
-        ///     该 value to select。
+        ///     要选择的值。
         /// </param>
         public void SetValue(TValue value)
         {
@@ -1279,7 +1280,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Replaces all dropdown options and updates the selected value without firing callbacks.
-        ///     Replaces all dropdown options 和 更新 the selected value 带有out firing callbacks.
+        ///     替换所有下拉选项并更新选中值，且不触发回调。
         /// </summary>
         public void SetOptions(IReadOnlyList<(TValue Value, string Label)> options, TValue selectedValue)
         {
@@ -2144,7 +2145,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Color editor with a visible swatch picker and editable hex value.
-    ///     Color editor 带有 a visible swatch picker 和 editable hex value.
+    ///     带可见色块选择器和可编辑十六进制值的颜色编辑器。
     /// </summary>
     public sealed partial class ModSettingsColorControl : HBoxContainer, IModSettingsTransientPopupOwner
     {
@@ -2168,23 +2169,23 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a color editor with picker options.
-        ///     创建 a color editor with picker options。
+        ///     创建带选择器选项的颜色编辑器。
         /// </summary>
         /// <param name="initialValue">
         ///     The initial color string (hex, HTML, or BaseLib <c>[r,g,b,a]</c>), or null/empty.
-        ///     该 initial color string (hex, HTML, or BaseLib <c>[r,g,b,a]</c>), or null/empty。
+        ///     指定 initial color string (hex, HTML, or BaseLib <c>[r,g,b,a]</c>), or null/empty。
         /// </param>
         /// <param name="onChanged">
         ///     Callback invoked after the committed color value changes.
-        ///     Callback invoked 之后 the committed color value changes.
+        ///     已提交颜色值变化后调用的回调。
         /// </param>
         /// <param name="editAlpha">
         ///     Whether the swatch popup exposes alpha editing.
-        ///     表示是否 the swatch popup exposes alpha editing。
+        ///     色块弹窗是否公开 alpha 编辑。
         /// </param>
         /// <param name="editIntensity">
         ///     Whether the popup exposes intensity (HDR) editing.
-        ///     表示是否 the popup exposes intensity (HDR) editing。
+        ///     弹窗是否公开强度（HDR）编辑。
         /// </param>
         public ModSettingsColorControl(string? initialValue, Action<string?> onChanged, bool editAlpha,
             bool editIntensity)
@@ -2247,7 +2248,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates the color editor for Godot scene instantiation.
-        ///     创建 the color editor for Godot scene instantiation。
+        ///     创建用于 Godot 场景实例化的颜色编辑器。
         /// </summary>
         public ModSettingsColorControl()
         {
@@ -2255,7 +2256,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Current hex text shown by the editor, or an empty string when the color is unset.
-        ///     当前 hex text shown by the editor, or an empty string when the color is unset。
+        ///     编辑器当前显示的 hex 文本；颜色未设置时为空字符串。
         /// </summary>
         public string ValueText => _hexEdit?.Text ?? _lastCommitted;
 
@@ -2268,7 +2269,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Serializes <paramref name="color" /> as an 8-digit hex string for settings storage / display.
-        ///     Serializes <c>color</c> as an 8-digit hex string 用于 设置 storage / display.
+        ///     将 <paramref name="color" /> 序列化为 8 位十六进制字符串，用于设置存储 / 显示。
         /// </summary>
         public static string FormatStoredColorString(Color color)
         {
@@ -2277,7 +2278,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Parses hex, Godot HTML, or BaseLib-style <c>[r, g, b, a]</c> component lists (invariant floats).
-        ///     Parses hex, Godot HTML, 或 BaseLib-style <c>[r, g, b, a]</c> component lists (invariant floats).
+        ///     解析 hex、Godot HTML 或 BaseLib 风格的 <c>[r, g, b, a]</c> 分量列表（固定区域性的浮点数）。
         /// </summary>
         public static bool TryDeserializeColorForSettings(string? text, out Color color)
         {
@@ -2304,7 +2305,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Wires editor events after the control enters the scene tree.
-        ///     Wires editor 事件s 之后 the control enters the 场景 tree.
+        ///     控件进入场景树后连接编辑器事件。
         /// </summary>
         public override void _Ready()
         {
@@ -2329,11 +2330,11 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Updates the displayed value without recreating the control.
-        ///     更新 the displayed value 带有out recreating the control.
+        ///     更新显示值而不重新创建控件。
         /// </summary>
         /// <param name="value">
         ///     The hex color to display, or null/empty to leave the field unset.
-        ///     该 hex color to display, or null/empty to leave the field unset。
+        ///     要显示的 hex 颜色；为 null/空时保持字段未设置。
         /// </param>
         public void SetValue(string? value)
         {
@@ -2484,7 +2485,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Keybinding capture editor used by settings pages and custom editors.
-    ///     Keybinding capture editor used 通过 设置 pages 和 自定义 editors.
+    ///     设置页面和自定义编辑器使用的按键绑定捕获编辑器。
     /// </summary>
     public sealed partial class ModSettingsKeyBindingControl : VBoxContainer
     {
@@ -2500,27 +2501,27 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a keybinding capture editor.
-        ///     创建 a keybinding capture editor。
+        ///     创建按键绑定捕获编辑器。
         /// </summary>
         /// <param name="initialValue">
         ///     The binding shown initially.
-        ///     该 binding shown initially。
+        ///     初始显示的绑定。
         /// </param>
         /// <param name="allowModifierCombos">
         ///     Whether modifier combinations are allowed.
-        ///     表示是否 modifier combinations are allowed。
+        ///     是否允许修饰键组合。
         /// </param>
         /// <param name="allowModifierOnly">
         ///     Whether modifier-only bindings are allowed.
-        ///     表示是否 modifier-only bindings are allowed。
+        ///     是否允许仅修饰键的绑定。
         /// </param>
         /// <param name="distinguishModifierSides">
         ///     Whether left and right modifier keys are recorded separately.
-        ///     表示是否 left and right modifier keys are recorded separately。
+        ///     是否分别记录左、右修饰键。
         /// </param>
         /// <param name="onChanged">
         ///     Invoked after the binding changes.
-        ///     Invoked 之后 the binding changes.
+        ///     绑定变化后调用。
         /// </param>
         public ModSettingsKeyBindingControl(string initialValue, bool allowModifierCombos, bool allowModifierOnly,
             bool distinguishModifierSides, Action<string> onChanged)
@@ -2599,7 +2600,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Godot serialization constructor.
-        ///     中文说明：Godot serialization constructor.
+        ///     Godot 序列化构造函数。
         /// </summary>
         public ModSettingsKeyBindingControl()
         {
@@ -2614,11 +2615,11 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Replaces the captured binding without starting capture mode.
-        ///     Replaces the captured binding 带有out starting capture mode.
+        ///     替换捕获的绑定而不启动捕获模式。
         /// </summary>
         /// <param name="value">
         ///     The binding to display.
-        ///     该 binding to display。
+        ///     要显示的绑定。
         /// </param>
         public void SetValue(string value)
         {
@@ -2759,9 +2760,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Uses <see cref="InputEventKey.PhysicalKeycode" /> when <paramref name="distinguishModifierSides" /> is true
-        ///     使用 <c>InputEventKey.PhysicalKeycode</c> 当 <c>distinguishModifierSides</c> is true
         ///     so Left Ctrl / Right Shift etc. are distinguished; otherwise uses the logical <see cref="InputEventKey.Keycode" />.
-        ///     so Left Ctrl / Right Shift etc. are distinguished; otherwise 使用 the logical <c>InputEventKey.Keycode</c>.
+        ///     当 <paramref name="distinguishModifierSides" /> 为 true 时使用 <see cref="InputEventKey.PhysicalKeycode" />，以区分 Left
+        ///     Ctrl / Right Shift 等；否则使用逻辑 <see cref="InputEventKey.Keycode" />。
         /// </summary>
         internal static string GetRecordedKeyName(InputEventKey keyEvent, bool distinguishModifierSides)
         {
@@ -3289,7 +3290,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Multi-keybinding capture editor used by native settings pages.
-    ///     Multi-keybinding capture editor used 通过 native 设置 pages.
+    ///     原生设置页面使用的多按键绑定捕获编辑器。
     /// </summary>
     public sealed partial class ModSettingsMultiKeyBindingControl : VBoxContainer
     {
@@ -3307,27 +3308,27 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a native multi-binding capture editor.
-        ///     创建 a native multi-binding capture editor。
+        ///     创建原生多绑定捕获编辑器。
         /// </summary>
         /// <param name="initialValues">
         ///     Initial bindings shown by the control.
-        ///     Initial bindings shown 通过 the control.
+        ///     控件初始显示的绑定。
         /// </param>
         /// <param name="allowModifierCombos">
         ///     Whether modifier combinations are allowed.
-        ///     表示是否 modifier combinations are allowed。
+        ///     是否允许修饰键组合。
         /// </param>
         /// <param name="allowModifierOnly">
         ///     Whether modifier-only bindings are allowed.
-        ///     表示是否 modifier-only bindings are allowed。
+        ///     是否允许仅修饰键的绑定。
         /// </param>
         /// <param name="distinguishModifierSides">
         ///     Whether left/right modifier keys are recorded separately.
-        ///     表示是否 left/right modifier keys are recorded separately。
+        ///     是否分别记录左/右修饰键。
         /// </param>
         /// <param name="onChanged">
         ///     Invoked after the normalized binding list changes.
-        ///     Invoked 之后 the normalized binding list changes.
+        ///     规范化后的绑定列表变化后调用。
         /// </param>
         public ModSettingsMultiKeyBindingControl(IEnumerable<string>? initialValues, bool allowModifierCombos,
             bool allowModifierOnly, bool distinguishModifierSides, Action<List<string>> onChanged)
@@ -3371,7 +3372,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Godot serialization constructor.
-        ///     中文说明：Godot serialization constructor.
+        ///     Godot 序列化构造函数。
         /// </summary>
         public ModSettingsMultiKeyBindingControl()
         {
@@ -3384,11 +3385,11 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Replaces the displayed binding list without starting capture mode.
-        ///     Replaces the displayed binding list 带有out starting capture mode.
+        ///     替换显示的绑定列表而不启动捕获模式。
         /// </summary>
         /// <param name="values">
         ///     The bindings to display.
-        ///     该 bindings to display。
+        ///     要显示的绑定。
         /// </param>
         public void SetValue(IEnumerable<string>? values)
         {
@@ -3720,21 +3721,21 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Compact button used by stepper controls, dropdown rows, and other dense settings editors.
-    ///     Comp章节 button used 通过 stepper controls, dropdown rows, 和 other dense 设置 editors.
+    ///     步进控件、下拉行和其他密集设置编辑器使用的紧凑按钮。
     /// </summary>
     public sealed partial class ModSettingsMiniButton : ModSettingsGamepadCompatibleButton
     {
         /// <summary>
         ///     Creates a compact button with the standard mini-button chrome.
-        ///     创建 a compact button with the standard mini-button chrome。
+        ///     创建带标准迷你按钮外观的紧凑按钮。
         /// </summary>
         /// <param name="text">
         ///     The button label.
-        ///     该 button label。
+        ///     按钮标签。
         /// </param>
         /// <param name="action">
         ///     Invoked when the button is pressed.
-        ///     Invoked 当 the button is pressed.
+        ///     按钮按下时调用。
         /// </param>
         public ModSettingsMiniButton(string text, Action action)
         {
@@ -3758,7 +3759,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Godot serialization constructor.
-        ///     中文说明：Godot serialization constructor.
+        ///     Godot 序列化构造函数。
         /// </summary>
         public ModSettingsMiniButton()
         {
@@ -3766,7 +3767,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates the standard mini-button surface for normal, hover, focus, and disabled states.
-        ///     创建 the standard mini-button surface for normal, hover, focus, and disabled states。
+        ///     为正常、悬停、焦点和禁用状态创建标准迷你按钮表面。
         /// </summary>
         public static StyleBoxFlat CreateStyle(bool highlighted, bool disabled = false)
         {
@@ -3808,7 +3809,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates the pressed-state style for mini buttons.
-        ///     创建 the pressed-state style for mini buttons。
+        ///     创建迷你按钮的按下状态样式。
         /// </summary>
         public static StyleBoxFlat CreatePressedStyle()
         {
@@ -3817,7 +3818,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates the focus-state style for mini buttons.
-        ///     创建 the focus-state style for mini buttons。
+        ///     创建迷你按钮的焦点状态样式。
         /// </summary>
         public static StyleBoxFlat CreateFocusStyle()
         {
@@ -5708,7 +5709,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Textured action button using the standard settings button chrome.
-    ///     Textured action button using the standard 设置 button chrome.
+    ///     使用标准设置按钮外观的纹理动作按钮。
     /// </summary>
     public partial class ModSettingsTextButton : ModSettingsGamepadCompatibleButton
     {
@@ -5718,19 +5719,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a standard settings action button.
-        ///     创建 a standard settings action button。
+        ///     创建标准设置动作按钮。
         /// </summary>
         /// <param name="text">
         ///     The button label.
-        ///     该 button label。
+        ///     按钮标签。
         /// </param>
         /// <param name="tone">
         ///     The visual tone applied to the button.
-        ///     该 visual tone applied to the button。
+        ///     应用到按钮的视觉色调。
         /// </param>
         /// <param name="action">
         ///     Invoked when the button is pressed.
-        ///     Invoked 当 the button is pressed.
+        ///     按钮按下时调用。
         /// </param>
         public ModSettingsTextButton(string text, ModSettingsButtonTone tone, Action? action)
         {
@@ -5774,7 +5775,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Godot serialization constructor.
-        ///     中文说明：Godot serialization constructor.
+        ///     Godot 序列化构造函数。
         /// </summary>
         public ModSettingsTextButton()
         {
@@ -5789,11 +5790,11 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Updates the selected visual state used by segmented button groups and previews.
-        ///     更新 the selected visual state used 通过 segmented button groups 和 previews.
+        ///     更新分段按钮组和预览使用的选中视觉状态。
         /// </summary>
         /// <param name="selected">
         ///     Whether the button should render as selected.
-        ///     表示是否 the button should render as selected。
+        ///     按钮是否应渲染为选中状态。
         /// </param>
         public void SetSelected(bool selected)
         {

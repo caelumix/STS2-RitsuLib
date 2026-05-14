@@ -5,9 +5,9 @@ namespace STS2RitsuLib.Compat
 {
     /// <summary>
     ///     Best-effort version of the running STS2 host from <c>release_info.json</c> or the <c>sts2</c> assembly.
-    ///     Best-effort version of the running STS2 host 从 <c>release_info.json</c> 或 the <c>sts2</c> assembly.
     ///     Not currently consumed by RitsuLib; kept for future version-gated behavior or diagnostics.
-    ///     Not currently consumed 通过 RitsuLib; kept 用于 future version-gated behavior 或 diagnostics.
+    ///     从 <c>release_info.json</c> 或 <c>sts2</c> 程序集尽力获取正在运行的 STS2 宿主版本。
+    ///     RitsuLib 当前未使用；保留用于未来按版本门控的行为或诊断。
     /// </summary>
     internal static class Sts2HostVersion
     {
@@ -15,13 +15,13 @@ namespace STS2RitsuLib.Compat
 
         /// <summary>
         ///     Parsed numeric version when reliable; otherwise <c>null</c>.
-        ///     Parsed numeric version 当 reliable; otherwise <c>null</c>.
+        ///     可靠时解析出的数字版本；否则为 <c>null</c>。
         /// </summary>
         internal static Version? Numeric => Lazy.Value.Numeric;
 
         /// <summary>
         ///     Original label from <see cref="ReleaseInfo.Version" /> when present.
-        ///     Original label 从 <c>ReleaseInfo.Version</c> 当 present.
+        ///     存在时来自 <see cref="ReleaseInfo.Version" /> 的原始标签。
         /// </summary>
         internal static string? ReleaseLabel => Lazy.Value.ReleaseLabel;
 
@@ -52,7 +52,7 @@ namespace STS2RitsuLib.Compat
 
         /// <summary>
         ///     Accepts <c>major.minor[.build[.revision]]</c>; strips common semver suffixes (<c>-beta</c>, <c>+build</c>).
-        ///     中文说明：Accepts <c>major.minor[.build[.revision]]</c>; strips common semver suffixes (<c>-beta</c>, <c>+build</c>).
+        ///     接受 <c>major.minor[.build[.revision]]</c>；去除常见 semver 后缀（<c>-beta</c>、<c>+build</c>）。
         /// </summary>
         internal static bool TryParseVersionCore(string text, out Version version)
         {

@@ -4,13 +4,11 @@ namespace STS2RitsuLib.Utils
 {
     /// <summary>
     ///     Non-generic helper class to cache reflection information per type.
-    ///     中文说明：Non-generic helper class to cache reflection information per type.
-    ///     Non-generic helper class to cache reflection information per type.
-    ///     中文说明：Non-generic helper class to cache reflection information per type.
     ///     Avoids static fields in generic types while maintaining performance.
-    ///     中文说明：Avoids static fields in generic types while maintaining performance.
-    ///     Avoids static fields in generic types while maintaining performance.
-    ///     中文说明：Avoids static fields in generic types while maintaining performance.
+    ///     用于按类型缓存反射信息的非泛型辅助类。
+    ///     用于按类型缓存反射信息的非泛型辅助类。
+    ///     在保持性能的同时避免泛型类型中的静态字段。
+    ///     在保持性能的同时避免泛型类型中的静态字段。
     /// </summary>
     internal static class PropertyCache
     {

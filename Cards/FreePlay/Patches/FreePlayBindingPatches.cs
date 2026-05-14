@@ -6,7 +6,7 @@ namespace STS2RitsuLib.Cards.FreePlay.Patches
 {
     /// <summary>
     ///     Binds engine-level SetToFree calls into <see cref="FreePlayBindingRegistry" /> markers.
-    ///     Binds engine-level 设置ToFree calls into <c>FreePlayBinding注册表</c> markers.
+    ///     将引擎级 SetToFree 调用绑定到 <see cref="FreePlayBindingRegistry" /> 标记。
     /// </summary>
     internal sealed class CardModelSetToFreeBindingPatch : IPatchMethod
     {

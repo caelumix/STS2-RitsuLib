@@ -5,17 +5,16 @@ namespace STS2RitsuLib.Timeline
 {
     /// <summary>
     ///     Maps epoch ids to CLR types gated by that epoch (cards and/or relics only — not potions), populated from pack
-    ///     Maps epoch ids to CLR types gated 通过 that epoch (卡牌s and/or Relics only — not potions), populated 从 pack
     ///     flow such as <see cref="TimelineColumnPackEntry{TStory}" /> slot <c>Cards</c>/<c>Relics</c>/<c>RelicsFromPool</c>/
-    ///     flow such as <c>TimelineColumnPackEntry{TStory}</c> slot <c>卡牌s</c>/<c>Relics</c>/<c>RelicsFromPool</c>/
     ///     <c>CardsFromPool</c>.
     ///     Potions use <c>RequireAllPotionsInPool</c> / <c>Potions</c> on <c>EpochSlotBuilder&lt;TEpoch&gt;</c>
-    ///     Potions 使用 <c>RequireAllPotionsInPool</c> / <c>Potions</c> on <c>EpochSlotBuilder&lt;TEpoch&gt;</c>
     ///     (RequireEpoch only).
-    ///     中文说明：(RequireEpoch only).
     ///     Used by pack-declared unlock epoch templates and stays in sync with
-    ///     used 通过 pack-declared unlock epoch templates 和 stays in sync 带有
     ///     <see cref="Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)" />.
+    ///     将 epoch id 映射到受该纪元门控的 CLR 类型（仅卡牌和/或遗物，不包括药水），由 pack 流程填充，例如 <see cref="TimelineColumnPackEntry{TStory}" /> 槽位
+    ///     <c>Cards</c>/<c>Relics</c>/<c>RelicsFromPool</c>/<c>CardsFromPool</c>。
+    ///     药水使用 <c>EpochSlotBuilder&lt;TEpoch&gt;</c> 上的 <c>RequireAllPotionsInPool</c> / <c>Potions</c>（仅 RequireEpoch）。
+    ///     供 pack 声明的解锁纪元模板使用，并与 <see cref="Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)" /> 保持同步。
     /// </summary>
     public static class ModEpochGatedContentRegistry
     {
@@ -28,7 +27,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     True after <see cref="FreezeRegistrations" />.
-        ///     True 之后 <c>FreezeRegistrations</c>.
+        ///     在 <see cref="FreezeRegistrations" /> 之后为 true。
         /// </summary>
         public static bool IsFrozen
         {
@@ -54,9 +53,8 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers gated model types for <paramref name="epochId" /> (must be unique). At least one card or relic
-        ///     Registers gated 模型 types 用于 <c>epochId</c> (must be unique). At least one 卡牌 或 遗物
         ///     type is required.
-        ///     中文说明：type is required.
+        ///     为 <paramref name="epochId" /> 注册受门控的模型类型（必须唯一）。至少需要一个卡牌或遗物类型。
         /// </summary>
         public static void Register(string modId, string epochId, IReadOnlyList<Type>? cardTypes,
             IReadOnlyList<Type>? relicTypes)
@@ -84,7 +82,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Returns whether <paramref name="epochId" /> has pack-registered gated types.
-        ///     返回 whether <c>epochId</c> has pack-registered gated types。
+        ///     返回 <paramref name="epochId" /> 是否有由 pack 注册的门控类型。
         /// </summary>
         public static bool TryGet(string epochId, out EpochGatedContentEntry entry)
         {
@@ -98,7 +96,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Resolves <see cref="CardModel" /> instances for a gated epoch id.
-        ///     解析 <c>CardModel</c> instances for a gated epoch id。
+        ///     为受门控的纪元 id 解析 <see cref="CardModel" /> 实例。
         /// </summary>
         public static IReadOnlyList<CardModel> ResolveCards(string epochId)
         {
@@ -112,7 +110,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Resolves <see cref="RelicModel" /> instances for a gated epoch id.
-        ///     解析 <c>RelicModel</c> instances for a gated epoch id。
+        ///     为受门控的纪元 id 解析 <see cref="RelicModel" /> 实例。
         /// </summary>
         public static IReadOnlyList<RelicModel> ResolveRelics(string epochId)
         {
@@ -135,7 +133,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Snapshot of types registered for one epoch (from the owning mod’s pack).
-        ///     Snapshot of types 已注册 用于 one epoch (从 the owning mod’s pack).
+        ///     为一个纪元注册的类型快照（来自所属 mod 的 pack）。
         /// </summary>
         public sealed record EpochGatedContentEntry(
             string ModId,

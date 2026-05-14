@@ -5,14 +5,14 @@ namespace STS2RitsuLib.CardPiles.Nodes
     ///     (button or extra-hand container). Used by
     ///     <see cref="ModCardPileLayout.GetTargetPosition" /> and by the <c>NCard.FindOnTable</c> patch to
     ///     answer "where did the card fly to?" without forcing callers to look up scene nodes themselves.
-    ///     从 <c>ModCardPileDefinition</c> 到当前 live UI 实例（button 或 extra-hand container）的进程级查找表。
-    ///     <c>ModCardPileLayout.GetTargetPosition</c> 和 <c>NCard.FindOnTable</c> patch 使用它回答
-    ///     “card 飞到了哪里？”，无需强迫调用方自行查找 scene node。
+    ///     从 <see cref="ModCardPileDefinition" /> 到当前 live UI 实例（button 或 extra-hand container）的进程级查找表。
+    ///     <see cref="ModCardPileLayout.GetTargetPosition" /> 和 <c>NCard.FindOnTable</c> patch 使用它回答
+    ///     “卡牌飞到了哪里？”，无需强迫调用方自行查找 scene node。
     /// </summary>
     /// <remarks>
     ///     The registry only holds weak UI state (Godot nodes clean themselves up on scene unload); entries
     ///     are replaced when a new combat UI reinjects piles.
-    ///     registry 只持有弱 UI 状态（Godot node 会在 scene unload 时自行清理）；新的 combat UI 重新注入 pile 时，
+    ///     registry 只持有弱 UI 状态（Godot node 会在 scene unload 时自行清理）；新的 combat UI 重新注入牌堆时，
     ///     entry 会被替换。
     /// </remarks>
     internal static class ModCardPileButtonRegistry

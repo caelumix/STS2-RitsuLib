@@ -6,9 +6,8 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Builds <see cref="BackgroundAssets" /> from an arbitrary <c>res://</c> layers directory using the same file naming
-    ///     Builds <c>BackgroundAssets</c> 从 an arbitrary <c>res://</c> layers directory using the same file naming
     ///     rules as vanilla (<c>_bg_</c> / <c>_fg_</c>).
-    ///     rules as 原版 (<c>_bg_</c> / <c>_fg_</c>).
+    ///     使用与原版相同的文件命名规则（<c>_bg_</c> / <c>_fg_</c>），从任意 <c>res://</c> layers 目录构建 <see cref="BackgroundAssets" />。
     /// </summary>
     internal static class ActBackgroundLayersFactory
     {

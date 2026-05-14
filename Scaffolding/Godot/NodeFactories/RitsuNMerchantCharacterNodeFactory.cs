@@ -6,8 +6,8 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeFactories
     /// <summary>
     ///     Builds <see cref="NMerchantCharacter" /> from <see cref="Texture2D" /> or converted mod scenes.
     ///     Merchant <see cref="Characters.Visuals.ModCreatureVisualPlayback" /> handles non-Spine <c>PlayAnimation</c>.
-    ///     从 <c>Texture2D</c> 或转换后的 mod 场景构建 <c>NMerchantCharacter</c>。
-    ///     merchant 的非 Spine <c>PlayAnimation</c> 由 <c>Characters.Visuals.ModCreatureVisualPlayback</c> 处理。
+    ///     从 <see cref="Texture2D" /> 或转换后的 mod 场景构建 <see cref="NMerchantCharacter" />。
+    ///     商人 <see cref="Characters.Visuals.ModCreatureVisualPlayback" /> 会处理非 Spine <c>PlayAnimation</c>。
     /// </summary>
     internal sealed class RitsuNMerchantCharacterNodeFactory() : RitsuGodotNodeFactory<NMerchantCharacter>([])
     {

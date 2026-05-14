@@ -2,9 +2,9 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Queues FMOD Studio bank and GUID mapping paths until <see cref="DeferredInitializationCompletedEvent" />,
-    ///     Queues FMOD Studio bank 和 GUID mapping 路径 until <c>DeferredInitializationCompleted事件</c>,
     ///     then loads them in one batch with a single <see cref="FmodStudioServer.TryWaitForAllLoads" />.
-    ///     then 加载 them in one batch 带有 a single <c>FmodStudioServer.TryWaitForAll加载</c>.
+    ///     将 FMOD Studio bank 和 GUID 映射路径排队到 <see cref="DeferredInitializationCompletedEvent" />，
+    ///     然后通过单次 <see cref="FmodStudioServer.TryWaitForAllLoads" /> 批量加载它们。
     /// </summary>
     public static class FmodStudioDeferredBankRegistration
     {
@@ -15,7 +15,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Queues a bank path to load after deferred initialization (deduplicated).
-        ///     Queues a bank 路径 to 加载 之后 deferred initialization (deduplicated).
+        ///     将 bank 路径排队，等待延迟初始化后加载（去重）。
         /// </summary>
         public static void RegisterBank(string resourcePath)
         {
@@ -31,9 +31,9 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Queues a GUID mapping file for <see cref="FmodStudioServer.TryLoadStudioGuidMappings" /> after deferred
-        ///     Queues a GUID mapping file 用于 <c>FmodStudioServer.TryLoadStudioGuidMappings</c> 之后 deferred
         ///     initialization (deduplicated).
-        ///     中文说明：initialization (deduplicated).
+        ///     将用于 <see cref="FmodStudioServer.TryLoadStudioGuidMappings" /> 的 GUID 映射文件排队，等待延迟
+        ///     初始化后加载（去重）。
         /// </summary>
         public static void RegisterStudioGuidMappings(string guidMapResourcePath)
         {

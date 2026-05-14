@@ -3,14 +3,14 @@ namespace STS2RitsuLib.Keywords
     /// <summary>
     ///     Where a registered mod keyword’s inline card text (gold title + period) is merged into the rendered card
     ///     description, mirroring vanilla <c>CardKeywordOrder</c> behavior.
-    ///     已注册 mod keyword 的 inline card text（gold title + period）应合并到渲染后 card description 的位置，
-    ///     对应原版 <c>CardKeywordOrder</c> 行为。
+    ///     已注册 mod keyword 的内联卡牌文本（gold title + period）合并到渲染后卡牌
+    ///     description 的位置，对应原版 <c>CardKeywordOrder</c> 行为。
     /// </summary>
     public enum ModKeywordCardDescriptionPlacement
     {
         /// <summary>
         ///     Do not inject keyword text into the card description (default).
-        ///     不向 card description 注入 keyword 文本（默认）。
+        ///     不向卡牌描述注入关键词文本（默认）。
         /// </summary>
         None = 0,
 

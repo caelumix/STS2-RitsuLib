@@ -10,9 +10,10 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandGlow
     ///     <see cref="ModContentRegistry.RegisterCardHandGlow{TCard}" /> so registration respects the same freeze rules as
     ///     other
     ///     content.
-    ///     全局注册逐卡牌类型手牌 glow 规则，并通过框架 Harmony 补丁合并进 <c>CardModel.ShouldGlowGold</c>
-    ///     和 <c>CardModel.ShouldGlowRed</c>。优先使用
-    ///     <c>ModContentRegistry.RegisterCardHandGlow{TCard}</c>，这样注册会遵守与其它内容相同的 freeze 规则。
+    ///     逐卡牌类型手牌发光规则的全局注册，经框架 Harmony patch 合并到 <see cref="CardModel.ShouldGlowGold" /> 和
+    ///     <see cref="CardModel.ShouldGlowRed" />。优先使用
+    ///     <see cref="ModContentRegistry.RegisterCardHandGlow{TCard}" />，让注册遵循与其它
+    ///     内容相同的冻结规则。
     /// </summary>
     public static class ModCardHandGlowRegistry
     {
@@ -21,8 +22,8 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandGlow
         /// <summary>
         ///     Registers rules for <typeparamref name="TCard" />. Multiple calls for the same type OR-merge channels.
         ///     Throws if <see cref="ModContentRegistry.IsFrozen" />.
-        ///     为 <c>TCard</c> 注册规则。同一类型多次调用会 OR 合并通道。
-        ///     若 <c>ModContentRegistry.IsFrozen</c> 则抛出异常。
+        ///     为 <typeparamref name="TCard" /> 注册规则。对同一类型多次调用会按 OR 合并通道。
+        ///     如果 <see cref="ModContentRegistry.IsFrozen" /> 则抛出。
         /// </summary>
         public static void Register<TCard>(ModCardHandGlowRules rules) where TCard : CardModel
         {
@@ -31,7 +32,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandGlow
 
         /// <summary>
         ///     Registers rules for <paramref name="cardType" />. Must be a concrete <see cref="CardModel" /> subtype.
-        ///     为 <c>cardType</c> 注册规则。它必须是具体 <c>CardModel</c> 子类型。
+        ///     为 <paramref name="cardType" /> 注册规则。必须是具体 <see cref="CardModel" /> 子类型。
         /// </summary>
         public static void Register(Type cardType, ModCardHandGlowRules rules)
         {

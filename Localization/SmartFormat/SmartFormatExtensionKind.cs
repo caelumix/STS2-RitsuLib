@@ -2,19 +2,19 @@ namespace STS2RitsuLib.Localization.SmartFormat
 {
     /// <summary>
     ///     SmartFormat extension category registered through ritsulib.
-    ///     SmartFormat extension category 已注册 through ritsulib.
+    ///     通过 ritsulib 注册的 SmartFormat 扩展类别。
     /// </summary>
     public enum SmartFormatExtensionKind
     {
         /// <summary>
         ///     A SmartFormat selector source.
-        ///     一个 SmartFormat selector source。
+        ///     SmartFormat 选择器 source。
         /// </summary>
         Source,
 
         /// <summary>
         ///     A SmartFormat formatter.
-        ///     一个 SmartFormat formatter。
+        ///     SmartFormat formatter。
         /// </summary>
         Formatter,
     }

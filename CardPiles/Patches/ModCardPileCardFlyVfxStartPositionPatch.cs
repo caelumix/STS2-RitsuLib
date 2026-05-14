@@ -14,9 +14,11 @@ namespace STS2RitsuLib.CardPiles.Patches
     ///     <see cref="ModCardPileFlightHistory" /> (fed by <see cref="CardPile.CardRemoved" />) to recover the
     ///     source pile and applies <see cref="ModCardPileSpec.FlightStartPositionResolver" /> when the source
     ///     pile is a mod pile.
-    ///     当 card 已经 reparent 后才生成 card fly visual 时，节点可能不再携带足够的“old pile”上下文来选择正确
-    ///     start position。此 patch 查询 <c>ModCardPileFlightHistory</c>（由
-    ///     <c>CardPile.CardRemoved</c> 填充）来恢复 source pile，并在 source pile 是 mod pile 时应用
+    ///     <see cref="ModCardPileSpec.FlightStartPositionResolver" />。
+    ///     当卡牌已经被重新设定父节点后才生成卡牌飞行动画时，节点可能不再携带足够的“旧牌堆”上下文来选择正确
+    ///     起点位置。此 patch 查询 <see cref="ModCardPileFlightHistory" />（由
+    ///     <see cref="CardPile.CardRemoved" /> 填充）来恢复源牌堆，并在源牌堆是 mod 牌堆时应用
+    ///     <see cref="ModCardPileSpec.FlightStartPositionResolver" />。
     ///     <see cref="ModCardPileSpec.FlightStartPositionResolver" />。
     /// </summary>
     public sealed class ModCardPileCardFlyVfxStartPositionPatch : IPatchMethod
@@ -43,8 +45,8 @@ namespace STS2RitsuLib.CardPiles.Patches
         /// <summary>
         ///     Post-processes the created fly vfx and overwrites its start position when the recovered
         ///     source pile is a mod pile with a start-position resolver.
-        ///     后处理已创建的 fly vfx；当恢复出的 source pile 是带 start-position resolver 的 mod pile 时，
-        ///     覆盖其 start position。
+        ///     后处理已创建的 fly vfx；当恢复出的源牌堆是带起点位置解析器的 mod 牌堆时，
+        ///     覆盖其起点位置。
         /// </summary>
         public static void Postfix(NCard card, Vector2 end, bool isAddingToPile, string trailPath,
             ref NCardFlyVfx? __result)

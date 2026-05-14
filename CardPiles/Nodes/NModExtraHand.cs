@@ -9,8 +9,8 @@ namespace STS2RitsuLib.CardPiles.Nodes
     ///     Extra hand-like container for <see cref="ModCardPileUiStyle.ExtraHand" /> piles. Renders the pile's
     ///     cards as individual <see cref="NCard" /> nodes laid out horizontally, mirroring the vanilla
     ///     <c>NPlayerHand</c> in intent but using a much simpler layout.
-    ///     <c>ModCardPileUiStyle.ExtraHand</c> pile 使用的类似 extra hand 的容器。它将 pile 中的 card
-    ///     渲染为水平排列的单个 <c>NCard</c> 节点，意图上对应原版 <c>NPlayerHand</c>，
+    ///     <see cref="ModCardPileUiStyle.ExtraHand" /> 牌堆使用的类似 extra hand 的容器。它将牌堆中的卡牌
+    ///     渲染为水平排列的单个 <see cref="NCard" /> 节点，意图上对应原版 <c>NPlayerHand</c>，
     ///     但使用更简单的布局。
     /// </summary>
     /// <remarks>
@@ -21,10 +21,12 @@ namespace STS2RitsuLib.CardPiles.Nodes
     ///         sync. The vanilla fly animation delivers the card to the pile's registered target position
     ///         (returned by <see cref="ModCardPileLayout.GetTargetPosition" />), and this container then owns
     ///         the long-lived visual.
+    ///     </para>
+    ///     <para>
     ///         它不 patch <c>CardPileCmd.Add</c> async state machine（那会与 baselib 现有 transpiler 冲突），
-    ///         而是监听 pile 的 <c>CardAdded</c> / <c>CardRemoved</c> event，并维护自己的 <c>NCard</c>
-    ///         roster。原版 fly 动画会把 card 送到 pile 注册的目标位置
-    ///         （由 <c>ModCardPileLayout.GetTargetPosition</c> 返回），随后此容器拥有长期存在的 visual。
+    ///         而是由 <see cref="NModExtraHand" /> 监听牌堆的 <c>CardAdded</c> / <c>CardRemoved</c> 事件，并维护自己的 <see cref="NCard" />
+    ///         roster。原版 fly 动画会把卡牌送到牌堆注册的目标位置
+    ///         （由 <see cref="ModCardPileLayout.GetTargetPosition" /> 返回），随后此容器拥有长期存在的 visual。
     ///     </para>
     /// </remarks>
     public sealed partial class NModExtraHand : Control
@@ -50,8 +52,8 @@ namespace STS2RitsuLib.CardPiles.Nodes
         /// <summary>
         ///     Builds a new extra-hand container for <paramref name="definition" />. Add it to the combat UI
         ///     and call <see cref="Initialize" /> with the local player once the pile is available.
-        ///     为 <c>definition</c> 构建新的 extra-hand 容器。将其加入 combat UI，并在 pile 可用后
-        ///     用本地玩家调用 <c>Initialize</c>。
+        ///     为 <paramref name="definition" /> 构建新的 extra-hand 容器。将其加入 combat UI，并在牌堆可用后
+        ///     用本地玩家调用 <see cref="Initialize" />。
         /// </summary>
         public static NModExtraHand Create(ModCardPileDefinition definition)
         {
@@ -70,7 +72,7 @@ namespace STS2RitsuLib.CardPiles.Nodes
 
         /// <summary>
         ///     Binds the container to <paramref name="player" /> and begins mirroring the underlying pile.
-        ///     将容器绑定到 <c>player</c>，并开始镜像底层 pile。
+        ///     将容器绑定到 <paramref name="player" />，并开始镜像底层牌堆。
         /// </summary>
         public void Initialize(Player player)
         {
@@ -82,7 +84,7 @@ namespace STS2RitsuLib.CardPiles.Nodes
         /// <summary>
         ///     Returns the <see cref="NCard" /> displayed for <paramref name="card" />, or null when the card
         ///     is not currently in this pile.
-        ///     返回为 <c>card</c> 显示的 <c>NCard</c>；当该 card 当前不在此 pile 中时返回 null。
+        ///     返回为 <paramref name="card" /> 显示的 <see cref="NCard" />；当该卡牌当前不在此牌堆中时返回 null。
         /// </summary>
         public NCard? GetCard(CardModel card)
         {

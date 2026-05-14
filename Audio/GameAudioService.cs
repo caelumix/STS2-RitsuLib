@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Default implementation behind <see cref="GameFmod.Playback" />.
-    ///     默认 implementation behind <c>GameFmod.Playback</c>。
+    ///     <see cref="GameFmod.Playback" /> 背后的默认实现。
     /// </summary>
     public sealed class GameAudioService : IGameAudio
     {
@@ -14,7 +14,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Shared singleton instance.
-        ///     中文说明：Shared singleton instance.
+        ///     共享的单例实例。
         /// </summary>
         public static GameAudioService Shared { get; } = new();
 

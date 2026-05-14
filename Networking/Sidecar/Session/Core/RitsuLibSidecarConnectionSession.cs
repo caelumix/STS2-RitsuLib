@@ -2,7 +2,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Per-peer last-known capability from <see cref="RitsuLibSidecarHandshakeBinary" />.
-    ///     Per-peer last-known capability 从 <c>RitsuLibSidecarHandshakeBinary</c>.
+    ///     来自 <see cref="RitsuLibSidecarHandshakeBinary" /> 的每 peer 最后已知能力。
     /// </summary>
     public static class RitsuLibSidecarConnectionSession
     {
@@ -12,7 +12,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Best-effort: records features reported for <paramref name="remoteNetId" />.
-        ///     Best-effort: records features reported 用于 <c>remoteNetId</c>.
+        ///     Best-effort：记录 <paramref name="remoteNetId" /> 报告的 feature。
         /// </summary>
         public static void SetPeerFeatures(ulong remoteNetId, RitsuLibSidecarPeerFeatures features)
         {
@@ -24,9 +24,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Returns the last recorded <see cref="RitsuLibSidecarPeerFeatures" /> for <paramref name="remoteNetId" />, if
-        ///     返回 the last recorded <c>RitsuLibSidecarPeerFeatures</c> 用于 <c>remoteNetId</c>, if
         ///     any.
-        ///     中文说明：any.
+        ///     返回最后记录的 <see cref="RitsuLibSidecarPeerFeatures" />，对于 <paramref name="remoteNetId" />，如果
+        ///     存在。
         /// </summary>
         public static bool TryGetPeerFeatures(ulong remoteNetId, out RitsuLibSidecarPeerFeatures features)
         {
@@ -38,7 +38,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Removes all cached per-peer feature state (e.g. when leaving multiplayer).
-        ///     Removes all cached per-peer feature state (e.g. 当 leaving multiplayer).
+        ///     移除所有缓存的每 peer feature 状态（例如离开多人游戏时）。
         /// </summary>
         public static void Clear()
         {

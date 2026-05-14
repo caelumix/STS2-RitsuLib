@@ -5,11 +5,10 @@ namespace STS2RitsuLib.Content.Patches
 {
     /// <summary>
     ///     Applies dynamic Harmony postfixes so <see cref="ModContentRegistry" /> character-starter registrations merge
-    ///     Applies dynamic Harmony 后置补丁es so <c>ModContentRegistry</c> character-starter 注册s merge
     ///     into every concrete <see cref="CharacterModel" /> (vanilla and mod) before <see cref="ModelDb.Init" /> caches
-    ///     into every concrete <c>Character模型</c> (原版 和 mod) 之前 <c>ModelDb.Init</c> caches
     ///     content.
-    ///     中文说明：content.
+    ///     应用动态 Harmony 后置补丁，使 <see cref="ModContentRegistry" /> 角色初始内容注册在
+    ///     <see cref="ModelDb.Init" /> 缓存内容前合并进每个具体 <see cref="CharacterModel" />（原版和 mod）。
     /// </summary>
     public sealed class DynamicCharacterStarterContentPatchBootstrap : IPatchMethod
     {
@@ -31,7 +30,7 @@ namespace STS2RitsuLib.Content.Patches
 
         /// <summary>
         ///     Ensures starter merge patches are applied for every loaded character type before ModelDb initialization.
-        ///     Ensures starter merge patches are applied 用于 every loaded character type 之前 ModelDb initialization.
+        ///     确保在 ModelDb 初始化前，为每个已加载角色类型应用初始内容合并补丁。
         /// </summary>
         public static void Prefix()
         {

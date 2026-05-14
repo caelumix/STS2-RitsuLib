@@ -14,7 +14,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
     ///     Replaces <c>ModelDb.GetById&lt;CharacterModel&gt;</c> and <c>GetById&lt;ActModel&gt;</c> in run-history UI with
     ///     <see cref="RunHistoryMissingModelSupport" /> so missing mod content does not throw.
     ///     将跑局历史 UI 中的 <c>ModelDb.GetById&lt;CharacterModel&gt;</c> 和 <c>GetById&lt;ActModel&gt;</c> 替换为
-    ///     <c>RunHistoryMissingModelSupport</c>，使缺失 mod 内容时不会抛错。
+    ///     <see cref="RunHistoryMissingModelSupport" />，使缺失 mod 内容时不会抛错。
     /// </summary>
     public class RunHistoryMissingModelDbGetByIdTranspilerPatch : IPatchMethod
     {

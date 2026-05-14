@@ -2,16 +2,17 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Optional notifications for chunked sidecar transfers (receive path). Subscribe for UI such as image
-    ///     可选 notifications 用于 chunked sidecar transfers (receive 路径). Subscribe 用于 UI such as image
     ///     download progress; keep handlers short and avoid blocking the multiplayer receive thread unless using
-    ///     down加载 progress; keep handlers short 和 avoid blocking the multiplayer receive thread unless using
     ///     <see cref="RitsuLibSidecarGodotMainLoopScheduling.TryPostToMainLoop" />.
+    ///     分块 sidecar 传输的可选通知（接收路径）。为图像下载进度等 UI 订阅；
+    ///     保持处理器简短，除非使用
+    ///     <see cref="RitsuLibSidecarGodotMainLoopScheduling.TryPostToMainLoop" />，否则避免阻塞多人接收线程。
     /// </summary>
     public static class RitsuLibSidecarChunkTransferNotifications
     {
         /// <summary>
         ///     Raised after a new segment is accepted or when reassembly completes.
-        ///     Raised 之后 a new segment is accepted 或 当 reassembly completes.
+        ///     接受新 segment 后或重组完成时引发。
         /// </summary>
         public static event Action<RitsuLibSidecarChunkReceiveProgress>? ReceiveProgress;
 

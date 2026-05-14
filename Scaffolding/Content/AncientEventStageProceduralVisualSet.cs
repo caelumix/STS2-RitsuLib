@@ -6,12 +6,12 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     Data-only ancient encounter stage: rear layer is either a looping video (<c>VideoStreamPlayer</c>) or
     ///     <see cref="VisualCueSet" /> sprites / frame sequences; optional foreground uses cue sets only (no video).
     ///     仅数据的远古事件舞台定义：后层可以是循环视频（<c>VideoStreamPlayer</c>），也可以是
-    ///     <c>VisualCueSet</c> sprite / 帧序列；可选前景层仅支持 cue set（不支持视频）。
+    ///     <see cref="VisualCueSet" /> 精灵/帧序列；可选前景层仅支持 cue set（不支持视频）。
     /// </summary>
     /// <param name="BackgroundCueSet">
     ///     When <paramref name="BackgroundVideoPath" /> is <see langword="null" />, drives the background layer (required
     ///     in that case).
-    ///     当 <c>BackgroundVideoPath</c> 为 <see langword="null" /> 时，驱动背景层（这种情况下必填）。
+    ///     当 <paramref name="BackgroundVideoPath" /> 为 <see langword="null" /> 时，驱动背景层（这种情况下必填）。
     /// </param>
     /// <param name="BackgroundLoopCueName">
     ///     Primary cue for background sprite playback; when <see langword="null" />, uses <c>loop</c>. Ignored when video
@@ -22,11 +22,11 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     Optional <c>res://</c> path to a <c>VideoStream</c> resource (e.g. WebM / Ogg Theora). Mutually exclusive with
     ///     <paramref name="BackgroundCueSet" />.
     ///     指向 <c>VideoStream</c> 资源的可选 <c>res://</c> 路径（例如 WebM / Ogg Theora）。与
-    ///     <c>BackgroundCueSet</c> 互斥。
+    ///     <paramref name="BackgroundCueSet" /> 互斥。
     /// </param>
     /// <param name="ForegroundCueSet">
     ///     Optional front layer (e.g. character); textures or <see cref="VisualFrameSequence" />.
-    ///     可选前层（例如角色）；可使用贴图或 <c>VisualFrameSequence</c>。
+    ///     可选前层（例如角色）；可使用贴图或 <see cref="VisualFrameSequence" />。
     /// </param>
     /// <param name="ForegroundLoopCueName">
     ///     Primary foreground cue; when <see langword="null" />, uses <c>loop</c>.
@@ -41,7 +41,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Fluent builder for <see cref="AncientEventStageProceduralVisualSet" />.
-    ///     <c>AncientEventStageProceduralVisualSet</c> 的流式 builder。
+    ///     <see cref="AncientEventStageProceduralVisualSet" /> 的流式构建器。
     /// </summary>
     public sealed class AncientEventStageProceduralVisualSetBuilder
     {
@@ -66,7 +66,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Sets the rear layer from cues (mutually exclusive with <see cref="BackgroundVideo" />).
-        ///     用 cue 设置后层（与 <c>BackgroundVideo</c> 互斥）。
+        ///     用 cue 设置后层（与 <see cref="BackgroundVideo" /> 互斥）。
         /// </summary>
         public AncientEventStageProceduralVisualSetBuilder Background(VisualCueSet cueSet, string? loopCueName = null)
         {
@@ -79,7 +79,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Configures the rear layer via <see cref="VisualCueSetBuilder" />.
-        ///     通过 <c>VisualCueSetBuilder</c> 配置后层。
+        ///     通过 <see cref="VisualCueSetBuilder" /> 配置后层。
         /// </summary>
         public AncientEventStageProceduralVisualSetBuilder Background(Action<VisualCueSetBuilder> configure,
             string? loopCueName = null)
@@ -119,7 +119,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Configures the front layer via <see cref="VisualCueSetBuilder" />.
-        ///     通过 <c>VisualCueSetBuilder</c> 配置前层。
+        ///     通过 <see cref="VisualCueSetBuilder" /> 配置前层。
         /// </summary>
         public AncientEventStageProceduralVisualSetBuilder Foreground(Action<VisualCueSetBuilder> configure,
             string? loopCueName = null)
@@ -132,7 +132,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Materializes the set. Requires either background cues or <see cref="BackgroundVideo" />.
-        ///     实体化该集合。必须提供背景 cue 或 <c>BackgroundVideo</c>。
+        ///     实体化该集合。必须提供背景 cue 或 <see cref="BackgroundVideo" />。
         /// </summary>
         public AncientEventStageProceduralVisualSet Build()
         {
@@ -152,13 +152,13 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Entry point for ancient stage procedural layers on <see cref="AncientEventPresentationAssetProfile" />.
-    ///     <c>AncientEventPresentationAssetProfile</c> 上远古事件程序化舞台图层的入口点。
+    ///     <see cref="AncientEventPresentationAssetProfile" /> 上远古事件程序化舞台图层的入口点。
     /// </summary>
     public static class ModAncientStageVisuals
     {
         /// <summary>
         ///     Begins an <see cref="AncientEventStageProceduralVisualSetBuilder" />.
-        ///     开始一个 <c>AncientEventStageProceduralVisualSetBuilder</c>。
+        ///     开始一个 <see cref="AncientEventStageProceduralVisualSetBuilder" />。
         /// </summary>
         public static AncientEventStageProceduralVisualSetBuilder Stage()
         {

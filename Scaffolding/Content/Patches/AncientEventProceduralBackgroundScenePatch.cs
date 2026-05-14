@@ -10,8 +10,8 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
     ///     Supplies a tiny packed placeholder scene for ancient events that use
     ///     <see cref="AncientEventPresentationAssetProfile.StageProcedural" />, so
     ///     <see cref="EventModel.CreateBackgroundScene" /> does not require a real background <c>.tscn</c>.
-    ///     对使用 <c>AncientEventPresentationAssetProfile.StageProcedural</c> 的远古事件提供一个极小的 packed scene
-    ///     占位符，使 <c>EventModel.CreateBackgroundScene</c> 不再需要真实的背景 <c>.tscn</c>。
+    ///     对使用 <see cref="AncientEventPresentationAssetProfile.StageProcedural" /> 的远古事件提供一个极小的 packed scene
+    ///     占位符，使 <see cref="EventModel.CreateBackgroundScene" /> 不再需要真实的背景 <c>.tscn</c>。
     /// </summary>
     public class AncientEventProceduralBackgroundScenePatch : IPatchMethod
     {

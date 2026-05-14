@@ -12,12 +12,18 @@ namespace STS2RitsuLib.Scaffolding.Godot
     ///     </see>
     ///     or <see cref="CreateFromResource{TNode}" /> — there is no global
     ///     <c>PackedScene.Instantiate</c> postfix, so other libraries (e.g. baselib) and vanilla loads are unaffected.
-    ///     <c>RitsuGodotNodeFactories</c> 的内部工厂查找表。只有调用
     ///     <see>
     ///         <cref>CreateFromScene{TNode}</cref>
     ///     </see>
-    ///     或 <c>CreateFromResource{TNode}</c> 时才会执行转换；这里没有全局
-    ///     <c>PackedScene.Instantiate</c> postfix，因此其它库（例如 baselib）和原版加载不受影响。
+    ///     <see cref="RitsuGodotNodeFactories" /> 的内部工厂查找。只有在调用
+    ///     <see>
+    ///         <cref>CreateFromScene{TNode}</cref>
+    ///     </see>
+    ///     或 <see cref="CreateFromResource{TNode}" /> 时才会运行转换；没有全局
+    ///     <c>PackedScene.Instantiate</c> postfix，因此其他库（如 baselib）和原版加载不受影响。
+    ///     <see>
+    ///         <cref>CreateFromScene{TNode}</cref>
+    ///     </see>
     /// </summary>
     internal static class RitsuGodotNodeFactoryRegistry
     {
@@ -25,7 +31,7 @@ namespace STS2RitsuLib.Scaffolding.Godot
 
         /// <summary>
         ///     Registers a factory instance for <typeparamref name="TNode" /> (typically done once from the factory ctor).
-        ///     为 <c>TNode</c> 注册工厂实例（通常由工厂构造函数执行一次）。
+        ///     为 <typeparamref name="TNode" /> 注册一个工厂实例（通常从工厂构造函数中执行一次）。
         /// </summary>
         public static void RegisterFactory<TNode>(RitsuGodotNodeFactory factory) where TNode : Node
         {

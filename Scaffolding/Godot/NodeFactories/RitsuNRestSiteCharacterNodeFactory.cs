@@ -9,8 +9,10 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeFactories
     /// <summary>
     ///     Builds <see cref="NRestSiteCharacter" /> from <see cref="Texture2D" />, <see cref="Sprite2D" />-root scenes, or
     ///     other mod Godot roots (mirrors baselib <c>NRestSiteCharacterFactory</c> for ritsulib’s explicit factory path).
-    ///     从 <c>Texture2D</c>、以 <c>Sprite2D</c> 为 root 的场景，或其它 mod Godot root 构建
-    ///     <c>NRestSiteCharacter</c>（为 ritsulib 的显式工厂路径对应 baselib
+    ///     <c>NRestSiteCharacterFactory</c>）。
+    ///     从 <see cref="Texture2D" />、<see cref="Sprite2D" /> 根节点场景或
+    ///     其他 mod Godot 根节点构建 <see cref="NRestSiteCharacter" />（这与 baselib <c>NRestSiteCharacterFactory</c> 一致，用于 ritsulib
+    ///     的显式工厂路径）。
     ///     <c>NRestSiteCharacterFactory</c>）。
     /// </summary>
     internal sealed class RitsuNRestSiteCharacterNodeFactory() : RitsuGodotNodeFactory<NRestSiteCharacter>([

@@ -12,12 +12,17 @@ namespace STS2RitsuLib.Keywords
     ///     vanilla <c>AddKeyword</c> / <c>RemoveKeyword</c> / <c>DeepCloneFields</c> / canonical seeding without
     ///     any side-loaded state). Non-card objects fall back to a <see cref="ConditionalWeakTable{TKey,TValue}" />
     ///     for ad-hoc usage (no clone / save persistence).
-    ///     用于将 runtime keyword id 附加到任意对象以及处理 hover-tip helper 的 extension method。
-    ///     每个 <c>CardModel</c> 操作都会直接路由到原版 <c>CardModel.Keywords</c>，
-    ///     使用预先 minted 的 <c>ModKeywordDefinition.CardKeywordValue</c>（因此 mod keyword 可以沿用原版
     ///     <c>AddKeyword</c> / <c>RemoveKeyword</c> / <c>DeepCloneFields</c> / canonical seeding，
-    ///     不需要 side-loaded state）。非 card 对象会回退到 <c>ConditionalWeakTable{TKey,TValue}</c>
-    ///     做 ad-hoc 使用（无 clone / save persistence）。
+    ///     用于将运行时关键词 id 附加到任意对象以及处理悬停提示 helper 的扩展方法。
+    ///     每个 <see cref="CardModel" /> 操作都会直接路由到原版 <c>CardModel.Keywords</c>，
+    ///     使用预先铸造的 <see cref="ModKeywordDefinition.CardKeywordValue" />（因此 mod 关键词可以沿用
+    ///     原版 <c>AddKeyword</c>、<c>RemoveKeyword</c>、<c>DeepCloneFields</c> 和规范种入，且无需
+    ///     任何 side-loaded 状态）。非卡牌对象会回退到 <see cref="ConditionalWeakTable{TKey,TValue}" />
+    ///     做临时用途（无克隆/存档持久化）。
+    ///     <c>AddKeyword</c>
+    ///     <c>RemoveKeyword</c>
+    ///     <c>DeepCloneFields</c>
+    ///     canonical seeding，
     /// </summary>
     public static class ModKeywordExtensions
     {
@@ -29,9 +34,10 @@ namespace STS2RitsuLib.Keywords
         ///     For every <see cref="CardModel" /> (vanilla or modded) the minted
         ///     <see cref="ModKeywordDefinition.CardKeywordValue" /> is pushed into vanilla
         ///     <c>CardModel.Keywords</c>; the id must already be registered via <see cref="ModKeywordRegistry" />.
-        ///     向扩展目标添加 runtime keyword id（去重、大小写不敏感）。对每个 <c>CardModel</c>
-        ///     （原版或 modded），minted 的 <c>ModKeywordDefinition.CardKeywordValue</c> 会被推入原版
-        ///     <c>CardModel.Keywords</c>；id 必须已通过 <c>ModKeywordRegistry</c> 注册。
+        ///     向扩展目标添加 runtime keyword id（去重、大小写不敏感）。
+        ///     对每个 <see cref="CardModel" />（原版或 modded），minted 的
+        ///     <see cref="ModKeywordDefinition.CardKeywordValue" /> 会被推入原版
+        ///     <c>CardModel.Keywords</c>；id 必须已通过 <see cref="ModKeywordRegistry" /> 注册。
         /// </summary>
         public static void AddModKeyword(this object target, string keywordId)
         {
@@ -57,10 +63,11 @@ namespace STS2RitsuLib.Keywords
         ///     <c>card.AddModKeyword(ModKeywordRegistry.GetCardKeyword("mymod.blazed"))</c>. The card's keyword
         ///     set is materialized first (mirroring the vanilla getter) so the underlying
         ///     <c>_keywords</c> field is never null when <see cref="CardModel.AddKeyword" /> runs.
-        ///     将预先 minted 的 mod <c>CardKeyword</c> 值直接添加到原版 <c>CardModel.Keywords</c>，
-        ///     使 <c>card.AddModKeyword(ModKeywordRegistry.GetCardKeyword("mymod.blazed"))</c> 这类 native 风格
-        ///     调用点可用。会先 materialize card 的 keyword set（对应原版 getter），因此
-        ///     <c>CardModel.AddKeyword</c> 运行时底层 <c>_keywords</c> 字段不会为 null。
+        ///     将预先铸造的 mod <see cref="CardKeyword" /> 值直接添加到原版
+        ///     <c>CardModel.Keywords</c>，使
+        ///     <c>card.AddModKeyword(ModKeywordRegistry.GetCardKeyword("mymod.blazed"))</c> 这类原生风格调用点可用。该卡牌的关键词
+        ///     集合会先实体化（对应原版 getter），因此底层
+        ///     <c>_keywords</c> 字段在 <see cref="CardModel.AddKeyword" /> 运行时绝不会为 null。
         /// </summary>
         public static void AddModKeyword(this CardModel card, CardKeyword value)
         {
@@ -73,8 +80,9 @@ namespace STS2RitsuLib.Keywords
         ///     Removes a previously added runtime keyword id.
         ///     For every <see cref="CardModel" /> the corresponding minted value is removed from vanilla
         ///     <c>CardModel.Keywords</c>; unregistered ids return <c>false</c> without touching the card.
-        ///     移除先前添加的 runtime keyword id。对每个 <c>CardModel</c>，对应 minted 值会从原版
-        ///     <c>CardModel.Keywords</c> 中移除；未注册 id 会返回 <c>false</c>，且不触碰 card。
+        ///     移除先前添加的 runtime keyword id。
+        ///     对每个 <see cref="CardModel" />，对应的 minted 值会从原版
+        ///     <c>CardModel.Keywords</c> 中移除；未注册 id 返回 <c>false</c>，且不触碰卡牌。
         /// </summary>
         /// <returns>
         ///     True when the id was present and removed.
@@ -99,7 +107,8 @@ namespace STS2RitsuLib.Keywords
         /// <summary>
         ///     Removes <paramref name="value" /> from vanilla <c>CardModel.Keywords</c>. Returns <c>true</c> when
         ///     the keyword was present.
-        ///     从原版 <c>CardModel.Keywords</c> 中移除 <c>value</c>。keyword 曾存在时返回 <c>true</c>。
+        ///     从原版 <c>CardModel.Keywords</c> 中移除 <paramref name="value" />。当
+        ///     该 keyword 曾存在时返回 <c>true</c>。
         /// </summary>
         public static bool RemoveModKeyword(this CardModel card, CardKeyword value)
         {
@@ -133,7 +142,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Whether <paramref name="card" /> currently carries the minted mod keyword <paramref name="value" />.
-        ///     <c>card</c> 当前是否携带 minted mod keyword <c>value</c>。
+        ///     <paramref name="card" /> 当前是否携带 minted mod keyword <paramref name="value" />。
         /// </summary>
         public static bool HasModKeyword(this CardModel card, CardKeyword value)
         {
@@ -145,8 +154,9 @@ namespace STS2RitsuLib.Keywords
         ///     Sorted list of effective runtime mod-keyword ids on the target. For every
         ///     <see cref="CardModel" /> this enumerates vanilla <c>CardModel.Keywords</c> and reverse-maps minted
         ///     values back to their registered ids (skipping vanilla and unregistered entries).
-        ///     目标上生效的 runtime mod-keyword id 排序列表。对每个 <c>CardModel</c>，此方法枚举原版
-        ///     <c>CardModel.Keywords</c>，并将 minted 值反向映射为其已注册 id（跳过原版和未注册 entry）。
+        ///     目标上生效的 runtime mod-keyword id 排序列表。对每个
+        ///     <see cref="CardModel" />，此方法枚举原版 <c>CardModel.Keywords</c>，并将 minted
+        ///     值反向映射为其已注册 id（跳过原版和未注册条目）。
         /// </summary>
         public static IReadOnlyList<string> GetModKeywordIds(this object target)
         {
@@ -197,8 +207,8 @@ namespace STS2RitsuLib.Keywords
         /// <summary>
         ///     Maps each non-empty keyword id to a registered <see cref="IHoverTip" /> when
         ///     <see cref="ModKeywordDefinition.IncludeInCardHoverTip" /> is true.
-        ///     当 <c>ModKeywordDefinition.IncludeInCardHoverTip</c> 为 true 时，将每个非空 keyword id
-        ///     映射到已注册的 <c>IHoverTip</c>。
+        ///     当 <see cref="ModKeywordDefinition.IncludeInCardHoverTip" /> 为 true 时，将每个非空 keyword id
+        ///     映射到已注册的 <see cref="IHoverTip" />。
         /// </summary>
         public static IEnumerable<IHoverTip> ToHoverTips(this IEnumerable<string> keywords)
         {
@@ -228,7 +238,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Card BBCode for the extended keyword id string via <see cref="ModKeywordRegistry.GetCardText" />.
-        ///     通过 <c>ModKeywordRegistry.GetCardText</c> 获取扩展 keyword id 字符串对应的 card BBCode。
+        ///     通过 <see cref="ModKeywordRegistry.GetCardText" /> 获取扩展关键词 id 字符串对应的卡牌 BBCode。
         /// </summary>
         public static string GetModKeywordCardText(this string keywordId)
         {
@@ -240,8 +250,10 @@ namespace STS2RitsuLib.Keywords
         ///     Convenience: minted <see cref="CardKeyword" /> value for <paramref name="keywordId" />, intended
         ///     for call sites that want to use the native vanilla keyword API directly
         ///     (<c>card.AddKeyword(id.GetModCardKeyword())</c>).
-        ///     便捷方法：返回 <c>keywordId</c> 的 minted <c>CardKeyword</c> 值，
-        ///     供希望直接使用原版 keyword API 的调用点使用
+        ///     （<c>card.AddKeyword(id.GetModCardKeyword())</c>）。
+        ///     便捷方法：返回 <paramref name="keywordId" /> 的 minted <see cref="CardKeyword" /> 值，供
+        ///     希望直接使用 native 原版 keyword API 的调用点使用
+        ///     （<c>card.AddKeyword(id.GetModCardKeyword())</c>）。
         ///     （<c>card.AddKeyword(id.GetModCardKeyword())</c>）。
         /// </summary>
         public static CardKeyword GetModCardKeyword(this string keywordId)
@@ -252,7 +264,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Compatibility alias for <see cref="GetModCardKeyword" />.
-        ///     <c>GetModCardKeyword</c> 的兼容别名。
+        ///     <see cref="GetModCardKeyword" /> 的兼容别名。
         /// </summary>
         public static CardKeyword GetModKeywordCardKeyword(this string keywordId)
         {
@@ -261,7 +273,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Tries to reverse-map a minted mod <see cref="CardKeyword" /> value to its registered string id.
-        ///     尝试将 minted mod <c>CardKeyword</c> 值反向映射到其已注册字符串 id。
+        ///     尝试将 minted mod <see cref="CardKeyword" /> 值反向映射到其已注册字符串 id。
         /// </summary>
         public static bool TryGetModKeywordId(this CardKeyword value, out string id)
         {
@@ -270,7 +282,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Reverse-maps a minted mod <see cref="CardKeyword" /> value to its registered string id.
-        ///     将 minted mod <c>CardKeyword</c> 值反向映射到其已注册字符串 id。
+        ///     将 minted mod <see cref="CardKeyword" /> 值反向映射到其已注册字符串 id。
         /// </summary>
         public static string GetModKeywordId(this CardKeyword value)
         {

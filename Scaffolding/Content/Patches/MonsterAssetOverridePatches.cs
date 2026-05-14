@@ -6,27 +6,28 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Optional creature visuals scene path (vanilla <c>MonsterModel.VisualsPath</c>); use
-    ///     可选 creature visuals 场景 路径 (原版 <c>Monster模型.Visuals路径</c>); 使用
     ///     <see cref="ModMonsterTemplate" /> or implement on a mod <see cref="MonsterModel" />.
+    ///     可选生物视觉场景路径（原版 <c>MonsterModel.VisualsPath</c>）；使用
+    ///     <see cref="ModMonsterTemplate" />，或在 mod <see cref="MonsterModel" /> 上实现。
     /// </summary>
     public interface IModMonsterAssetOverrides
     {
         /// <summary>
         ///     Path bundle; <c>Custom*</c> properties mirror these fields unless overridden.
-        ///     路径包；<c>Custom*</c> properties mirror these fields unless overridden。
+        ///     路径包；除非被覆盖，否则 <c>Custom*</c> 属性会映射这些字段。
         /// </summary>
         MonsterAssetProfile AssetProfile => MonsterAssetProfile.Empty;
 
         /// <summary>
         ///     Override packed scene path for combat creature visuals.
-        ///     combat creature visuals 的 PackedScene 路径覆盖。
+        ///     覆盖战斗生物视觉的 packed scene 路径。
         /// </summary>
         string? CustomVisualsPath => AssetProfile.VisualsScenePath;
     }
 
     /// <summary>
     ///     Patches <see cref="MonsterModel.VisualsPath" /> for <see cref="IModMonsterAssetOverrides" />.
-    ///     为 <c>IModMonsterAssetOverrides</c> 补丁 <c>MonsterModel.VisualsPath</c>。
+    ///     为 <see cref="IModMonsterAssetOverrides" /> 修补<see cref="MonsterModel.VisualsPath" />。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -50,7 +51,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModMonsterAssetOverrides.CustomVisualsPath" /> when the resource exists.
-        ///     当 the resource exists 时提供 <c>IModMonsterAssetOverrides.CustomVisualsPath</c>。
+        ///     当资源存在时提供 <see cref="IModMonsterAssetOverrides.CustomVisualsPath" />。
         /// </summary>
         public static bool Prefix(MonsterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming

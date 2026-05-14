@@ -4,16 +4,16 @@ namespace STS2RitsuLib.Combat.Rewards
 {
     /// <summary>
     ///     Implement this on custom <see cref="Reward" /> types that need to survive combat-room save/load.
-    ///     自定义 <c>Reward</c> 需要在战斗房间存读档中保留时实现此接口。
     ///     This interface only describes persistence; multiplayer side effects still need to be deterministic
     ///     or synchronized by the reward implementation.
+    ///     自定义 <see cref="Reward" /> 需要在战斗房间存读档中保留时实现此接口。
     ///     此接口只描述持久化；多人副作用仍需由 reward 实现保持确定性或自行同步。
     /// </summary>
     public interface IModSerializableReward
     {
         /// <summary>
         ///     Dynamic or vanilla reward type used by <see cref="ModRewardRegistry" /> to rebuild the reward.
-        ///     由 <c>ModRewardRegistry</c> 用于重建 reward 的动态或原版 reward type。
+        ///     由 <see cref="ModRewardRegistry" /> 用于重建 reward 的动态或原版 reward type。
         /// </summary>
         RewardType ModRewardType { get; }
 

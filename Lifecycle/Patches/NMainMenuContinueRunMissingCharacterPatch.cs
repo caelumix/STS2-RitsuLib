@@ -18,8 +18,8 @@ namespace STS2RitsuLib.Lifecycle.Patches
     ///     Before <see cref="RunState.FromSerializable" />, reject saves that reference unregistered characters so the
     ///     vanilla <c>catch { DisplayLoadSaveError(); throw; }</c> path never runs (avoids TaskHelper rethrow freeze).
     ///     Run files are not deleted.
-    ///     在 <c>RunState.FromSerializable</c> 前拒绝引用未注册角色的存档，使原版
-    ///     <c>catch { DisplayLoadSaveError(); throw; }</c> 路径不会运行（避免 TaskHelper 重新抛出导致卡死）。
+    ///     在 <see cref="RunState.FromSerializable" /> 前拒绝引用未注册角色的存档，使
+    ///     原版 <c>catch { DisplayLoadSaveError(); throw; }</c> 路径不会运行（避免 TaskHelper 重新抛出导致卡死）。
     ///     跑局文件不会被删除。
     /// </summary>
     public class NMainMenuContinueRunMissingCharacterPatch : IPatchMethod

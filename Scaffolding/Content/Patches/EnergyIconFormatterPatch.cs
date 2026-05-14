@@ -10,19 +10,21 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Intercepts <c>EnergyIconsFormatter.TryEvaluateFormat</c> after it assembles the
-    ///     Intercepts <c>EnergyIconsFormatter.TryEvaluateFormat</c> 之后 it assembles the
     ///     hard-coded rich-text img tag for the small energy icon used in card descriptions, and
-    ///     hard-coded rich-text img tag 用于 the small energy 图标 used in 卡牌 descriptions, and
     ///     replaces it with a custom path when the owning card pool implements
-    ///     replaces it 带有 a 自定义 路径 当 the owning 卡牌 pool implements
     ///     <see cref="IModTextEnergyIconPool" />.
     ///     <para />
     ///     The default game path pattern is:
-    ///     The default game 路径 pattern is:
     ///     <c>[img]res://images/packed/sprite_fonts/{prefix}_energy_icon.png[/img]</c>.
     ///     Implementing <see cref="IModTextEnergyIconPool.TextEnergyIconPath" /> on the
-    ///     Implementing <c>IModTextEnergyIconPool.TextEnergyIcon路径</c> on the
     ///     <see cref="MegaCrit.Sts2.Core.Models.CardPoolModel" /> lets you use any resource path.
+    ///     拦截 <c>EnergyIconsFormatter.TryEvaluateFormat</c>：在它组装用于卡牌描述中小型能量图标的
+    ///     硬编码富文本 img 标签后，
+    ///     如果所属卡牌池实现 <see cref="IModTextEnergyIconPool" />，则替换为自定义路径。
+    ///     <para />
+    ///     游戏默认路径模式为：
+    ///     在 <see cref="MegaCrit.Sts2.Core.Models.CardPoolModel" /> 上实现
+    ///     <see cref="IModTextEnergyIconPool.TextEnergyIconPath" /> 后即可使用任意资源路径。
     /// </summary>
     public class EnergyIconFormatterPatch : IPatchMethod
     {
@@ -44,35 +46,37 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     After the formatter stores the assembled <c>text3</c> img-tag into its local variable,
-        ///     之后 the 用于matter stores the assembled <c>text3</c> img-tag into its local variable,
         ///     insert a call that lets <see cref="ModTextEnergyIconHelper" /> redirect to a custom path.
-        ///     insert a call that lets <c>ModTextEnergyIconHelper</c> redirect to a 自定义 路径.
         ///     Matched IL pattern (inside TryEvaluateFormat):
-        ///     中文说明：Matched IL pattern (inside TryEvaluateFormat):
         ///     <code>
         ///         ldstr  "[img]res://images/packed/sprite_fonts/"
-        ///         中文说明：ldstr  "[img]res://images/packed/sprite_fonts/"
         ///         ldloc  (text / prefix)
-        ///         中文说明：ldloc  (text / prefix)
         ///         ldstr  "_energy_icon.png[/img]"
-        ///         ldstr  "_energy_图标.png[/img]"
         ///         call   string.Concat(string, string, string)
-        ///         中文说明：call   string.Concat(string, string, string)
         ///         stloc  (text3)                        ← match ends here
-        ///         中文说明：stloc  (text3)                        ← match ends here
         ///     </code>
         ///     Inserted after stloc:
-        ///     Inserted 之后 stloc:
         ///     <code>
         ///         ldloc  (text)
-        ///         中文说明：ldloc  (text)
         ///         ldloc  (text3)
-        ///         中文说明：ldloc  (text3)
         ///         call   ModTextEnergyIconHelper.OverrideTextIconTag
         ///         call   ModTextEnergyIconHelper.OverrideTextIconTag
         ///         stloc  (text3)
-        ///         中文说明：stloc  (text3)
         ///     </code>
+        ///     格式化器将组装好的 <c>text3</c> img 标签存入局部变量后，
+        ///     插入一次调用，让 <see cref="ModTextEnergyIconHelper" /> 重定向到自定义路径。
+        ///     匹配的 IL 模式（位于 TryEvaluateFormat 内）：
+        ///     <code>
+        /// ldloc  (text / prefix)
+        /// </code>
+        ///     在 stloc 后插入：
+        ///     <code>
+        /// ldloc  (text)
+        /// ldloc  (text3)
+        /// call   ModTextEnergyIconHelper.OverrideTextIconTag
+        /// call   ModTextEnergyIconHelper.OverrideTextIconTag
+        /// stloc  (text3)
+        /// </code>
         /// </summary>
         [HarmonyAfter(Const.BaseLibHarmonyId)]
         [HarmonyPriority(Priority.Last)]
@@ -126,11 +130,13 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
     /// <summary>
     ///     Runtime helper called by the patched formatter.
-    ///     runtime helper called 通过 the patched 用于matter.
     ///     On first use it builds a lookup table from all registered mod characters' card pools
-    ///     On first 使用 it builds a lookup table 从 all 已注册 mod characters' 卡牌 pools
     ///     that implement <see cref="IModTextEnergyIconPool" />.
     ///     that implement <c>IModTextEnergyIconPool</c>.
+    ///     由已修补格式化器调用的运行时辅助方法。
+    ///     首次使用时，它会从所有已注册 mod 角色中实现 <see cref="IModTextEnergyIconPool" /> 的卡牌池
+    ///     构建查找表。
+    ///     实现 <c>IModTextEnergyIconPool</c> 的卡牌池。
     /// </summary>
     internal static class ModTextEnergyIconHelper
     {

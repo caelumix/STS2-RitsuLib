@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Timeline
 {
     /// <summary>
     ///     Per-era policy registry for timeline axis icons.
-    ///     Per-era policy 注册表 用于 timeline axis Icons.
+    ///     时间线轴图标的按 era 策略注册表。
     /// </summary>
     public static class ModTimelineEraIconRegistry
     {
@@ -13,7 +13,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Configures icon policy for a concrete <see cref="EpochEra" /> value.
-        ///     Configures 图标 policy 用于 a concrete <c>EpochEra</c> value.
+        ///     为具体 <see cref="EpochEra" /> 值配置图标策略。
         /// </summary>
         public static void Configure(EpochEra era, bool? enabled = null, string? texturePath = null)
         {
@@ -22,7 +22,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Configures icon policy for an era integer value (supports custom/non-enum eras).
-        ///     Configures 图标 policy 用于 an era integer value (supports 自定义/non-enum eras).
+        ///     为 era 整数值配置图标策略（支持自定义/非枚举 era）。
         /// </summary>
         public static void Configure(long eraValue, bool? enabled = null, string? texturePath = null)
         {
@@ -34,7 +34,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Clears icon policy for a concrete <see cref="EpochEra" /> value.
-        ///     Clears 图标 policy 用于 a concrete <c>EpochEra</c> value.
+        ///     清除具体 <see cref="EpochEra" /> 值的图标策略。
         /// </summary>
         public static void Clear(EpochEra era)
         {
@@ -43,7 +43,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Clears icon policy for an era integer value.
-        ///     Clears 图标 policy 用于 an era integer value.
+        ///     清除 era 整数值的图标策略。
         /// </summary>
         public static void Clear(long eraValue)
         {

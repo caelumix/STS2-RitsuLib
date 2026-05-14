@@ -10,11 +10,10 @@ namespace STS2RitsuLib.Interop
     ///     RFC 7386 merge-patch for a key, or <c>null</c> when unbound.
     ///     https://www.rfc-editor.org/rfc/rfc7386
     ///     某个 key 的 RFC 7386 merge-patch；未绑定时为 <c>null</c>。
-    ///     https://www.rfc-editor.org/rfc/rfc7386
     /// </param>
     /// <param name="GetRootObject">
     ///     Full document root as <see cref="JsonObject" />, or <c>null</c> when unbound.
-    ///     作为 <c>JsonObject</c> 的完整 document root；未绑定时为 <c>null</c>。
+    ///     作为 <see cref="JsonObject" /> 的完整 document root；未绑定时为 <c>null</c>。
     /// </param>
     /// <param name="GetNode">
     ///     Sub-tree read by JSON Pointer, or <c>null</c> when unbound.
@@ -22,19 +21,16 @@ namespace STS2RitsuLib.Interop
     /// </param>
     /// <param name="ApplyMergePatch">
     ///     Apply an RFC 7386 merge patch to a key, or <c>null</c> when unbound.
-    ///     https://www.rfc-editor.org/rfc/rfc7386
     ///     对某个 key 应用 RFC 7386 merge patch；未绑定时为 <c>null</c>。
-    ///     https://www.rfc-editor.org/rfc/rfc7386
     /// </param>
     /// <param name="GetJsonPatch">
     ///     JSON Patch (RFC 6902) document for a key, or <c>null</c> when unbound.
     ///     https://www.rfc-editor.org/rfc/rfc6902
-    ///     某个 key 的 JSON Patch（RFC 6902）document；未绑定时为 <c>null</c>。
-    ///     https://www.rfc-editor.org/rfc/rfc6902
+    ///     某个 key 的 JSON Patch（RFC 6902）文档；未绑定时为 <c>null</c>。
     /// </param>
     /// <param name="SetRootObject">
     ///     Replace root object for a key, or <c>null</c> when unbound.
-    ///     替换某个 key 的 root object；未绑定时为 <c>null</c>。
+    ///     替换某个 key 的根对象；未绑定时为 <c>null</c>。
     /// </param>
     /// <param name="SetNode">
     ///     Write a node at a JSON Pointer, or <c>null</c> when unbound.
@@ -54,9 +50,7 @@ namespace STS2RitsuLib.Interop
     /// </param>
     /// <param name="ApplyJsonPatch">
     ///     Apply a JSON Patch (RFC 6902) document to a key, or <c>null</c> when unbound.
-    ///     https://www.rfc-editor.org/rfc/rfc6902
-    ///     对某个 key 应用 JSON Patch（RFC 6902）document；未绑定时为 <c>null</c>。
-    ///     https://www.rfc-editor.org/rfc/rfc6902
+    ///     对某个 key 应用 JSON Patch（RFC 6902）文档；未绑定时为 <c>null</c>。
     /// </param>
     public sealed record JsonDomChannelDelegates(
         Func<string, JsonNode?>? GetMergePatch,

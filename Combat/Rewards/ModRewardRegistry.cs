@@ -12,20 +12,20 @@ namespace STS2RitsuLib.Combat.Rewards
     /// <summary>
     ///     Per-mod registration surface for custom reward types. Prefer <see cref="RegisterOwned" /> so ids follow
     ///     the same <c>MODID_REWARD_LOCAL</c> convention as other RitsuLib dynamic ids.
-    ///     自定义 reward type 的逐 mod 注册入口。优先使用 <c>RegisterOwned</c>，使 id 遵循与其它
+    ///     自定义 reward type 的逐 mod 注册入口。优先使用 <see cref="RegisterOwned" />，使 id 遵循与其它
     ///     RitsuLib 动态 id 相同的 <c>MODID_REWARD_LOCAL</c> 约定。
     /// </summary>
     public sealed class ModRewardRegistry
     {
         /// <summary>
         ///     Factory used to rebuild a custom reward from a saved reward and optional mod-owned JSON payload.
-        ///     用保存的 reward 与可选 mod JSON payload 重建自定义 reward 的工厂。
+        ///     用保存的 reward 与可选的 mod JSON 载荷重建自定义 reward 的工厂。
         /// </summary>
         public delegate Reward ModRewardFactory(SerializableReward save, Player player, string? json);
 
         /// <summary>
         ///     Factory used to rebuild a custom reward from a saved reward and a typed mod-owned payload.
-        ///     用保存的 reward 和已解析的 mod payload 重建自定义 reward。
+        ///     用保存的 reward 和已解析的 mod 载荷重建自定义 reward 的工厂。
         /// </summary>
         public delegate Reward ModRewardFactory<TPayload>(
             SerializableReward save,
@@ -55,7 +55,7 @@ namespace STS2RitsuLib.Combat.Rewards
 
         /// <summary>
         ///     Returns the singleton registry for <paramref name="modId" />, creating it on first use.
-        ///     返回 <c>modId</c> 的 singleton registry，首次使用时创建。
+        ///     返回 <paramref name="modId" /> 对应的单例注册表，首次使用时创建。
         /// </summary>
         public static ModRewardRegistry For(string modId)
         {
@@ -75,7 +75,7 @@ namespace STS2RitsuLib.Combat.Rewards
         /// <summary>
         ///     Registers a reward owned by this registry's mod using
         ///     <see cref="ModContentRegistry.GetQualifiedRewardId" />.
-        ///     使用 <c>ModContentRegistry.GetQualifiedRewardId</c> 生成归属当前 mod 的 reward id。
+        ///     使用 <see cref="ModContentRegistry.GetQualifiedRewardId" /> 生成归属当前 mod 的 reward id。
         /// </summary>
         public ModRewardDefinition RegisterOwned(string localRewardStem, ModRewardFactory factory)
         {
@@ -89,8 +89,8 @@ namespace STS2RitsuLib.Combat.Rewards
         /// <summary>
         ///     Registers a reward owned by this registry's mod and lets RitsuLib parse the mod-owned JSON payload
         ///     with a source-generated JSON contract before calling <paramref name="factory" />.
-        ///     注册归属当前 mod 的 reward。读档时，RitsuLib 会先用传入的 JSON contract 解析 payload，
-        ///     再调用 <c>factory</c>。
+        ///     注册归属当前 mod 的 reward。读档时，RitsuLib 会先用传入的 JSON 协定解析载荷，
+        ///     再调用 <paramref name="factory" />。
         /// </summary>
         public ModRewardDefinition RegisterOwned<TPayload>(
             string localRewardStem,
@@ -107,7 +107,7 @@ namespace STS2RitsuLib.Combat.Rewards
 
         /// <summary>
         ///     Registers a reward with a raw global id. Prefer <see cref="RegisterOwned" /> for mod-scoped ids.
-        ///     使用原始全局 id 注册 reward。mod 作用域 id 推荐优先使用 <c>RegisterOwned</c>。
+        ///     使用原始全局 id 注册 reward。mod 作用域 id 推荐优先使用 <see cref="RegisterOwned" />。
         /// </summary>
         public static ModRewardDefinition Register(string id, ModRewardFactory factory)
         {
@@ -120,8 +120,8 @@ namespace STS2RitsuLib.Combat.Rewards
         /// <summary>
         ///     Registers a reward with a raw global id and lets RitsuLib parse the mod-owned JSON payload with a
         ///     source-generated JSON contract before calling <paramref name="factory" />.
-        ///     使用原始全局 id 注册 reward。读档时，RitsuLib 会先用传入的 JSON contract 解析 payload，
-        ///     再调用 <c>factory</c>。
+        ///     使用原始全局 id 注册 reward。读档时，RitsuLib 会先用传入的 JSON 协定解析 mod 载荷，
+        ///     再调用 <paramref name="factory" />。
         /// </summary>
         public static ModRewardDefinition Register<TPayload>(
             string id,
@@ -138,7 +138,7 @@ namespace STS2RitsuLib.Combat.Rewards
 
         /// <summary>
         ///     Registers or replaces a custom reward factory for an already defined <see cref="RewardType" />.
-        ///     为已经定义好的 <c>RewardType</c> 注册或替换自定义 reward 工厂。
+        ///     为已经定义好的 <see cref="RewardType" /> 注册或替换自定义 reward 工厂。
         /// </summary>
         public static void Register(RewardType rewardType, ModRewardFactory factory)
         {
@@ -152,7 +152,7 @@ namespace STS2RitsuLib.Combat.Rewards
 
         /// <summary>
         ///     Returns the deterministic dynamic <see cref="RewardType" /> for a registered or raw reward id.
-        ///     返回已注册或原始 reward id 对应的确定性动态 <c>RewardType</c>。
+        ///     返回已注册或原始 reward id 对应的确定性动态 <see cref="RewardType" />。
         /// </summary>
         public static RewardType GetRewardType(string id)
         {
@@ -170,7 +170,7 @@ namespace STS2RitsuLib.Combat.Rewards
 
         /// <summary>
         ///     Resolves the reward id that minted <paramref name="rewardType" />, if any.
-        ///     解析生成 <c>rewardType</c> 的 reward id，如果存在。
+        ///     解析生成 <paramref name="rewardType" /> 的 reward id，如果存在。
         /// </summary>
         public static bool TryGetId(RewardType rewardType, out string id)
         {

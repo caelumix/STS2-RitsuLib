@@ -37,13 +37,13 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Computes rarity for the current run/player context.
-        ///     根据当前 run/player 上下文计算稀有度。
+        ///     根据当前跑局/玩家上下文计算稀有度。
         /// </summary>
         public abstract BadgeRarity Rarity(SerializableRun run, SerializablePlayer player);
 
         /// <summary>
         ///     Whether this badge has been obtained in the current run/player context.
-        ///     此徽章在当前 run/player 上下文中是否已获得。
+        ///     此徽章在当前跑局/玩家上下文中是否已获得。
         /// </summary>
         public abstract bool IsObtained(SerializableRun run, SerializablePlayer player);
 

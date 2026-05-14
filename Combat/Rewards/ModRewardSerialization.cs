@@ -14,8 +14,8 @@ namespace STS2RitsuLib.Combat.Rewards
         /// <summary>
         ///     Creates a <see cref="SerializableReward" /> for an <see cref="IModSerializableReward" />.
         ///     Custom reward implementations should return this from their <c>ToSerializable</c> override.
-        ///     为 <c>IModSerializableReward</c> 创建 <c>SerializableReward</c>。自定义 reward 应在
-        ///     <c>ToSerializable</c> override 中返回它。
+        ///     为 <see cref="IModSerializableReward" /> 创建 <see cref="SerializableReward" />。自定义 reward 应在
+        ///     <c>ToSerializable</c> 重写中返回它。
         /// </summary>
         public static SerializableReward CreateSerializable(IModSerializableReward reward)
         {
@@ -25,7 +25,7 @@ namespace STS2RitsuLib.Combat.Rewards
 
         /// <summary>
         ///     Creates a <see cref="SerializableReward" /> for a registered custom reward type.
-        ///     为已注册的自定义 reward type 创建 <c>SerializableReward</c>。
+        ///     为已注册的自定义 reward 类型创建 <see cref="SerializableReward" />。
         /// </summary>
         public static SerializableReward CreateSerializable(RewardType rewardType, string? json = null)
         {
@@ -46,7 +46,7 @@ namespace STS2RitsuLib.Combat.Rewards
         /// <summary>
         ///     Creates a <see cref="SerializableReward" /> for a registered custom reward type and serializes
         ///     a mod-owned payload with a source-generated JSON contract.
-        ///     为已注册的自定义 reward 创建存档数据，并用传入的 JSON contract 序列化 mod payload。
+        ///     为已注册的自定义 reward 类型创建 <see cref="SerializableReward" />，并用传入的 JSON 协定序列化 mod 载荷。
         /// </summary>
         public static SerializableReward CreateSerializable<TPayload>(
             RewardType rewardType,

@@ -123,19 +123,19 @@ namespace STS2RitsuLib.Scaffolding.Characters
     /// </param>
     /// <param name="PrimarySpriteModulate">
     ///     Primary trail sprite tint.
-    ///     主轨迹 sprite 染色。
+    ///     主 trail 精灵色调。
     /// </param>
     /// <param name="PrimarySpriteScale">
     ///     Primary trail sprite scale.
-    ///     主轨迹 sprite 缩放。
+    ///     主 trail 精灵缩放。
     /// </param>
     /// <param name="SecondarySpriteModulate">
     ///     Secondary trail sprite tint.
-    ///     次轨迹 sprite 染色。
+    ///     副 trail 精灵色调。
     /// </param>
     /// <param name="SecondarySpriteScale">
     ///     Secondary trail sprite scale.
-    ///     次轨迹 sprite 缩放。
+    ///     副 trail 精灵缩放。
     /// </param>
     public sealed record CharacterTrailStyle(
         Color? OuterTrailModulate = null,
@@ -221,9 +221,9 @@ namespace STS2RitsuLib.Scaffolding.Characters
     ///     One entry in <see cref="CharacterAssetProfile.VanillaRelicVisualOverrides" />: when this mod character owns a
     ///     relic whose <c>ModelId.Entry</c> equals <paramref name="RelicModelIdEntry" /> (ordinal ignore-case), use
     ///     <paramref name="Assets" /> for icon paths.
-    ///     <c>CharacterAssetProfile.VanillaRelicVisualOverrides</c> 的一个条目：当此 mod 角色拥有的遗物
-    ///     <c>ModelId.Entry</c> 等于 <c>RelicModelIdEntry</c>（ordinal ignore-case）时，使用
-    ///     <c>Assets</c> 作为图标路径。
+    ///     <see cref="CharacterAssetProfile.VanillaRelicVisualOverrides" /> 中的一个条目：当此 mod 角色拥有
+    ///     <c>ModelId.Entry</c> 等于 <paramref name="RelicModelIdEntry" />（ordinal ignore-case）的遗物时，使用
+    ///     <paramref name="Assets" /> 作为图标路径。
     /// </summary>
     /// <param name="RelicModelIdEntry">
     ///     Stable relic id (same string as <c>RelicModel.Id.Entry</c>).
@@ -232,7 +232,7 @@ namespace STS2RitsuLib.Scaffolding.Characters
     /// <param name="Assets">
     ///     Packed icon, outline, and large art paths (same shape as mod relic
     ///     <see cref="RelicAssetProfile" />).
-    ///     打包图标、轮廓和大图路径（结构与 mod 遗物 <c>RelicAssetProfile</c> 相同）。
+    ///     打包后的图标、描边和大图路径（与 mod 遗物 <see cref="RelicAssetProfile" /> 形态相同）。
     /// </param>
     public sealed record CharacterVanillaRelicVisualOverride(string RelicModelIdEntry, RelicAssetProfile Assets);
 
@@ -240,9 +240,9 @@ namespace STS2RitsuLib.Scaffolding.Characters
     ///     One entry in <see cref="CharacterAssetProfile.VanillaPotionVisualOverrides" />: when this mod character
     ///     encounters or holds a potion whose <c>ModelId.Entry</c> equals <paramref name="PotionModelIdEntry" />
     ///     (ordinal ignore-case), use <paramref name="Assets" /> for image/outline paths.
-    ///     <c>CharacterAssetProfile.VanillaPotionVisualOverrides</c> 的一个条目：当此 mod 角色遇到或持有的药水
-    ///     <c>ModelId.Entry</c> 等于 <c>PotionModelIdEntry</c>（ordinal ignore-case）时，使用
-    ///     <c>Assets</c> 作为图片 / 轮廓路径。
+    ///     <see cref="CharacterAssetProfile.VanillaPotionVisualOverrides" /> 中的一个条目：当此 mod 角色
+    ///     遇到或持有 <c>ModelId.Entry</c> 等于 <paramref name="PotionModelIdEntry" />
+    ///     （ordinal ignore-case）的药水时，使用 <paramref name="Assets" /> 作为图像/描边路径。
     /// </summary>
     /// <param name="PotionModelIdEntry">
     ///     Stable potion id (same string as <c>PotionModel.Id.Entry</c>).
@@ -250,7 +250,7 @@ namespace STS2RitsuLib.Scaffolding.Characters
     /// </param>
     /// <param name="Assets">
     ///     Bottle and outline paths (same shape as mod potion <see cref="PotionAssetProfile" />).
-    ///     瓶身和轮廓路径（结构与 mod 药水 <c>PotionAssetProfile</c> 相同）。
+    ///     瓶身和描边路径（与 mod 药水 <see cref="PotionAssetProfile" /> 形态相同）。
     /// </param>
     public sealed record CharacterVanillaPotionVisualOverride(string PotionModelIdEntry, PotionAssetProfile Assets);
 
@@ -258,9 +258,9 @@ namespace STS2RitsuLib.Scaffolding.Characters
     ///     One entry in <see cref="CharacterAssetProfile.VanillaCardVisualOverrides" />: when this mod character
     ///     encounters or holds a card whose <c>ModelId.Entry</c> equals <paramref name="CardModelIdEntry" />
     ///     (ordinal ignore-case), use <paramref name="Assets" /> for portrait/frame/banner/overlay paths.
-    ///     <c>CharacterAssetProfile.VanillaCardVisualOverrides</c> 的一个条目：当此 mod 角色遇到或持有的卡牌
-    ///     <c>ModelId.Entry</c> 等于 <c>CardModelIdEntry</c>（ordinal ignore-case）时，使用
-    ///     <c>Assets</c> 作为肖像 / 边框 / 横幅 / 覆盖层路径。
+    ///     <see cref="CharacterAssetProfile.VanillaCardVisualOverrides" /> 中的一个条目：当此 mod 角色
+    ///     遇到或持有 <c>ModelId.Entry</c> 等于 <paramref name="CardModelIdEntry" />
+    ///     （ordinal ignore-case）的卡牌时，使用 <paramref name="Assets" /> 作为肖像/边框/banner/覆盖层路径。
     /// </summary>
     /// <param name="CardModelIdEntry">
     ///     Stable card id (same string as <c>CardModel.Id.Entry</c>).
@@ -269,24 +269,23 @@ namespace STS2RitsuLib.Scaffolding.Characters
     /// <param name="Assets">
     ///     Card portrait and frame/border/material/overlay/banner path bundle (same shape as
     ///     mod card <see cref="CardAssetProfile" />).
-    ///     卡牌肖像以及边框 / 边框线 / 材质 / 覆盖层 / 横幅路径集合（结构与 mod 卡牌
-    ///     <c>CardAssetProfile</c> 相同）。
+    ///     卡牌肖像和框/边框/材质/覆盖层/banner 路径包（与
+    ///     mod 卡牌 <see cref="CardAssetProfile" /> 形态相同）。
     /// </param>
     public sealed record CharacterVanillaCardVisualOverride(string CardModelIdEntry, CardAssetProfile Assets);
 
     /// <summary>
     ///     Well-known <see cref="CharacterVanillaRelicVisualOverride.RelicModelIdEntry" /> values for base-game relics
     ///     that commonly need per-character art.
-    ///     常见需要逐角色美术的基础游戏遗物对应的已知
-    ///     <c>CharacterVanillaRelicVisualOverride.RelicModelIdEntry</c> 值。
+    ///     基础游戏遗物中常需要逐角色美术的知名 <see cref="CharacterVanillaRelicVisualOverride.RelicModelIdEntry" /> 值。
     /// </summary>
     public static class CharacterOwnedVanillaRelicModelId
     {
         /// <summary>
         ///     Canonical entry id for the vanilla <c>YummyCookie</c> relic (uppercase); live
         ///     <c>RelicModel.Id.Entry</c> is still matched ordinal-ignore-case.
-        ///     原版 <c>YummyCookie</c> 遗物的规范 entry id（大写）；实际 <c>RelicModel.Id.Entry</c> 仍按
-        ///     ordinal-ignore-case 匹配。
+        ///     原版 <c>YummyCookie</c> 遗物的规范条目 id（大写）；实时
+        ///     <c>RelicModel.Id.Entry</c> 仍按 ordinal-ignore-case 匹配。
         /// </summary>
         public const string YummyCookie = "YUMMY_COOKIE";
     }
@@ -325,7 +324,7 @@ namespace STS2RitsuLib.Scaffolding.Characters
     /// </param>
     /// <param name="WorldProceduralVisuals">
     ///     Merchant / rest-site shells without custom character <c>tscn</c> scenes.
-    ///     不使用自定义角色 <c>tscn</c> 场景的商人 / 休息点外壳。
+    ///     没有自定义角色 <c>tscn</c> 场景的商人/营火 shell。
     /// </param>
     /// <param name="VanillaRelicVisualOverrides">
     ///     Per–relic-id icon overrides when this character is the relic owner (see
@@ -361,8 +360,7 @@ namespace STS2RitsuLib.Scaffolding.Characters
         /// <summary>
         ///     Binary compatibility constructor for assemblies compiled before
         ///     <see cref="VanillaRelicVisualOverrides" /> was added (legacy eight-parameter <c>.ctor</c>).
-        ///     为添加 <c>VanillaRelicVisualOverrides</c> 前编译的程序集保留的二进制兼容构造函数
-        ///     （旧版八参数 <c>.ctor</c>）。
+        ///     为在添加 <see cref="VanillaRelicVisualOverrides" /> 之前编译的程序集提供二进制兼容构造函数（旧版八参数 <c>.ctor</c>）。
         /// </summary>
         public CharacterAssetProfile(
             CharacterSceneAssetSet? scenes,
@@ -388,7 +386,7 @@ namespace STS2RitsuLib.Scaffolding.Characters
 
         /// <summary>
         ///     Profile with all components null (merge / fill helpers treat null as “missing”).
-        ///     所有组件均为 null 的 profile（合并 / 填充 helper 会把 null 视为“缺失”）。
+        ///     所有组件均为 null 的 profile（merge/fill helper 将 null 视为“缺失”）。
         /// </summary>
         public static CharacterAssetProfile Empty { get; } = new();
     }

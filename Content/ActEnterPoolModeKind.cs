@@ -2,7 +2,7 @@ namespace STS2RitsuLib.Content
 {
     /// <summary>
     ///     How eligible pool candidates are combined for an act slot when no force wins.
-    ///     How eligible pool candidates are combined 用于 an 章节 slot 当 no 用于ce wins.
+    ///     没有强制项胜出时，章节槽位的合格池候选项如何组合。
     /// </summary>
     public enum ActEnterPoolModeKind
     {
@@ -11,21 +11,26 @@ namespace STS2RitsuLib.Content
         ///     Uniform over
         ///     <c>
         ///         { act already in <see cref="MegaCrit.Sts2.Core.Runs.RunState.Acts" />[slot] } ∪ eligible
-        ///         { 章节 already in <c>MegaCrit.Sts2.Core.runs.跑局State.章节s</c>[slot] } ∪ eligible
         ///         candidates
-        ///         中文说明：candidates
         ///     </c>
         ///     .
-        ///     中文说明：.
+        ///     对以下集合做均匀抽取：
+        ///     对以下集合做均匀抽取：
+        ///     <c>
+        ///         { <see cref="MegaCrit.Sts2.Core.Runs.RunState.Acts" />[slot] 中已有的章节 } ∪ 合格
+        ///         候选项
+        ///     </c>
+        ///     。
         /// </summary>
         Uniform = 0,
 
         /// <summary>
         ///     Weighted draw over eligible candidates and optional baseline weight (see
-        ///     Weighted draw over eligible candidates 和 可选 baseline weight (see
         ///     <see cref="ModContentRegistry.RegisterActEnterWeightedPoolBaseline" />). Acts with non-positive weight are
         ///     skipped.
-        ///     中文说明：skipped.
+        ///     在合格候选项和可选基线权重上进行加权抽取（参见
+        ///     <see cref="ModContentRegistry.RegisterActEnterWeightedPoolBaseline" />）。权重非正的章节会
+        ///     被跳过。
         /// </summary>
         Weighted = 1,
     }

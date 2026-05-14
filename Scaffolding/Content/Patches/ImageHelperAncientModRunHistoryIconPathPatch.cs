@@ -11,13 +11,15 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Vanilla run-history rows call <see cref="ImageHelper.GetRoomIconPath" /> /
-    ///     原版 跑局-history rows call <c>ImageHelper.GetRoom图标路径</c> /
     ///     <see cref="ImageHelper.GetRoomIconOutlinePath" />
     ///     directly, bypassing <see cref="AncientEventModel.RunHistoryIcon" />. This prefix returns mod
-    ///     directly, bypassing <c>AncientEventModel.RunHistoryIcon</c>. This prefix 返回 mod
     ///     <see cref="IModAncientEventAssetOverrides" /> paths at resolve time so the first load uses the correct textures
     ///     (no post-load replacement on <c>NMapPointHistoryEntry</c>).
-    ///     (no post-加载 replacement on <c>NMapPointHistoryEntry</c>).
+    ///     原版跑局历史行会直接调用 <see cref="ImageHelper.GetRoomIconPath" /> /
+    ///     <see cref="ImageHelper.GetRoomIconOutlinePath" />，
+    ///     绕过 <see cref="AncientEventModel.RunHistoryIcon" />。此前缀在解析时返回 mod
+    ///     <see cref="IModAncientEventAssetOverrides" /> 路径，使首次加载就使用正确纹理
+    ///     （无需在 <c>NMapPointHistoryEntry</c> 上进行加载后替换）。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -46,7 +48,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies mod run-history texture paths before vanilla builds <c>ui/run_history/&lt;entry&gt;.png</c> paths.
-        ///     Supplies mod 跑局-history 纹理 路径 之前 原版 builds <c>ui/跑局_history/&lt;entry&gt;.png</c> 路径.
+        ///     在原版构建 <c>ui/run_history/&lt;entry&gt;.png</c> 路径之前，提供 mod 跑局历史纹理路径。
         /// </summary>
         public static bool Prefix(
                 MethodBase __originalMethod,

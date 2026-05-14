@@ -8,8 +8,8 @@ namespace STS2RitsuLib.CardPiles.Patches
     ///     Short-circuits <see cref="CardPile.Get" /> for mod-minted <see cref="PileType" /> values, returning
     ///     the per-<see cref="Player" /> / per-combat instance resolved by <see cref="ModCardPileStorage" />.
     ///     Non-mod values defer to vanilla (and any other Prefix, such as baselib's <c>GetCombatPile</c>).
-    ///     对 mod-minted <c>PileType</c> 值短路 <c>CardPile.Get</c>，返回由
-    ///     <c>ModCardPileStorage</c> 解析出的 per-<c>Player</c> / per-combat 实例。
+    ///     对 mod-minted <see cref="PileType" /> 值短路 <see cref="CardPile.Get" />，返回由
+    ///     <see cref="ModCardPileStorage" /> 解析出的 per-<see cref="Player" /> / per-combat 实例。
     ///     非 mod 值交给原版（以及任何其它 Prefix，例如 baselib 的 <c>GetCombatPile</c>）。
     /// </summary>
     /// <remarks>

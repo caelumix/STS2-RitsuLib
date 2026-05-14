@@ -16,8 +16,8 @@ namespace STS2RitsuLib.Combat.Rewards
     /// <remarks>
     ///     Reward-set selection is synchronized by vanilla, but reward-specific side effects must either be
     ///     deterministic on every client or explicitly synchronized by the derived reward.
-    ///     reward set 的“选择了哪个 reward”由 vanilla 同步；但 reward 自己造成的副作用必须在每个客户端确定性执行，
-    ///     或由派生 reward 显式同步。
+    ///     奖励集合中“选择了哪个奖励”由原版同步；但奖励自身造成的副作用必须在每个客户端确定性执行，
+    ///     或由派生奖励显式同步。
     /// </remarks>
     public abstract class ModCustomReward(Player player) : Reward(player), IModSerializableReward
     {
@@ -35,13 +35,13 @@ namespace STS2RitsuLib.Combat.Rewards
 
         /// <summary>
         ///     Localization table used by <see cref="Description" />.
-        ///     <c>Description</c> 使用的本地化表。
+        ///     <see cref="Description" /> 使用的本地化表。
         /// </summary>
         protected virtual string DescriptionLocTable => "gameplay_ui";
 
         /// <summary>
         ///     Localization key used by <see cref="Description" />.
-        ///     <c>Description</c> 使用的本地化 key。
+        ///     <see cref="Description" /> 使用的本地化 key。
         /// </summary>
         protected virtual string DescriptionLocKey => ModRewardRegistry.TryGetId(ModRewardType, out var id)
             ? id

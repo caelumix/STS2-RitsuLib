@@ -6,7 +6,7 @@ namespace STS2RitsuLib.Networking.Sidecar.Patches
 {
     /// <summary>
     ///     Intercepts sidecar envelopes on the client before <see cref="NetMessageBus" /> runs.
-    ///     Intercepts sidecar envelopes on the client 之前 <c>NetMessageBus</c> runs.
+    ///     在 <see cref="NetMessageBus" /> 运行前，在客户端拦截 sidecar envelope。
     /// </summary>
     internal sealed class RitsuLibSidecarNetClientReceivePatch : IPatchMethod
     {

@@ -12,7 +12,7 @@ namespace STS2RitsuLib.CardPiles.Patches
     ///     Injects <see cref="ModCardPileUiStyle.TopBarDeck" /> style buttons into <see cref="NTopBar" />
     ///     after its vanilla <c>_Ready</c> has resolved the built-in <c>%Deck</c> / <c>%Map</c> references.
     ///     在原版 <c>_Ready</c> 解析内置 <c>%Deck</c> / <c>%Map</c> 引用后，将
-    ///     <c>ModCardPileUiStyle.TopBarDeck</c> 样式按钮注入 <c>NTopBar</c>。
+    ///     <see cref="ModCardPileUiStyle.TopBarDeck" /> 样式按钮注入 <see cref="NTopBar" />。
     /// </summary>
     public sealed class ModCardPileTopBarReadyPatch : IPatchMethod
     {
@@ -46,8 +46,8 @@ namespace STS2RitsuLib.CardPiles.Patches
     /// <summary>
     ///     Forwards <see cref="NTopBar.Initialize" /> so mod TopBarDeck buttons bind to the local
     ///     <see cref="Player" /> alongside vanilla <c>Deck.Initialize(player)</c>.
-    ///     转发 <c>NTopBar.Initialize</c>，使 mod TopBarDeck 按钮与原版
-    ///     <c>Deck.Initialize(player)</c> 一起绑定到本地 <c>Player</c>。
+    ///     转发 <see cref="NTopBar.Initialize" />，使 mod TopBarDeck 按钮与原版
+    ///     <c>Deck.Initialize(player)</c> 一起绑定到本地 <see cref="Player" />。
     /// </summary>
     public sealed class ModCardPileTopBarInitializePatch : IPatchMethod
     {
@@ -73,7 +73,7 @@ namespace STS2RitsuLib.CardPiles.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Binds each injected TopBar mod button to the local <see cref="Player" />.
-        ///     将每个已注入的 TopBar mod 按钮绑定到本地 <c>Player</c>。
+        ///     将每个已注入的 TopBar mod 按钮绑定到本地 <see cref="Player" />。
         /// </summary>
         public static void Postfix(NTopBar __instance, IRunState runState)
         {

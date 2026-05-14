@@ -9,7 +9,9 @@ namespace STS2RitsuLib.Combat.Rewards.Patches
     /// <summary>
     ///     Flushes reward sideband data into <see cref="SerializableRoom.EncounterState" /> after
     ///     <see cref="CombatRoom.ToSerializable" /> creates serializable rewards.
-    ///     在 <c>CombatRoom.ToSerializable</c> 生成 reward 存档数据后，把 reward 扩展数据写入
+    ///     <c>EncounterState</c>。
+    ///     在 <see cref="CombatRoom.ToSerializable" /> 创建可序列化 reward 后，将 reward sideband 数据写入
+    ///     <see cref="SerializableRoom.EncounterState" />。
     ///     <c>EncounterState</c>。
     /// </summary>
     internal sealed class CombatRoomToSerializableRewardExtPatch : IPatchMethod
@@ -52,7 +54,8 @@ namespace STS2RitsuLib.Combat.Rewards.Patches
     /// <summary>
     ///     Restores reward sideband data from <see cref="SerializableRoom.EncounterState" /> before
     ///     <see cref="CombatRoom.FromSerializable" /> rebuilds rewards.
-    ///     在 <c>CombatRoom.FromSerializable</c> 重建 reward 前，从 <c>EncounterState</c> 还原扩展数据。
+    ///     在 <see cref="CombatRoom.FromSerializable" /> 重建 reward 前，从 <see cref="SerializableRoom.EncounterState" /> 还原 reward
+    ///     sideband 数据。
     /// </summary>
     internal sealed class CombatRoomFromSerializableRewardExtPatch : IPatchMethod
     {

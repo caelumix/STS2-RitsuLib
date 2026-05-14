@@ -2,13 +2,13 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Convenience builders for common adaptive music override patterns.
-    ///     Convenience builders 用于 common adaptive music override patterns.
+    ///     常见自适应音乐覆盖模式的便捷构建器。
     /// </summary>
     public static class AudioAdaptivePlans
     {
         /// <summary>
         ///     Builds a plan that overrides combat music and optionally room and victory transitions.
-        ///     Builds a plan that overrides combat music 和 可选ly room 和 victory transitions.
+        ///     构建覆盖战斗音乐，并可选择处理房间和胜利转换的计划。
         /// </summary>
         public static AudioAdaptiveMusicPlan CombatOverride(
             AudioSource combatSource,
@@ -31,9 +31,8 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Builds a plan that supplies room and combat overrides for the full run without restoring vanilla music after
-        ///     Builds a plan that supplies room 和 combat overrides 用于 the full 跑局 带有out restoring 原版 music 之后
         ///     combat.
-        ///     中文说明：combat.
+        ///     构建在整个跑局中提供房间和战斗覆盖，且战斗后不恢复原版音乐的计划。
         /// </summary>
         public static AudioAdaptiveMusicPlan FullRunOverride(
             AudioSource roomSource,

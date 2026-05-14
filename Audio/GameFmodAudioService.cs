@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Forwards to <see cref="NAudioManager" /> (same FMOD routing, buses, and test-mode behavior as vanilla).
-    ///     Forwards to <c>NAudioManager</c> (same FMOD routing, b使用, 和 test-mode behavior as 原版).
+    ///     转发到 <see cref="NAudioManager" />（与原版相同的 FMOD 路由、bus 和 test-mode 行为）。
     /// </summary>
     public sealed class GameFmodAudioService : IGameFmodAudio
     {
@@ -14,7 +14,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Shared singleton used by <see cref="GameFmod.Studio" />.
-        ///     Shared singleton used 通过 <c>GameFmod.Studio</c>.
+        ///     <see cref="GameFmod.Studio" /> 使用的共享单例。
         /// </summary>
         public static GameFmodAudioService Shared { get; } = new();
 

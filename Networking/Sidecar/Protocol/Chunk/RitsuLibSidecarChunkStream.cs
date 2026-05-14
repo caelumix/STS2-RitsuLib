@@ -4,10 +4,11 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Splits a large user payload into <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" /> messages with
-    ///     Splits a large 使用r payload into <c>RitsuLibSidecarControlOpcodes.ChunkedFrame</c> messages 带有
     ///     per-segment CRC32; loss recovery uses selective gap reports and re-sends only missing parts (see
-    ///     per-segment CRC32; loss recovery 使用 selective gap reports 和 re-sends only missing parts (see
     ///     <see cref="RitsuLibSidecarControlOpcodes.ChunkStreamSelectiveNack" />).
+    ///     将大型用户载荷拆分为带逐 segment CRC32 的 <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" /> 消息；
+    ///     丢包恢复使用选择性缺口报告，并只重发缺失部分（见
+    ///     <see cref="RitsuLibSidecarControlOpcodes.ChunkStreamSelectiveNack" />）。
     /// </summary>
     public static class RitsuLibSidecarChunkStream
     {
@@ -15,7 +16,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Generates a new monotonically increasing stream id (per process) for chunked sends.
-        ///     Generates a new monotonically increasing stream id (per process) 用于 chunked sends.
+        ///     为分块发送生成新的单调递增 stream id（按进程）。
         /// </summary>
         public static ulong AllocateStreamId()
         {
@@ -24,9 +25,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Sends <paramref name="full" /> in multiple <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" /> envelopes
-        ///     中文说明：Sends <c>full</c> in multiple <c>RitsuLibSidecarControlOpcodes.ChunkedFrame</c> envelopes
         ///     to the host.
-        ///     中文说明：to the host.
+        ///     将 <paramref name="full" /> 放入多个 <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" /> envelope
+        ///     发送到主机。
         /// </summary>
         public static void TrySendToHost(
             RunManager? runManager,
@@ -49,7 +50,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Sends a chunked stream from host to a single client.
-        ///     Sends a chunked stream 从 host to a single client.
+        ///     从主机向单个客户端发送分块流。
         /// </summary>
         public static void TrySendToPeer(
             RunManager? runManager,
@@ -73,7 +74,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host: sends a chunked stream to every ready-to-broadcast peer.
-        ///     中文说明：Host: sends a chunked stream to every ready-to-broadcast peer.
+        ///     主机：向每个 ready-to-broadcast peer 发送分块流。
         /// </summary>
         public static void TrySendBroadcast(
             RunManager? runManager,

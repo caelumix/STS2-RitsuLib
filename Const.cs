@@ -2,55 +2,55 @@ namespace STS2RitsuLib
 {
     /// <summary>
     ///     Stable identifiers and version constants for the RitsuLib mod assembly.
-    ///     稳定的 identifiers and version constants for the RitsuLib mod assembly。
+    ///     RitsuLib mod 程序集的稳定标识符和版本常量。
     /// </summary>
     public static class Const
     {
         /// <summary>
         ///     Human-readable mod name.
-        ///     人类可读的 mod name。
+        ///     可读的 mod 名称。
         /// </summary>
         public const string Name = "RitsuLib";
 
         /// <summary>
         ///     Unique mod id used by the game and persistence.
-        ///     Unique mod id used 通过 the game 和 persistence.
+        ///     游戏和持久化使用的唯一 mod id。
         /// </summary>
         public const string ModId = "com.ritsukage.sts2-RitsuLib";
 
         /// <summary>
         ///     Assembly / manifest version string.
-        ///     中文说明：Assembly / manifest version string.
+        ///     程序集/清单版本字符串。
         /// </summary>
         public const string Version = "0.2.30";
 
         /// <summary>
         ///     Root key for RitsuLib JSON settings under the mod’s user folder.
-        ///     Root key 用于 RitsuLib JSON 设置 under the mod’s 使用r folder.
+        ///     mod 用户文件夹下 RitsuLib JSON 设置的根键。
         /// </summary>
         public const string SettingsKey = "settings";
 
         /// <summary>
         ///     On-disk settings file name.
-        ///     On-disk 设置 file name.
+        ///     磁盘上的设置文件名。
         /// </summary>
         public const string SettingsFileName = "settings.json";
 
         /// <summary>
         ///     Subdirectory under global mod data for shell theme JSON (next to <see cref="SettingsFileName" />).
-        ///     Subdirectory under global mod data 用于 shell theme JSON (next to <c>设置FileName</c>).
+        ///     全局 mod 数据下用于 shell 主题 JSON 的子目录（与 <see cref="SettingsFileName" /> 相邻）。
         /// </summary>
         public const string ShellThemesDirectoryName = "shell_themes";
 
         /// <summary>
         ///     BaseLib main Harmony instance id.
-        ///     中文说明：BaseLib main Harmony instance id.
+        ///     BaseLib 主 Harmony 实例 id。
         /// </summary>
         public const string BaseLibHarmonyId = "BaseLib";
 
         /// <summary>
         ///     Harmony id used by RitsuLib content-registry patcher.
-        ///     Harmony id used 通过 RitsuLib content-注册表 patcher.
+        ///     RitsuLib 内容注册表补丁器使用的 Harmony id。
         /// </summary>
         public const string FrameworkContentRegistryHarmonyId = ModId + ".framework-content-registry";
     }

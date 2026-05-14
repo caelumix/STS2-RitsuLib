@@ -6,7 +6,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     External override registry for non-card content assets.
-    ///     External override 注册表 用于 non-卡牌 content 资源.
+    ///     non-卡牌 content assets的外部覆盖注册表。
     /// </summary>
     public static class ExternalAssetOverrideRegistry
     {
@@ -182,7 +182,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for relic icon paths.
-        ///     注册 or replaces an external provider for relic icon paths。
+        ///     注册或替换遗物 图标 路径的外部提供器。
         /// </summary>
         public static void RegisterRelicIconPathProvider(string key, Func<RelicModel, string?> provider)
         {
@@ -191,7 +191,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for relic outline icon paths.
-        ///     注册 or replaces an external provider for relic outline icon paths。
+        ///     注册或替换遗物 轮廓 图标 路径的外部提供器。
         /// </summary>
         public static void RegisterRelicIconOutlinePathProvider(string key, Func<RelicModel, string?> provider)
         {
@@ -200,7 +200,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for relic icon textures.
-        ///     注册 or replaces an external provider for relic icon textures。
+        ///     注册或替换遗物 图标 textures的外部提供器。
         /// </summary>
         public static void RegisterRelicIconTextureProvider(string key, Func<RelicModel, Texture2D?> provider)
         {
@@ -209,7 +209,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for relic outline icon textures.
-        ///     注册 or replaces an external provider for relic outline icon textures。
+        ///     注册或替换遗物 轮廓 图标 textures的外部提供器。
         /// </summary>
         public static void RegisterRelicIconOutlineTextureProvider(string key, Func<RelicModel, Texture2D?> provider)
         {
@@ -218,7 +218,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for relic big icon textures.
-        ///     注册 or replaces an external provider for relic big icon textures。
+        ///     注册或替换遗物 大图标 textures的外部提供器。
         /// </summary>
         public static void RegisterRelicBigIconTextureProvider(string key, Func<RelicModel, Texture2D?> provider)
         {
@@ -227,7 +227,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for power icon paths.
-        ///     注册 or replaces an external provider for power icon paths。
+        ///     注册或替换能力 图标 路径的外部提供器。
         /// </summary>
         public static void RegisterPowerIconPathProvider(string key, Func<PowerModel, string?> provider)
         {
@@ -236,7 +236,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for power icon textures.
-        ///     注册 or replaces an external provider for power icon textures。
+        ///     注册或替换能力 图标 textures的外部提供器。
         /// </summary>
         public static void RegisterPowerIconTextureProvider(string key, Func<PowerModel, Texture2D?> provider)
         {
@@ -245,7 +245,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for power big icon textures.
-        ///     注册 or replaces an external provider for power big icon textures。
+        ///     注册或替换能力 大图标 textures的外部提供器。
         /// </summary>
         public static void RegisterPowerBigIconTextureProvider(string key, Func<PowerModel, Texture2D?> provider)
         {
@@ -254,7 +254,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for potion image paths.
-        ///     注册 or replaces an external provider for potion image paths。
+        ///     注册或替换药水 图像 路径的外部提供器。
         /// </summary>
         public static void RegisterPotionImagePathProvider(string key, Func<PotionModel, string?> provider)
         {
@@ -263,7 +263,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for potion outline paths.
-        ///     注册 or replaces an external provider for potion outline paths。
+        ///     注册或替换药水 轮廓 路径的外部提供器。
         /// </summary>
         public static void RegisterPotionOutlinePathProvider(string key, Func<PotionModel, string?> provider)
         {
@@ -272,7 +272,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for potion image textures.
-        ///     注册 or replaces an external provider for potion image textures。
+        ///     注册或替换药水 图像 textures的外部提供器。
         /// </summary>
         public static void RegisterPotionImageTextureProvider(string key, Func<PotionModel, Texture2D?> provider)
         {
@@ -281,7 +281,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for potion outline textures.
-        ///     注册 or replaces an external provider for potion outline textures。
+        ///     注册或替换药水 轮廓 textures的外部提供器。
         /// </summary>
         public static void RegisterPotionOutlineTextureProvider(string key, Func<PotionModel, Texture2D?> provider)
         {
@@ -290,7 +290,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for orb icon paths.
-        ///     注册 or replaces an external provider for orb icon paths。
+        ///     注册或替换充能球 图标 路径的外部提供器。
         /// </summary>
         public static void RegisterOrbIconPathProvider(string key, Func<OrbModel, string?> provider)
         {
@@ -299,7 +299,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for orb icon textures.
-        ///     注册 or replaces an external provider for orb icon textures。
+        ///     注册或替换充能球 图标 textures的外部提供器。
         /// </summary>
         public static void RegisterOrbIconTextureProvider(string key, Func<OrbModel, CompressedTexture2D?> provider)
         {
@@ -308,7 +308,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for orb visuals scene paths.
-        ///     注册 or replaces an external provider for orb visuals scene paths。
+        ///     注册或替换充能球 视觉场景 路径的外部提供器。
         /// </summary>
         public static void RegisterOrbVisualsScenePathProvider(string key, Func<OrbModel, string?> provider)
         {
@@ -317,7 +317,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for act main background scene paths.
-        ///     注册 or replaces an external provider for act main background scene paths。
+        ///     注册或替换章节 主背景场景 路径的外部提供器。
         /// </summary>
         public static void RegisterActBackgroundScenePathProvider(string key, Func<ActModel, string?> provider)
         {
@@ -326,7 +326,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for act rest-site background scene paths.
-        ///     注册 or replaces an external provider for act rest-site background scene paths。
+        ///     注册或替换章节 休息处 背景场景 路径的外部提供器。
         /// </summary>
         public static void RegisterActRestSiteBackgroundPathProvider(string key, Func<ActModel, string?> provider)
         {
@@ -335,7 +335,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for act map top background paths.
-        ///     注册 or replaces an external provider for act map top background paths。
+        ///     注册或替换章节 map top background 路径的外部提供器。
         /// </summary>
         public static void RegisterActMapTopBgPathProvider(string key, Func<ActModel, string?> provider)
         {
@@ -344,7 +344,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for act map middle background paths.
-        ///     注册 or replaces an external provider for act map middle background paths。
+        ///     注册或替换章节 map middle background 路径的外部提供器。
         /// </summary>
         public static void RegisterActMapMidBgPathProvider(string key, Func<ActModel, string?> provider)
         {
@@ -353,7 +353,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for act map bottom background paths.
-        ///     注册 or replaces an external provider for act map bottom background paths。
+        ///     注册或替换章节 map bottom background 路径的外部提供器。
         /// </summary>
         public static void RegisterActMapBotBgPathProvider(string key, Func<ActModel, string?> provider)
         {
@@ -362,7 +362,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for event background scene path getters.
-        ///     注册 or replaces an external provider for event background scene path getters。
+        ///     注册或替换事件 背景场景 路径 getter的外部提供器。
         /// </summary>
         public static void RegisterEventBackgroundScenePathProvider(string key, Func<EventModel, string?> provider)
         {
@@ -371,7 +371,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for event layout scene paths.
-        ///     注册 or replaces an external provider for event layout scene paths。
+        ///     注册或替换事件 布局场景 路径的外部提供器。
         /// </summary>
         public static void RegisterEventLayoutScenePathProvider(string key, Func<EventModel, string?> provider)
         {
@@ -380,7 +380,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for event initial portrait textures.
-        ///     注册 or replaces an external provider for event initial portrait textures。
+        ///     注册或替换事件 initial portrait textures的外部提供器。
         /// </summary>
         public static void RegisterEventInitialPortraitTextureProvider(string key,
             Func<EventModel, Texture2D?> provider)
@@ -390,7 +390,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for event background packed scenes.
-        ///     注册 or replaces an external provider for event background packed scenes。
+        ///     注册或替换事件 background packed 场景的外部提供器。
         /// </summary>
         public static void RegisterEventBackgroundSceneProvider(string key, Func<EventModel, PackedScene?> provider)
         {
@@ -399,7 +399,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for event vfx packed scenes.
-        ///     注册 or replaces an external provider for event vfx packed scenes。
+        ///     注册或替换事件 vfx packed 场景的外部提供器。
         /// </summary>
         public static void RegisterEventVfxSceneProvider(string key, Func<EventModel, PackedScene?> provider)
         {
@@ -408,7 +408,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for encounter scene paths.
-        ///     注册 or replaces an external provider for encounter scene paths。
+        ///     注册或替换遭遇 场景 路径的外部提供器。
         /// </summary>
         public static void RegisterEncounterScenePathProvider(string key, Func<EncounterModel, string?> provider)
         {
@@ -417,7 +417,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for encounter background scene paths.
-        ///     注册 or replaces an external provider for encounter background scene paths。
+        ///     注册或替换遭遇 背景场景 路径的外部提供器。
         /// </summary>
         public static void RegisterEncounterBackgroundScenePathProvider(string key,
             Func<EncounterModel, string?> provider)
@@ -427,7 +427,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for encounter background layers directories.
-        ///     注册 or replaces an external provider for encounter background layers directories。
+        ///     注册或替换遭遇 背景层目录的外部提供器。
         /// </summary>
         public static void RegisterEncounterBackgroundLayersDirectoryProvider(string key,
             Func<EncounterModel, string?> provider)
@@ -437,7 +437,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for encounter boss-node paths.
-        ///     注册 or replaces an external provider for encounter boss-node paths。
+        ///     注册或替换遭遇 Boss 节点 路径的外部提供器。
         /// </summary>
         public static void RegisterEncounterBossNodePathProvider(string key, Func<EncounterModel, string?> provider)
         {
@@ -446,7 +446,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for encounter map-node asset path lists.
-        ///     注册 or replaces an external provider for encounter map-node asset path lists。
+        ///     注册或替换遭遇 map-节点 资源路径列表的外部提供器。
         /// </summary>
         public static void RegisterEncounterMapNodeAssetPathsProvider(string key,
             Func<EncounterModel, IEnumerable<string>?> provider)
@@ -456,7 +456,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for encounter run-history icon paths.
-        ///     注册 or replaces an external provider for encounter run-history icon paths。
+        ///     注册或替换遭遇 跑局历史 图标 路径的外部提供器。
         /// </summary>
         public static void RegisterEncounterRunHistoryIconPathProvider(string key,
             Func<EncounterModel, string?> provider)
@@ -466,7 +466,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for encounter run-history icon outline paths.
-        ///     注册 or replaces an external provider for encounter run-history icon outline paths。
+        ///     注册或替换遭遇 跑局历史 图标 轮廓 路径的外部提供器。
         /// </summary>
         public static void RegisterEncounterRunHistoryIconOutlinePathProvider(string key,
             Func<EncounterModel, string?> provider)
@@ -476,7 +476,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for ancient map icon paths.
-        ///     注册 or replaces an external provider for ancient map icon paths。
+        ///     注册或替换远古事件 map 图标 路径的外部提供器。
         /// </summary>
         public static void RegisterAncientMapIconPathProvider(string key, Func<AncientEventModel, string?> provider)
         {
@@ -485,7 +485,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for ancient map icon outline paths.
-        ///     注册 or replaces an external provider for ancient map icon outline paths。
+        ///     注册或替换远古事件 map 图标 轮廓 路径的外部提供器。
         /// </summary>
         public static void RegisterAncientMapIconOutlinePathProvider(string key,
             Func<AncientEventModel, string?> provider)
@@ -495,7 +495,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for ancient run-history icon paths.
-        ///     注册 or replaces an external provider for ancient run-history icon paths。
+        ///     注册或替换远古事件 跑局历史 图标 路径的外部提供器。
         /// </summary>
         public static void RegisterAncientRunHistoryIconPathProvider(string key,
             Func<AncientEventModel, string?> provider)
@@ -505,7 +505,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for ancient run-history icon outline paths.
-        ///     注册 or replaces an external provider for ancient run-history icon outline paths。
+        ///     注册或替换远古事件 跑局历史 图标 轮廓 路径的外部提供器。
         /// </summary>
         public static void RegisterAncientRunHistoryIconOutlinePathProvider(string key,
             Func<AncientEventModel, string?> provider)
@@ -515,7 +515,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for affliction overlay paths.
-        ///     注册 or replaces an external provider for affliction overlay paths。
+        ///     注册或替换苦痛 overlay 路径的外部提供器。
         /// </summary>
         public static void RegisterAfflictionOverlayPathProvider(string key, Func<AfflictionModel, string?> provider)
         {
@@ -524,7 +524,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for affliction overlay packed scenes.
-        ///     注册 or replaces an external provider for affliction overlay packed scenes。
+        ///     注册或替换苦痛 overlay packed 场景的外部提供器。
         /// </summary>
         public static void RegisterAfflictionOverlaySceneProvider(string key,
             Func<AfflictionModel, PackedScene?> provider)
@@ -534,7 +534,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces an external provider for enchantment icon paths.
-        ///     注册 or replaces an external provider for enchantment icon paths。
+        ///     注册或替换附魔 图标 路径的外部提供器。
         /// </summary>
         public static void RegisterEnchantmentIconPathProvider(string key, Func<EnchantmentModel, string?> provider)
         {
@@ -543,7 +543,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Removes all providers registered under the specified key.
-        ///     Removes all providers 已注册 under the specified key.
+        ///     移除在指定键下注册的所有提供器。
         /// </summary>
         public static bool Unregister(string key)
         {
@@ -562,7 +562,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Clears all registered external providers.
-        ///     Clears all 已注册 external providers.
+        ///     清除所有registered 外部 提供器。
         /// </summary>
         public static void Clear()
         {

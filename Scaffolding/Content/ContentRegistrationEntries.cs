@@ -11,13 +11,13 @@ namespace STS2RitsuLib.Scaffolding.Content
 {
     /// <summary>
     ///     Declarative manifest entry that registers content with a <see cref="ModContentRegistry" /> when applied.
-    ///     声明式 manifest 条目，应用时会向 <c>ModContentRegistry</c> 注册内容。
+    ///     声明式 manifest 条目，应用时会向 <see cref="ModContentRegistry" /> 注册内容。
     /// </summary>
     public interface IContentRegistrationEntry
     {
         /// <summary>
         ///     Performs the registration for this entry against <paramref name="registry" />.
-        ///     针对 <c>registry</c> 执行此条目的注册。
+        ///     针对 <paramref name="registry" /> 执行此条目的注册。
         /// </summary>
         void Register(ModContentRegistry registry);
     }
@@ -28,7 +28,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TCharacter">
     ///     Concrete <see cref="CharacterModel" /> to register.
-    ///     要注册的具体 <c>CharacterModel</c>。
+    ///     要注册的具体 <see cref="CharacterModel" />。
     /// </typeparam>
     public sealed class CharacterRegistrationEntry<TCharacter> : IContentRegistrationEntry
         where TCharacter : CharacterModel
@@ -46,7 +46,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends starter-deck copies of <typeparamref name="TCard" /> when this character entry is registered.
-        ///     注册此角色条目时，向初始牌组追加 <c>TCard</c> 的若干复制。
+        ///     注册此角色条目时，向初始牌组追加 <typeparamref name="TCard" /> 的若干复制。
         /// </summary>
         public CharacterRegistrationEntry<TCharacter> AddStartingCard<TCard>(int count = 1)
             where TCard : CardModel
@@ -56,7 +56,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends starter-deck copies of <typeparamref name="TCard" /> when this character entry is registered.
-        ///     注册此角色条目时，向初始牌组追加 <c>TCard</c> 的若干复制。
+        ///     注册此角色条目时，向初始牌组追加 <typeparamref name="TCard" /> 的若干复制。
         /// </summary>
         public CharacterRegistrationEntry<TCharacter> AddStartingCard<TCard>(int count, int order)
             where TCard : CardModel
@@ -68,7 +68,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends starting relic copies of <typeparamref name="TRelic" /> when this character entry is registered.
-        ///     注册此角色条目时，追加 <c>TRelic</c> 的若干初始遗物复制。
+        ///     注册此角色条目时，追加 <typeparamref name="TRelic" /> 的若干初始遗物复制。
         /// </summary>
         public CharacterRegistrationEntry<TCharacter> AddStartingRelic<TRelic>(int count = 1)
             where TRelic : RelicModel
@@ -78,7 +78,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends starting relic copies of <typeparamref name="TRelic" /> when this character entry is registered.
-        ///     注册此角色条目时，追加 <c>TRelic</c> 的若干初始遗物复制。
+        ///     注册此角色条目时，追加 <typeparamref name="TRelic" /> 的若干初始遗物复制。
         /// </summary>
         public CharacterRegistrationEntry<TCharacter> AddStartingRelic<TRelic>(int count, int order)
             where TRelic : RelicModel
@@ -90,7 +90,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends starting potion copies of <typeparamref name="TPotion" /> when this character entry is registered.
-        ///     注册此角色条目时，追加 <c>TPotion</c> 的若干初始药水复制。
+        ///     注册此角色条目时，追加 <typeparamref name="TPotion" /> 的若干初始药水复制。
         /// </summary>
         public CharacterRegistrationEntry<TCharacter> AddStartingPotion<TPotion>(int count = 1)
             where TPotion : PotionModel
@@ -100,7 +100,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends starting potion copies of <typeparamref name="TPotion" /> when this character entry is registered.
-        ///     注册此角色条目时，追加 <c>TPotion</c> 的若干初始药水复制。
+        ///     注册此角色条目时，追加 <typeparamref name="TPotion" /> 的若干初始药水复制。
         /// </summary>
         public CharacterRegistrationEntry<TCharacter> AddStartingPotion<TPotion>(int count, int order)
             where TPotion : PotionModel
@@ -204,7 +204,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TAct">
     ///     Concrete <see cref="ActModel" /> to register.
-    ///     要注册的具体 <c>ActModel</c>。
+    ///     要注册的具体 <see cref="ActModel" />。
     /// </typeparam>
     public sealed class ActRegistrationEntry<TAct> : IContentRegistrationEntry
         where TAct : ActModel
@@ -218,7 +218,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a card type with its pool and optional public entry options.
-    ///     将卡牌类型及其池和可选公开 entry 选项一起注册。
+    ///     将卡牌类型及其池和可选公开条目选项一起注册。
     /// </summary>
     /// <typeparam name="TPool">
     ///     Card pool model type.
@@ -230,7 +230,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </typeparam>
     /// <param name="publicEntry">
     ///     Optional stable entry / visibility options.
-    ///     可选的稳定 entry / 可见性选项。
+    ///     可选的稳定条目/可见性选项。
     /// </param>
     public sealed class CardRegistrationEntry<TPool, TCard>(ModelPublicEntryOptions publicEntry = default)
         : IContentRegistrationEntry
@@ -246,15 +246,15 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers <see cref="ModCardHandGlowRegistry" /> rules for a card type (gold/red hand highlights).
-    ///     为卡牌类型注册 <c>ModCardHandGlowRegistry</c> 规则（金色/红色手牌高亮）。
+    ///     为卡牌类型注册 <see cref="ModCardHandGlowRegistry" /> 规则（金色/红色手牌高亮）。
     /// </summary>
     /// <typeparam name="TCard">
     ///     <see cref="CardModel" /> subtype.
-    ///     <c>CardModel</c> 子类型。
+    ///     <see cref="CardModel" /> 子类型。
     /// </typeparam>
     /// <param name="rules">
     ///     Predicate rules; merged with <see cref="ModCardHandGlowRules.Or" /> if registered twice.
-    ///     谓词规则；重复注册时会通过 <c>ModCardHandGlowRules.Or</c> 合并。
+    ///     谓词规则；重复注册时会通过 <see cref="ModCardHandGlowRules.Or" /> 合并。
     /// </param>
     public sealed class CardHandGlowRegistrationEntry<TCard>(ModCardHandGlowRules rules) : IContentRegistrationEntry
         where TCard : CardModel
@@ -268,7 +268,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers <see cref="ModCardHandOutlineRegistry" /> tint rules for a card type (arbitrary hand-highlight colors).
-    ///     为卡牌类型注册 <c>ModCardHandOutlineRegistry</c> 染色规则（任意手牌高亮颜色）。
+    ///     为卡牌类型注册 <see cref="ModCardHandOutlineRegistry" /> 染色规则（任意手牌高亮颜色）。
     /// </summary>
     public sealed class CardHandOutlineRegistrationEntry<TCard>(ModCardHandOutlineRule rule) : IContentRegistrationEntry
         where TCard : CardModel
@@ -282,7 +282,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a relic type with its pool and optional public entry options.
-    ///     将遗物类型及其池和可选公开 entry 选项一起注册。
+    ///     将遗物类型及其池和可选公开条目选项一起注册。
     /// </summary>
     /// <typeparam name="TPool">
     ///     Relic pool model type.
@@ -294,7 +294,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </typeparam>
     /// <param name="publicEntry">
     ///     Optional stable entry / visibility options.
-    ///     可选的稳定 entry / 可见性选项。
+    ///     可选的稳定条目/可见性选项。
     /// </param>
     public sealed class RelicRegistrationEntry<TPool, TRelic>(ModelPublicEntryOptions publicEntry = default)
         : IContentRegistrationEntry
@@ -310,7 +310,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a potion type with its pool and optional public entry options.
-    ///     将药水类型及其池和可选公开 entry 选项一起注册。
+    ///     将药水类型及其池和可选公开条目选项一起注册。
     /// </summary>
     /// <typeparam name="TPool">
     ///     Potion pool model type.
@@ -322,7 +322,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </typeparam>
     /// <param name="publicEntry">
     ///     Optional stable entry / visibility options.
-    ///     可选的稳定 entry / 可见性选项。
+    ///     可选的稳定条目/可见性选项。
     /// </param>
     public sealed class PotionRegistrationEntry<TPool, TPotion>(ModelPublicEntryOptions publicEntry = default)
         : IContentRegistrationEntry
@@ -338,11 +338,11 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a standalone power model type.
-    ///     注册一个独立 Power 模型类型。
+    ///     注册一个独立能力模型类型。
     /// </summary>
     /// <typeparam name="TPower">
     ///     Concrete <see cref="PowerModel" />.
-    ///     具体 <c>PowerModel</c>。
+    ///     具体 <see cref="PowerModel" />。
     /// </typeparam>
     public sealed class PowerRegistrationEntry<TPower> : IContentRegistrationEntry
         where TPower : PowerModel
@@ -356,7 +356,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a non-power health bar forecast source type.
-    ///     注册一个非 Power 的生命条预测来源类型。
+    ///     注册一个非能力的生命条预测来源类型。
     /// </summary>
     /// <typeparam name="TSource">
     ///     Concrete forecast source type.
@@ -383,7 +383,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TPool">
     ///     Concrete <see cref="CardPoolModel" />.
-    ///     具体 <c>CardPoolModel</c>。
+    ///     具体 <see cref="CardPoolModel" />。
     /// </typeparam>
     public sealed class SharedCardPoolRegistrationEntry<TPool> : IContentRegistrationEntry
         where TPool : CardPoolModel
@@ -401,7 +401,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TOrb">
     ///     Concrete <see cref="OrbModel" />.
-    ///     具体 <c>OrbModel</c>。
+    ///     具体 <see cref="OrbModel" />。
     /// </typeparam>
     public sealed class OrbRegistrationEntry<TOrb> : IContentRegistrationEntry
         where TOrb : OrbModel
@@ -419,7 +419,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TEnchantment">
     ///     Concrete <see cref="EnchantmentModel" />.
-    ///     具体 <c>EnchantmentModel</c>。
+    ///     具体 <see cref="EnchantmentModel" />。
     /// </typeparam>
     public sealed class EnchantmentRegistrationEntry<TEnchantment> : IContentRegistrationEntry
         where TEnchantment : EnchantmentModel
@@ -437,7 +437,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TAffliction">
     ///     Concrete <see cref="AfflictionModel" />.
-    ///     具体 <c>AfflictionModel</c>。
+    ///     具体 <see cref="AfflictionModel" />。
     /// </typeparam>
     public sealed class AfflictionRegistrationEntry<TAffliction> : IContentRegistrationEntry
         where TAffliction : AfflictionModel
@@ -455,7 +455,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TAchievement">
     ///     Concrete <see cref="AchievementModel" />.
-    ///     具体 <c>AchievementModel</c>。
+    ///     具体 <see cref="AchievementModel" />。
     /// </typeparam>
     public sealed class AchievementRegistrationEntry<TAchievement> : IContentRegistrationEntry
         where TAchievement : AchievementModel
@@ -473,7 +473,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TSingleton">
     ///     Concrete <see cref="SingletonModel" />.
-    ///     具体 <c>SingletonModel</c>。
+    ///     具体 <see cref="SingletonModel" />。
     /// </typeparam>
     public sealed class SingletonRegistrationEntry<TSingleton> : IContentRegistrationEntry
         where TSingleton : SingletonModel
@@ -491,7 +491,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TModifier">
     ///     Concrete <see cref="ModifierModel" />.
-    ///     具体 <c>ModifierModel</c>。
+    ///     具体 <see cref="ModifierModel" />。
     /// </typeparam>
     public sealed class GoodModifierRegistrationEntry<TModifier> : IContentRegistrationEntry
         where TModifier : ModifierModel
@@ -509,7 +509,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TModifier">
     ///     Concrete <see cref="ModifierModel" />.
-    ///     具体 <c>ModifierModel</c>。
+    ///     具体 <see cref="ModifierModel" />。
     /// </typeparam>
     public sealed class BadModifierRegistrationEntry<TModifier> : IContentRegistrationEntry
         where TModifier : ModifierModel
@@ -527,7 +527,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TPool">
     ///     Concrete <see cref="RelicPoolModel" />.
-    ///     具体 <c>RelicPoolModel</c>。
+    ///     具体 <see cref="RelicPoolModel" />。
     /// </typeparam>
     public sealed class SharedRelicPoolRegistrationEntry<TPool> : IContentRegistrationEntry
         where TPool : RelicPoolModel
@@ -545,7 +545,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TPool">
     ///     Concrete <see cref="PotionPoolModel" />.
-    ///     具体 <c>PotionPoolModel</c>。
+    ///     具体 <see cref="PotionPoolModel" />。
     /// </typeparam>
     public sealed class SharedPotionPoolRegistrationEntry<TPool> : IContentRegistrationEntry
         where TPool : PotionPoolModel
@@ -563,7 +563,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TMonster">
     ///     Concrete <see cref="MonsterModel" />.
-    ///     具体 <c>MonsterModel</c>。
+    ///     具体 <see cref="MonsterModel" />。
     /// </typeparam>
     public sealed class MonsterRegistrationEntry<TMonster> : IContentRegistrationEntry
         where TMonster : MonsterModel
@@ -581,7 +581,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TEvent">
     ///     Concrete <see cref="EventModel" />.
-    ///     具体 <c>EventModel</c>。
+    ///     具体 <see cref="EventModel" />。
     /// </typeparam>
     public sealed class SharedEventRegistrationEntry<TEvent> : IContentRegistrationEntry
         where TEvent : EventModel
@@ -595,7 +595,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers an encounter model scoped to <typeparamref name="TAct" />.
-    ///     注册一个限定在 <c>TAct</c> 范围内的遭遇模型。
+    ///     注册一个限定在 <typeparamref name="TAct" /> 范围内的遭遇模型。
     /// </summary>
     public sealed class ActEncounterRegistrationEntry<TAct, TEncounter> : IContentRegistrationEntry
         where TAct : ActModel
@@ -612,11 +612,10 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     Registers an encounter model merged into every act’s encounter list (see
     ///     <c>ModContentRegistry.RegisterGlobalEncounter&lt;TEncounter&gt;()</c>).
     ///     注册一个会合并到每个 act 遭遇列表中的遭遇模型（见
-    ///     <c>ModContentRegistry.RegisterGlobalEncounter&lt;TEncounter&gt;()</c>）。
     /// </summary>
     /// <typeparam name="TEncounter">
     ///     Concrete <see cref="EncounterModel" />.
-    ///     具体 <c>EncounterModel</c>。
+    ///     具体 <see cref="EncounterModel" />。
     /// </typeparam>
     public sealed class GlobalEncounterRegistrationEntry<TEncounter> : IContentRegistrationEntry
         where TEncounter : EncounterModel
@@ -630,7 +629,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers an event model scoped to <typeparamref name="TAct" />.
-    ///     注册一个限定在 <c>TAct</c> 范围内的EventModel。
+    ///     注册一个限定在 <typeparamref name="TAct" /> 范围内的EventModel。
     /// </summary>
     public sealed class ActEventRegistrationEntry<TAct, TEvent> : IContentRegistrationEntry
         where TAct : ActModel
@@ -649,7 +648,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <typeparam name="TAncient">
     ///     Concrete <see cref="AncientEventModel" />.
-    ///     具体 <c>AncientEventModel</c>。
+    ///     具体 <see cref="AncientEventModel" />。
     /// </typeparam>
     public sealed class SharedAncientRegistrationEntry<TAncient> : IContentRegistrationEntry
         where TAncient : AncientEventModel
@@ -663,7 +662,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers an ancient event model scoped to <typeparamref name="TAct" />.
-    ///     注册一个限定在 <c>TAct</c> 范围内的 ancient EventModel。
+    ///     注册一个限定在 <typeparamref name="TAct" /> 范围内的 ancient EventModel。
     /// </summary>
     public sealed class ActAncientRegistrationEntry<TAct, TAncient> : IContentRegistrationEntry
         where TAct : ActModel
@@ -692,7 +691,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a generated placeholder card from a stable entry stem.
-    ///     通过稳定 entry stem 注册一张生成式占位卡牌。
+    ///     通过稳定条目词干注册一张生成式占位卡牌。
     /// </summary>
     public sealed class PlaceholderCardRegistrationEntry<TPool>(
         string stableEntryStem,
@@ -708,7 +707,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a generated placeholder card with explicit public entry options.
-    ///     使用显式公开 entry 选项注册一张生成式占位卡牌。
+    ///     使用显式公开条目选项注册一张生成式占位卡牌。
     /// </summary>
     public sealed class PlaceholderCardFromOptionsRegistrationEntry<TPool>(
         ModelPublicEntryOptions publicEntry,
@@ -724,7 +723,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a generated placeholder relic from a stable entry stem.
-    ///     通过稳定 entry stem 注册一个生成式占位遗物。
+    ///     通过稳定条目词干注册一个生成式占位遗物。
     /// </summary>
     public sealed class PlaceholderRelicRegistrationEntry<TPool>(
         string stableEntryStem,
@@ -740,7 +739,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a generated placeholder relic with explicit public entry options.
-    ///     使用显式公开 entry 选项注册一个生成式占位遗物。
+    ///     使用显式公开条目选项注册一个生成式占位遗物。
     /// </summary>
     public sealed class PlaceholderRelicFromOptionsRegistrationEntry<TPool>(
         ModelPublicEntryOptions publicEntry,
@@ -756,7 +755,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a generated placeholder potion from a stable entry stem.
-    ///     通过稳定 entry stem 注册一瓶生成式占位药水。
+    ///     通过稳定条目词干注册一瓶生成式占位药水。
     /// </summary>
     public sealed class PlaceholderPotionRegistrationEntry<TPool>(
         string stableEntryStem,
@@ -772,7 +771,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a generated placeholder potion with explicit public entry options.
-    ///     使用显式公开 entry 选项注册一瓶生成式占位药水。
+    ///     使用显式公开条目选项注册一瓶生成式占位药水。
     /// </summary>
     public sealed class PlaceholderPotionFromOptionsRegistrationEntry<TPool>(
         ModelPublicEntryOptions publicEntry,
@@ -788,7 +787,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers an <see cref="ArchaicTooth" /> transcendence mapping (starter deck card → ancient transform target).
-    ///     注册一个 <c>ArchaicTooth</c> 超越映射（初始牌组卡牌 → ancient 转化目标）。
+    ///     注册一个 <see cref="ArchaicTooth" /> 超越映射（初始牌组卡牌 → ancient 转化目标）。
     /// </summary>
     /// <typeparam name="TStarterCard">
     ///     Deck card id to match.
@@ -796,7 +795,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </typeparam>
     /// <typeparam name="TAncientCard">
     ///     Transform target prototype from <see cref="ModelDb.Card{T}" />.
-    ///     来自 <c>ModelDb.Card{T}</c> 的转化目标原型。
+    ///     来自 <see cref="ModelDb.Card{T}" /> 的转化目标原型。
     /// </typeparam>
     public sealed class
         ArchaicToothTranscendenceRegistrationEntry<TStarterCard, TAncientCard> : IContentRegistrationEntry
@@ -812,7 +811,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers an <see cref="ArchaicTooth" /> transcendence mapping with explicit starter id and ancient card type.
-    ///     使用显式初始卡牌 id 和 ancient 卡牌类型注册一个 <c>ArchaicTooth</c> 超越映射。
+    ///     使用显式初始卡牌 id 和 ancient 卡牌类型注册一个 <see cref="ArchaicTooth" /> 超越映射。
     /// </summary>
     /// <param name="StarterCardId">
     ///     Deck card model id to match.
@@ -820,7 +819,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </param>
     /// <param name="AncientCardType">
     ///     Concrete ancient card type (resolved via <see cref="ModelDb" /> at runtime).
-    ///     具体 ancient 卡牌类型（运行时通过 <c>ModelDb</c> 解析）。
+    ///     具体 ancient 卡牌类型（运行时通过 <see cref="ModelDb" /> 解析）。
     /// </param>
     public sealed record ArchaicToothTranscendenceByIdRegistrationEntry(
         ModelId StarterCardId,
@@ -838,7 +837,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a <see cref="TouchOfOrobas" /> refinement mapping (starter relic → upgraded relic).
-    ///     注册一个 <c>TouchOfOrobas</c> 精炼映射（初始遗物 → 升级遗物）。
+    ///     注册一个 <see cref="TouchOfOrobas" /> 精炼映射（初始遗物 → 升级遗物）。
     /// </summary>
     /// <typeparam name="TStarterRelic">
     ///     Starter relic id to match.
@@ -846,7 +845,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </typeparam>
     /// <typeparam name="TUpgradedRelic">
     ///     Replacement relic prototype from <see cref="ModelDb.Relic{T}" />.
-    ///     来自 <c>ModelDb.Relic{T}</c> 的替换遗物原型。
+    ///     来自 <see cref="ModelDb.Relic{T}" /> 的替换遗物原型。
     /// </typeparam>
     public sealed class
         TouchOfOrobasRefinementRegistrationEntry<TStarterRelic, TUpgradedRelic> : IContentRegistrationEntry
@@ -862,7 +861,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Registers a <see cref="TouchOfOrobas" /> refinement mapping with explicit starter id and upgraded relic type.
-    ///     使用显式初始遗物 id 和升级遗物类型注册一个 <c>TouchOfOrobas</c> 精炼映射。
+    ///     使用显式初始遗物 id 和升级遗物类型注册一个 <see cref="TouchOfOrobas" /> 精炼映射。
     /// </summary>
     /// <param name="StarterRelicId">
     ///     Starter relic id to match.
@@ -870,7 +869,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </param>
     /// <param name="UpgradedRelicType">
     ///     Concrete upgraded relic type (resolved via <see cref="ModelDb" /> at runtime).
-    ///     具体升级遗物类型（运行时通过 <c>ModelDb</c> 解析）。
+    ///     具体升级遗物类型（运行时通过 <see cref="ModelDb" /> 解析）。
     /// </param>
     public sealed record TouchOfOrobasRefinementByIdRegistrationEntry(
         ModelId StarterRelicId,

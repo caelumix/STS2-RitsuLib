@@ -6,7 +6,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandGlow.Patches
 {
     /// <summary>
     ///     ORs <see cref="ModCardHandGlowRegistry" /> red rules into <see cref="CardModel.ShouldGlowRed" />.
-    ///     ORs <c>ModCardHandGlow注册表</c> red rules into <c>CardModel.ShouldGlowRed</c>.
+    ///     将 <see cref="ModCardHandGlowRegistry" /> 的红色规则 OR 到 <see cref="CardModel.ShouldGlowRed" />。
     /// </summary>
     internal sealed class CardModelShouldGlowRedRegistryPatch : IPatchMethod
     {

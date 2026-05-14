@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Interop
     ///     Base type for interop types whose instance methods forward to a wrapped runtime object
     ///     (see <see cref="ModInteropAttribute" />).
     ///     interop 类型的基类；这些类型的实例方法会转发到包装的运行时对象
-    ///     （参见 <c>ModInteropAttribute</c>）。
+    ///     （参见 <see cref="ModInteropAttribute" />）。
     /// </summary>
     public abstract class InteropClassWrapper
     {

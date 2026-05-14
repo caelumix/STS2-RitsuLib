@@ -11,7 +11,8 @@ namespace STS2RitsuLib.Combat.Rewards.Patches
     /// <summary>
     ///     Extends <see cref="Reward.FromSerializable" /> to reconstruct registered custom reward types
     ///     and card reward serialization-fix sideband data.
-    ///     扩展 <c>Reward.FromSerializable</c>，用于重建已注册的 custom reward，以及 CardReward 修正数据。
+    ///     扩展 <see cref="Reward.FromSerializable" />，用于重建已注册的自定义 reward 类型
+    ///     以及卡牌 reward 序列化修正的 sideband 数据。
     /// </summary>
     internal sealed class RewardFromSerializableExtPatch : IPatchMethod
     {

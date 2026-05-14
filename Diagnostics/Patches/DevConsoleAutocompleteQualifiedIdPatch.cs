@@ -11,7 +11,7 @@ namespace STS2RitsuLib.Diagnostics.Patches
 {
     /// <summary>
     ///     Enables shorthand autocomplete only for IDs owned by ritsulib-registered content.
-    ///     Enables shorthand autocomplete only 用于 IDs owned 通过 ritsulib-已注册 content.
+    ///     仅为 ritsulib 注册内容拥有的 ID 启用简写自动补全。
     /// </summary>
     public sealed class DevConsoleAutocompleteQualifiedIdPatch : IPatchMethod
     {
@@ -35,7 +35,7 @@ namespace STS2RitsuLib.Diagnostics.Patches
 
         /// <summary>
         ///     Installs a matcher only when no other patch already provided one.
-        ///     Installs a matcher only 当 no other patch already provided one.
+        ///     仅当没有其它补丁已提供匹配器时安装匹配器。
         /// </summary>
         public static void Prefix(ref Func<string, string, bool>? matchPredicate)
         {
@@ -47,7 +47,7 @@ namespace STS2RitsuLib.Diagnostics.Patches
 
         /// <summary>
         ///     De-duplicates completion candidates while preserving existing order from upstream patches.
-        ///     De-duplicates completion candidates while preserving existing order 从 upstream patches.
+        ///     在保留上游补丁现有顺序的同时，对补全候选项去重。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(ref CompletionResult __result, string partialArg)

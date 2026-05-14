@@ -7,9 +7,11 @@ namespace STS2RitsuLib.Content
     {
         /// <summary>
         ///     Registers a custom in-hand outline / highlight tint (<see cref="MegaCrit.Sts2.Core.Nodes.Cards.NCardHighlight" />
-        ///     Registers a 自定义 in-hand outline / highlight tint (<c>MegaCrit.Sts2.Core.Nodes.卡牌s.NCardHighlight</c>
         ///     <c>Modulate</c>) for <typeparamref name="TCard" />. Multiple rules may be registered; the highest
         ///     <see cref="ModCardHandOutlineRule.Priority" /> among matching predicates wins.
+        ///     为 <typeparamref name="TCard" /> 注册自定义手牌轮廓/高亮色调（<see cref="MegaCrit.Sts2.Core.Nodes.Cards.NCardHighlight" />
+        ///     <c>Modulate</c>）。可以注册多条规则；匹配谓词中最高的
+        ///     <see cref="ModCardHandOutlineRule.Priority" /> 胜出。
         /// </summary>
         public void RegisterCardHandOutline<TCard>(ModCardHandOutlineRule rule) where TCard : CardModel
         {
@@ -19,9 +21,9 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers several <see cref="ModCardHandOutlineRule" /> values for the same card type (e.g. different
-        ///     Registers several <c>ModCardHandOutlineRule</c> values 用于 the same 卡牌 type (e.g. different
         ///     priorities / conditions).
-        ///     中文说明：priorities / conditions).
+        ///     为同一卡牌类型注册多个 <see cref="ModCardHandOutlineRule" /> 值（例如不同的
+        ///     优先级/条件）。
         /// </summary>
         public void RegisterCardHandOutline<TCard>(params ModCardHandOutlineRule[] rules) where TCard : CardModel
         {

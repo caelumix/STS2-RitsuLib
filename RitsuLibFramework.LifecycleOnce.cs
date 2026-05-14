@@ -17,7 +17,7 @@ namespace STS2RitsuLib
         /// </param>
         /// <param name="replayCurrentState">
         ///     When true, invokes <paramref name="handler" /> once if a replayable last event exists, then disposes.
-        ///     为 true 时，如果存在最后一次可回放事件，则调用一次 <c>handler</c>，随后释放订阅。
+        ///     为 true 时，如果存在可重放的最后事件，则调用 <paramref name="handler" /> 一次，然后释放。
         /// </param>
         /// <returns>
         ///     Disposing unsubscribes without invoking the handler.

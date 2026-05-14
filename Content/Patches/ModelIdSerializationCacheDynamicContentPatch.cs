@@ -15,12 +15,14 @@ namespace STS2RitsuLib.Content.Patches
     /// <summary>
     ///     <see cref="ModelIdSerializationCache.Init" /> only walks <see cref="ModelDb.AllAbstractModelSubtypes" />, so
     ///     Reflection.Emit placeholder models (and any other injected types not returned by mod subtype scan) never receive
-    ///     Reflection.Emit placeholder Models (and any other injected types not 返回ed 通过 mod subtype scan) never receive
     ///     net
-    ///     中文说明：net
     ///     IDs. This postfix merges <see cref="ModelDb" /> content and recomputes bit sizes and hash like vanilla
-    ///     IDs. This postfix merges <c>ModelDb</c> content 和 recomputes bit sizes 和 hash like 原版
     ///     <c>Init</c>.
+    ///     <see cref="ModelIdSerializationCache.Init" /> 只遍历 <see cref="ModelDb.AllAbstractModelSubtypes" />，因此
+    ///     Reflection.Emit 占位模型（以及任何其它未由 mod 子类型扫描返回的注入类型）永远不会获得
+    ///     net
+    ///     ID。此后置补丁会合并 <see cref="ModelDb" /> 内容，并像原版
+    ///     <c>Init</c> 一样重新计算位大小和哈希。
     /// </summary>
     public class ModelIdSerializationCacheDynamicContentPatch : IPatchMethod
     {
@@ -45,9 +47,9 @@ namespace STS2RitsuLib.Content.Patches
 
         /// <summary>
         ///     After vanilla <see cref="ModelIdSerializationCache.Init" />, merges injected <see cref="ModelDb" /> entries
-        ///     之后 原版 <c>ModelIdSerializationCache.Init</c>, merges injected <c>ModelDb</c> entries
         ///     into net ID maps and refreshes bit sizes and hash.
-        ///     into net ID maps 和 refreshes bit sizes 和 hash.
+        ///     在原版 <see cref="ModelIdSerializationCache.Init" /> 之后，将注入的 <see cref="ModelDb" /> 条目
+        ///     合并进 net ID 映射，并刷新位大小和哈希。
         /// </summary>
         public static void Postfix()
         {

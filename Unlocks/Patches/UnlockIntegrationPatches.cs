@@ -11,7 +11,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 {
     /// <summary>
     ///     Filters locked mod characters out of <c>UnlockState.Characters</c>.
-    ///     从 <c>UnlockState.Characters</c> 中过滤掉仍锁定的 mod 角色。
+    ///     从 <c>UnlockState.Characters</c> 中过滤掉已锁定的 mod 角色。
     /// </summary>
     public class CharacterUnlockFilterPatch : IPatchMethod
     {
@@ -44,7 +44,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
     /// <summary>
     ///     Filters locked mod shared ancients out of <c>UnlockState.SharedAncients</c>.
-    ///     从 <c>UnlockState.SharedAncients</c> 中过滤掉仍锁定的 mod 共享远古。
+    ///     从 <c>UnlockState.SharedAncients</c> 中过滤掉已锁定的 mod 共享远古。
     /// </summary>
     public class SharedAncientUnlockFilterPatch : IPatchMethod
     {
@@ -77,7 +77,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
     /// <summary>
     ///     Filters locked mod cards from <c>CardPoolModel.GetUnlockedCards</c> results.
-    ///     从 <c>CardPoolModel.GetUnlockedCards</c> 结果中过滤掉仍锁定的 mod 卡牌。
+    ///     从 <c>CardPoolModel.GetUnlockedCards</c> 结果中过滤掉已锁定的 mod 卡牌。
     /// </summary>
     public class CardUnlockFilterPatch : IPatchMethod
     {
@@ -113,7 +113,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
     /// <summary>
     ///     Filters locked mod relics from <c>RelicPoolModel.GetUnlockedRelics</c> results.
-    ///     从 <c>RelicPoolModel.GetUnlockedRelics</c> 结果中过滤掉仍锁定的 mod 遗物。
+    ///     从 <c>RelicPoolModel.GetUnlockedRelics</c> 结果中过滤掉已锁定的 mod 遗物。
     /// </summary>
     public class RelicUnlockFilterPatch : IPatchMethod
     {
@@ -145,7 +145,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
     /// <summary>
     ///     Filters locked mod potions from <c>PotionPoolModel.GetUnlockedPotions</c> results.
-    ///     从 <c>PotionPoolModel.GetUnlockedPotions</c> 结果中过滤掉仍锁定的 mod 药水。
+    ///     从 <c>PotionPoolModel.GetUnlockedPotions</c> 结果中过滤掉已锁定的 mod 药水。
     /// </summary>
     public class PotionUnlockFilterPatch : IPatchMethod
     {

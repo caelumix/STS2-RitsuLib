@@ -6,9 +6,9 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Extends <see cref="NTargetManager.AllowedToTargetCreature" /> to allow targeting any living creature when
-    ///     Extends <c>NTargetManager.AllowedToTargetCreature</c> to allow targeting any living creature 当
     ///     the active valid-targets type is <see cref="CustomTargetType.Anyone" />.
-    ///     该 active valid-targets type is <c>CustomTargetType.Anyone</c>。
+    ///     扩展 <see cref="NTargetManager.AllowedToTargetCreature" />，当活动有效目标类型为
+    ///     <see cref="CustomTargetType.Anyone" /> 时允许选中任何存活生物。
     /// </summary>
     internal sealed class NTargetManagerAllowedToTargetCreatureAnyonePatch : IPatchMethod
     {

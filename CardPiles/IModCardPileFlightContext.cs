@@ -7,7 +7,7 @@ namespace STS2RitsuLib.CardPiles
 {
     /// <summary>
     ///     Common subset of data exposed by mod card pile flight contexts.
-    ///     mod card pile flight context 暴露的通用数据子集。
+    ///     mod 卡牌牌堆飞行上下文暴露的通用数据子集。
     /// </summary>
     public interface IModCardPileFlightContext
     {
@@ -25,25 +25,25 @@ namespace STS2RitsuLib.CardPiles
 
         /// <summary>
         ///     Source pile for this request, when applicable.
-        ///     此请求的 source pile（适用时）。
+        ///     此请求的源牌堆（适用时）。
         /// </summary>
         CardPile? StartPile { get; }
 
         /// <summary>
         ///     Destination pile for this request, when applicable.
-        ///     此请求的 destination pile（适用时）。
+        ///     此请求的目标牌堆（适用时）。
         /// </summary>
         CardPile? TargetPile { get; }
 
         /// <summary>
         ///     Live card node involved in the flight, when available.
-        ///     flight 涉及的 live card node（可用时）。
+        ///     飞行动画涉及的实时卡牌节点（可用时）。
         /// </summary>
         NCard? CardNode { get; }
 
         /// <summary>
         ///     Card model involved in the flight, when available.
-        ///     flight 涉及的 card model（可用时）。
+        ///     飞行动画涉及的卡牌模型（可用时）。
         /// </summary>
         CardModel? CardModel { get; }
     }

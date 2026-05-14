@@ -8,8 +8,8 @@ namespace STS2RitsuLib.CardPiles
     /// <summary>
     ///     Context passed to <see cref="ModCardPileSpec.FlightStartPositionResolver" /> when shuffle-style fly
     ///     visuals need a source/start position for a mod pile.
-    ///     当 shuffle 风格 fly visual 需要 mod pile 的 source/start 位置时，传给
-    ///     <c>ModCardPileSpec.FlightStartPositionResolver</c> 的 context。
+    ///     当 shuffle 风格飞行动画需要 mod 牌堆的源/起点位置时，传给
+    ///     <see cref="ModCardPileSpec.FlightStartPositionResolver" /> 的上下文。
     /// </summary>
     public sealed class ModCardPileFlightStartContext : IModCardPileFlightContext
     {
@@ -29,25 +29,25 @@ namespace STS2RitsuLib.CardPiles
 
         /// <summary>
         ///     Ritsulib's default start position for this request.
-        ///     ritsulib 为此请求计算的默认 start 位置。
+        ///     ritsulib 为此请求计算的默认起点位置。
         /// </summary>
         public Vector2 DefaultStartPosition { get; }
 
         /// <summary>
         ///     Source pile for this shuffle fly visual.
-        ///     此 shuffle fly visual 的 source pile。
+        ///     此 shuffle 飞行动画的源牌堆。
         /// </summary>
         public CardPile StartPile { get; }
 
         /// <summary>
         ///     Destination pile for this shuffle fly visual.
-        ///     此 shuffle fly visual 的 destination pile。
+        ///     此 shuffle 飞行动画的目标牌堆。
         /// </summary>
         public CardPile TargetPile { get; }
 
         /// <summary>
         ///     Definition of the source pile.
-        ///     source pile 的 definition。
+        ///     源牌堆的定义。
         /// </summary>
         public ModCardPileDefinition Definition { get; }
 

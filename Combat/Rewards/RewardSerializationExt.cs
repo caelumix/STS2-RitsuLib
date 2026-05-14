@@ -10,7 +10,9 @@ namespace STS2RitsuLib.Combat.Rewards
     ///     Data is first attached to <see cref="SerializableReward" /> instances via
     ///     <see cref="ConditionalWeakTable{TKey,TValue}" />, then persisted into
     ///     <see cref="SerializableRoom.EncounterState" /> with keys prefixed by <see cref="KeyPrefix" />.
-    ///     扩展数据先挂到 <c>SerializableReward</c> 实例上，再通过 <c>EncounterState</c> 保存。
+    ///     扩展 reward 序列化数据的 sideband 存储。
+    ///     数据先通过 <see cref="ConditionalWeakTable{TKey,TValue}" /> 附加到 <see cref="SerializableReward" /> 实例，随后持久化到
+    ///     <see cref="SerializableRoom.EncounterState" />，键带有 <see cref="KeyPrefix" /> 前缀。
     /// </summary>
     internal static class RewardSerializationExt
     {

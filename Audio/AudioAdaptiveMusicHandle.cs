@@ -2,7 +2,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Represents an active adaptive music binding that can switch tracks and restore vanilla state when stopped.
-    ///     Represents an active adaptive music binding that can switch tracks 和 restore 原版 state 当 stopped.
+    ///     表示一个活动的自适应音乐绑定，可切换曲目，并在停止时恢复原版状态。
     /// </summary>
     public sealed class AudioAdaptiveMusicHandle : IDisposable
     {
@@ -17,7 +17,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Stops adaptive playback and unregisters this handle from the shared director.
-        ///     Stops adaptive playback 和 unregisters this handle 从 the shared director.
+        ///     停止自适应播放，并从共享 director 注销此句柄。
         /// </summary>
         public void Dispose()
         {
@@ -42,7 +42,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Stops the current adaptive override and optionally restores vanilla run music.
-        ///     Stops the current adaptive override 和 可选ly restores 原版 跑局 music.
+        ///     停止当前自适应覆盖，并可选择恢复原版跑局音乐。
         /// </summary>
         public void Stop(bool restoreVanillaMusic = true)
         {

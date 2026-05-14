@@ -6,9 +6,9 @@ namespace STS2RitsuLib.Saves
 {
     /// <summary>
     ///     Shared checks when resuming a run: missing <see cref="CharacterModel" /> means a mod was unloaded.
-    ///     Shared checks 当 resuming a 跑局: missing <c>Character模型</c> means a mod was unloaded.
     ///     We never delete run saves so the player can restore mods and continue later.
-    ///     We never delete 跑局 保存 so the player can restore mods 和 continue later.
+    ///     恢复跑局时的共享检查：缺失 <see cref="CharacterModel" /> 表示某个 mod 已卸载。
+    ///     我们从不删除跑局存档，因此玩家可以稍后恢复 mod 并继续。
     /// </summary>
     internal static class RunResumeMissingCharacterSupport
     {

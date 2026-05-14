@@ -8,7 +8,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Appends registered mod rules into <see cref="AncientEventModel" /> initial options after vanilla generation.
-    ///     Appends 已注册 mod rules into <c>AncientEventModel</c> initial options 之后 原版 generation.
+    ///     原版生成后，将已注册 mod 规则追加到 <see cref="AncientEventModel" /> 初始选项中。
     /// </summary>
     public class AncientEventInitialOptionsRegistryPatch : IPatchMethod
     {
@@ -34,7 +34,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Appends matching registered options after vanilla generated initial options are materialized.
-        ///     Appends matching 已注册 options 之后 原版 generated initial options are 材质ized.
+        ///     在原版生成的初始选项实体化后，追加匹配的已注册选项。
         /// </summary>
         public static void Postfix(AncientEventModel __instance, ref IReadOnlyList<EventOption> __result)
             // ReSharper restore InconsistentNaming

@@ -17,11 +17,11 @@ namespace STS2RitsuLib.Diagnostics.CompendiumExport
 {
     /// <summary>
     ///     Renders compendium-style detail panels in an offscreen <see cref="SubViewport" />: relic inspect
-    ///     Renders compendium-style detail panels in an offscreen <c>SubViewport</c>: 遗物 inspect
     ///     (same <c>inspect_relic_screen</c> <c>Popup</c> subtree) and potion lab focus view
-    ///     (same <c>inspect_遗物_screen</c> <c>Popup</c> subtree) 和 potion lab focus view
     ///     (<see cref="NPotion" /> at 1.2x + hover tips, matching focus + tips layout).
-    ///     中文说明：(<c>NPotion</c> at 1.2x + hover tips, matching focus + tips layout).
+    ///     在离屏 <see cref="SubViewport" /> 中渲染概要风格的详情面板：遗物查看
+    ///     （同一个 <c>inspect_relic_screen</c> <c>Popup</c> 子树）和药水实验室聚焦视图
+    ///     （1.2x 的 <see cref="NPotion" /> + 悬停提示，匹配聚焦 + 提示布局）。
     /// </summary>
     public static class CompendiumDetailPngExporter
     {
@@ -55,7 +55,7 @@ namespace STS2RitsuLib.Diagnostics.CompendiumExport
 
         /// <summary>
         ///     Starts a batch export for the requested <see cref="CompendiumPngExportRequest" />.
-        ///     Starts a batch export 用于 the requested <c>CompendiumPngExportRequest</c>.
+        ///     为请求的 <see cref="CompendiumPngExportRequest" /> 启动批量导出。
         /// </summary>
         public static void BeginExport(CompendiumPngExportRequest request, Action<string>? log = null)
         {

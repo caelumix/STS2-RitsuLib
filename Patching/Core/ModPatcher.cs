@@ -53,13 +53,13 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Count of registered static <see cref="ModPatchInfo" /> entries.
-        ///     已注册静态 <c>ModPatchInfo</c> 条目的数量。
+        ///     已注册静态 <see cref="ModPatchInfo" /> 条目的数量。
         /// </summary>
         public int RegisteredPatchCount => _registeredPatches.Count;
 
         /// <summary>
         ///     Count of registered <see cref="DynamicPatchInfo" /> entries.
-        ///     已注册 <c>DynamicPatchInfo</c> 条目的数量。
+        ///     已注册 <see cref="DynamicPatchInfo" /> 条目的数量。
         /// </summary>
         public int RegisteredDynamicPatchCount => _registeredDynamicPatches.Count;
 
@@ -77,13 +77,13 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     True after <see cref="PatchAll" /> succeeds without rolling back.
-        ///     当 <c>PatchAll</c> 成功且未回滚后为 true。
+        ///     <see cref="PatchAll" /> 成功且未回滚后为 True。
         /// </summary>
         public bool IsApplied { get; private set; }
 
         /// <summary>
         ///     Queues a static patch; throws if <see cref="IsApplied" /> is already true.
-        ///     将静态补丁加入队列；如果 <c>IsApplied</c> 已为 true，则抛出异常。
+        ///     将静态 patch 加入队列；如果 <see cref="IsApplied" /> 已为 true，则抛出异常。
         /// </summary>
         public void RegisterPatch(ModPatchInfo modPatchInfo)
         {
@@ -109,7 +109,7 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Calls <see cref="RegisterPatch" /> for each entry in <paramref name="patches" />.
-        ///     对 <c>patches</c> 中的每个条目调用 <c>RegisterPatch</c>。
+        ///     调用 <see cref="RegisterPatch" />，针对 <paramref name="patches" /> 中的每个条目。
         /// </summary>
         public void RegisterPatches(params ReadOnlySpan<ModPatchInfo> patches)
         {
@@ -118,7 +118,7 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Queues a dynamic patch (resolved <see cref="MethodBase" /> + Harmony methods).
-        ///     将动态补丁加入队列（已解析的 <c>MethodBase</c> 加 Harmony 方法）。
+        ///     将动态 patch（已解析的 <see cref="MethodBase" /> + Harmony 方法）加入队列。
         /// </summary>
         public void RegisterDynamicPatch(DynamicPatchInfo dynamicPatchInfo)
         {
@@ -138,7 +138,7 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Calls <see cref="RegisterDynamicPatch" /> for each entry.
-        ///     对每个条目调用 <c>RegisterDynamicPatch</c>。
+        ///     对每个条目调用 <see cref="RegisterDynamicPatch" />。
         /// </summary>
         public void RegisterDynamicPatches(params ReadOnlySpan<DynamicPatchInfo> dynamicPatches)
         {
@@ -218,7 +218,7 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Applies all registered static patches once; on critical failure calls <see cref="UnpatchAll" />.
-        ///     一次性应用所有已注册静态补丁；发生关键失败时调用 <c>UnpatchAll</c>。
+        ///     应用所有已注册静态 patch 一次；发生关键失败时调用 <see cref="UnpatchAll" />。
         /// </summary>
         /// <returns>
         ///     True when no critical patch failed.
@@ -264,8 +264,9 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Applies additional static patches after <see cref="PatchAll" /> (e.g. Android hosts that must wait until
-        ///     Applies additional static patches 之后 <c>PatchAll</c> (e.g. Android hosts that must wait until
         ///     <c>ModelDb.Init</c> completes). Failures are logged; optional patches do not throw.
+        ///     在 <see cref="PatchAll" /> 之后应用额外静态 patch（例如必须等到
+        ///     <c>ModelDb.Init</c> 完成的 Android 主机）。失败会记录日志；可选 patch 不会抛出。
         /// </summary>
         public void ApplyLateStaticPatches(ReadOnlySpan<ModPatchInfo> patches)
         {
@@ -501,7 +502,7 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Validate that patch type implements IPatchMethod interface (optional but recommended)
-        ///     验证补丁类型是否实现 IPatchMethod 接口（可选但推荐）。
+        ///     验证 patch 类型是否实现 IPatchMethod 接口（可选但推荐）
         /// </summary>
         private void ValidatePatchType(ModPatchInfo modPatchInfo)
         {

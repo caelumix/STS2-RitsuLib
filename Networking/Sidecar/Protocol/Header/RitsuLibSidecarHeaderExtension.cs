@@ -2,22 +2,23 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Layout of the first byte in <see cref="RitsuLibSidecarEnvelope" /> <c>headerExtension</c> when
-    ///     Layout of the first byte in <c>RitsuLibSidecarEnvelope</c> <c>headerExtension</c> 当
     ///     <see cref="RitsuLibSidecarHighLevelSend" /> / <see cref="RitsuLibSidecar.CreateEnvelopeWithDelivery" />
     ///     (delivery-aware helpers) are used. Additional extension bytes, if any, follow this byte in the same buffer.
-    ///     (delivery-aware helpers) are used. Additional extension bytes, 如果 any, follow this byte in the same buffer.
+    ///     使用投递感知辅助方法时，<see cref="RitsuLibSidecarEnvelope" /> <c>headerExtension</c> 中第一个字节的布局：
+    ///     <see cref="RitsuLibSidecarHighLevelSend" /> / <see cref="RitsuLibSidecar.CreateEnvelopeWithDelivery" />
+    ///     。若存在额外扩展字节，它们跟随此字节位于同一缓冲区中。
     /// </summary>
     public static class RitsuLibSidecarHeaderExtension
     {
         /// <summary>
         ///     Minimum <see cref="RitsuLibSidecarEnvelope.ParsedEnvelope.HeaderExtension" /> when delivery is explicit.
-        ///     最小 <c>RitsuLibSidecarEnvelope.ParsedEnvelope.HeaderExtension</c> when delivery is explicit。
+        ///     显式投递时 <see cref="RitsuLibSidecarEnvelope.ParsedEnvelope.HeaderExtension" /> 的最小长度。
         /// </summary>
         public const int MinBytesWithDelivery = RitsuLibSidecarBinaryLayout.ByteSize;
 
         /// <summary>
         ///     Reads the delivery field; if length is 0, returns <see cref="RitsuLibSidecarDeliverySemantics.Unspecified" />.
-        ///     Reads the delivery field; 如果 length is 0, 返回 <c>RitsuLibSidecarDeliverySemantics.Unspecified</c>.
+        ///     读取投递字段；如果长度为 0，则返回 <see cref="RitsuLibSidecarDeliverySemantics.Unspecified" />。
         /// </summary>
         public static RitsuLibSidecarDeliverySemantics GetDeliveryOrUnspecified(ReadOnlyMemory<byte> extension)
         {

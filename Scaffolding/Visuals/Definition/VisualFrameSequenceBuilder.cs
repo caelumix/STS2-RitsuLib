@@ -2,7 +2,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 {
     /// <summary>
     ///     Fluent builder for <see cref="VisualFrameSequence" /> with per-frame durations.
-    ///     带逐帧时长的 <c>VisualFrameSequence</c> 流式 builder。
+    ///     带逐帧时长的 <see cref="VisualFrameSequence" /> 流式构建器。
     /// </summary>
     public sealed class VisualFrameSequenceBuilder
     {

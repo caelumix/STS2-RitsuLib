@@ -8,8 +8,8 @@ namespace STS2RitsuLib.Interop
     /// <summary>
     ///     Keyed JSON DOM synchronization between a <see cref="ReflectionStaticChannel" /> and an in-memory
     ///     <see cref="JsonObject" /> document root (ModData, RPC payloads, replicas, …).
-    ///     <c>ReflectionStaticChannel</c> 与内存中的 <c>JsonObject</c> document root 之间的
-    ///     keyed JSON DOM 同步（ModData、RPC payload、replica 等）。
+    ///     <see cref="ReflectionStaticChannel" /> 与内存中的
+    ///     <see cref="JsonObject" /> document root 之间的 keyed JSON DOM 同步（ModData、RPC 载荷、replica 等）。
     /// </summary>
     public static class KeyedJsonDomTransport
     {
@@ -26,15 +26,15 @@ namespace STS2RitsuLib.Interop
 
         /// <summary>
         ///     Applies provider → document pull semantics and returns the updated root node.
-        ///     应用 provider → document 的 pull 语义，并返回更新后的 root node。
+        ///     应用提供方到文档的拉取语义，并返回更新后的根节点。
         /// </summary>
         /// <param name="key">
         ///     Interop key passed to provider static methods.
-        ///     传给 provider 静态方法的 interop key。
+        ///     传给提供方静态方法的互操作键。
         /// </param>
         /// <param name="channel">
         ///     Bound reflection channel for the provider.
-        ///     provider 的已绑定反射 channel。
+        ///     提供方的已绑定反射通道。
         /// </param>
         /// <param name="documentRoot">
         ///     In-memory document root to update.
@@ -42,12 +42,14 @@ namespace STS2RitsuLib.Interop
         /// </param>
         /// <param name="pathRouting">
         ///     Optional pull/push/merge pointer lists; required when using node getters with partial paths.
-        ///     可选 pull / push / merge pointer 列表；使用带 partial path 的 node getter 时必需。
+        ///     可选的拉取/推送/合并 pointer 列表；使用带部分路径的节点 getter 时必需。
         /// </param>
         /// <param name="jsonOptions">
         ///     Serializer options when falling back to object round-trip; defaults to
         ///     <see cref="DefaultJsonSerializerOptions" />.
+        ///     <see cref="DefaultJsonSerializerOptions" />。
         ///     回退到 object round-trip 时使用的 serializer options；默认使用
+        ///     <see cref="DefaultJsonSerializerOptions" />。
         ///     <see cref="DefaultJsonSerializerOptions" />。
         /// </param>
         public static JsonNode? PullFromProviderIntoRoot(
@@ -106,15 +108,15 @@ namespace STS2RitsuLib.Interop
 
         /// <summary>
         ///     Applies document → provider push semantics from <paramref name="documentRoot" />.
-        ///     从 <c>documentRoot</c> 应用 document → provider 的 push 语义。
+        ///     从 <paramref name="documentRoot" /> 应用文档到提供方的推送语义。
         /// </summary>
         /// <param name="key">
         ///     Interop key passed to provider static methods.
-        ///     传给 provider 静态方法的 interop key。
+        ///     传给提供方静态方法的互操作键。
         /// </param>
         /// <param name="channel">
         ///     Bound reflection channel for the provider.
-        ///     provider 的已绑定反射 channel。
+        ///     提供方的已绑定反射通道。
         /// </param>
         /// <param name="documentRoot">
         ///     In-memory document root to read from.
@@ -122,12 +124,14 @@ namespace STS2RitsuLib.Interop
         /// </param>
         /// <param name="pathRouting">
         ///     Optional pull/push/merge pointer lists; required when using node or merge-at setters with partial paths.
-        ///     可选 pull / push / merge pointer 列表；使用带 partial path 的 node setter 或 merge-at setter 时必需。
+        ///     可选的拉取/推送/合并 pointer 列表；使用带部分路径的节点 setter 或 merge-at setter 时必需。
         /// </param>
         /// <param name="jsonOptions">
         ///     Serializer options when using the JSON text setter tier; defaults to
         ///     <see cref="DefaultJsonSerializerOptions" />.
+        ///     <see cref="DefaultJsonSerializerOptions" />。
         ///     使用 JSON text setter tier 时的 serializer options；默认使用
+        ///     <see cref="DefaultJsonSerializerOptions" />。
         ///     <see cref="DefaultJsonSerializerOptions" />。
         /// </param>
         public static void PushRootToProvider(

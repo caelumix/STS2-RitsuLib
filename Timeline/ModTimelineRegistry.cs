@@ -7,11 +7,11 @@ namespace STS2RitsuLib.Timeline
 {
     /// <summary>
     ///     Per-mod registry for custom <c>EpochModel</c> and <c>StoryModel</c> types wired into the game's static
-    ///     Per-mod 注册表 用于 自定义 <c>Epoch模型</c> 和 <c>Story模型</c> types wired into the game's static
     ///     timeline dictionaries. Epochs are individual unlock slots; a <see cref="StoryModel" /> groups them into one
-    ///     timeline dictionaries. Epochs are individual unlock slots; a <c>Story模型</c> groups them into one
     ///     timeline column (story title + ordered epoch list in the progression UI).
-    ///     中文说明：timeline column (story title + ordered epoch list in the progression UI).
+    ///     按 mod 划分的注册表，用于将自定义 <c>EpochModel</c> 和 <c>StoryModel</c> 类型接入游戏的静态
+    ///     时间线字典。纪元是单独的解锁槽；一个 <see cref="StoryModel" /> 会把它们归入一个
+    ///     时间线列（进度界面中的故事标题 + 有序纪元列表）。
     /// </summary>
     public sealed class ModTimelineRegistry
     {
@@ -36,13 +36,13 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     True after the framework freezes further epoch/story registrations (e.g. at model init).
-        ///     True 之后 the framework freezes further epoch/story 注册s (e.g. at 模型 init).
+        ///     框架冻结后续 epoch/story 注册后为 true（例如模型初始化时）。
         /// </summary>
         public static bool IsFrozen { get; private set; }
 
         /// <summary>
         ///     Returns the timeline registry singleton for <paramref name="modId" />.
-        ///     返回 the timeline registry singleton for <c>modId</c>。
+        ///     返回 timeline registry 单例，用于 <paramref name="modId" />。
         /// </summary>
         public static ModTimelineRegistry For(string modId)
         {
@@ -61,7 +61,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers a concrete epoch type so its id appears in vanilla epoch discovery.
-        ///     注册 a concrete epoch type so its id appears in vanilla epoch discovery。
+        ///     注册具体 纪元类型 使其 id 出现在 原版纪元发现。
         /// </summary>
         public void RegisterEpoch<TEpoch>() where TEpoch : EpochModel, new()
         {
@@ -70,7 +70,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers <paramref name="epochType" /> so its id appears in vanilla epoch discovery.
-        ///     注册 <c>epochType</c> so its id appears in vanilla epoch discovery。
+        ///     注册 <paramref name="epochType" /> 使其 id 出现在 原版纪元发现。
         /// </summary>
         public void RegisterEpoch(Type epochType)
         {
@@ -107,7 +107,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers a concrete story type in the game's story type dictionary.
-        ///     注册 a concrete story type in the game's story type dictionary。
+        ///     注册具体 故事类型 在游戏的 story 类型字典。
         /// </summary>
         public void RegisterStory<TStory>() where TStory : StoryModel, new()
         {
@@ -116,7 +116,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers <paramref name="storyType" /> in the game's story type dictionary.
-        ///     注册 <c>storyType</c> in the game's story type dictionary。
+        ///     注册 <paramref name="storyType" /> 在游戏的 story 类型字典。
         /// </summary>
         public void RegisterStory(Type storyType)
         {
@@ -148,8 +148,9 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers <typeparamref name="TEpoch" /> with vanilla epoch discovery and appends it to
-        ///     Registers <c>TEpoch</c> 带有 原版 epoch discovery 和 appends it to
         ///     <typeparamref name="TStory" />'s ordered column via <see cref="ModStoryEpochBindings" /> (manifest / pack order).
+        ///     注册 <typeparamref name="TEpoch" /> 到原版纪元发现中 并将其追加到
+        ///     <typeparamref name="TStory" />'s 有序列 通过 <see cref="ModStoryEpochBindings" /> (manifest / pack 顺序)。
         /// </summary>
         public void RegisterStoryEpoch<TStory, TEpoch>()
             where TStory : StoryModel, new()
@@ -160,7 +161,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers <paramref name="epochType" /> and binds it to <paramref name="storyType" />'s story column.
-        ///     注册 <c>epochType</c> and binds it to <c>storyType</c>'s story column。
+        ///     注册 <paramref name="epochType" /> 并将其绑定到 <paramref name="storyType" />'s 故事列。
         /// </summary>
         public void RegisterStoryEpoch(Type storyType, Type epochType)
         {
@@ -193,10 +194,11 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Rewrites <see cref="EpochModel.AllEpochIds" /> from the live <c>_epochTypeDictionary</c> so
-        ///     Rewrites <c>Epoch模型.AllEpochIds</c> 从 the live <c>_epochTypeDictionary</c> so
         ///     <see cref="EpochModel.IsValid" /> matches <see cref="EpochModel.Get" /> after third-party dictionary edits or
         ///     early vanilla lazy-init of <c>_allEpochIds</c>.
-        ///     early 原版 lazy-init of <c>_allEpochIds</c>.
+        ///     从实时 <c>_epochTypeDictionary</c> 重写 <see cref="EpochModel.AllEpochIds" />，使
+        ///     <see cref="EpochModel.IsValid" /> 在第三方字典编辑或
+        ///     原版过早惰性初始化 <c>_allEpochIds</c> 后仍与 <see cref="EpochModel.Get" /> 一致。
         /// </summary>
         internal static void EnsureAllEpochIdsSyncedWithDictionary()
         {

@@ -11,15 +11,17 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
     ///     Helper that composes a <see cref="CompositeAnimationBackend" /> from the nodes found under a visuals
     ///     root, in priority order: cue frame sequences / static textures, Spine, Godot animation tree state machine,
     ///     Godot animation player, Godot animated sprite.
-    ///     根据视觉根节点下找到的节点组合 <c>CompositeAnimationBackend</c> 的 helper。优先级顺序为：
-    ///     cue 帧序列 / 静态贴图、Spine、Godot animation tree state machine、Godot animation player、Godot animated sprite。
+    ///     辅助类：按优先级顺序，从视觉根节点下找到的节点组合出
+    ///     <see cref="CompositeAnimationBackend" />：cue 帧序列 / 静态纹理、Spine、Godot animation tree 状态机、
+    ///     Godot animation player、Godot animated sprite。
     /// </summary>
     public static class CompositeBackendFactory
     {
         /// <summary>
         ///     Builds the composite backend. Returns the cue-only backend when no Godot / Spine nodes are found,
         ///     or a truly-empty (single backend) pass-through when cues are unavailable.
-        ///     构建组合后端。未找到 Godot / Spine 节点时返回仅 cue 的后端；cue 也不可用时返回真正空的单后端透传。
+        ///     构建组合后端。找不到 Godot / Spine 节点时返回仅 cue 后端；
+        ///     cue 不可用时返回真正为空的（单后端）透传后端。
         /// </summary>
         /// <param name="visualsRoot">
         ///     Root node under which backends are discovered.
@@ -28,8 +30,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         /// <param name="character">
         ///     Optional character model used to pull <see cref="VisualCueSet" /> when
         ///     <paramref name="cueSet" /> is <see langword="null" />.
-        ///     当 <c>cueSet</c> 为 <see langword="null" /> 时，用于拉取
-        ///     <c>VisualCueSet</c> 的可选角色模型。
+        ///     可选角色模型；当 <paramref name="cueSet" /> 为 <see langword="null" /> 时用于取得
+        ///     <see cref="VisualCueSet" />。
         /// </param>
         /// <param name="cueSet">
         ///     Optional explicit cue set; takes priority over the character-derived one.

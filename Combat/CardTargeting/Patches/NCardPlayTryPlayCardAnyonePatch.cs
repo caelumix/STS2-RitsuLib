@@ -7,9 +7,9 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Fixes <see cref="NCardPlay.TryPlayCard" /> for <see cref="CustomTargetType.Anyone" /> by ensuring the selected
-    ///     Fixes <c>NCardPlay.TryPlay卡牌</c> 用于 <c>CustomTargetType.Anyone</c> 通过 ensuring the selected
     ///     target is passed into <c>TryManualPlay</c> rather than being dropped as if it were a non-targeted card.
-    ///     目标 is passed into <c>TryManualPlay</c> rather than being dropped as if it were a non-targeted card。
+    ///     修复 <see cref="NCardPlay.TryPlayCard" /> 对 <see cref="CustomTargetType.Anyone" /> 的处理，确保选中的
+    ///     目标传入 <c>TryManualPlay</c>，而不是像非目标卡牌一样被丢弃。
     /// </summary>
     internal sealed class NCardPlayTryPlayCardAnyonePatch : IPatchMethod
     {

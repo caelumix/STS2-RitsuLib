@@ -18,7 +18,8 @@ namespace STS2RitsuLib.Data.Models
         /// <summary>
         ///     Persisted schema version used by the migration pipeline
         ///     (<see cref="ModDataVersion.SchemaVersionProperty" />).
-        ///     迁移管线使用的持久化 schema 版本（<c>ModDataVersion.SchemaVersionProperty</c>）。
+        ///     迁移管线使用的持久化 schema 版本
+        ///     （<see cref="ModDataVersion.SchemaVersionProperty" />）。
         /// </summary>
         [JsonPropertyName(ModDataVersion.SchemaVersionProperty)]
         public int SchemaVersion { get; set; } = CurrentSchemaVersion;

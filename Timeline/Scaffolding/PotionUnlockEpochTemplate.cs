@@ -10,18 +10,21 @@ namespace STS2RitsuLib.Timeline.Scaffolding
     /// </summary>
     /// <remarks>
     ///     Pool visibility still depends on <see cref="Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)" /> for each
-    ///     Pool visibility still depends on <c>Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)</c> 用于 each
     ///     potion type. Register those bindings from a pack using <see cref="TimelineColumnPackEntry{TStory}" /> with
-    ///     potion type. Register those bindings 从 a pack using <c>TimelineColumnPackEntry{TStory}</c> 带有
     ///     <c>EpochSlotBuilder&lt;TEpoch&gt;</c> callbacks (<c>RequireAllPotionsInPool&lt;TPool&gt;()</c>,
     ///     <c>Potions(IReadOnlyList&lt;Type&gt;)</c>), or enqueue equivalent <c>RequireEpoch</c> steps from
     ///     <see cref="ModContentPackBuilder" />.
+    ///     池可见性仍取决于每种
+    ///     药水类型的 <see cref="Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)" />。使用
+    ///     <see cref="TimelineColumnPackEntry{TStory}" /> 搭配
+    ///     <c>EpochSlotBuilder&lt;TEpoch&gt;</c> 回调（<c>RequireAllPotionsInPool&lt;TPool&gt;()</c>、
+    ///     <c>Potions(IReadOnlyList&lt;Type&gt;)</c>），或从 <see cref="ModContentPackBuilder" /> 入队等效的 <c>RequireEpoch</c> 步骤。
     /// </remarks>
     public abstract class PotionUnlockEpochTemplate : ModEpochTemplate
     {
         /// <summary>
         ///     Resolved <see cref="PotionModel" /> instances for <see cref="PotionTypes" />.
-        ///     resolved <c>PotionModel</c> instances 用于 <c>PotionTypes</c>.
+        ///     解析出的 <see cref="PotionModel" /> 实例，用于 <see cref="PotionTypes" />。
         /// </summary>
         public IReadOnlyList<PotionModel> Potions => PotionTypes
             .Select(type => ModelDb.GetById<PotionModel>(ModelDb.GetId(type)))
@@ -32,13 +35,13 @@ namespace STS2RitsuLib.Timeline.Scaffolding
 
         /// <summary>
         ///     CLR types of potions to unlock; each must be registered in <see cref="ModelDb" />.
-        ///     CLR types of potions to unlock; each must be 已注册 in <c>ModelDb</c>.
+        ///     要解锁的药水 CLR 类型; 每个都必须注册到 <see cref="ModelDb" />。
         /// </summary>
         protected abstract IEnumerable<Type> PotionTypes { get; }
 
         /// <summary>
         ///     Additional epoch types to append when this epoch unlocks; default none.
-        ///     Additional epoch types to append 当 this epoch unlocks; default none.
+        ///     要追加的额外纪元类型 当此纪元解锁时; 默认为无。
         /// </summary>
         protected virtual IEnumerable<Type> ExpansionEpochTypes => [];
 

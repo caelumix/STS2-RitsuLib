@@ -14,19 +14,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Persist under global scope store.
-        ///     持久化到 global scope store。
+        ///     持久化到全局作用域存储。
         /// </summary>
         Global = 1,
 
         /// <summary>
         ///     Persist under profile scope store.
-        ///     持久化到 profile scope store。
+        ///     持久化到 profile 作用域存储。
         /// </summary>
         Profile = 2,
 
         /// <summary>
         ///     Persist under run-sidecar scope.
-        ///     持久化到 run-sidecar scope。
+        ///     持久化到 run-sidecar 作用域。
         /// </summary>
         RunSidecar = 3,
 
@@ -38,13 +38,13 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Caller-provided read/write/save callbacks.
-        ///     使用调用方提供的 read/write/save 回调。
+        ///     调用方提供的读 / 写 / 保存回调。
         /// </summary>
         Callback = 5,
 
         /// <summary>
         ///     Project from a parent callback binding.
-        ///     从父级 callback binding 投影。
+        ///     从父回调绑定投影。
         /// </summary>
         Project = 6,
     }
@@ -70,19 +70,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional callback read method name for callback/project sources.
-        ///     callback / project 来源使用的可选读取回调方法名。
+        ///     callback / project 来源的可选读取回调方法名。
         /// </summary>
         public string? ReadUsing { get; init; }
 
         /// <summary>
         ///     Optional callback write method name for callback/project sources.
-        ///     callback / project 来源使用的可选写入回调方法名。
+        ///     callback / project 来源的可选写入回调方法名。
         /// </summary>
         public string? WriteUsing { get; init; }
 
         /// <summary>
         ///     Optional callback save method name for callback/project sources.
-        ///     callback / project 来源使用的可选保存回调方法名。
+        ///     callback / project 来源的可选保存回调方法名。
         /// </summary>
         public string? SaveUsing { get; init; }
 
@@ -100,31 +100,31 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Parent read callback method name for projection source.
-        ///     projection 来源使用的父级读取回调方法名。
+        ///     投影来源的父级读取回调方法名。
         /// </summary>
         public string? ProjectParentReadUsing { get; init; }
 
         /// <summary>
         ///     Parent write callback method name for projection source.
-        ///     projection 来源使用的父级写入回调方法名。
+        ///     投影来源的父级写入回调方法名。
         /// </summary>
         public string? ProjectParentWriteUsing { get; init; }
 
         /// <summary>
         ///     Optional parent save callback method name for projection source.
-        ///     projection 来源使用的可选父级保存回调方法名。
+        ///     投影来源的可选父级保存回调方法名。
         /// </summary>
         public string? ProjectParentSaveUsing { get; init; }
 
         /// <summary>
         ///     Projection getter callback method name (<c>TParent -&gt; TValue</c>).
-        ///     projection getter 回调方法名（<c>TParent -&gt; TValue</c>）。
+        ///     投影 getter 回调方法名（<c>TParent -&gt; TValue</c>）。
         /// </summary>
         public string? ProjectGetUsing { get; init; }
 
         /// <summary>
         ///     Projection setter callback method name (<c>(TParent, TValue) -&gt; TParent</c>).
-        ///     projection setter 回调方法名（<c>(TParent, TValue) -&gt; TParent</c>）。
+        ///     投影 setter 回调方法名（<c>(TParent, TValue) -&gt; TParent</c>）。
         /// </summary>
         public string? ProjectSetUsing { get; init; }
 
@@ -137,13 +137,13 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Shared slots for title/description text that can resolve from literal, i18n, or LocString.
-    ///     title / description 文本的共享槽位，可从字面量、i18n 或 LocString 解析。
+    ///     标题 / 描述文本的共享槽位，可从字面值、i18n 或 LocString 解析。
     /// </summary>
     public abstract class ModSettingsTitleDescriptionTextAttribute : Attribute
     {
         /// <summary>
         ///     Optional provider method name that returns <see cref="Utils.I18N" /> for this attribute.
-        ///     为此 attribute 返回 <c>Utils.I18N</c> 的可选 provider 方法名。
+        ///     为此 attribute 返回 <see cref="Utils.I18N" /> 的可选提供器方法名。
         /// </summary>
         public string? I18NProviderUsing { get; init; }
 
@@ -155,19 +155,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="Title" />.
-        ///     <c>Title</c> 的可选 i18n key。
+        ///     <see cref="Title" /> 的可选 i18n key。
         /// </summary>
         public string? TitleKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Title" />.
-        ///     <c>Title</c> 的可选 LocString table。
+        ///     <see cref="Title" /> 的可选 LocString table。
         /// </summary>
         public string? TitleLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="Title" />.
-        ///     <c>Title</c> 的可选 LocString key。
+        ///     <see cref="Title" /> 的可选 LocString key。
         /// </summary>
         public string? TitleLocKey { get; init; }
 
@@ -179,32 +179,32 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="Description" />.
-        ///     <c>Description</c> 的可选 i18n key。
+        ///     <see cref="Description" /> 的可选 i18n key。
         /// </summary>
         public string? DescriptionKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Description" />.
-        ///     <c>Description</c> 的可选 LocString table。
+        ///     <see cref="Description" /> 的可选 LocString table。
         /// </summary>
         public string? DescriptionLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="Description" />.
-        ///     <c>Description</c> 的可选 LocString key。
+        ///     <see cref="Description" /> 的可选 LocString key。
         /// </summary>
         public string? DescriptionLocKey { get; init; }
     }
 
     /// <summary>
     ///     Shared slots for label/description text that can resolve from literal, i18n, or LocString.
-    ///     label / description 文本的共享槽位，可从字面量、i18n 或 LocString 解析。
+    ///     标签 / 描述文本的共享槽位，可从字面值、i18n 或 LocString 解析。
     /// </summary>
     public abstract class ModSettingsLabelDescriptionTextAttribute : Attribute
     {
         /// <summary>
         ///     Optional provider method name that returns <see cref="Utils.I18N" /> for this attribute.
-        ///     为此 attribute 返回 <c>Utils.I18N</c> 的可选 provider 方法名。
+        ///     为此 attribute 返回 <see cref="Utils.I18N" /> 的可选提供器方法名。
         /// </summary>
         public string? I18NProviderUsing { get; init; }
 
@@ -216,19 +216,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="Label" />.
-        ///     <c>Label</c> 的可选 i18n key。
+        ///     <see cref="Label" /> 的可选 i18n key。
         /// </summary>
         public string? LabelKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Label" />.
-        ///     <c>Label</c> 的可选 LocString table。
+        ///     <see cref="Label" /> 的可选 LocString table。
         /// </summary>
         public string? LabelLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="Label" />.
-        ///     <c>Label</c> 的可选 LocString key。
+        ///     <see cref="Label" /> 的可选 LocString key。
         /// </summary>
         public string? LabelLocKey { get; init; }
 
@@ -240,26 +240,26 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="Description" />.
-        ///     <c>Description</c> 的可选 i18n key。
+        ///     <see cref="Description" /> 的可选 i18n key。
         /// </summary>
         public string? DescriptionKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Description" />.
-        ///     <c>Description</c> 的可选 LocString table。
+        ///     <see cref="Description" /> 的可选 LocString table。
         /// </summary>
         public string? DescriptionLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="Description" />.
-        ///     <c>Description</c> 的可选 LocString key。
+        ///     <see cref="Description" /> 的可选 LocString key。
         /// </summary>
         public string? DescriptionLocKey { get; init; }
     }
 
     /// <summary>
     ///     Shared slots for common ordered entries with visibility predicate.
-    ///     带可见性谓词的常见有序 entry 共享槽位。
+    ///     带可见性 predicate 的通用有序条目的共享槽位。
     /// </summary>
     public abstract class ModSettingsOrderedEntryAttribute : ModSettingsLabelDescriptionTextAttribute
     {
@@ -278,7 +278,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Marks a type as an attribute-driven reflection settings page provider.
-    ///     将类型标记为 attribute 驱动的反射设置页 provider。
+    ///     将类型标记为 attribute 驱动的反射设置页面提供器。
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class ModSettingsPageAttribute(string modId, string? pageId = null)
@@ -316,19 +316,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="ModDisplayName" />.
-        ///     <c>ModDisplayName</c> 的可选 i18n key。
+        ///     <see cref="ModDisplayName" /> 的可选 i18n key。
         /// </summary>
         public string? ModDisplayNameKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="ModDisplayName" />.
-        ///     <c>ModDisplayName</c> 的可选 LocString table。
+        ///     <see cref="ModDisplayName" /> 的可选 LocString table。
         /// </summary>
         public string? ModDisplayNameLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="ModDisplayName" />.
-        ///     <c>ModDisplayName</c> 的可选 LocString key。
+        ///     <see cref="ModDisplayName" /> 的可选 LocString key。
         /// </summary>
         public string? ModDisplayNameLocKey { get; init; }
 
@@ -341,7 +341,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares one section in a reflection settings page.
-    ///     在反射设置页中声明一个 section。
+    ///     声明反射设置页面中的一个 section。
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public sealed class ModSettingsSectionAttribute(string id) : ModSettingsTitleDescriptionTextAttribute
@@ -373,7 +373,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a boolean toggle entry.
-    ///     声明一个布尔 toggle entry。
+    ///     声明布尔 toggle 条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class ModSettingsToggleAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
@@ -393,7 +393,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a floating-point slider entry.
-    ///     声明一个浮点 slider entry。
+    ///     声明浮点 slider 条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class ModSettingsSliderAttribute(
@@ -437,7 +437,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares an integer slider entry.
-    ///     声明一个整数 slider entry。
+    ///     声明整数 slider 条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class ModSettingsIntSliderAttribute(string id, string sectionId, int min, int max, int step = 1)
@@ -476,7 +476,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a single-line text entry.
-    ///     声明一个单行文本 entry。
+    ///     声明单行文本条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class ModSettingsStringAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
@@ -501,19 +501,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="Placeholder" />.
-        ///     <c>Placeholder</c> 的可选 i18n key。
+        ///     <see cref="Placeholder" /> 的可选 i18n key。
         /// </summary>
         public string? PlaceholderKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Placeholder" />.
-        ///     <c>Placeholder</c> 的可选 LocString table。
+        ///     <see cref="Placeholder" /> 的可选 LocString table。
         /// </summary>
         public string? PlaceholderLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="Placeholder" />.
-        ///     <c>Placeholder</c> 的可选 LocString key。
+        ///     <see cref="Placeholder" /> 的可选 LocString key。
         /// </summary>
         public string? PlaceholderLocKey { get; init; }
 
@@ -532,7 +532,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a multiline text entry.
-    ///     声明一个多行文本 entry。
+    ///     声明多行文本条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class ModSettingsMultilineStringAttribute(string id, string sectionId)
@@ -558,19 +558,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="Placeholder" />.
-        ///     <c>Placeholder</c> 的可选 i18n key。
+        ///     <see cref="Placeholder" /> 的可选 i18n key。
         /// </summary>
         public string? PlaceholderKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Placeholder" />.
-        ///     <c>Placeholder</c> 的可选 LocString table。
+        ///     <see cref="Placeholder" /> 的可选 LocString table。
         /// </summary>
         public string? PlaceholderLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="Placeholder" />.
-        ///     <c>Placeholder</c> 的可选 LocString key。
+        ///     <see cref="Placeholder" /> 的可选 LocString key。
         /// </summary>
         public string? PlaceholderLocKey { get; init; }
 
@@ -583,7 +583,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a color picker entry.
-    ///     声明一个颜色选择器 entry。
+    ///     声明颜色选择器条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class ModSettingsColorAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
@@ -615,7 +615,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a key binding entry (single or multi).
-    ///     声明一个按键绑定 entry（单绑定或多绑定）。
+    ///     声明按键绑定条目（单绑定或多绑定）。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class ModSettingsKeyBindingAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
@@ -659,7 +659,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a choice entry (string or enum).
-    ///     声明一个选项 entry（string 或 enum）。
+    ///     声明 choice 条目（string 或 enum）。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class ModSettingsChoiceAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
@@ -684,13 +684,13 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional labels parallel to <see cref="Options" />.
-        ///     与 <c>Options</c> 一一对应的可选标签。
+        ///     与 <see cref="Options" /> 一一对应的可选标签。
         /// </summary>
         public string[]? OptionLabels { get; init; }
 
         /// <summary>
         ///     Optional i18n keys parallel to <see cref="Options" />.
-        ///     与 <c>Options</c> 一一对应的可选 i18n key。
+        ///     与 <see cref="Options" /> 一一对应的可选 i18n key。
         /// </summary>
         public string[]? OptionLabelKeys { get; init; }
 
@@ -702,7 +702,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional LocString keys parallel to <see cref="Options" />.
-        ///     与 <c>Options</c> 一一对应的可选 LocString key。
+        ///     与 <see cref="Options" /> 一一对应的可选 LocString key。
         /// </summary>
         public string[]? OptionLabelLocKeys { get; init; }
 
@@ -715,7 +715,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a button action entry.
-    ///     声明一个按钮动作 entry。
+    ///     声明按钮动作条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ModSettingsButtonAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
@@ -740,19 +740,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="ButtonText" />.
-        ///     <c>ButtonText</c> 的可选 i18n key。
+        ///     <see cref="ButtonText" /> 的可选 i18n key。
         /// </summary>
         public string? ButtonTextKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="ButtonText" />.
-        ///     <c>ButtonText</c> 的可选 LocString table。
+        ///     <see cref="ButtonText" /> 的可选 LocString table。
         /// </summary>
         public string? ButtonTextLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="ButtonText" />.
-        ///     <c>ButtonText</c> 的可选 LocString key。
+        ///     <see cref="ButtonText" /> 的可选 LocString key。
         /// </summary>
         public string? ButtonTextLocKey { get; init; }
 
@@ -764,14 +764,14 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Whether the target method expects host context.
-        ///     目标方法是否接收 host context。
+        ///     目标方法是否需要 host context。
         /// </summary>
         public bool UseHostContext { get; init; }
     }
 
     /// <summary>
     ///     Declares a paragraph display entry.
-    ///     声明一个段落展示 entry。
+    ///     声明段落显示条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ModSettingsParagraphAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
@@ -796,19 +796,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="Text" />.
-        ///     <c>Text</c> 的可选 i18n key。
+        ///     <see cref="Text" /> 的可选 i18n key。
         /// </summary>
         public string? TextKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Text" />.
-        ///     <c>Text</c> 的可选 LocString table。
+        ///     <see cref="Text" /> 的可选 LocString 表。
         /// </summary>
         public string? TextLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="Text" />.
-        ///     <c>Text</c> 的可选 LocString key。
+        ///     <see cref="Text" /> 的可选 LocString key。
         /// </summary>
         public string? TextLocKey { get; init; }
 
@@ -821,14 +821,14 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a header display entry.
-    ///     声明一个标题展示 entry。
+    ///     声明一个标题显示条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ModSettingsHeaderAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
     {
         /// <summary>
         ///     Stable entry id.
-        ///     稳定的 entry id。
+        ///     稳定的条目 id。
         /// </summary>
         public string Id { get; } = id;
 
@@ -841,14 +841,14 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares an info-card display entry.
-    ///     声明一个信息卡展示 entry。
+    ///     声明一个信息卡显示条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ModSettingsInfoCardAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
     {
         /// <summary>
         ///     Stable entry id.
-        ///     稳定的 entry id。
+        ///     稳定的条目 id。
         /// </summary>
         public string Id { get; } = id;
 
@@ -866,26 +866,26 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="Body" />.
-        ///     <c>Body</c> 的可选 i18n key。
+        ///     <see cref="Body" /> 的可选 i18n key。
         /// </summary>
         public string? BodyKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Body" />.
-        ///     <c>Body</c> 的可选 LocString table。
+        ///     <see cref="Body" /> 的可选 LocString 表。
         /// </summary>
         public string? BodyLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="Body" />.
-        ///     <c>Body</c> 的可选 LocString key。
+        ///     <see cref="Body" /> 的可选 LocString key。
         /// </summary>
         public string? BodyLocKey { get; init; }
     }
 
     /// <summary>
     ///     Declares a runtime hotkey-summary display entry.
-    ///     声明一个运行时热键摘要展示 entry。
+    ///     声明一个运行时热键摘要显示条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ModSettingsRuntimeHotkeySummaryAttribute(string id, string sectionId)
@@ -893,7 +893,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Stable entry id.
-        ///     稳定的 entry id。
+        ///     稳定的条目 id。
         /// </summary>
         public string Id { get; } = id;
 
@@ -911,43 +911,43 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="Body" />.
-        ///     <c>Body</c> 的可选 i18n key。
+        ///     <see cref="Body" /> 的可选 i18n key。
         /// </summary>
         public string? BodyKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Body" />.
-        ///     <c>Body</c> 的可选 LocString table。
+        ///     <see cref="Body" /> 的可选 LocString 表。
         /// </summary>
         public string? BodyLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="Body" />.
-        ///     <c>Body</c> 的可选 LocString key。
+        ///     <see cref="Body" /> 的可选 LocString key。
         /// </summary>
         public string? BodyLocKey { get; init; }
 
         /// <summary>
         ///     Hotkey chips to display.
-        ///     要显示的热键 chip。
+        ///     要显示的热键标签。
         /// </summary>
         public string[] Bindings { get; init; } = [];
 
         /// <summary>
         ///     Optional i18n keys parallel to <see cref="Bindings" />.
-        ///     与 <c>Bindings</c> 一一对应的可选 i18n key。
+        ///     与 <see cref="Bindings" /> 并行的可选 i18n key。
         /// </summary>
         public string[]? BindingKeys { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="Bindings" />.
-        ///     <c>Bindings</c> 使用的可选 LocString table。
+        ///     <see cref="Bindings" /> 的可选 LocString 表。
         /// </summary>
         public string? BindingLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString keys parallel to <see cref="Bindings" />.
-        ///     与 <c>Bindings</c> 一一对应的可选 LocString key。
+        ///     与 <see cref="Bindings" /> 并行的可选 LocString key。
         /// </summary>
         public string[]? BindingLocKeys { get; init; }
 
@@ -959,33 +959,33 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="IdSuffix" />.
-        ///     <c>IdSuffix</c> 的可选 i18n key。
+        ///     <see cref="IdSuffix" /> 的可选 i18n key。
         /// </summary>
         public string? IdSuffixKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="IdSuffix" />.
-        ///     <c>IdSuffix</c> 的可选 LocString table。
+        ///     <see cref="IdSuffix" /> 的可选 LocString 表。
         /// </summary>
         public string? IdSuffixLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="IdSuffix" />.
-        ///     <c>IdSuffix</c> 的可选 LocString key。
+        ///     <see cref="IdSuffix" /> 的可选 LocString key。
         /// </summary>
         public string? IdSuffixLocKey { get; init; }
     }
 
     /// <summary>
     ///     Declares an image display entry.
-    ///     声明一个图片展示 entry。
+    ///     声明一个图片显示条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ModSettingsImageAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
     {
         /// <summary>
         ///     Stable entry id.
-        ///     稳定的 entry id。
+        ///     稳定的条目 id。
         /// </summary>
         public string Id { get; } = id;
 
@@ -1004,7 +1004,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares a subpage navigation entry.
-    ///     声明一个子页面导航 entry。
+    ///     声明一个子页面导航条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ModSettingsSubpageAttribute(string id, string sectionId, string targetPageId)
@@ -1012,7 +1012,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Stable entry id.
-        ///     稳定的 entry id。
+        ///     稳定的条目 id。
         /// </summary>
         public string Id { get; } = id;
 
@@ -1036,33 +1036,33 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Optional i18n key for <see cref="ButtonText" />.
-        ///     <c>ButtonText</c> 的可选 i18n key。
+        ///     <see cref="ButtonText" /> 的可选 i18n key。
         /// </summary>
         public string? ButtonTextKey { get; init; }
 
         /// <summary>
         ///     Optional LocString table for <see cref="ButtonText" />.
-        ///     <c>ButtonText</c> 的可选 LocString table。
+        ///     <see cref="ButtonText" /> 的可选 LocString 表。
         /// </summary>
         public string? ButtonTextLocTable { get; init; }
 
         /// <summary>
         ///     Optional LocString key for <see cref="ButtonText" />.
-        ///     <c>ButtonText</c> 的可选 LocString key。
+        ///     <see cref="ButtonText" /> 的可选 LocString key。
         /// </summary>
         public string? ButtonTextLocKey { get; init; }
     }
 
     /// <summary>
     ///     Declares a custom-control entry.
-    ///     声明一个自定义控件 entry。
+    ///     声明一个自定义控件条目。
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class ModSettingsCustomEntryAttribute(string id, string sectionId) : ModSettingsOrderedEntryAttribute
     {
         /// <summary>
         ///     Stable entry id.
-        ///     稳定的 entry id。
+        ///     稳定的条目 id。
         /// </summary>
         public string Id { get; } = id;
 

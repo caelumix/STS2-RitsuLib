@@ -5,9 +5,9 @@ namespace STS2RitsuLib.Utils
 {
     /// <summary>
     ///     Public helpers for Godot project paths: <c>res://</c>, <c>user://</c>, <c>uid://</c> remapping and
-    ///     Public helpers 用于 Godot project 路径: <c>res://</c>, <c>使用r://</c>, <c>uid://</c> remapping and
     ///     resource presence checks aligned with <see cref="ResourceLoader" /> and <see cref="ResourceUid" />.
-    ///     资源 presence checks aligned 带有 <c>ResourceLoader</c> 和 <c>ResourceUid</c>.
+    ///     Godot 项目路径的公共辅助方法：<c>res://</c>、<c>user://</c>、<c>uid://</c> 重映射以及
+    ///     与 <see cref="ResourceLoader" /> 和 <see cref="ResourceUid" /> 对齐的资源存在性检查。
     /// </summary>
     public static class GodotResourcePath
     {
@@ -23,8 +23,9 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Yields paths the engine may use for the same logical asset: the trimmed input, <c>uid://</c> →
-        ///     Yields 路径 the engine may 使用 用于 the same logical 资源: the trimmed input, <c>uid://</c> →
         ///     <c>res://</c> (when applicable), and <see cref="ResourceUid.EnsurePath" /> alternatives.
+        ///     生成引擎可能用于同一逻辑资源的路径：修剪后的输入、<c>uid://</c> →
+        ///     <c>res://</c>（适用时），以及 <see cref="ResourceUid.EnsurePath" /> 替代路径。
         /// </summary>
         public static IEnumerable<string> EnumerateCandidatePaths(string? rawPath)
         {
@@ -37,9 +38,9 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Resolves <paramref name="pathOrUid" /> via <see cref="ResourceUid.EnsurePath" /> (UID or path → project
-        ///     解析 <c>路径OrUid</c> via <c>ResourceUid.EnsurePath</c> (UID 或 路径 → project
         ///     path). Returns <see langword="false" /> when the UID is unknown or resolution fails.
-        ///     路径). 返回 <see langword="false" /> 当 the UID is unknown 或 resolution fails.
+        ///     通过 <see cref="ResourceUid.EnsurePath" /> 解析 <paramref name="pathOrUid" />（UID 或路径 → 项目
+        ///     路径）。当 UID 未知或解析失败时返回 <see langword="false" />。
         /// </summary>
         public static bool TryEnsurePath(string? pathOrUid, [NotNullWhen(true)] out string? path)
         {
@@ -57,11 +58,11 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Whether the running game’s <see cref="ResourceLoader" /> recognizes the path, using the same
-        ///     Whether the running game’s <c>ResourceLoader</c> recognizes the 路径, using the same
         ///     remapping as <see cref="EnumerateCandidatePaths" />, optional <c>type_hint</c> checks, and the
-        ///     remapping as <c>EnumerateCandidatePaths</c>, 可选 <c>type_hint</c> checks, 和 the
         ///     cache (e.g. <see cref="Resource.TakeOverPath" /> scenarios).
-        ///     cache (e.g. <c>资源.TakeOverPath</c> scenarios).
+        ///     运行中游戏的 <see cref="ResourceLoader" /> 是否识别该路径，使用与
+        ///     <see cref="EnumerateCandidatePaths" /> 相同的重映射、可选 <c>type_hint</c> 检查以及
+        ///     缓存（例如 <see cref="Resource.TakeOverPath" /> 场景）。
         /// </summary>
         public static bool ResourceExists(string? rawPath)
         {

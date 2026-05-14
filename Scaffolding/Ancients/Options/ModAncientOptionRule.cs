@@ -5,7 +5,7 @@ namespace STS2RitsuLib.Scaffolding.Ancients.Options
 {
     /// <summary>
     ///     Declarative rule for injecting extra options into an ancient's initial option pool.
-    ///     用于向 ancient 初始选项池注入额外选项的声明式规则。
+    ///     用于向古代的初始选项池注入额外选项的声明式规则。
     /// </summary>
     public sealed class ModAncientOptionRule
     {
@@ -15,7 +15,7 @@ namespace STS2RitsuLib.Scaffolding.Ancients.Options
         /// </summary>
         /// <param name="optionFactory">
         ///     Produces zero or more options for the current ancient instance.
-        ///     为当前 ancient 实例生成零个或多个选项。
+        ///     为当前古代实例生成零个或多个选项。
         /// </param>
         public ModAncientOptionRule(Func<AncientEventModel, IEnumerable<EventOption>> optionFactory)
         {
@@ -25,13 +25,13 @@ namespace STS2RitsuLib.Scaffolding.Ancients.Options
 
         /// <summary>
         ///     Produces options to append for a matching ancient instance.
-        ///     为匹配的 ancient 实例生成要追加的选项。
+        ///     为匹配的古代实例生成要追加的选项。
         /// </summary>
         public Func<AncientEventModel, IEnumerable<EventOption>> OptionFactory { get; }
 
         /// <summary>
         ///     Optional predicate gate. When null, the rule is always considered.
-        ///     可选谓词 gate。为 null 时，总是考虑此规则。
+        ///     可选谓词门控。为 null 时，始终考虑该规则。
         /// </summary>
         public Func<AncientEventModel, bool>? Condition { get; init; }
 
@@ -43,7 +43,7 @@ namespace STS2RitsuLib.Scaffolding.Ancients.Options
 
         /// <summary>
         ///     When true, options with duplicate <see cref="EventOption.TextKey" /> are skipped.
-        ///     为 true 时，跳过 <c>EventOption.TextKey</c> 重复的选项。
+        ///     为 true 时，跳过具有重复 <see cref="EventOption.TextKey" /> 的选项。
         /// </summary>
         public bool SkipDuplicateTextKeys { get; init; } = true;
 

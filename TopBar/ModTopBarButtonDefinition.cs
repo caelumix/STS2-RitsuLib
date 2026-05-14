@@ -5,7 +5,7 @@ namespace STS2RitsuLib.TopBar
 {
     /// <summary>
     ///     Immutable registry entry for a mod-owned top-bar button.
-    ///     Immutable 注册表 entry 用于 a mod-owned top-bar button.
+    ///     mod 拥有的顶部栏按钮的不可变注册表条目。
     /// </summary>
     public sealed record ModTopBarButtonDefinition
     {
@@ -33,67 +33,67 @@ namespace STS2RitsuLib.TopBar
 
         /// <summary>
         ///     Owning mod id.
-        ///     中文说明：Owning mod id.
+        ///     所属 mod id。
         /// </summary>
         public string ModId { get; }
 
         /// <summary>
         ///     Normalized global id (e.g. <c>MYMOD_TOPBARBUTTON_RECIPES</c>).
-        ///     中文说明：Normalized global id (e.g. <c>MYMOD_TOPBARBUTTON_RECIPES</c>).
+        ///     规范化全局 id (e.g. <c>MYMOD_TOPBARBUTTON_RECIPES</c>)。
         /// </summary>
         public string Id { get; }
 
         /// <summary>
         ///     Godot resource path for the icon, or null.
-        ///     Godot 资源 路径 用于 the 图标, 或 null.
+        ///     图标的 Godot 资源路径, 或 null。
         /// </summary>
         public string? IconPath { get; }
 
         /// <summary>
         ///     Sort order within this mod's top-bar buttons.
-        ///     Sort order 带有in this mod's top-bar buttons.
+        ///     排序顺序 在此 mod 的顶部栏按钮内。
         /// </summary>
         public int Order { get; }
 
         /// <summary>
         ///     Extra pixel offset on top of the auto-stacked slot.
-        ///     Extra pixel off设置 on top of the auto-stacked slot.
+        ///     叠加在自动堆叠槽上的额外像素偏移。
         /// </summary>
         public Vector2 Offset { get; }
 
         /// <summary>
         ///     Click handler; see <see cref="ModTopBarButtonSpec.OnClick" />.
-        ///     中文说明：Click handler; see <c>ModTopBarButtonSpec.OnClick</c>.
+        ///     点击处理器; 见 <see cref="ModTopBarButtonSpec.OnClick" />。
         /// </summary>
         public Action<ModTopBarButtonContext>? OnClick { get; }
 
         /// <summary>
         ///     Optional visibility predicate; see <see cref="ModTopBarButtonSpec.VisibleWhen" />.
-        ///     可选 visibility predicate; see <c>ModTopBarButtonSpec.VisibleWhen</c>.
+        ///     可选可见性谓词; 见 <see cref="ModTopBarButtonSpec.VisibleWhen" />。
         /// </summary>
         public Func<ModTopBarButtonContext, bool>? VisibleWhen { get; }
 
         /// <summary>
         ///     Optional "screen open" predicate; see <see cref="ModTopBarButtonSpec.IsOpenWhen" />.
-        ///     可选 "screen open" predicate; see <c>ModTopBarButtonSpec.IsOpenWhen</c>.
+        ///     可选“屏幕打开”谓词; 见 <see cref="ModTopBarButtonSpec.IsOpenWhen" />。
         /// </summary>
         public Func<ModTopBarButtonContext, bool>? IsOpenWhen { get; }
 
         /// <summary>
         ///     Optional count provider for the badge; see <see cref="ModTopBarButtonSpec.CountProvider" />.
-        ///     可选 count provider 用于 the badge; see <c>ModTopBarButtonSpec.CountProvider</c>.
+        ///     徽章的可选计数提供器；见 <see cref="ModTopBarButtonSpec.CountProvider" />。
         /// </summary>
         public Func<ModTopBarButtonContext, int>? CountProvider { get; }
 
         /// <summary>
         ///     Hover-tip title resolved against <c>static_hover_tips</c> with key <c>{Id}.title</c>.
-        ///     Hover-tip title resolved against <c>static_hover_tips</c> 带有 key <c>{Id}.title</c>.
+        ///     悬停提示标题 基于解析 <c>static_hover_tips</c> 与 键 <c>{Id}.title</c>。
         /// </summary>
         public LocString Title => new(ModTopBarButtonSpec.HoverTipLocTable, $"{Id}.title");
 
         /// <summary>
         ///     Hover-tip description resolved against <c>static_hover_tips</c> with key <c>{Id}.description</c>.
-        ///     Hover-tip description resolved against <c>static_hover_tips</c> 带有 key <c>{Id}.description</c>.
+        ///     根据键 <c>{Id}.description</c> 从 <c>static_hover_tips</c> 解析的悬停提示描述。
         /// </summary>
         public LocString Description => new(ModTopBarButtonSpec.HoverTipLocTable, $"{Id}.description");
     }

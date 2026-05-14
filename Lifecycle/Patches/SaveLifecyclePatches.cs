@@ -8,7 +8,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
     /// <summary>
     ///     Publishes profile initialization, switching, progress save, and profile deletion lifecycle events around
     ///     <see cref="SaveManager" /> APIs.
-    ///     围绕 <c>SaveManager</c> API 发布档案初始化、切换、进度保存和档案删除生命周期事件。
+    ///     围绕 <see cref="SaveManager" /> API 发布档案初始化、切换、进度保存和档案删除生命周期事件。
     /// </summary>
     public class SaveManagerLifecyclePatch : IPatchMethod
     {
@@ -128,7 +128,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
     /// <summary>
     ///     Publishes lifecycle events when a run is saved through <see cref="SaveManager.SaveRun" />.
-    ///     当通过 <c>SaveManager.SaveRun</c> 保存跑局时发布生命周期事件。
+    ///     当通过 <see cref="SaveManager.SaveRun" /> 保存跑局时发布生命周期事件。
     /// </summary>
     public class RunSavingLifecyclePatch : IPatchMethod
     {
@@ -152,7 +152,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
         /// <summary>
         ///     Harmony prefix: publishes <see cref="RunSavingEvent" /> before the async save begins.
-        ///     Harmony prefix：在异步保存开始前发布 <c>RunSavingEvent</c>。
+        ///     Harmony prefix：在异步保存开始前发布 <see cref="RunSavingEvent" />。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Prefix(SaveManager __instance, AbstractRoom? preFinishedRoom, bool saveProgress)
@@ -165,7 +165,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
         /// <summary>
         ///     Harmony postfix: chains onto the save task and publishes <see cref="RunSavedEvent" /> when it completes.
-        ///     Harmony postfix：链接到保存任务，并在其完成时发布 <c>RunSavedEvent</c>。
+        ///     Harmony postfix：链接到保存任务，并在其完成时发布 <see cref="RunSavedEvent" />。
         /// </summary>
         // ReSharper disable InconsistentNaming
         public static void Postfix(SaveManager __instance, AbstractRoom? preFinishedRoom, bool saveProgress,

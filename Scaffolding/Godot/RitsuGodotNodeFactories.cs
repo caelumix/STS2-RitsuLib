@@ -7,15 +7,18 @@ namespace STS2RitsuLib.Scaffolding.Godot
     ///     Explicit-only Godot node construction: call these from your own code paths. Does not patch global
     ///     <c>PackedScene.Instantiate</c>, so baselib scene conversion and vanilla loading keep exclusive control of their
     ///     hooks.
-    ///     仅显式调用的 Godot 节点构造：从你自己的代码路径调用这些方法。它不会 patch 全局
-    ///     <c>PackedScene.Instantiate</c>，因此 baselib 场景转换和原版加载仍独占控制自己的 hook。
+    ///     仅显式使用的 Godot 节点构造：从你自己的代码路径调用这些方法。它不会修补全局
+    ///     <c>PackedScene.Instantiate</c>，因此 baselib 场景转换和原版加载会继续独占控制自己的
+    ///     钩子。
     /// </summary>
     public static class RitsuGodotNodeFactories
     {
         /// <summary>
         ///     Creates <typeparamref name="TNode" /> from a loaded resource (e.g. <see cref="Texture2D" /> for creature /
         ///     merchant factories).
-        ///     从已加载资源创建 <c>TNode</c>（例如 creature / merchant 工厂使用
+        ///     <see cref="Texture2D" />）。
+        ///     从已加载资源创建 <typeparamref name="TNode" />（例如用于生物 /
+        ///     商人工厂的 <see cref="Texture2D" />）。
         ///     <see cref="Texture2D" />）。
         /// </summary>
         public static TNode CreateFromResource<TNode>(object resource) where TNode : Node, new()
@@ -25,7 +28,7 @@ namespace STS2RitsuLib.Scaffolding.Godot
 
         /// <summary>
         ///     Instantiates <paramref name="scene" /> and runs the registered factory to produce <typeparamref name="TNode" />.
-        ///     实例化 <c>scene</c>，并运行已注册工厂来生成 <c>TNode</c>。
+        ///     实例化 <paramref name="scene" /> 并运行已注册工厂来生成 <typeparamref name="TNode" />。
         /// </summary>
         public static TNode CreateFromScene<TNode>(PackedScene scene) where TNode : Node, new()
         {
@@ -35,8 +38,8 @@ namespace STS2RitsuLib.Scaffolding.Godot
         /// <summary>
         ///     Same as <see cref="CreateFromScene{TNode}(PackedScene)" /> but uses the given Godot instantiate edit
         ///     state (match vanilla callsites such as <c>PackedScene.GenEditState.Disabled</c>).
-        ///     与 <c>CreateFromScene{TNode}(PackedScene)</c> 相同，但使用给定的 Godot instantiate edit
-        ///     state（匹配 <c>PackedScene.GenEditState.Disabled</c> 等原版调用点）。
+        ///     与 <see cref="CreateFromScene{TNode}(PackedScene)" /> 相同，但使用给定的 Godot 实例化编辑
+        ///     状态（匹配原版调用点，例如 <c>PackedScene.GenEditState.Disabled</c>）。
         /// </summary>
         public static TNode CreateFromScene<TNode>(PackedScene scene, PackedScene.GenEditState editState)
             where TNode : Node, new()
@@ -50,7 +53,15 @@ namespace STS2RitsuLib.Scaffolding.Godot
         ///         <cref>CreateFromScene{TNode}</cref>
         ///     </see>
         ///     .
-        ///     通过 <c>PreloadManager.Cache</c> 加载 <c>scenePath</c>，然后调用
+        ///     <see>
+        ///         <cref>CreateFromScene{TNode}</cref>
+        ///     </see>
+        ///     。
+        ///     通过 <see cref="PreloadManager.Cache" /> 加载 <paramref name="scenePath" />，然后调用
+        ///     <see>
+        ///         <cref>CreateFromScene{TNode}</cref>
+        ///     </see>
+        ///     。
         ///     <see>
         ///         <cref>CreateFromScene{TNode}</cref>
         ///     </see>

@@ -7,7 +7,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 {
     /// <summary>
     ///     Keeps extra corner amount labels in sync with <see cref="NPower" />.
-    ///     Keeps extra corner amount labels in sync 带有 <c>NPower</c>.
+    ///     使额外角落数量标签与 <see cref="NPower" /> 保持同步。
     /// </summary>
     public sealed class NPowerExtraCornerAmountLabelsPatch : IPatchMethod
     {
@@ -29,7 +29,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NPower.RefreshAmount</c>.
-        ///     Harmony 后置补丁 用于 <c>NPower.RefreshAmount</c>.
+        ///     <c>NPower.RefreshAmount</c> 的 Harmony 后置补丁。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NPower __instance)
@@ -40,7 +40,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Clears extra corner labels when the combat power node exits the tree.
-    ///     Clears extra corner labels 当 the combat 能力 node exits the tree.
+    ///     当战斗能力节点退出树时清除额外角落标签。
     /// </summary>
     public sealed class NPowerExtraCornerAmountLabelsExitTreePatch : IPatchMethod
     {
@@ -61,7 +61,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NPower._ExitTree</c>.
-        ///     Harmony 后置补丁 用于 <c>NPower._ExitTree</c>.
+        ///     <c>NPower._ExitTree</c> 的 Harmony 后置补丁。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NPower __instance)
@@ -72,7 +72,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Keeps extra corner labels in sync with <see cref="NRelicInventoryHolder" />.
-    ///     Keeps extra corner labels in sync 带有 <c>NRelicInventoryHolder</c>.
+    ///     使额外角落标签与 <see cref="NRelicInventoryHolder" /> 保持同步。
     /// </summary>
     public sealed class NRelicInventoryHolderExtraCornerAmountLabelsPatch : IPatchMethod
     {
@@ -94,7 +94,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NRelicInventoryHolder.RefreshAmount</c>.
-        ///     Harmony 后置补丁 用于 <c>NRelicInventoryHolder.RefreshAmount</c>.
+        ///     <c>NRelicInventoryHolder.RefreshAmount</c> 的 Harmony 后置补丁。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NRelicInventoryHolder __instance)
@@ -105,7 +105,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Clears relic extra labels when the holder exits the tree.
-    ///     Clears 遗物 extra labels 当 the holder exits the tree.
+    ///     当持有者退出树时清除遗物额外标签。
     /// </summary>
     public sealed class NRelicInventoryHolderExtraCornerAmountLabelsExitTreePatch : IPatchMethod
     {
@@ -126,7 +126,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NRelicInventoryHolder._ExitTree</c>.
-        ///     Harmony 后置补丁 用于 <c>NRelicInventoryHolder._ExitTree</c>.
+        ///     <c>NRelicInventoryHolder._ExitTree</c> 的 Harmony 后置补丁。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NRelicInventoryHolder __instance)
@@ -137,7 +137,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Keeps extra corner labels in sync with <see cref="NIntent" />.
-    ///     Keeps extra corner labels in sync 带有 <c>NIntent</c>.
+    ///     使额外角落标签与 <see cref="NIntent" /> 保持同步。
     /// </summary>
     public sealed class NIntentExtraCornerAmountLabelsPatch : IPatchMethod
     {
@@ -159,7 +159,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NIntent.UpdateVisuals</c>.
-        ///     Harmony 后置补丁 用于 <c>NIntent.更新Visuals</c>.
+        ///     <c>NIntent.UpdateVisuals</c> 的 Harmony 后置补丁。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NIntent __instance)
@@ -170,7 +170,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Clears intent extra labels when the intent node exits the tree.
-    ///     Clears intent extra labels 当 the intent node exits the tree.
+    ///     当意图节点退出树时清除意图额外标签。
     /// </summary>
     public sealed class NIntentExtraCornerAmountLabelsExitTreePatch : IPatchMethod
     {
@@ -191,7 +191,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NIntent._ExitTree</c>.
-        ///     Harmony 后置补丁 用于 <c>NIntent._ExitTree</c>.
+        ///     <c>NIntent._ExitTree</c> 的 Harmony 后置补丁。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NIntent __instance)

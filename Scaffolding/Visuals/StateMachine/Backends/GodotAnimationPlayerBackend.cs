@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 {
     /// <summary>
     ///     <see cref="IAnimationBackend" /> driver for Godot <see cref="AnimationPlayer" />.
-    ///     Godot <c>AnimationPlayer</c> 的 <c>IAnimationBackend</c> 驱动。
+    ///     Godot <see cref="AnimationPlayer" /> 的 <see cref="IAnimationBackend" /> 驱动。
     /// </summary>
     public sealed class GodotAnimationPlayerBackend : IAnimationBackend
     {
@@ -17,8 +17,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
         /// <summary>
         ///     Wraps <paramref name="player" /> and hooks <c>AnimationPlayer.AnimationFinished</c> and
         ///     <c>AnimationPlayer.AnimationStarted</c> so queued auto-advances surface as <see cref="Started" />.
-        ///     包装 <c>player</c>，并挂接 <c>AnimationPlayer.AnimationFinished</c> 和
-        ///     <c>AnimationPlayer.AnimationStarted</c>，使队列自动推进也能表现为 <c>Started</c>。
+        ///     包装 <paramref name="player" /> 并挂接 <c>AnimationPlayer.AnimationFinished</c> 和
+        ///     <c>AnimationPlayer.AnimationStarted</c>，使排队的自动推进表现为 <see cref="Started" />。
         /// </summary>
         public GodotAnimationPlayerBackend(AnimationPlayer player)
         {

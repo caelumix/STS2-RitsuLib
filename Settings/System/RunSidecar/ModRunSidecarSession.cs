@@ -5,9 +5,8 @@ namespace STS2RitsuLib.Settings.RunSidecar
 {
     /// <summary>
     ///     Coordinates run sidecar cache epochs and disk cleanup aligned with vanilla run and save lifecycle. Sidecar
-    ///     Coordinates 跑局 sidecar cache epochs 和 disk cleanup aligned 带有 原版 跑局 和 保存 lifecycle. Sidecar
     ///     files are client-local and never mutate vanilla <see cref="SerializableRun" /> network payloads.
-    ///     files are client-local 和 never mutate 原版 <c>SerializableRun</c> network payload.
+    ///     协调跑局 sidecar 缓存纪元和磁盘清理，使其与原版跑局和存档生命周期对齐。sidecar 文件仅存在于客户端本地，绝不会修改原版 <see cref="SerializableRun" /> 网络载荷。
     /// </summary>
     /// <remarks>
     ///     <list type="bullet">
@@ -15,7 +14,6 @@ namespace STS2RitsuLib.Settings.RunSidecar
     ///             <description>
     ///                 <see cref="RunStartedEvent" /> / <see cref="RunLoadedEvent" />: bump <see cref="RunEpoch" />
     ///                 (same moments as <see cref="STS2RitsuLib.Lifecycle.Patches.RunLifecyclePatch" />).
-    ///                 (same moments as <c>STS2RitsuLib.Lifecycle.Patches.跑局LifecyclePatch</c>).
     ///             </description>
     ///         </item>
     ///         <item>
@@ -28,9 +26,7 @@ namespace STS2RitsuLib.Settings.RunSidecar
     ///             <description>
     ///                 <see cref="SaveManager.DeleteCurrentRun" /> / <see cref="SaveManager.DeleteCurrentMultiplayerRun" />:
     ///                 sidecar folder is removed in a Harmony prefix while the save file still exists (main-menu
-    ///                 sidecar folder is removed in a Harmony 前置补丁 while the 保存 file still exists (main-menu
     ///                 abandon, normal run end after save deletion, etc.); see
-    ///                 abandon, normal 跑局 end 之后 保存 deletion, etc.); see
     ///                 <see cref="STS2RitsuLib.Settings.RunSidecar.Patches.ModRunSidecarSaveDeletionPatches" />.
     ///             </description>
     ///         </item>
@@ -38,7 +34,33 @@ namespace STS2RitsuLib.Settings.RunSidecar
     ///             <description>
     ///                 <see cref="ProfileSwitchedEvent" />: bump epoch. <see cref="ProfileDeletedEvent" />: delete the
     ///                 entire <c>run_sidecar</c> subtree for that profile.
-    ///                 entire <c>跑局_sidecar</c> subtree 用于 that 档案.
+    ///             </description>
+    ///         </item>
+    ///     </list>
+    ///     <list type="bullet">
+    ///         <item>
+    ///             <description>
+    ///                 <see cref="RunStartedEvent" /> / <see cref="RunLoadedEvent" />：提升 <see cref="RunEpoch" />
+    ///                 （与 <see cref="STS2RitsuLib.Lifecycle.Patches.RunLifecyclePatch" /> 相同的时机）。
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <description>
+    ///                 <see cref="RunEndedEvent" />：删除已结束跑局的 sidecar 文件夹，然后提升纪元（覆盖
+    ///                 原版可能保留跑局存档文件的 <c>ShouldSave == false</c> 情况）。
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <description>
+    ///                 <see cref="SaveManager.DeleteCurrentRun" /> / <see cref="SaveManager.DeleteCurrentMultiplayerRun" />：
+    ///                 在存档文件仍存在时，于 Harmony prefix 中移除 sidecar 文件夹（主菜单
+    ///                 放弃、存档删除后的正常跑局结束等）；见
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <description>
+    ///                 <see cref="ProfileSwitchedEvent" />：提升纪元。<see cref="ProfileDeletedEvent" />：删除该档案的
+    ///                 整个 <c>run_sidecar</c> 子树。
     ///             </description>
     ///         </item>
     ///     </list>
@@ -51,7 +73,7 @@ namespace STS2RitsuLib.Settings.RunSidecar
 
         /// <summary>
         ///     Incremented whenever the active profile or run instance changes; bindings use it to drop stale caches.
-        ///     Incremented 当ever the active 档案 或 跑局 instance changes; bindings 使用 it to drop stale caches.
+        ///     每当活动档案或跑局实例变化时递增；binding 用它丢弃过期缓存。
         /// </summary>
         public static int RunEpoch => Volatile.Read(ref _runEpoch);
 

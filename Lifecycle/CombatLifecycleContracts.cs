@@ -298,8 +298,10 @@ namespace STS2RitsuLib
     ///     On host API 0.105.0 and newer the underlying <c>Hook.AfterCardRetained</c> callback no longer exists; this event
     ///     is replayed per retained card from <c>Hook.AfterFlush</c> for backward compatibility. Subscribe to
     ///     <see cref="CardsFlushedEvent" /> instead to also observe the matching flushed cards and the player.
-    ///     在宿主 API 0.105.0 及更新版本中，底层 <c>Hook.AfterCardRetained</c> 回调已不存在；为了向后兼容，此事件会从
-    ///     <c>Hook.AfterFlush</c> 按每张保留卡重放。若还需要观察对应的被清空卡牌和玩家，请改订阅
+    ///     <see cref="CardsFlushedEvent" />。
+    ///     在 host API 0.105.0 及更新版本中，底层 <c>Hook.AfterCardRetained</c> callback 已不存在；此事件
+    ///     会为了向后兼容，从 <c>Hook.AfterFlush</c> 按每张保留卡牌 replay。请改为订阅
+    ///     <see cref="CardsFlushedEvent" />，以同时观察匹配的 flushed 卡牌和玩家。
     ///     <see cref="CardsFlushedEvent" />。
     /// </remarks>
     /// <param name="CombatState">
@@ -352,7 +354,7 @@ namespace STS2RitsuLib
     ///     Fired from <c>Hook.AfterFlush</c> on host API 0.105.0 and newer. On older host APIs <c>Hook.AfterFlush</c> does
     ///     not exist and this event is not raised; use the legacy <see cref="CardRetainedEvent" /> there.
     ///     在宿主 API 0.105.0 及更新版本中由 <c>Hook.AfterFlush</c> 触发。在旧版宿主 API 中 <c>Hook.AfterFlush</c>
-    ///     不存在，此事件不会触发；请在旧版中使用遗留的 <c>CardRetainedEvent</c>。
+    ///     不存在，此事件不会触发；请在旧版中使用遗留的 <see cref="CardRetainedEvent" />。
     /// </remarks>
     /// <param name="CombatState">
     ///     Active combat state.

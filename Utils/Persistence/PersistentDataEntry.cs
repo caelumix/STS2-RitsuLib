@@ -6,7 +6,7 @@ namespace STS2RitsuLib.Utils.Persistence
 {
     /// <summary>
     ///     Typed JSON persistence wrapper with optional migrations, backup recovery, and change notifications.
-    ///     Typed JSON persistence wrapper 带有 可选 migrations, backup recovery, 和 change notifications.
+    ///     带可选迁移、备份恢复和变更通知的类型化 JSON 持久化包装器。
     /// </summary>
     public class PersistentDataEntry<T> where T : class, new()
     {
@@ -20,7 +20,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Initializes in-memory data from <paramref name="defaultValues" /> and captures persistence settings.
-        ///     初始化 in-memory data from <c>defaultValues</c> and captures persistence settings。
+        ///     从 <paramref name="defaultValues" /> 初始化内存数据，并捕获持久化设置。
         /// </summary>
         public PersistentDataEntry(
             string modId,
@@ -45,36 +45,36 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Current deserialized data object (mutate via <see cref="Modify" /> for change notifications).
-        ///     当前 deserialized data object (mutate via <c>Modify</c> for change notifications)。
+        ///     当前 deserialized 数据 object (mutate via <see cref="Modify" /> 用于 change notifications).
         /// </summary>
         public T Data { get; private set; }
 
         /// <summary>
         ///     Resolved absolute path for this entry using the active profile.
-        ///     resolved absolute 路径 用于 this entry using the active 档案.
+        ///     使用活动档案解析出的此条目绝对路径。
         /// </summary>
         public string FilePath =>
             StoragePathResolver.ResolveFilePathUser(_modId, _fileName, Scope, _contextProvider?.Invoke());
 
         /// <summary>
         ///     Whether this file lives under global account storage or a profile subdirectory.
-        ///     表示是否 this file lives under global account storage or a profile subdirectory。
+        ///     此文件位于全局账户存储还是档案子目录下。
         /// </summary>
         public SaveScope Scope { get; }
 
         /// <summary>
         ///     Raised after load/save cycles and in-memory modifications.
-        ///     Raised 之后 加载/保存 cycles 和 in-memory modifications.
+        ///     在加载 / 保存周期和内存修改后触发。
         /// </summary>
         public event Action? Changed;
 
         /// <summary>
         ///     Reads JSON from disk (with backup fallback), applies migrations, and updates <see cref="Data" />.
-        ///     Reads JSON 从 disk (带有 backup fallback), applies migrations, 和 更新 <c>Data</c>.
+        ///     从磁盘读取 JSON（带备份回退），应用迁移，并更新 <see cref="Data" />。
         /// </summary>
         /// <returns>
         ///     False when defaults were used due to missing or invalid files.
-        ///     False 当 defaults were used due to missing 或 invalid files.
+        ///     当因文件缺失或无效而使用默认值时为 false。
         /// </returns>
         public bool Load()
         {
@@ -129,7 +129,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Serializes <see cref="Data" /> to <see cref="FilePath" />.
-        ///     Serializes <c>Data</c> to <c>File路径</c>.
+        ///     将 <see cref="Data" /> 序列化到 <see cref="FilePath" />。
         /// </summary>
         public bool Save()
         {
@@ -138,7 +138,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Serializes <see cref="Data" /> to an explicit path (for exports or tests).
-        ///     Serializes <c>Data</c> to an explicit 路径 (用于 exports 或 tests).
+        ///     将 <see cref="Data" /> 序列化到显式路径（用于导出或测试）。
         /// </summary>
         public bool SaveTo(string path)
         {
@@ -161,7 +161,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Applies an in-place mutation to <see cref="Data" /> and raises <see cref="Changed" />.
-        ///     Applies an in-place mutation to <c>Data</c> 和 raises <c>Changed</c>.
+        ///     对 <see cref="Data" /> 应用原地修改，并触发 <see cref="Changed" />。
         /// </summary>
         public void Modify(Action<T> modifier)
         {

@@ -9,7 +9,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Patches <see cref="ActModel.GenerateBackgroundAssets" /> so mod acts can use a custom <c>res://</c> layers folder.
-    ///     补丁 <c>ActModel.GenerateBackgroundAssets</c> so mod acts can use a custom <c>res://</c> layers folder。
+    ///     补丁 <see cref="ActModel.GenerateBackgroundAssets" />，使 mod 章节可以使用自定义 <c>res://</c> layers 文件夹。
     /// </summary>
     public class ActGenerateBackgroundAssetsPatch : IPatchMethod
     {
@@ -31,9 +31,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     When <see cref="IModActAssetOverrides.CustomBackgroundLayersDirectoryPath" /> is set and valid, builds layers
-        ///     当 <c>IModActAssetOverrides.CustomBackgroundLayersDirectoryPath</c> is 设置 和 有效, builds layers
         ///     from that directory; main scene uses <see cref="ActModel.BackgroundScenePath" /> (including existing path patches).
-        ///     从 that directory; main 场景 使用 <c>ActModel.背景场景路径</c> (including existing 路径 patches).
+        ///     当 <see cref="IModActAssetOverrides.CustomBackgroundLayersDirectoryPath" /> 已设置且有效时，从该目录构建图层；
+        ///     主场景使用 <see cref="ActModel.BackgroundScenePath" />（包括既有路径补丁）。
         /// </summary>
         public static bool Prefix(ActModel __instance, Rng rng, ref BackgroundAssets __result)
             // ReSharper restore InconsistentNaming
@@ -77,7 +77,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
     /// <summary>
     ///     Appends all <c>.tscn</c> paths under the custom layers directory to <see cref="ActModel.AssetPaths" /> for preload.
-    ///     Appends all <c>.tscn</c> 路径 under the 自定义 layers directory to <c>ActModel.ResourcePaths</c> 用于 pre加载.
+    ///     将自定义 layers 目录下的所有 <c>.tscn</c> 路径追加到 <see cref="ActModel.AssetPaths" />，用于预加载。
     /// </summary>
     public class ActAssetPathsBackgroundLayersPatch : IPatchMethod
     {
@@ -99,7 +99,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Concatenates every layer scene path under the configured directory.
-        ///     Concatenates every layer 场景 路径 under the configured directory.
+        ///     拼接已配置目录下的每个图层场景路径。
         /// </summary>
         public static void Postfix(ActModel __instance, ref IEnumerable<string> __result)
             // ReSharper restore InconsistentNaming

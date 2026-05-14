@@ -5,7 +5,7 @@ namespace STS2RitsuLib.Utils.Persistence.Migration
 {
     /// <summary>
     ///     Manages data migrations between schema versions
-    ///     中文说明：Manages data migrations between schema versions
+    ///     Manages 数据 迁移s between schema 版本s
     /// </summary>
     public class MigrationManager
     {
@@ -14,7 +14,7 @@ namespace STS2RitsuLib.Utils.Persistence.Migration
 
         /// <summary>
         ///     Register migration configuration for a data type
-        ///     Register migration configuration 用于 a data type
+        ///     为数据类型注册迁移配置。
         /// </summary>
         public void RegisterConfig<T>(int currentVersion, int minimumSupportedVersion,
             string schemaVersionProperty = ModDataVersion.SchemaVersionProperty)
@@ -29,7 +29,7 @@ namespace STS2RitsuLib.Utils.Persistence.Migration
 
         /// <summary>
         ///     Register a migration for a data type
-        ///     Register a migration 用于 a data type
+        ///     为数据类型注册迁移。
         /// </summary>
         public void RegisterMigration<T>(IMigration migration)
         {
@@ -47,11 +47,11 @@ namespace STS2RitsuLib.Utils.Persistence.Migration
 
         /// <summary>
         ///     Attempt to migrate JSON data to the current version
-        ///     中文说明：Attempt to migrate JSON data to the current version
+        ///     尝试将 JSON 数据迁移到当前版本。
         /// </summary>
         /// <returns>
         ///     Migration result with migrated data or error information
-        ///     Migration result 带有 migrated data 或 error information
+        ///     包含迁移后数据或错误信息的迁移结果。
         /// </returns>
         public MigrationResult<T> Migrate<T>(string jsonContent, JsonSerializerOptions? options = null)
             where T : class, new()
@@ -162,7 +162,7 @@ namespace STS2RitsuLib.Utils.Persistence.Migration
 
         /// <summary>
         ///     Get the current version for a data type
-        ///     Get the current version 用于 a data type
+        ///     获取数据类型的当前版本。
         /// </summary>
         public int GetCurrentVersion<T>()
         {
@@ -222,17 +222,17 @@ namespace STS2RitsuLib.Utils.Persistence.Migration
 
         /// <summary>
         ///     Breadth-first search on version states: from current version <paramref name="startVersion" />, a
-        ///     Breadth-first search on version states: 从 current version <c>startVersion</c>, a
         ///     registered migration applies when the version lies in <c>[FromVersion, ToVersion)</c>, advancing the
-        ///     已注册 migration applies 当 the version lies in <c>[FromVersion, ToVersion)</c>, advancing the
         ///     state to <c>ToVersion</c>.
-        ///     中文说明：state to <c>ToVersion</c>.
         ///     Edges whose <c>ToVersion</c> exceeds <paramref name="targetVersion" /> are skipped so the plan ends at
-        ///     中文说明：Edges whose <c>ToVersion</c> exceeds <c>targetVersion</c> are skipped so the plan ends at
         ///     the configured current schema. The returned path uses the minimum number of migration steps; ties are
-        ///     the configured current schema. The 返回ed 路径 使用 the minimum number of migration steps; ties are
         ///     broken by iteration order (registration order, then sort by FromVersion, ToVersion).
-        ///     broken 通过 iteration order (注册 order, then sort 通过 FromVersion, ToVersion).
+        ///     对版本状态执行广度优先搜索：从当前版本 <paramref name="startVersion" /> 开始，
+        ///     当版本位于 <c>[FromVersion, ToVersion)</c> 时，已注册迁移适用，并将
+        ///     状态推进到 <c>ToVersion</c>。
+        ///     会跳过 <c>ToVersion</c> 超过 <paramref name="targetVersion" /> 的边，使计划结束于
+        ///     配置的当前 schema。返回路径使用最少迁移步骤数；平局时
+        ///     按迭代顺序打破（注册顺序，然后按 FromVersion、ToVersion 排序）。
         /// </summary>
         private static bool TryBuildShortestMigrationPath(
             int startVersion,
@@ -305,43 +305,43 @@ namespace STS2RitsuLib.Utils.Persistence.Migration
 
     /// <summary>
     ///     Result of a migration operation
-    ///     中文说明：Result of a migration operation
+    ///     迁移操作的结果。
     /// </summary>
     public class MigrationResult<T>
     {
         /// <summary>
         ///     True when JSON was parsed and optional migrations succeeded.
-        ///     当 JSON was parsed and optional migrations succeeded 时为 true。
+        ///     当 JSON 已解析且可选迁移成功时为 true。
         /// </summary>
         public bool Success { get; init; }
 
         /// <summary>
         ///     Migrated instance when <see cref="Success" /> is true.
-        ///     Migrated instance 当 <c>Success</c> is true.
+        ///     <see cref="Success" /> 为 true 时的迁移后实例。
         /// </summary>
         public T? Data { get; init; }
 
         /// <summary>
         ///     Failure explanation when <see cref="Success" /> is false.
-        ///     Failure explanation 当 <c>Success</c> is false.
+        ///     <see cref="Success" /> 为 false 时的失败说明。
         /// </summary>
         public string? ErrorMessage { get; init; }
 
         /// <summary>
         ///     True when at least one migration step ran.
-        ///     当 at least one migration step ran 时为 true。
+        ///     当 at least one 迁移 step ran.
         /// </summary>
         public bool WasMigrated { get; init; }
 
         /// <summary>
         ///     Schema version after migration (or the detected version when no migrations ran).
-        ///     Schema version 之后 migration (or the detected version 当 no migrations ran).
+        ///     迁移后的 schema 版本（未执行迁移时为检测到的版本）。
         /// </summary>
         public int FinalVersion { get; init; }
 
         /// <summary>
         ///     True when the on-disk file should be quarantined or reset (corrupt or unsupported version).
-        ///     当 the on-disk file should be quarantined or reset (corrupt or unsupported version) 时为 true。
+        ///     当磁盘文件应被隔离或重置时为 true（损坏或版本不受支持）。
         /// </summary>
         public bool RequiresRecovery { get; init; }
     }

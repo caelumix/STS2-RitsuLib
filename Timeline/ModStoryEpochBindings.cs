@@ -4,10 +4,12 @@ namespace STS2RitsuLib.Timeline
 {
     /// <summary>
     ///     Collects ordered epoch CLR types per concrete <see cref="MegaCrit.Sts2.Core.Timeline.StoryModel" /> type, filled by
-    ///     Collects ordered epoch CLR types per concrete <c>MegaCrit.Sts2.Core.Timeline.Story模型</c> type, filled by
     ///     <see cref="ModTimelineRegistry.RegisterStoryEpoch{TStory, TEpoch}" />. <see cref="Scaffolding.ModStoryTemplate" />
     ///     reads this list instead of a hard-coded <c>EpochTypes</c> override.
-    ///     中文说明：reads this list instead of a hard-coded <c>EpochTypes</c> override.
+    ///     按具体 <see cref="MegaCrit.Sts2.Core.Timeline.StoryModel" /> 类型收集有序纪元 CLR 类型，由
+    ///     <see cref="ModTimelineRegistry.RegisterStoryEpoch{TStory, TEpoch}" /> 填充。
+    ///     <see cref="Scaffolding.ModStoryTemplate" />
+    ///     会读取此列表，而不是硬编码的 <c>EpochTypes</c> override。
     /// </summary>
     public static class ModStoryEpochBindings
     {
@@ -21,7 +23,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Appends <paramref name="epochType" /> to <paramref name="storyType" />'s column order (registration order).
-        ///     Appends <c>epochType</c> to <c>storyType</c>'s column order (注册 order).
+        ///     将 <paramref name="epochType" /> 追加到 <paramref name="storyType" /> 的列顺序中（注册顺序）。
         /// </summary>
         /// <exception cref="InvalidOperationException">
         ///     Frozen, duplicate epoch in the same story, or epoch already bound to
@@ -72,7 +74,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Ordered epoch types for a concrete story type, or empty when none were bound.
-        ///     Ordered epoch types 用于 a concrete story type, 或 empty 当 none were bound.
+        ///     具体 story 类型的有序纪元类型；未绑定时为空。
         /// </summary>
         public static IReadOnlyList<Type> GetOrderedEpochTypes(Type storyConcreteType)
         {

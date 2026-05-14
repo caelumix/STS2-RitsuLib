@@ -6,7 +6,7 @@ namespace STS2RitsuLib.Networking.Sidecar.Patches
 {
     /// <summary>
     ///     Host-side hook: when vanilla compare detects checksum mismatch, trigger a one-shot sidecar coordinated dump.
-    ///     Host-side hook: 当 原版 compare detects checksum mismatch, trigger a one-shot sidecar coordinated dump.
+    ///     主机侧 hook：当原版比较检测到 checksum 不匹配时，触发一次性 sidecar 协调 dump。
     /// </summary>
     internal sealed class RitsuLibSidecarChecksumDivergenceRelayPatch : IPatchMethod
     {

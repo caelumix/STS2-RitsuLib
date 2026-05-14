@@ -14,8 +14,9 @@ namespace STS2RitsuLib.Settings.Patches
 {
     /// <summary>
     ///     Harmony patch that reuses one <see cref="RitsuModSettingsSubmenu" /> per
-    ///     Harmony patch that re使用 one <c>RitsuModSettingsSubmenu</c> per
     ///     <see cref="NMainMenuSubmenuStack" /> instance.
+    ///     Harmony patch：每个 <see cref="NMainMenuSubmenuStack" /> 实例复用一个
+    ///     <see cref="RitsuModSettingsSubmenu" />。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -41,7 +42,7 @@ namespace STS2RitsuLib.Settings.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Returns a cached <see cref="RitsuModSettingsSubmenu" /> for the stack when the requested type matches.
-        ///     返回 a cached <c>RitsuModSettingsSubmenu</c> for the stack when the requested type matches。
+        ///     当请求的类型匹配时，为该 stack 返回缓存的 <see cref="RitsuModSettingsSubmenu" />。
         /// </summary>
         public static bool Prefix(NMainMenuSubmenuStack __instance, Type type, ref NSubmenu __result)
             // ReSharper restore InconsistentNaming
@@ -69,8 +70,9 @@ namespace STS2RitsuLib.Settings.Patches
 
     /// <summary>
     ///     Harmony patch that reuses one <see cref="RitsuModSettingsSubmenu" /> per
-    ///     Harmony patch that re使用 one <c>RitsuModSettingsSubmenu</c> per
     ///     <see cref="NRunSubmenuStack" /> (in-run pause / settings), mirroring <see cref="ModSettingsSubmenuPatch" />.
+    ///     Harmony patch：每个 <see cref="NRunSubmenuStack" />（跑局中暂停 / 设置）复用一个
+    ///     <see cref="RitsuModSettingsSubmenu" />，对应 <see cref="ModSettingsSubmenuPatch" /> 的做法。
     /// </summary>
     public class ModSettingsRunSubmenuStackPatch : IPatchMethod
     {
@@ -92,7 +94,7 @@ namespace STS2RitsuLib.Settings.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Returns a cached <see cref="RitsuModSettingsSubmenu" /> for the run stack when the requested type matches.
-        ///     返回 a cached <c>RitsuModSettingsSubmenu</c> for the run stack when the requested type matches。
+        ///     当请求的类型匹配时，为跑局 stack 返回缓存的 <see cref="RitsuModSettingsSubmenu" />。
         /// </summary>
         public static bool Prefix(NRunSubmenuStack __instance, Type type, ref NSubmenu __result)
             // ReSharper restore InconsistentNaming
@@ -107,7 +109,7 @@ namespace STS2RitsuLib.Settings.Patches
 
     /// <summary>
     ///     Injects the “Mod Settings (RitsuLib)” row into the vanilla settings screen and keeps general panel height in sync.
-    ///     Injects the “Mod 设置 (RitsuLib)” row into the 原版 设置 screen 和 keeps general panel height in sync.
+    ///     将 “Mod Settings (RitsuLib)” 行注入原版设置屏幕，并保持 General 面板高度同步。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -137,7 +139,7 @@ namespace STS2RitsuLib.Settings.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Ensures the entry line exists, refreshes copy, and schedules panel height refresh when mod pages exist.
-        ///     Ensures the entry line exists, refreshes copy, 和 schedules panel height refresh 当 mod pages exist.
+        ///     确保条目行存在，刷新文案，并在存在 mod 页面时安排面板高度刷新。
         /// </summary>
         public static void Postfix(NSettingsScreen __instance)
         {
@@ -235,9 +237,9 @@ namespace STS2RitsuLib.Settings.Patches
 
         /// <summary>
         ///     Mirrors <see cref="NSettingsPanel" />'s private refresh: when content exceeds the viewport (plus padding), panel
-        ///     Mirrors <c>NSettingsPanel</c>'s private refresh: 当 content exceeds the viewport (plus padding), panel
         ///     height becomes <c>contentMinY + parentHeight * 0.4f</c> for bottom scroll slack (game default).
-        ///     height becomes <c>contentMinY + parentHeight * 0.4f</c> 用于 bottom scroll slack (game default).
+        ///     复刻 <see cref="NSettingsPanel" /> 的私有刷新逻辑：当内容超过视口（加 padding）时，面板
+        ///     高度变为 <c>contentMinY + parentHeight * 0.4f</c>，为底部滚动留出余量（游戏默认值）。
         /// </summary>
         private static void RefreshPanelSize(NSettingsPanel panel)
         {
@@ -268,9 +270,9 @@ namespace STS2RitsuLib.Settings.Patches
 
         /// <summary>
         ///     Sum of visible direct children's <see cref="Control.GetCombinedMinimumSize" /> and VBox separation;
-        ///     Sum of visible direct children's <c>Control.GetCombinedMinimumSize</c> 和 VBox separation;
         ///     fallback when <see cref="Control.GetMinimumSize" /> on the root VBox is temporarily too small.
-        ///     fallback 当 <c>Control.GetMinimumSize</c> on the root VBox is temporarily too small.
+        ///     可见直接子节点的 <see cref="Control.GetCombinedMinimumSize" /> 与 VBox 间距之和；
+        ///     当根 VBox 上的 <see cref="Control.GetMinimumSize" /> 暂时过小时作为回退。
         /// </summary>
         private static float ComputeVBoxContentMinHeight(VBoxContainer box)
         {
@@ -294,10 +296,9 @@ namespace STS2RitsuLib.Settings.Patches
 
     /// <summary>
     ///     Rebuilds the General tab vertical focus chain the same way <see cref="NSettingsPanel" /> does in
-    ///     中文说明：Rebuilds the General tab vertical focus chain the same way <c>NSettingsPanel</c> does in
-    ///     Rebuilds the General tab vertical focus chain the same way <c>NSettingsPanel</c> does in
-    ///     中文说明：Rebuilds the General tab vertical focus chain the same way <c>NSettingsPanel</c> does in
     ///     <c>_Ready</c>, after our row is injected (vanilla never sees the new controls).
+    ///     按 <see cref="NSettingsPanel" /> 相同的方式重建 General 标签页的垂直焦点链，
+    ///     在注入我们的行后于 <c>_Ready</c> 中执行（原版不会看到这些新控件）。
     /// </summary>
     internal static class GeneralSettingsModEntryFocusWire
     {

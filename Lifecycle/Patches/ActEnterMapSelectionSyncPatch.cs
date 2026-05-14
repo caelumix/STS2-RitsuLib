@@ -13,10 +13,11 @@ namespace STS2RitsuLib.Lifecycle.Patches
     ///     replaced the <see cref="ActModel" />, so votes and relic-driven layout changes stay
     ///     consistent (avoids patching <see cref="RunManager.SetActInternal" />, whose Harmony postfix can run before
     ///     <see cref="RunManager.GenerateMap" /> completes).
-    ///     在地图 UI 完成应用 <c>NMapScreen.SetMap</c> 后，如果进入章节逻辑替换了 <c>ActModel</c>，
-    ///     则可选择递增 <c>MegaCrit.Sts2.Core.Multiplayer.Game.MapSelectionSynchronizer.MapGenerationCount</c>，
-    ///     让投票和遗物驱动的布局变更保持一致（避免补丁 <c>RunManager.SetActInternal</c>，其 Harmony postfix
-    ///     可能早于 <c>RunManager.GenerateMap</c> 完成）。
+    ///     在地图 UI 完成应用 <see cref="NMapScreen.SetMap" /> 后，如果 act-enter 逻辑
+    ///     替换了 <see cref="ActModel" />，则可选择增加
+    ///     <see cref="MegaCrit.Sts2.Core.Multiplayer.Game.MapSelectionSynchronizer.MapGenerationCount" />，使投票和遗物驱动的布局变化保持
+    ///     一致（避免 patch <see cref="RunManager.SetActInternal" />，因为其 Harmony postfix 可能在
+    ///     <see cref="RunManager.GenerateMap" /> 完成前运行）。
     /// </summary>
     public sealed class ActEnterMapSelectionSyncPatch : IPatchMethod
     {
@@ -41,7 +42,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
         /// <summary>
         ///     Harmony postfix: synchronizer bump after the visible map matches <see cref="RunManager.GenerateMap" /> output.
-        ///     Harmony postfix：在可见地图与 <c>RunManager.GenerateMap</c> 输出一致后递增同步器。
+        ///     Harmony postfix：在可见地图与 <see cref="RunManager.GenerateMap" /> 输出一致后递增同步器。
         /// </summary>
         public static void Postfix()
         {

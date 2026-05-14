@@ -7,14 +7,15 @@ namespace STS2RitsuLib.Timeline.Scaffolding
 {
     /// <summary>
     ///     Relic-unlock epoch whose gated relic types are declared in the content pack via
-    ///     遗物-unlock epoch whose gated 遗物 types are declared in the content pack via
     ///     <see cref="TimelineColumnPackEntry{TStory}" />.
+    ///     遗物解锁纪元 其受门控的遗物类型通过内容包中的声明：
+    ///     <see cref="TimelineColumnPackEntry{TStory}" />。
     /// </summary>
     public abstract class PackDeclaredRelicUnlockEpochTemplate : ModEpochTemplate
     {
         /// <summary>
         ///     Relics resolved from <see cref="ModEpochGatedContentRegistry" /> for this epoch’s <see cref="EpochModel.Id" />.
-        ///     Relics resolved 从 <c>ModEpochGatedContent注册表</c> 用于 this epoch’s <c>Epoch模型.Id</c>.
+        ///     解析出的遗物，来源： <see cref="ModEpochGatedContentRegistry" /> 用于此纪元的 <see cref="EpochModel.Id" />。
         /// </summary>
         public IReadOnlyList<RelicModel> Relics => ModEpochGatedContentRegistry.ResolveRelics(Id);
 
@@ -23,7 +24,7 @@ namespace STS2RitsuLib.Timeline.Scaffolding
 
         /// <summary>
         ///     Additional epoch types to append when this epoch unlocks.
-        ///     Additional epoch types to append 当 this epoch unlocks.
+        ///     要追加的额外纪元类型 当此纪元解锁时。
         /// </summary>
         protected virtual IEnumerable<Type> ExpansionEpochTypes => [];
 

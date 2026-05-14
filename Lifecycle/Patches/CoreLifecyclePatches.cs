@@ -20,8 +20,9 @@ namespace STS2RitsuLib.Lifecycle.Patches
     /// <summary>
     ///     Publishes <see cref="EssentialInitializationStartingEvent" /> / <see cref="DeferredInitializationStartingEvent" />
     ///     and matching completed events around vanilla one-time initialization.
-    ///     在原版一次性初始化前后发布 <c>EssentialInitializationStartingEvent</c> /
-    ///     <c>DeferredInitializationStartingEvent</c> 及其对应的完成事件。
+    ///     在原版一次性初始化前后发布 <see cref="EssentialInitializationStartingEvent" /> /
+    ///     <see cref="DeferredInitializationStartingEvent" />
+    ///     以及对应的 completed 事件。
     /// </summary>
     public class CoreInitializationLifecyclePatch : IPatchMethod
     {
@@ -97,7 +98,8 @@ namespace STS2RitsuLib.Lifecycle.Patches
     /// <summary>
     ///     Hooks <see cref="ModelDb" /> and related init to freeze registries, inject models, and publish model lifecycle
     ///     events.
-    ///     挂接 <c>ModelDb</c> 及相关初始化流程，用于冻结注册表、注入模型并发布模型生命周期事件。
+    ///     hook <see cref="ModelDb" /> 和相关 init，以冻结注册表、注入模型并发布模型生命周期
+    ///     事件。
     /// </summary>
     public class ModelRegistryLifecyclePatch : IPatchMethod
     {
@@ -172,7 +174,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Publishes “completed” model lifecycle events after <see cref="ModelDb" /> init phases.
-        ///     在 <c>ModelDb</c> 初始化阶段后发布“completed”模型生命周期事件。
+        ///     在 <see cref="ModelDb" /> 初始化阶段后发布“completed”模型生命周期事件。
         /// </summary>
         public static void Postfix(MethodBase __originalMethod)
         {
@@ -208,7 +210,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
     /// <summary>
     ///     Publishes <see cref="GameTreeEnteredEvent" /> and <see cref="GameReadyEvent" /> for <see cref="NGame" />.
-    ///     为 <c>NGame</c> 发布 <c>GameTreeEnteredEvent</c> 和 <c>GameReadyEvent</c>。
+    ///     为 <see cref="NGame" /> 发布 <see cref="GameTreeEnteredEvent" /> 和 <see cref="GameReadyEvent" />。
     /// </summary>
     public class GameNodeLifecyclePatch : IPatchMethod
     {
@@ -234,7 +236,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Dispatches game tree / ready lifecycle events based on which <see cref="NGame" /> method was patched.
-        ///     根据被补丁的 <c>NGame</c> 方法分发游戏树/就绪生命周期事件。
+        ///     根据被补丁的 <see cref="NGame" /> 方法分发游戏树/就绪生命周期事件。
         /// </summary>
         public static void Postfix(MethodBase __originalMethod, NGame __instance)
             // ReSharper restore InconsistentNaming
@@ -259,7 +261,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
     /// <summary>
     ///     Publishes <see cref="RunStartedEvent" /> and <see cref="RunLoadedEvent" /> from <see cref="RunManager" />.
-    ///     从 <c>RunManager</c> 发布 <c>RunStartedEvent</c> 和 <c>RunLoadedEvent</c>。
+    ///     从 <see cref="RunManager" /> 发布 <see cref="RunStartedEvent" /> 和 <see cref="RunLoadedEvent" />。
     /// </summary>
     public class RunLifecyclePatch : IPatchMethod
     {
@@ -316,7 +318,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
     /// <summary>
     ///     Publishes <see cref="RunEndedEvent" /> and forwards run end to <see cref="ModUnlockRegistry" />.
-    ///     发布 <c>RunEndedEvent</c>，并将跑局结束转发给 <c>ModUnlockRegistry</c>。
+    ///     发布 <see cref="RunEndedEvent" />，并将跑局结束转发给 <see cref="ModUnlockRegistry" />。
     /// </summary>
     public class RunEndedLifecyclePatch : IPatchMethod
     {
@@ -341,7 +343,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Runs unlock bookkeeping and publishes <see cref="RunEndedEvent" /> when a run terminates.
-        ///     当跑局终止时运行解锁记账并发布 <c>RunEndedEvent</c>。
+        ///     当跑局终止时运行解锁记账并发布 <see cref="RunEndedEvent" />。
         /// </summary>
         public static void Postfix(RunManager __instance, bool isVictory, SerializableRun __result)
             // ReSharper restore InconsistentNaming

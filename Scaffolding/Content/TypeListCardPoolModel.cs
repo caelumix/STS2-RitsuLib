@@ -6,23 +6,24 @@ namespace STS2RitsuLib.Scaffolding.Content
 {
     /// <summary>
     ///     Card pool base that can enumerate legacy CLR card types, expose optional pool frame material overrides,
-    ///     卡牌 pool base that can enumerate legacy CLR 卡牌 types, expose 可选 pool frame 材质 overrides,
     ///     and map energy icon paths for UI patches.
-    ///     and map energy 图标 路径 用于 UI patches.
+    ///     卡牌池基类：可枚举旧式 CLR 卡牌类型，公开可选的池边框材质覆盖，
+    ///     并为 UI 补丁映射能量图标路径。
     /// </summary>
     public abstract class TypeListCardPoolModel : CardPoolModel, IModBigEnergyIconPool, IModTextEnergyIconPool,
         IModCardPoolFrameMaterial
     {
         /// <summary>
         ///     Legacy hook: enumerating card types on the pool class. Prefer registering each card through
-        ///     Legacy hook: enumerating 卡牌 types on the pool class. Prefer registering each 卡牌 through
         ///     <c>ModContentRegistry.RegisterCard&lt;TPool, TCard&gt;()</c>, <c>CreateContentPack.Card&lt;TPool, TCard&gt;()</c>,
         ///     or a manifest <c>CardRegistrationEntry</c> so <c>ModHelper.AddModelToPool</c> injects them without
-        ///     or a manifest <c>卡牌RegistrationEntry</c> so <c>ModHelper.Add模型ToPool</c> injects them 带有out
         ///     duplicating the same <see cref="CardModel" /> instances when this property also lists those types.
-        ///     duplicating the same <c>CardModel</c> instances 当 this property also lists those types.
         ///     Defaults to an empty sequence.
-        ///     中文说明：Defaults to an empty sequence.
+        ///     旧式钩子：枚举池类上的卡牌类型。建议改为通过以下方式逐张注册卡牌：
+        ///     <c>ModContentRegistry.RegisterCard&lt;TPool, TCard&gt;()</c>、<c>CreateContentPack.Card&lt;TPool, TCard&gt;()</c>，
+        ///     或 manifest <c>CardRegistrationEntry</c>，让 <c>ModHelper.AddModelToPool</c> 注入它们，避免
+        ///     当此属性也列出这些类型时重复生成同一批 <see cref="CardModel" /> 实例。
+        ///     默认为空序列。
         /// </summary>
         [Obsolete(
             "Prefer ModContentRegistry / CreateContentPack .Card<TPool, TCard>() or manifest CardRegistrationEntry. "
@@ -31,11 +32,11 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Path-based fallback for the card frame material.
-        ///     路径-based fallback 用于 the 卡牌 frame 材质.
         ///     Only used when <see cref="PoolFrameMaterial" /> is null.
-        ///     Only used 当 <c>PoolFrame材质</c> is null.
         ///     Override this if you want to reference a pre-existing <c>.tres</c> material file.
-        ///     Override this 如果 you want to reference a pre-existing <c>.tres</c> 材质 file.
+        ///     卡牌边框材质的基于路径的回退。
+        ///     仅当 <see cref="PoolFrameMaterial" /> 为 null 时使用。
+        ///     如果要引用已有的 <c>.tres</c> 材质文件，请重写此项。
         /// </summary>
         public override string CardFrameMaterialPath => "card_frame_colorless";
 
@@ -44,9 +45,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Directly supply a <see cref="Material" /> for all card frames in this pool.
-        ///     Directly supply a <c>材质</c> 用于 all 卡牌 frames in this pool.
         ///     When non-null, <see cref="CardFrameMaterialPath" /> is ignored.
-        ///     当 non-null, <c>CardFrame材质路径</c> is ignored.
+        ///     为此池中的所有卡牌边框直接提供 <see cref="Material" />。
+        ///     非 null 时会忽略 <see cref="CardFrameMaterialPath" />。
         /// </summary>
         public virtual Material? PoolFrameMaterial => null;
 

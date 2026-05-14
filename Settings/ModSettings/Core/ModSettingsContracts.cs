@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Identifies a mod settings value stored under a mod id, data key, and <see cref="SaveScope" />.
-    ///     标识一个按 Mod id、数据键和 <c>SaveScope</c> 存储的 Mod 设置值。
+    ///     标识存储在 mod id、data key 和 <see cref="SaveScope" /> 下的 mod 设置值。
     /// </summary>
     public interface IModSettingsBinding
     {
@@ -35,7 +35,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Read/write binding for a single settings value of type <typeparamref name="TValue" />.
-    ///     单个 <c>TValue</c> 类型设置值的读写绑定。
+    ///     类型为 <typeparamref name="TValue" /> 的单个设置值的读 / 写绑定。
     /// </summary>
     /// <typeparam name="TValue">
     ///     Serialized settings payload type.
@@ -97,20 +97,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Serializes <paramref name="value" /> to a single text blob (e.g. JSON).
-        ///     将 <c>value</c> 序列化为单个文本块（例如 JSON）。
+        ///     将 <paramref name="value" /> 序列化为单个文本 blob（例如 JSON）。
         /// </summary>
         string Serialize(TValue value);
 
         /// <summary>
         ///     Parses <paramref name="text" /> into <paramref name="value" />.
-        ///     将 <c>text</c> 解析到 <c>value</c>。
+        ///     将 <paramref name="text" /> 解析到 <paramref name="value" /> 中。
         /// </summary>
         bool TryDeserialize(string text, out TValue value);
     }
 
     /// <summary>
     ///     Value binding that uses an <see cref="IStructuredModSettingsValueAdapter{TValue}" /> for serialization.
-    ///     使用 <c>IStructuredModSettingsValueAdapter{TValue}</c> 进行序列化的值绑定。
+    ///     使用 <see cref="IStructuredModSettingsValueAdapter{TValue}" /> 进行序列化的值绑定。
     /// </summary>
     /// <typeparam name="TValue">
     ///     Structured settings type.
@@ -128,8 +128,8 @@ namespace STS2RitsuLib.Settings
     /// <summary>
     ///     Marker for bindings backed by <see cref="T:STS2RitsuLib.Settings.RunSidecar.ModRunSidecarStore" />
     ///     (client-local JSON, never written into vanilla multiplayer packets).
-    ///     由 <c>T:STS2RitsuLib.Settings.RunSidecar.ModRunSidecarStore</c> 支持的绑定标记
-    ///     （客户端本地 JSON，永远不会写入原版多人数据包）。
+    ///     由 <see cref="T:STS2RitsuLib.Settings.RunSidecar.ModRunSidecarStore" /> 支持的绑定标记
+    ///     （客户端本地 JSON，永不写入原版多人数据包）。
     /// </summary>
     public interface IRunSidecarModSettingsBinding : IModSettingsBinding;
 }

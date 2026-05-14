@@ -85,13 +85,13 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Raised after translations are reloaded (locale change or <see cref="ForceReload" />).
-        ///     在翻译重载后触发（语言切换或调用 <c>ForceReload</c>）。
+        ///     在翻译重新加载后触发（区域设置变化或 <see cref="ForceReload" />）。
         /// </summary>
         public event Action? Changed;
 
         /// <summary>
         ///     Returns the translation for <paramref name="key" /> or <paramref name="fallback" /> if missing.
-        ///     返回 <c>key</c> 对应的翻译；缺失时返回 <c>fallback</c>。
+        ///     返回 <paramref name="key" /> 的翻译；缺失时返回 <paramref name="fallback" />。
         /// </summary>
         public string Get(string key, string fallback)
         {
@@ -102,7 +102,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns true and outputs the translation when <paramref name="key" /> exists.
-        ///     当 <c>key</c> 存在时返回 true，并输出对应翻译。
+        ///     当 <paramref name="key" /> 存在时返回 true 并输出翻译。
         /// </summary>
         public bool TryGet(string key, out string value)
         {
@@ -113,7 +113,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns true when <paramref name="key" /> exists in the current merged dictionary.
-        ///     当 <c>key</c> 存在于当前合并字典中时返回 true。
+        ///     当 <paramref name="key" /> 存在于当前合并字典中时返回 true。
         /// </summary>
         public bool ContainsKey(string key)
         {
@@ -206,7 +206,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Reloads translations for the current resolved language and raises <see cref="Changed" />.
-        ///     为当前解析出的语言重新加载翻译，并触发 <c>Changed</c>。
+        ///     重新加载当前解析语言的翻译，并触发 <see cref="Changed" />。
         /// </summary>
         public void ForceReload()
         {
@@ -470,10 +470,8 @@ namespace STS2RitsuLib.Utils
         /// </summary>
         /// <remarks>
         ///     Resolution tries (in order):
-        ///     解析会按以下顺序尝试：
         ///     <list type="number">
         ///         <item>
-        ///             <description><c>LocManager.Instance.Language</c> (when available)；<c>LocManager.Instance.Language</c>（可用时）</description>
         ///         </item>
         ///         <item>
         ///             <description>
@@ -483,7 +481,17 @@ namespace STS2RitsuLib.Utils
         ///     </list>
         ///     The returned value is always normalized by <see cref="NormalizeLanguageCode" /> and falls back to
         ///     <c>eng</c> when unknown.
-        ///     返回值始终会经过 <c>NormalizeLanguageCode</c> 规范化；未知时回退到 <c>eng</c>。
+        ///     解析会按顺序尝试：
+        ///     <list type="number">
+        ///         <item>
+        ///         </item>
+        ///         <item>
+        ///             <description>
+        ///             </description>
+        ///         </item>
+        ///     </list>
+        ///     返回值始终由 <see cref="NormalizeLanguageCode" /> 规范化，并在未知时回退到
+        ///     <c>eng</c>。
         /// </remarks>
         public static string ResolveCurrentLanguageCode()
         {
@@ -519,21 +527,27 @@ namespace STS2RitsuLib.Utils
         /// </summary>
         /// <remarks>
         ///     Examples:
-        ///     示例：
         ///     <list type="bullet">
         ///         <item>
-        ///             <description><c>en</c>, <c>en_us</c>, <c>en-US</c> -&gt; <c>eng</c>；英语区域代码会归一为 <c>eng</c></description>
         ///         </item>
         ///         <item>
-        ///             <description><c>zh</c>, <c>zh_cn</c>, <c>zh-Hans</c> -&gt; <c>zhs</c>；简体中文区域代码会归一为 <c>zhs</c></description>
         ///         </item>
         ///         <item>
-        ///             <description><c>ja</c>, <c>ja_jp</c> -&gt; <c>jpn</c>；日语区域代码会归一为 <c>jpn</c></description>
         ///         </item>
         ///     </list>
         ///     Unrecognized values are lower-cased, with <c>-</c> replaced by <c>_</c>.
         ///     Null or whitespace inputs fall back to <c>eng</c>.
-        ///     无法识别的值会转为小写，并将 <c>-</c> 替换为 <c>_</c>；null 或空白输入会回退到 <c>eng</c>。
+        ///     示例：
+        ///     <list type="bullet">
+        ///         <item>
+        ///         </item>
+        ///         <item>
+        ///         </item>
+        ///         <item>
+        ///         </item>
+        ///     </list>
+        ///     无法识别的值会转为小写，并将 <c>-</c> 替换为 <c>_</c>。
+        ///     null 或空白输入会回退到 <c>eng</c>。
         /// </remarks>
         public static string NormalizeLanguageCode(string? language)
         {

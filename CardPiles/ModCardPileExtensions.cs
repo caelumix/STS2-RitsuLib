@@ -4,14 +4,14 @@ namespace STS2RitsuLib.CardPiles
 {
     /// <summary>
     ///     Extension helpers for working with minted mod <see cref="PileType" /> values.
-    ///     用于处理 minted mod <c>PileType</c> 值的 extension helper。
+    ///     用于处理 minted mod <see cref="PileType" /> 值的 extension helper。
     /// </summary>
     public static class ModCardPileExtensions
     {
         /// <summary>
         ///     Convenience: minted <see cref="PileType" /> value for <paramref name="pileId" />, intended for
         ///     vanilla-style call sites such as <c>player.GetPile(id.GetModCardPileType())</c>.
-        ///     便捷方法：返回 <c>pileId</c> 的 minted <c>PileType</c> 值，供
+        ///     便捷方法：返回 <paramref name="pileId" /> 的 minted <see cref="PileType" /> 值，供
         ///     <c>player.GetPile(id.GetModCardPileType())</c> 等原版风格调用点使用。
         /// </summary>
         public static PileType GetModCardPileType(this string pileId)
@@ -22,7 +22,7 @@ namespace STS2RitsuLib.CardPiles
 
         /// <summary>
         ///     Tries to reverse-map a minted mod <see cref="PileType" /> value to its registered string id.
-        ///     尝试将 minted mod <c>PileType</c> 值反向映射到其已注册字符串 id。
+        ///     尝试将 minted mod <see cref="PileType" /> 值反向映射到其已注册字符串 id。
         /// </summary>
         public static bool TryGetModCardPileId(this PileType value, out string id)
         {
@@ -31,7 +31,7 @@ namespace STS2RitsuLib.CardPiles
 
         /// <summary>
         ///     Reverse-maps a minted mod <see cref="PileType" /> value to its registered string id.
-        ///     将 minted mod <c>PileType</c> 值反向映射到其已注册字符串 id。
+        ///     将 minted mod <see cref="PileType" /> 值反向映射到其已注册字符串 id。
         /// </summary>
         public static string GetModCardPileId(this PileType value)
         {

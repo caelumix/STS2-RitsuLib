@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Keywords
 {
     /// <summary>
     ///     Declarative keyword row for content packs: register with a <see cref="ModKeywordRegistry" /> in one call.
-    ///     content pack 使用的声明式 keyword 行：一次调用即可通过 <c>ModKeywordRegistry</c> 注册。
+    ///     content pack 使用的声明式 keyword 行：一次调用即可通过 <see cref="ModKeywordRegistry" /> 注册。
     /// </summary>
     public sealed record KeywordRegistrationEntry
     {
@@ -69,7 +69,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Title localization key.
-        ///     title 本地化 key。
+        ///     标题本地化键。
         /// </summary>
         public string TitleKey { get; init; } = string.Empty;
 
@@ -81,7 +81,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Description localization key.
-        ///     description 本地化 key。
+        ///     描述本地化键。
         /// </summary>
         public string DescriptionKey { get; init; } = string.Empty;
 
@@ -93,7 +93,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Inline card-description injection placement.
-        ///     inline card-description 注入位置。
+        ///     内联卡牌描述注入位置。
         /// </summary>
         public ModKeywordCardDescriptionPlacement CardDescriptionPlacement { get; init; } =
             ModKeywordCardDescriptionPlacement.None;
@@ -106,7 +106,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Registers this entry on <paramref name="registry" />.
-        ///     将此 entry 注册到 <c>registry</c>。
+        ///     将此条目注册到 <paramref name="registry" />。
         /// </summary>
         public void Register(ModKeywordRegistry registry)
         {
@@ -123,7 +123,8 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     <c>card_keywords</c> row: id and loc stem both from <see cref="ModContentRegistry.GetQualifiedKeywordId" />.
-        ///     <c>card_keywords</c> 行：id 与 loc stem 都来自
+        ///     <see cref="ModContentRegistry.GetQualifiedKeywordId" />。
+        ///     <c>card_keywords</c> 行：id 与本地化词干都来自 <see cref="ModContentRegistry.GetQualifiedKeywordId" />。
         ///     <see cref="ModContentRegistry.GetQualifiedKeywordId" />。
         /// </summary>
         public static KeywordRegistrationEntry OwnedCardByLocNamespace(
@@ -165,7 +166,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Builds a <c>card_keywords</c> entry (full factory signature).
-        ///     构建 <c>card_keywords</c> entry（完整工厂签名）。
+        ///     构建 <c>card_keywords</c> 条目（完整工厂签名）。
         /// </summary>
         [Obsolete(
             "Prefer OwnedCardByLocNamespace(modId, localKeywordStem, ...) so the keyword id is mod-qualified like fixed model entries; flat ids collide globally.")]

@@ -6,25 +6,25 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Optional 8-byte big-endian correlation id in the header extension immediately after the 1-byte delivery tag
-    ///     可选 8-byte big-endian correlation id in the header extension immediately 之后 the 1-byte delivery tag
     ///     from <see cref="RitsuLibSidecar.CreateEnvelopeWithDelivery" /> (layout: delivery, correlation × 8, optional
-    ///     从 <c>RitsuLibSidecar.创建EnvelopeWithDelivery</c> (layout: delivery, correlation × 8, 可选
     ///     tail).
-    ///     中文说明：tail).
+    ///     header 扩展中紧跟 1 字节投递标签之后的可选 8 字节 big-endian correlation id
+    ///     来自 <see cref="RitsuLibSidecar.CreateEnvelopeWithDelivery" />（布局：delivery、correlation × 8、可选
+    ///     tail）。
     /// </summary>
     public static class RitsuLibSidecarRequestCorrelation
     {
         /// <summary>
         ///     Size of the correlation id in the extension (after the delivery byte).
-        ///     Size of the correlation id in the extension (之后 the delivery byte).
+        ///     扩展中 correlation id 的大小（位于投递字节之后）。
         /// </summary>
         public const int BigEndianU64Bytes = RitsuLibSidecarBinaryLayout.U64Size;
 
         /// <summary>
         ///     Minimum full <see cref="RitsuLibSidecarEnvelope.ParsedEnvelope.HeaderExtension" /> length to read a
-        ///     中文说明：Minimum full <c>RitsuLibSidecarEnvelope.ParsedEnvelope.HeaderExtension</c> length to read a
         ///     correlation.
-        ///     中文说明：correlation.
+        ///     读取
+        ///     correlation 所需的完整 <see cref="RitsuLibSidecarEnvelope.ParsedEnvelope.HeaderExtension" /> 最小长度。
         /// </summary>
         public const int MinHeaderExtensionBytesWithCorrelation =
             RitsuLibSidecarBinaryLayout.ByteSize + BigEndianU64Bytes;
@@ -33,7 +33,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Allocates a monotonically increasing correlation value for request/reply matching.
-        ///     Allocates a monotonically increasing correlation value 用于 request/reply matching.
+        ///     为请求/回复匹配分配一个单调递增的 correlation 值。
         /// </summary>
         public static ulong AllocateCorrelationId()
         {
@@ -42,7 +42,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Writes <paramref name="correlationId" /> big-endian into the first 8 bytes of <paramref name="destination" />.
-        ///     写入 <c>correlationId</c> big-endian into the first 8 bytes of <c>destination</c>。
+        ///     将 <paramref name="correlationId" /> 以 big-endian 写入 <paramref name="destination" /> 的前 8 字节。
         /// </summary>
         public static void WriteCorrelationBigEndian(Span<byte> destination, ulong correlationId)
         {
@@ -51,15 +51,15 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Builds <c>additionalHeaderExtension</c> for
-        ///     Builds <c>additionalHeaderExtension</c> 用于
         ///     <see
         ///         cref="RitsuLibSidecarHighLevelSend.TrySendAsClient(RunManager?,ulong,System.ReadOnlySpan{byte},RitsuLibSidecarDeliverySemantics,RitsuLibSidecarWireFlags,bool,System.ReadOnlySpan{byte})" />
-        ///     cref="RitsuLibSidecarHighLevelSend.TrySendAsClient(跑局Manager?,ulong,System.ReadOnlySpan{byte},RitsuLibSidecarDeliverySemantics,RitsuLibSidecarWireFlags,bool,System.ReadOnlySpan{byte})"
         ///     />
         ///     :
-        ///     中文说明：:
         ///     correlation (8 BE) then <paramref name="tailAfterCorrelation" />.
-        ///     correlation (8 BE) then <c>tail之后Correlation</c>.
+        ///     构建 <c>additionalHeaderExtension</c>，用于
+        ///     <see />
+        ///     ：
+        ///     correlation（8 BE），然后是 <paramref name="tailAfterCorrelation" />。
         /// </summary>
         public static byte[] PackAdditional(ulong correlationId, ReadOnlySpan<byte> tailAfterCorrelation = default)
         {
@@ -71,7 +71,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Appends correlation and tail to <paramref name="writer" />.
-        ///     Appends correlation 和 tail to <c>writer</c>.
+        ///     将 correlation 和 tail 追加到 <paramref name="writer" />。
         /// </summary>
         public static void PackAdditionalTo(ulong correlationId, ReadOnlySpan<byte> tailAfterCorrelation,
             IBufferWriter<byte> writer)
@@ -84,7 +84,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Reads the correlation from a full header extension (delivery byte first).
-        ///     Reads the correlation 从 a full header extension (delivery byte first).
+        ///     从完整 header 扩展（投递字节在前）读取 correlation。
         /// </summary>
         public static bool TryReadCorrelation(ReadOnlyMemory<byte> fullHeaderExtension, out ulong correlationId)
         {
@@ -101,7 +101,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     True when a correlation is present and equals <paramref name="expected" />.
-        ///     当 a correlation is present and equals <c>expected</c> 时为 true。
+        ///     存在 correlation 且等于 <paramref name="expected" /> 时为 True。
         /// </summary>
         public static bool HeaderExtensionCorrelationEquals(ReadOnlyMemory<byte> fullHeaderExtension, ulong expected)
         {

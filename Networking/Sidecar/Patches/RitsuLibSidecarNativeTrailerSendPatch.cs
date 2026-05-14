@@ -34,7 +34,7 @@ namespace STS2RitsuLib.Networking.Sidecar.Patches
 
     /// <summary>
     ///     Steam transport send hooks; omitted on mobile and skipped when the host assembly has no Steam transport types.
-    ///     Steam transport send hooks; omitted on mobile 和 skipped 当 the host assembly has no Steam transport types.
+    ///     Steam 传输发送 hook；在移动端省略，并在主机程序集没有 Steam 传输类型时跳过。
     /// </summary>
     internal sealed class RitsuLibSidecarNativeTrailerSteamSendPatch : IPatchMethod
     {

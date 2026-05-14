@@ -8,7 +8,7 @@ namespace STS2RitsuLib.Timeline.Patches
 {
     /// <summary>
     ///     Applies era-axis icon policy with default behavior that hides icons when a custom era has no texture.
-    ///     Applies era-axis 图标 policy 带有 default behavior that hides Icons 当 a 自定义 era has no 纹理.
+    ///     应用 纪元轴图标策略 默认行为是在以下情况隐藏图标： a 自定义纪元没有纹理。
     /// </summary>
     public sealed class NTimelineScreenGetEraIconPolicyPatch : IPatchMethod
     {
@@ -34,9 +34,9 @@ namespace STS2RitsuLib.Timeline.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Uses <see cref="ModTimelineEraIconRegistry" /> when configured; otherwise keeps vanilla icon resolution if
-        ///     使用 <c>ModTimelineEra图标注册表</c> 当 configured; otherwise keeps 原版 图标 resolution if
         ///     resources exist and hides icon when they do not.
-        ///     资源s exist 和 hides 图标 当 they do not.
+        ///     配置后使用 <see cref="ModTimelineEraIconRegistry" />；否则在
+        ///     资源存在时保留原版图标解析，资源不存在时隐藏图标。
         /// </summary>
         public static bool Prefix(EpochEra era, ref (Texture2D Texture, string Name) __result)
         {
@@ -87,7 +87,7 @@ namespace STS2RitsuLib.Timeline.Patches
 
     /// <summary>
     ///     Hides the era icon node when no texture was resolved.
-    ///     Hides the era 图标 node 当 no 纹理 was resolved.
+    ///     未解析到纹理时隐藏 era 图标节点。
     /// </summary>
     public sealed class NEraColumnHideEmptyIconPatch : IPatchMethod
     {
@@ -112,7 +112,7 @@ namespace STS2RitsuLib.Timeline.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Ensures no empty placeholder icon remains visible when texture is absent.
-        ///     Ensures no empty placeholder 图标 remains visible 当 纹理 is absent.
+        ///     确保 不会留下可见的空占位图标 当纹理缺失时。
         /// </summary>
         public static void Postfix(NEraColumn __instance)
         {

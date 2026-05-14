@@ -7,9 +7,9 @@ namespace STS2RitsuLib.Platform.Patches
 {
     /// <summary>
     ///     After <see cref="ModelDb.Init" /> (including STS2Mobile's replaced init), applies Harmony patches that must
-    ///     之后 <c>ModelDb.Init</c> (including STS2Mobile's replaced init), applies Harmony patches that must
     ///     not run during the first mod-load pass because they touch static init that depends on the model registry.
-    ///     not 跑局 期间 the first mod-加载 pass beca使用 they touch static init that depends on the 模型 注册表.
+    ///     在 <see cref="ModelDb.Init" /> 之后（包括 STS2Mobile 替换后的 init）应用必须
+    ///     不在第一次 mod 加载阶段运行的 Harmony patch，因为它们会触及依赖模型注册表的静态初始化。
     /// </summary>
     internal sealed class RitsuLibMobileModelDbInitPostfixPatch : IPatchMethod
     {

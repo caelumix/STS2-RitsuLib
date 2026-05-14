@@ -18,13 +18,13 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Fixes <see cref="NControllerCardPlay.Start" /> for <see cref="TargetType.AnyPlayer" /> in multiplayer.
-    ///     Fixes <c>NControllerCardPlay.Start</c> 用于 <c>TargetType.AnyPlayer</c> in multiplayer.
     ///     Vanilla routes AnyPlayer to <c>MultiCreatureTargeting</c> (confirm-to-play, no arrow).
-    ///     原版 routes AnyPlayer to <c>MultiCreatureTargeting</c> (confirm-to-play, no arrow).
     ///     This patch routes it to a custom single-creature targeting flow with the correct
-    ///     This patch routes it to a 自定义 single-creature targeting flow 带有 the correct
     ///     candidate list (all living players including self).
-    ///     中文说明：candidate list (all living players including self).
+    ///     修复多人模式下 <see cref="NControllerCardPlay.Start" /> 对 <see cref="TargetType.AnyPlayer" /> 的处理。
+    ///     原版将 AnyPlayer 路由到 <c>MultiCreatureTargeting</c>（确认后出牌，无箭头）。
+    ///     此补丁将其路由到自定义单生物目标流程，并使用正确的
+    ///     候选列表（包括自身在内的所有存活玩家）。
     /// </summary>
     internal sealed class NControllerCardPlayStartAnyPlayerPatch : IPatchMethod
     {
@@ -103,12 +103,13 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
     /// <summary>
     ///     Fixes <see cref="NControllerCardPlay" />'s private <c>SingleCreatureTargeting</c> for
-    ///     Fixes <c>NControllerCardPlay</c>'s private <c>SingleCreatureTargeting</c> 用于
     ///     <see cref="TargetType.AnyPlayer" />. Vanilla's switch only handles AnyEnemy and AnyAlly,
     ///     leaving the candidate list empty for AnyPlayer (immediately cancels).
-    ///     leaving the candidate list empty 用于 AnyPlayer (immediately cancels).
     ///     This patch provides the correct list: all living player creatures.
-    ///     中文说明：This patch provides the correct list: all living player creatures.
+    ///     修复 <see cref="NControllerCardPlay" /> 的私有 <c>SingleCreatureTargeting</c> 对
+    ///     <see cref="TargetType.AnyPlayer" /> 的处理。原版 switch 只处理 AnyEnemy 和 AnyAlly，
+    ///     会让 AnyPlayer 的候选列表为空（立即取消）。
+    ///     此补丁提供正确列表：所有存活玩家生物。
     /// </summary>
     internal sealed class NControllerCardPlaySingleTargetingAnyPlayerPatch : IPatchMethod
     {

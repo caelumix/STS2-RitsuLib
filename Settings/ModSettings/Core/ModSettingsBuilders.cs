@@ -23,7 +23,8 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Initializes a builder for mod <paramref name="modId" />; <paramref name="pageId" /> defaults to the mod id when
         ///     null or whitespace.
-        ///     为 <c>modId</c> 初始化构建器；当 <c>pageId</c> 为 null 或空白时默认使用 Mod id。
+        ///     为 mod <paramref name="modId" /> 初始化构建器；当 <paramref name="pageId" /> 为 null 或空白时，
+        ///     默认使用 mod id。
         /// </summary>
         public ModSettingsPageBuilder(string modId, string? pageId = null)
         {
@@ -76,7 +77,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Nests this page under <paramref name="parentPageId" /> in the UI hierarchy.
-        ///     在 UI 层级中将此页面嵌套到 <c>parentPageId</c> 下。
+        ///     在 UI 层级中将此页面嵌套到 <paramref name="parentPageId" /> 下。
         /// </summary>
         public ModSettingsPageBuilder AsChildOf(string parentPageId)
         {
@@ -107,7 +108,8 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Sets the mod display name in the sidebar and registers it with <see cref="ModSettingsRegistry" /> on
         ///     <see cref="Build" />.
-        ///     设置侧边栏中的 Mod 显示名称，并在 <c>Build</c> 时将其注册到 <c>ModSettingsRegistry</c>。
+        ///     设置侧边栏中的 mod 显示名称，并在 <see cref="Build" /> 时将其注册到
+        ///     <see cref="ModSettingsRegistry" />。
         /// </summary>
         public ModSettingsPageBuilder WithModDisplayName(ModSettingsText displayName)
         {
@@ -117,7 +119,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Sets <see cref="SortOrder" />.
-        ///     设置 <c>SortOrder</c>。
+        ///     设置 <see cref="SortOrder" />。
         /// </summary>
         public ModSettingsPageBuilder WithSortOrder(int sortOrder)
         {
@@ -128,8 +130,8 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Registers <see cref="ModSettingsRegistry.RegisterModSidebarOrder" /> for <see cref="ModId" /> when this page
         ///     is built (repeat calls from the same mod should use the same value).
-        ///     在此页面构建时为 <c>ModId</c> 注册 <c>ModSettingsRegistry.RegisterModSidebarOrder</c>
-        ///     （同一 Mod 的重复调用应使用相同值）。
+        ///     构建此页面时，为 <see cref="ModId" /> 注册 <see cref="ModSettingsRegistry.RegisterModSidebarOrder" />
+        ///     （同一 mod 的重复调用应使用相同值）。
         /// </summary>
         public ModSettingsPageBuilder WithModSidebarOrder(int order)
         {
@@ -140,8 +142,8 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Hides the page in the sidebar and main content when <paramref name="predicate" /> returns false (re-evaluated
         ///     on settings UI refresh).
-        ///     当 <c>predicate</c> 返回 false 时，在侧边栏和主内容中隐藏此页面
-        ///     （设置 UI 刷新时会重新计算）。
+        ///     当 <paramref name="predicate" /> 返回 false 时，在侧边栏和主内容中隐藏页面（设置 UI 刷新时
+        ///     重新求值）。
         /// </summary>
         public ModSettingsPageBuilder WithVisibleWhen(Func<bool> predicate)
         {
@@ -152,7 +154,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Disables the page (dimmed, non-interactive) while <paramref name="predicate" /> is false.
-        ///     当 <c>predicate</c> 为 false 时禁用此页面（变暗且不可交互）。
+        ///     当 <paramref name="predicate" /> 为 false 时禁用页面（变暗且不可交互）。
         /// </summary>
         public ModSettingsPageBuilder WithEnabledWhen(Func<bool> predicate)
         {
@@ -193,7 +195,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a section built by <paramref name="configure" />; <paramref name="id" /> must be unique on this page.
-        ///     添加一个由 <c>configure</c> 构建的 section；<c>id</c> 在此页面内必须唯一。
+        ///     添加由 <paramref name="configure" /> 构建的 section；<paramref name="id" /> 在此页面上必须唯一。
         /// </summary>
         public ModSettingsPageBuilder AddSection(string id, Action<ModSettingsSectionBuilder> configure)
         {
@@ -287,19 +289,19 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     When true, the section can be collapsed in the UI.
-        ///     为 true 时，the section can be collapsed in the UI。
+        ///     为 true 时，该 section 可在 UI 中折叠。
         /// </summary>
         public bool IsCollapsible { get; private set; }
 
         /// <summary>
         ///     Initial collapsed state when <see cref="IsCollapsible" /> is true.
-        ///     Initial collapsed state 当 <c>IsCollapsible</c> is true.
+        ///     <see cref="IsCollapsible" /> 为 true 时的初始折叠状态。
         /// </summary>
         public bool StartCollapsed { get; private set; }
 
         /// <summary>
         ///     Sets <see cref="Title" />.
-        ///     设置 <c>Title</c>.
+        ///     设置 <see cref="Title" />。
         /// </summary>
         public ModSettingsSectionBuilder WithTitle(ModSettingsText title)
         {
@@ -309,7 +311,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Sets <see cref="Description" />.
-        ///     设置 <c>Description</c>.
+        ///     设置 <see cref="Description" />。
         /// </summary>
         public ModSettingsSectionBuilder WithDescription(ModSettingsText description)
         {
@@ -319,7 +321,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Marks the section collapsible; optionally starts collapsed.
-        ///     Marks the section collapsible; 可选ly starts collapsed.
+        ///     将该 section 标记为可折叠；可选地初始为折叠状态。
         /// </summary>
         public ModSettingsSectionBuilder Collapsible(bool startCollapsed = false)
         {
@@ -330,7 +332,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Hides the section (and its sidebar shortcut) while <paramref name="predicate" /> is false.
-        ///     中文说明：Hides the section (and its sidebar shortcut) while <c>predicate</c> is false.
+        ///     当 <paramref name="predicate" /> 为 false 时隐藏此 section（及其侧边栏快捷入口）。
         /// </summary>
         public ModSettingsSectionBuilder WithVisibleWhen(Func<bool> predicate)
         {
@@ -341,9 +343,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Disables the section (dimmed, non-interactive) while <paramref name="predicate" /> is false.
-        ///     中文说明：Disables the section (dimmed, non-interactive) while <c>predicate</c> is false.
-        ///     Disables the section (dimmed, non-interactive) while <c>predicate</c> is false.
-        ///     中文说明：Disables the section (dimmed, non-interactive) while <c>predicate</c> is false.
+        ///     当 <paramref name="predicate" /> 为 false 时禁用此 section（变暗且不可交互）。
         /// </summary>
         public ModSettingsSectionBuilder WithEnabledWhen(Func<bool> predicate)
         {
@@ -354,7 +354,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Limits where this section is shown. Defaults to all host surfaces.
-        ///     中文说明：Limits where this section is shown. Defaults to all host surfaces.
+        ///     限制此 section 显示的位置。默认用于所有宿主界面。
         /// </summary>
         public ModSettingsSectionBuilder WithVisibleOnHostSurfaces(ModSettingsHostSurface surfaces)
         {
@@ -364,7 +364,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Host surfaces where this section’s value controls are read-only (OR’d with the owning page mask).
-        ///     Host surfaces where this section’s value controls are read-only (OR’d 带有 the owning page mask).
+        ///     此 section 的值控件在哪些宿主界面中为只读（与所属页面掩码按 OR 合并）。
         /// </summary>
         public ModSettingsSectionBuilder WithReadOnlyOnHostSurfaces(ModSettingsHostSurface surfaces)
         {
@@ -374,7 +374,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Restricts which chrome menu actions are exposed for the section itself.
-        ///     Restricts which chrome menu actions are exposed 用于 the section itself.
+        ///     限制该 section 自身暴露哪些 chrome 菜单动作。
         /// </summary>
         public ModSettingsSectionBuilder WithMenuCapabilities(ModSettingsMenuCapabilities capabilities)
         {
@@ -384,9 +384,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a non-interactive header row.
-        ///     中文说明：Adds a non-interactive header row.
-        ///     Adds a non-interactive header row.
-        ///     中文说明：Adds a non-interactive header row.
+        ///     添加非交互式标题行。
         /// </summary>
         public ModSettingsSectionBuilder AddHeader(
             string id,
@@ -399,7 +397,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds read-only paragraph text with optional max height for scrolling.
-        ///     Adds read-only paragraph text 带有 可选 max height 用于 scrolling.
+        ///     添加只读段落文本，并可指定用于滚动的最大高度。
         /// </summary>
         public ModSettingsSectionBuilder AddParagraph(
             string id,
@@ -413,7 +411,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a read-only information card with title, optional subtitle, and body text.
-        ///     Adds a read-only information 卡牌 带有 title, 可选 subtitle, 和 body text.
+        ///     添加只读信息卡，包含标题、可选副标题和正文文本。
         /// </summary>
         public ModSettingsSectionBuilder AddInfoCard(
             string id,
@@ -427,7 +425,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a read-only runtime hotkey summary row with left text and right binding chips.
-        ///     Adds a read-only runtime hotkey summary row 带有 left text 和 right binding chips.
+        ///     添加只读运行时热键摘要行，左侧为文本，右侧为绑定 chip。
         /// </summary>
         public ModSettingsSectionBuilder AddRuntimeHotkeySummary(
             string id,
@@ -442,7 +440,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a preview image resolved by <paramref name="textureProvider" />.
-        ///     Adds a preview image resolved 通过 <c>TextureProvider</c>.
+        ///     添加由 <paramref name="textureProvider" /> 解析的预览图像。
         /// </summary>
         public ModSettingsSectionBuilder AddImage(
             string id,
@@ -458,8 +456,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds an editable list bound to <paramref name="binding" /> with per-row editor from
-        ///     Adds an editable list bound to <c>binding</c> 带有 per-row editor 从
         ///     <paramref name="itemEditorFactory" /> or defaults.
+        ///     添加绑定到 <paramref name="binding" /> 的可编辑列表，每行编辑器来自
+        ///     <paramref name="itemEditorFactory" /> 或默认实现。
         /// </summary>
         public ModSettingsSectionBuilder AddList<TItem>(
             string id,
@@ -491,9 +490,10 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds an editable list bound to <paramref name="binding" /> with optional collapsible item cards and
-        ///     Adds an editable list bound to <c>binding</c> 带有 可选 collapsible item 卡牌s and
         ///     compact header accessories.
         ///     compact header accessories.
+        ///     添加绑定到 <paramref name="binding" /> 的可编辑列表，支持可选的可折叠条目卡和
+        ///     紧凑标题附件。
         /// </summary>
         public ModSettingsSectionBuilder AddList<TItem>(
             string id,
@@ -531,7 +531,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a boolean toggle.
-        ///     中文说明：Adds a boolean toggle.
+        ///     添加布尔 toggle。
         /// </summary>
         public ModSettingsSectionBuilder AddToggle(
             string id,
@@ -546,7 +546,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds an integer range slider.
-        ///     中文说明：Adds an integer range slider.
+        ///     添加整数范围 slider。
         /// </summary>
         public ModSettingsSectionBuilder AddIntSlider(
             string id,
@@ -578,7 +578,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a floating-point range slider (<see cref="double" /> value domain).
-        ///     中文说明：Adds a floating-point range slider (<c>double</c> value domain).
+        ///     添加浮点范围 slider（<see cref="double" /> 值域）。
         /// </summary>
         public ModSettingsSectionBuilder AddSlider(
             string id,
@@ -610,9 +610,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Legacy <see cref="float" /> overload for binary compatibility; uses a dedicated float slider entry (not
-        ///     Legacy <c>float</c> over加载 用于 binary compatibility; 使用 a dedicated float slider entry (not
         ///     the <see cref="double" /> control path) to avoid float/double conversion feedback loops.
-        ///     该 <c>double</c> control path) to avoid float/double conversion feedback loops。
+        ///     用于二进制兼容性的旧版 <see cref="float" /> 重载；使用专用 float slider 条目（不走
+        ///     <see cref="double" /> 控件路径），以避免 float/double 转换反馈循环。
         /// </summary>
         [Obsolete(
             "Prefer AddSlider with IModSettingsValueBinding<double> and double range parameters. This overload exists only for compatibility with mods compiled against pre-double slider APIs.")]
@@ -647,7 +647,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a fixed set of choices (stepper, dropdown, etc. per <paramref name="presentation" />).
-        ///     Adds a fixed 设置 of choices (stepper, dropdown, etc. per <c>presentation</c>).
+        ///     添加固定选项集（按 <paramref name="presentation" /> 使用 stepper、dropdown 等）。
         /// </summary>
         public ModSettingsSectionBuilder AddChoice<TValue>(
             string id,
@@ -674,7 +674,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a choice control for enum <typeparamref name="TEnum" /> with optional per-value labels.
-        ///     Adds a choice control 用于 enum <c>TEnum</c> 带有 可选 per-value labels.
+        ///     为 enum <typeparamref name="TEnum" /> 添加 choice 控件，可为每个值指定可选标签。
         /// </summary>
         public ModSettingsSectionBuilder AddEnumChoice<TEnum>(
             string id,
@@ -715,19 +715,18 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a color picker bound to a string (serialized color), with picker chrome options.
-        ///     Adds a color picker bound to a string (serialized color), 带有 picker chrome options.
+        ///     添加绑定到字符串（序列化颜色）的颜色选择器，并带有选择器 chrome 选项。
         /// </summary>
         /// <param name="id">
         ///     Stable entry id within the section.
-        ///     稳定的 entry id within the section。
+        ///     section 内稳定的条目 id。
         /// </param>
         /// <param name="label">
         ///     Row label.
-        ///     中文说明：Row label.
+        ///     行标签。
         /// </param>
         /// <param name="binding">
         ///     Backing string binding (hex preferred; see <see cref="ModSettingsColorControl" />).
-        ///     Backing string binding (hex preferred; see <c>ModSettingsColorControl</c>).
         /// </param>
         /// <param name="description">
         ///     Optional description body.
@@ -735,12 +734,13 @@ namespace STS2RitsuLib.Settings
         /// </param>
         /// <param name="editAlpha">
         ///     Whether the picker allows editing alpha.
-        ///     表示是否 the picker allows editing alpha。
+        ///     取色器是否允许编辑 alpha。
         /// </param>
         /// <param name="editIntensity">
         ///     Whether the picker allows intensity / HDR-style values (Godot
-        ///     中文说明：Whether the picker allows intensity / HDR-style values (Godot
         ///     <c>ColorPicker.EditIntensity</c>).
+        ///     选择器是否允许 intensity / HDR 风格值（Godot
+        ///     <c>ColorPicker.EditIntensity</c>）。
         /// </param>
         public ModSettingsSectionBuilder AddColor(
             string id,
@@ -757,7 +757,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a single-line string field.
-        ///     中文说明：Adds a single-line string field.
+        ///     添加单行字符串字段。
         /// </summary>
         public ModSettingsSectionBuilder AddString(
             string id,
@@ -772,9 +772,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a single-line string field with optional visual validation (invalid text shows error chrome; commits
-        ///     Adds a single-line string field 带有 可选 visual 有效ation (invalid text shows error chrome; commits
         ///     are not blocked).
-        ///     中文说明：are not blocked).
+        ///     添加单行字符串字段，并可选进行视觉校验（无效文本显示错误 chrome；提交
+        ///     不会被阻止）。
         /// </summary>
         public ModSettingsSectionBuilder AddString(
             string id,
@@ -798,7 +798,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a multiline string field.
-        ///     中文说明：Adds a multiline string field.
+        ///     添加多行字符串字段。
         /// </summary>
         public ModSettingsSectionBuilder AddMultilineString(
             string id,
@@ -818,7 +818,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a key binding capture row.
-        ///     中文说明：Adds a key binding capture row.
+        ///     添加按键绑定捕获行。
         /// </summary>
         public ModSettingsSectionBuilder AddKeyBinding(
             string id,
@@ -840,7 +840,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a multi-key binding capture row. This path is native-only and must be explicitly opted into.
-        ///     Adds a multi-key binding capture row. This 路径 is native-only 和 must be explicitly opted into.
+        ///     添加多按键绑定捕获行。此路径仅限原生，必须显式选择启用。
         /// </summary>
         public ModSettingsSectionBuilder AddKeyBinding(
             string id,
@@ -867,9 +867,8 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a button that runs <paramref name="action" /> (no persisted value).
-        ///     中文说明：Adds a button that runs <c>action</c> (no persisted value).
-        ///     Adds a button that runs <c>action</c> (no persisted value).
-        ///     中文说明：Adds a button that runs <c>action</c> (no persisted value).
+        ///     添加运行 <paramref name="action" /> 的按钮（无持久化值）。
+        ///     添加运行 <c>action</c> 的按钮（无持久化值）。
         /// </summary>
         public ModSettingsSectionBuilder AddButton(
             string id,
@@ -886,7 +885,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a button that runs <paramref name="action" /> with a settings UI host (for refresh after deferred work).
-        ///     Adds a button that runs <c>action</c> 带有 a 设置 UI host (用于 refresh 之后 deferred work).
+        ///     添加使用设置 UI host 运行 <paramref name="action" /> 的按钮（用于延迟工作后的刷新）。
         /// </summary>
         public ModSettingsSectionBuilder AddButton(
             string id,
@@ -904,7 +903,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds navigation to another registered page <paramref name="targetPageId" />.
-        ///     Adds navigation to another 已注册 page <c>targetPageId</c>.
+        ///     添加到另一个已注册页面 <paramref name="targetPageId" /> 的导航。
         /// </summary>
         public ModSettingsSectionBuilder AddSubpage(
             string id,
@@ -925,7 +924,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Adds a custom row built by <paramref name="controlFactory" />.
-        ///     Adds a 自定义 row built 通过 <c>controlFactory</c>.
+        ///     添加由 <paramref name="controlFactory" /> 构建的自定义行。
         /// </summary>
         public ModSettingsSectionBuilder AddCustom(
             string id,
@@ -950,7 +949,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Overrides the chrome menu capabilities for one entry in this section.
-        ///     Overrides the chrome menu capabilities 用于 one entry in this section.
+        ///     覆盖此 section 中某个条目的 chrome 菜单能力。
         /// </summary>
         public ModSettingsSectionBuilder ConfigureEntryMenu(string id, ModSettingsMenuCapabilities capabilities)
         {

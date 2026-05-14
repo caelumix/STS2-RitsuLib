@@ -2,7 +2,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 {
     /// <summary>
     ///     Immutable ordered frames for one logical cue (combat, merchant room, ancient stage, …).
-    ///     一个逻辑 cue（战斗、商人房间、ancient 舞台等）的不可变有序帧。
+    ///     一个逻辑 cue 的不可变有序帧（战斗、商人房间、远古事件舞台等）。
     /// </summary>
     /// <param name="Frames">
     ///     At least one entry for playback.

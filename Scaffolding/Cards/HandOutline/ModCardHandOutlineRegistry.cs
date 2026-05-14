@@ -9,8 +9,8 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
     /// <summary>
     ///     Per–card-type custom outline colors for the in-hand <see cref="MegaCrit.Sts2.Core.Nodes.Cards.NCardHighlight" />.
     ///     Applied after vanilla <see cref="MegaCrit.Sts2.Core.Nodes.Cards.Holders.NHandCardHolder.UpdateCard" /> via Harmony.
-    ///     逐卡牌类型的手牌 <c>MegaCrit.Sts2.Core.Nodes.Cards.NCardHighlight</c> 自定义描边颜色。
-    ///     通过 Harmony 在原版 <c>MegaCrit.Sts2.Core.Nodes.Cards.Holders.NHandCardHolder.UpdateCard</c> 之后应用。
+    ///     手牌中 <see cref="MegaCrit.Sts2.Core.Nodes.Cards.NCardHighlight" /> 的逐卡牌类型自定义描边颜色。
+    ///     在原版 <see cref="MegaCrit.Sts2.Core.Nodes.Cards.Holders.NHandCardHolder.UpdateCard" /> 之后通过 Harmony 应用。
     /// </summary>
     public static class ModCardHandOutlineRegistry
     {
@@ -20,7 +20,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
 
         /// <summary>
         ///     Registers a rule for <typeparamref name="TCard" />. Throws if <see cref="ModContentRegistry.IsFrozen" />.
-        ///     为 <c>TCard</c> 注册规则。若 <c>ModContentRegistry.IsFrozen</c> 则抛出异常。
+        ///     为 <typeparamref name="TCard" /> 注册规则。如果 <see cref="ModContentRegistry.IsFrozen" /> 则抛出。
         /// </summary>
         public static void Register<TCard>(ModCardHandOutlineRule rule) where TCard : CardModel
         {
@@ -29,7 +29,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
 
         /// <summary>
         ///     Registers a rule for <paramref name="cardType" /> (<see cref="CardModel" /> subtype).
-        ///     为 <c>cardType</c>（<c>CardModel</c> 子类型）注册规则。
+        ///     为 <paramref name="cardType" />（<see cref="CardModel" /> 子类型）注册规则。
         /// </summary>
         public static void Register(Type cardType, ModCardHandOutlineRule rule)
         {
@@ -91,7 +91,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
 
         /// <summary>
         ///     Applies outline only when the matching rule uses <see cref="ModCardHandOutlineRule.DynamicColor" />.
-        ///     仅当匹配规则使用 <c>ModCardHandOutlineRule.DynamicColor</c> 时应用描边。
+        ///     仅当匹配规则使用 <see cref="ModCardHandOutlineRule.DynamicColor" /> 时应用描边。
         /// </summary>
         public static bool TryRefreshDynamicOutlineForHolder(NHandCardHolder? holder)
         {

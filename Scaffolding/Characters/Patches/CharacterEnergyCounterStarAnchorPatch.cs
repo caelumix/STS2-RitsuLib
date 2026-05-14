@@ -9,9 +9,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     Reparents <see cref="NStarCounter" /> to <c>%StarAnchor</c> when the active energy counter scene exposes
-    ///     Reparents <c>NStarCounter</c> to <c>%StarAnchor</c> 当 the active energy counter 场景 exposes
     ///     that anchor, so custom energy counters can control star counter placement.
-    ///     that anchor, so 自定义 energy counters can control star counter placement.
+    ///     当活动能量计数器场景暴露 <c>%StarAnchor</c> 时，将 <see cref="NStarCounter" /> 重新设为其子节点，
+    ///     使自定义能量计数器可以控制星星计数器位置。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -38,7 +38,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Moves the star counter under <c>%StarAnchor</c> and resets anchor/offset fields for predictable layout.
-        ///     Moves the star counter under <c>%StarAnchor</c> 和 re设置 anchor/off设置 fields 用于 predictable layout.
+        ///     将星星计数器移动到 <c>%StarAnchor</c> 下，并重置 anchor/offset 字段以获得可预测布局。
         /// </summary>
         public static void Postfix(NCombatUi __instance)
         {

@@ -107,8 +107,9 @@ namespace STS2RitsuLib.Settings
         ///     Lower values appear earlier among sibling pages (same <see cref="ModId" /> and
         ///     <see cref="ParentPageId" />). Use <see cref="ModSettingsRegistry.RegisterPageSortOrder" /> to adjust without
         ///     rebuilding the page.
-        ///     同级页面（相同 <c>ModId</c> 和 <c>ParentPageId</c>）中，数值越小越靠前。
-        ///     可使用 <c>ModSettingsRegistry.RegisterPageSortOrder</c> 在不重建页面的情况下调整。
+        ///     在兄弟页面（相同 <see cref="ModId" /> 和
+        ///     <see cref="ParentPageId" />）中，值越小越靠前。使用 <see cref="ModSettingsRegistry.RegisterPageSortOrder" /> 可在不
+        ///     重建页面的情况下调整。
         /// </summary>
         public int SortOrder { get; }
 
@@ -140,7 +141,8 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Host surfaces where this page appears in the sidebar and content. Defaults to
         ///     <see cref="ModSettingsHostSurface.All" />.
-        ///     此页面会出现在侧边栏和内容区中的宿主 surface。默认为 <c>ModSettingsHostSurface.All</c>。
+        ///     此页面会出现在侧边栏和内容中的宿主界面。默认值为
+        ///     <see cref="ModSettingsHostSurface.All" />。
         /// </summary>
         public ModSettingsHostSurface VisibleOnHostSurfaces { get; }
 
@@ -192,7 +194,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Section header; null for a flat list without a title bar.
-        ///     Section 标题；对于没有标题栏的平铺列表为 null。
+        ///     section 标题；对于不带标题栏的平铺列表为 null。
         /// </summary>
         public ModSettingsText? Title { get; }
 
@@ -210,7 +212,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Initial collapsed state when <see cref="IsCollapsible" /> is true.
-        ///     当 <c>IsCollapsible</c> 为 true 时的初始折叠状态。
+        ///     <see cref="IsCollapsible" /> 为 true 时的初始折叠状态。
         /// </summary>
         public bool StartCollapsed { get; }
 
@@ -234,13 +236,13 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Built-in actions enabled for the section-level actions menu.
-        ///     Section 级操作菜单启用的内置操作。
+        ///     section 级操作菜单启用的内置操作。
         /// </summary>
         public ModSettingsMenuCapabilities MenuCapabilities { get; }
 
         /// <summary>
         ///     Host surfaces where this section is shown. Defaults to <see cref="ModSettingsHostSurface.All" />.
-        ///     此 section 显示的宿主 surface。默认为 <c>ModSettingsHostSurface.All</c>。
+        ///     显示此 section 的宿主界面。默认值为 <see cref="ModSettingsHostSurface.All" />。
         /// </summary>
         public ModSettingsHostSurface VisibleOnHostSurfaces { get; }
 

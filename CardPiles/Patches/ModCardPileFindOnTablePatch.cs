@@ -11,8 +11,8 @@ namespace STS2RitsuLib.CardPiles.Patches
     ///     <see cref="ModCardPileUiStyle.ExtraHand" /> style) resolve to the live <c>NCard</c> instance managed
     ///     by <c>NModExtraHand</c>. Non-visible mod piles intentionally return <c>null</c> (matching vanilla's
     ///     Draw / Discard / Exhaust behaviour).
-    ///     扩展 <c>NCard.FindOnTable</c>，使位于可见 mod pile 中的 card（目前只有
-    ///     <c>ModCardPileUiStyle.ExtraHand</c> 样式）解析到由 <c>NModExtraHand</c> 管理的 live
+    ///     扩展 <see cref="NCard.FindOnTable" />，使位于可见 mod pile 中的 card（目前只有
+    ///     <see cref="ModCardPileUiStyle.ExtraHand" /> 样式）解析到由 <c>NModExtraHand</c> 管理的 live
     ///     <c>NCard</c> 实例。不可见 mod pile 会有意返回 <c>null</c>（匹配原版 Draw / Discard / Exhaust 行为）。
     /// </summary>
     /// <remarks>

@@ -14,15 +14,15 @@ namespace STS2RitsuLib.Combat.Powers
 {
     /// <summary>
     ///     Extensible temporary-power template that temporarily applies an arbitrary internal power model.
-    ///     Extensible temporary-能力 template that temporarily applies an arbitrary internal 能力 模型.
+    ///     可扩展的临时能力模板，会临时应用任意内部能力模型。
     /// </summary>
     public abstract class ModTemporaryPowerTemplate : ModPowerTemplate, ITemporaryPower
     {
         /// <summary>
         ///     Reserved dynamic var name used by this template to track extra expiry cycles and (optionally) expose the value
-        ///     Reserved dynamic var name used 通过 this template to track extra expiry cycles 和 (可选ly) expose the value
         ///     to localization formatting (e.g. <c>{ExtraTurns}</c>).
-        ///     to localization 用于matting (e.g. <c>{ExtraTurns}</c>).
+        ///     此模板使用的保留动态变量名，用于跟踪额外过期周期，并可选将该值暴露
+        ///     给本地化格式化（例如 <c>{ExtraTurns}</c>）。
         /// </summary>
         public const string ExtraTurnCyclesVarName = "ExtraTurns";
 
@@ -38,33 +38,36 @@ namespace STS2RitsuLib.Combat.Powers
 
         /// <summary>
         ///     Matches vanilla temporary Strength/Dexterity/Focus semantics:
-        ///     Matches 原版 temporary Strength/Dexterity/Focus semantics:
         ///     true means this temporary power is treated as positive; false as negative.
-        ///     true means this temporary 能力 is treated as positive; false as negative.
+        ///     匹配原版临时 Strength/Dexterity/Focus 语义：
+        ///     true 表示此临时能力视为正面；false 表示视为负面。
         /// </summary>
         protected virtual bool IsPositive => true;
 
         /// <summary>
         ///     When true, expires on the other side's turn end; otherwise on owner's side turn end.
-        ///     为 true 时，expires on the other side's turn end; otherwise on owner's side turn end。
+        ///     为 true 时，在另一方回合结束时过期；否则在拥有者一方回合结束时过期。
         /// </summary>
         protected virtual bool UntilEndOfOtherSideTurn => false;
 
         /// <summary>
         ///     Extra owner/opponent turn cycles before this temporary effect expires.
-        ///     Extra owner/opponent turn cycles 之前 this temporary effect expires.
+        ///     此临时效果过期前的额外拥有者/对手回合周期。
         /// </summary>
         protected virtual int LastForXExtraTurns => 0;
 
         /// <summary>
         ///     Additional dynamic vars for localization display.
-        ///     Additional dynamic vars 用于 localization display.
         ///     Use this instead of overriding <see cref="CanonicalVars" />, which is reserved by the template.
-        ///     使用 this instead of overriding <c>CanonicalVars</c>, which is reserved 通过 the template.
         ///     <para>
         ///         <see cref="ExtraTurnCyclesVarName" /> is reserved and will always be provided by the template.
         ///         Do not include it in <see cref="AdditionalCanonicalVars" />.
-        ///         中文说明：Do not include it in <c>AdditionalCanonicalVars</c>.
+        ///     </para>
+        ///     用于本地化显示的额外动态变量。
+        ///     请使用此项，而不是重写 <see cref="CanonicalVars" />；后者由模板保留。
+        ///     <para>
+        ///         <see cref="ExtraTurnCyclesVarName" /> 为保留项，模板始终会提供它。
+        ///         不要将它包含在 <see cref="AdditionalCanonicalVars" /> 中。
         ///     </para>
         /// </summary>
         protected virtual IEnumerable<DynamicVar> AdditionalCanonicalVars => [];
@@ -88,9 +91,9 @@ namespace STS2RitsuLib.Combat.Powers
 
         /// <summary>
         ///     Remaining extra expiry cycles before removal.
-        ///     Remaining extra expiry cycles 之前 removal.
         ///     Stored in <see cref="ExtraTurnCyclesVarName" /> for optional localization display.
-        ///     Stored in <c>ExtraTurnCyclesVarName</c> 用于 可选 localization display.
+        ///     移除前剩余的额外过期周期。
+        ///     存储在 <see cref="ExtraTurnCyclesVarName" /> 中，可选用于本地化显示。
         /// </summary>
         public int RemainingExtraTurnCycles
         {
@@ -107,37 +110,41 @@ namespace STS2RitsuLib.Combat.Powers
         /// <inheritdoc />
         /// <summary>
         ///     Canonical dynamic vars reserved by the template.
-        ///     Canonical dynamic vars reserved 通过 the template.
         ///     <para>
         ///         This template always defines <see cref="ExtraTurnCyclesVarName" /> (<c>{ExtraTurns}</c>) for its
-        ///         This template always defines <c>ExtraTurnCyclesVarName</c> (<c>{ExtraTurns}</c>) 用于 its
         ///         internal expiry counter and for optional localization display. Do not attempt to override this.
-        ///         internal expiry counter 和 用于 可选 localization display. Do not attempt to override this.
         ///     </para>
         ///     <para>
         ///         To add additional dynamic vars for localization, override <see cref="AdditionalCanonicalVars" /> instead.
-        ///         To add additional dynamic vars 用于 localization, override <c>AdditionalCanonicalVars</c> instead.
+        ///     </para>
+        ///     模板保留的规范动态变量。
+        ///     <para>
+        ///         此模板始终定义 <see cref="ExtraTurnCyclesVarName" />（<c>{ExtraTurns}</c>），用于其
+        ///         内部过期计数器以及可选的本地化显示。不要尝试覆盖它。
+        ///     </para>
+        ///     <para>
+        ///         若要为本地化添加额外动态变量，请改为重写 <see cref="AdditionalCanonicalVars" />。
         ///     </para>
         /// </summary>
         protected sealed override IEnumerable<DynamicVar> CanonicalVars => BuildCanonicalVars();
 
         /// <summary>
         ///     The model that granted this temporary power (card/potion/relic/power/orb/etc.).
-        ///     该 model that granted this temporary power (card/potion/relic/power/orb/etc.)。
         ///     Used for title and hover-tip resolution.
-        ///     used 用于 title 和 hover-tip resolution.
+        ///     授予此临时能力的模型（卡牌/药水/遗物/能力/orb 等）。
+        ///     用于标题和悬停提示解析。
         /// </summary>
         public abstract AbstractModel OriginModel { get; }
 
         /// <summary>
         ///     The internal power model that is applied/removed while this temporary wrapper exists.
-        ///     该 internal power model that is applied/removed while this temporary wrapper exists。
+        ///     此临时包装存在期间会被应用/移除的内部能力模型。
         /// </summary>
         public abstract PowerModel InternallyAppliedPower { get; }
 
         /// <summary>
         ///     Suppresses the next application/amount-change instance, matching vanilla temporary power semantics.
-        ///     Suppresses the next application/amount-change instance, matching 原版 temporary 能力 semantics.
+        ///     抑制下一次应用/数值变更实例，匹配原版临时能力语义。
         /// </summary>
         public void IgnoreNextInstance()
         {
@@ -207,7 +214,7 @@ namespace STS2RitsuLib.Combat.Powers
 
         /// <summary>
         ///     Applies vanilla-style sign mapping to amount using <see cref="IsPositive" />.
-        ///     Applies 原版-style sign mapping to amount using <c>IsPositive</c>.
+        ///     使用 <see cref="IsPositive" /> 对 amount 应用原版风格的符号映射。
         /// </summary>
         protected virtual decimal SignedAmount(decimal amount)
         {
@@ -296,15 +303,15 @@ namespace STS2RitsuLib.Combat.Powers
 
     /// <summary>
     ///     Generic helper that binds a temporary wrapper to a specific origin model and internal power type.
-    ///     Generic helper that binds a temporary wrapper to a specific origin 模型 和 internal 能力 type.
+    ///     将临时包装绑定到特定来源模型和内部能力类型的泛型辅助方法。
     /// </summary>
     /// <typeparam name="TOriginModel">
     ///     Source model that grants this temporary power.
-    ///     来源 model that grants this temporary power。
+    ///     授予此临时能力的来源模型。
     /// </typeparam>
     /// <typeparam name="TPower">
     ///     Internal power type that gets temporarily applied.
-    ///     Internal 能力 type that gets temporarily applied.
+    ///     会被临时应用的内部能力类型。
     /// </typeparam>
     public abstract class ModTemporaryAppliedPowerTemplate<TOriginModel, TPower> : ModTemporaryPowerTemplate
         where TOriginModel : AbstractModel

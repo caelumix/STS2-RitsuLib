@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Keywords
 {
     /// <summary>
     ///     Immutable registration data for a mod keyword (localization tables, keys, optional icon).
-    ///     mod keyword 的不可变注册数据（本地化 table、key、可选图标）。
+    ///     mod 关键词的不可变注册数据（本地化表、键、可选图标）。
     /// </summary>
     public sealed record ModKeywordDefinition
     {
@@ -78,7 +78,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Key for the title string.
-        ///     title 字符串使用的 key。
+        ///     标题字符串使用的键。
         /// </summary>
         public string TitleKey { get; init; } = string.Empty;
 
@@ -90,7 +90,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Key for the description string.
-        ///     description 字符串使用的 key。
+        ///     描述字符串使用的键。
         /// </summary>
         public string DescriptionKey { get; init; } = string.Empty;
 
@@ -102,7 +102,7 @@ namespace STS2RitsuLib.Keywords
 
         /// <summary>
         ///     Whether and where to inject keyword BBCode into card descriptions.
-        ///     是否以及在哪里将 keyword BBCode 注入 card description。
+        ///     是否以及在哪里将关键词 BBCode 注入卡牌描述。
         /// </summary>
         public ModKeywordCardDescriptionPlacement CardDescriptionPlacement { get; init; } =
             ModKeywordCardDescriptionPlacement.None;
@@ -110,8 +110,9 @@ namespace STS2RitsuLib.Keywords
         /// <summary>
         ///     When true, this keyword’s hover tip is included from <c>RegisteredKeywordIds</c> / runtime mod-keyword sets
         ///     on cards and other mod templates.
-        ///     为 true 时，此 keyword 的 hover tip 会从 card 和其它 mod template 上的
-        ///     <c>RegisteredKeywordIds</c> / runtime mod-keyword set 中包含进来。
+        ///     为 true 时，此关键词的悬停提示会从 <c>RegisteredKeywordIds</c>、
+        ///     运行时 mod 关键词集合
+        ///     包含到卡牌和其它 mod 模板上。
         /// </summary>
         public bool IncludeInCardHoverTip { get; init; }
 
@@ -121,10 +122,12 @@ namespace STS2RitsuLib.Keywords
         ///     keyword rides vanilla workflows (lookups, cloning, canonical seeding, per-run saves) without any
         ///     parallel side-loaded state. Populated by <see cref="ModKeywordRegistry" /> at registration time;
         ///     remains <see cref="CardKeyword.None" /> for definitions constructed outside the registry.
-        ///     为此 keyword 确定性 minted 的 <c>CardKeyword</c> 值（<c>Id</c> 的 hash，
-        ///     强制高于原版 enum 范围）。它会直接存入 <c>CardModel.Keywords</c>，使 mod keyword 沿用原版流程
-        ///     （lookup、clone、canonical seeding、per-run save），无需任何并行 side-loaded state。
-        ///     由 <c>ModKeywordRegistry</c> 在注册时填充；在 registry 外构造的 definition 保持
+        ///     <see cref="CardKeyword.None" />。
+        ///     为此关键词铸造的确定性 <see cref="CardKeyword" /> 值（<see cref="Id" /> 的 hash，
+        ///     强制高于原版 enum 范围）。它会直接存入 <c>CardModel.Keywords</c>，使 mod
+        ///     关键词沿用原版流程（查找、克隆、规范种入、逐跑局保存），无需任何
+        ///     并行 side-loaded 状态。由 <see cref="ModKeywordRegistry" /> 在注册时填充；
+        ///     在注册表外构造的定义保持 <see cref="CardKeyword.None" />。
         ///     <see cref="CardKeyword.None" />。
         /// </summary>
         public CardKeyword CardKeywordValue { get; init; } = CardKeyword.None;

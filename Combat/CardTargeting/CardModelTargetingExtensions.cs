@@ -13,7 +13,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
         /// <summary>
         ///     Returns targets resolved from the card's current <see cref="TargetType" />.
         ///     For single-target types, pass <paramref name="selectedTarget" /> to keep one unified execution path.
-        ///     返回根据当前卡牌 <c>TargetType</c> 解析得到的目标列表。
+        ///     返回根据当前卡牌 <see cref="TargetType" /> 解析得到的目标列表。
         ///     对单体目标类型，可传入 <paramref name="selectedTarget" /> 来保持统一执行路径。
         /// </summary>
         /// <param name="card">

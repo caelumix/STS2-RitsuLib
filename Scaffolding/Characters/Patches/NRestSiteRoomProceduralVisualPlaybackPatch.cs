@@ -6,9 +6,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     After the rest-site room finishes layout, drives procedural rest visuals (per-act loop cues) for characters
-    ///     之后 the rest-site room finishes layout, drives procedural rest visuals (per-章节 loop cues) 用于 characters
     ///     that use <see cref="IModCharacterAssetOverrides.WorldProceduralVisuals" /><c>.RestSite</c>.
-    ///     that 使用 <c>IModCharacterAssetOverrides.WorldProceduralVisuals</c><c>.RestSite</c>.
+    ///     在休息点房间完成布局后，为使用 <see cref="IModCharacterAssetOverrides.WorldProceduralVisuals" /><c>.RestSite</c> 的角色驱动程序化休息点视觉（按章节
+    ///     loop cue）。
     /// </summary>
     public class NRestSiteRoomProceduralVisualPlaybackPatch : IPatchMethod
     {
@@ -31,7 +31,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Runs after vanilla <c>_Ready</c> so all rest-site character nodes exist.
-        ///     runs 之后 原版 <c>_Ready</c> so all rest-site character nodes exist.
+        ///     在原版 <c>_Ready</c> 之后运行，确保所有休息点角色节点都已存在。
         /// </summary>
         public static void Postfix(NRestSiteRoom __instance)
         {

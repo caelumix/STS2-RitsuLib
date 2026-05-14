@@ -4,19 +4,19 @@ namespace STS2RitsuLib.RuntimeInput
 {
     /// <summary>
     ///     Deferred runtime hotkey metadata text that can be fixed or resolved dynamically at read time.
-    ///     Deferred runtime hotkey metadata text that can be fixed 或 resolved dynamically at read time.
+    ///     延迟的运行时热键元数据文本，可在读取时固定或动态解析。
     /// </summary>
     public abstract class RuntimeHotkeyText
     {
         /// <summary>
         ///     Resolves the text for the current locale or runtime state.
-        ///     解析 the text for the current locale or runtime state。
+        ///     为当前区域设置或运行时状态解析文本。
         /// </summary>
         public abstract string Resolve();
 
         /// <summary>
         ///     Creates fixed text that never changes.
-        ///     创建 fixed text that never changes。
+        ///     创建永不变化的固定文本。
         /// </summary>
         public static RuntimeHotkeyText Literal(string text)
         {
@@ -25,7 +25,7 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Creates text resolved dynamically each time metadata is read.
-        ///     创建 text resolved dynamically each time metadata is read。
+        ///     创建每次读取元数据时动态解析的文本。
         /// </summary>
         public static RuntimeHotkeyText Dynamic(Func<string> resolver)
         {
@@ -35,7 +35,7 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Implicitly wraps a fixed string.
-        ///     中文说明：Implicitly wraps a fixed string.
+        ///     隐式包装固定字符串。
         /// </summary>
         public static implicit operator RuntimeHotkeyText(string text)
         {
@@ -44,7 +44,7 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Implicitly wraps deferred mod-settings text.
-        ///     Implicitly wraps deferred mod-设置 text.
+        ///     隐式包装延迟的 mod 设置文本。
         /// </summary>
         public static implicit operator RuntimeHotkeyText(ModSettingsText text)
         {
@@ -54,7 +54,7 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Implicitly wraps a deferred string resolver.
-        ///     Implicitly wraps a deferred string 解析r.
+        ///     隐式包装延迟的字符串解析器。
         /// </summary>
         public static implicit operator RuntimeHotkeyText(Func<string> resolver)
         {

@@ -70,13 +70,13 @@ namespace STS2RitsuLib.Data
 
         /// <summary>
         ///     Whether this store has at least one <see cref="SaveScope.Profile" /> registration.
-        ///     此存储是否至少有一个 <c>SaveScope.Profile</c> 注册。
+        ///     此存储是否至少有一个 <see cref="SaveScope.Profile" /> 注册。
         /// </summary>
         public bool HasProfileScopedEntries => _entries.Values.Any(e => e.Scope == SaveScope.Profile);
 
         /// <summary>
         ///     Whether this store has at least one <see cref="SaveScope.RunSidecar" /> registration.
-        ///     此存储是否至少有一个 <c>SaveScope.RunSidecar</c> 注册。
+        ///     此存储是否至少有一个 <see cref="SaveScope.RunSidecar" /> 注册。
         /// </summary>
         public bool HasRunSidecarScopedEntries => _entries.Values.Any(e => e.Scope == SaveScope.RunSidecar);
 
@@ -97,7 +97,7 @@ namespace STS2RitsuLib.Data
 
         /// <summary>
         ///     Returns the process-wide store for <paramref name="modId" />.
-        ///     返回 <c>modId</c> 对应的进程级存储。
+        ///     返回 <paramref name="modId" /> 对应的进程级存储。
         /// </summary>
         public static ModDataStore For(string modId)
         {
@@ -188,11 +188,11 @@ namespace STS2RitsuLib.Data
         /// </summary>
         /// <param name="key">
         ///     Logical key used with <see cref="Get{T}" />, <see cref="Modify{T}" />, and <see cref="Save" />.
-        ///     与 <c>Get{T}</c>、<c>Modify{T}</c> 和 <c>Save</c> 一起使用的逻辑键。
+        ///     与 <see cref="Get{T}" />、<see cref="Modify{T}" /> 和 <see cref="Save" /> 一起使用的逻辑键。
         /// </param>
         /// <param name="fileName">
         ///     File name segment passed to <see cref="ProfileManager" /> path resolution.
-        ///     传递给 <c>ProfileManager</c> 路径解析的文件名片段。
+        ///     传递给 <see cref="ProfileManager" /> 路径解析的文件名片段。
         /// </param>
         /// <param name="scope">
         ///     Global or profile persistence scope.
@@ -212,7 +212,7 @@ namespace STS2RitsuLib.Data
         /// </param>
         /// <param name="migrations">
         ///     Optional migration steps; requires <paramref name="migrationConfig" />.
-        ///     可选迁移步骤；需要 <c>migrationConfig</c>。
+        ///     可选迁移步骤；需要 <paramref name="migrationConfig" />。
         /// </param>
         public void Register<T>(
             string key,
@@ -268,8 +268,8 @@ namespace STS2RitsuLib.Data
         ///     Registers a JSON-backed persistence slot identified by <paramref name="key" /> using an explicit
         ///     <see cref="StorageContext" /> provider for path resolution (e.g. run fingerprint stem for
         ///     <see cref="SaveScope.RunSidecar" />).
-        ///     注册一个由 JSON 支持、以 <c>key</c> 标识的持久化槽，并使用显式
-        ///     <c>StorageContext</c> 提供器解析路径（例如 <c>SaveScope.RunSidecar</c> 的跑局指纹 stem）。
+        ///     注册一个由 JSON 支持、以 <paramref name="key" /> 标识的持久化槽，并使用显式
+        ///     <see cref="StorageContext" /> 提供器解析路径（例如 <see cref="SaveScope.RunSidecar" /> 的跑局指纹 stem）。
         /// </summary>
         public void Register<T>(
             string key,
@@ -356,7 +356,7 @@ namespace STS2RitsuLib.Data
 
         /// <summary>
         ///     Mutates the instance for <paramref name="key" /> in place (persists via <see cref="Save" />).
-        ///     原地修改 <c>key</c> 对应的实例（通过 <c>Save</c> 持久化）。
+        ///     原地修改 <paramref name="key" /> 对应的实例（通过 <see cref="Save" /> 持久化）。
         /// </summary>
         public void Modify<T>(string key, Action<T> modifier) where T : class, new()
         {

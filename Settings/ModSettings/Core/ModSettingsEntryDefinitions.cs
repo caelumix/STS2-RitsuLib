@@ -10,7 +10,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Initializes <see cref="Id" />, <see cref="Label" />, and <see cref="Description" />.
-        ///     初始化 <c>Id</c>、<c>Label</c> 和 <c>Description</c>。
+        ///     初始化 <see cref="Id" />、<see cref="Label" /> 和 <see cref="Description" />。
         /// </summary>
         protected ModSettingsEntryDefinition(string id, ModSettingsText label, ModSettingsText? description)
         {
@@ -74,7 +74,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Boolean on/off toggle bound to <see cref="Binding" />.
-    ///     绑定到 <c>Binding</c> 的布尔开关。
+    ///     绑定到 <see cref="Binding" /> 的布尔开 / 关 toggle。
     /// </summary>
     public sealed class ToggleModSettingsEntryDefinition(
         string id,
@@ -118,7 +118,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Floating-point slider with range and optional formatter (<see cref="double" /> domain).
-    ///     带范围和可选格式化器的浮点滑条（<c>double</c> 域）。
+    ///     带范围和可选格式化器的浮点 slider（<see cref="double" /> 域）。
     /// </summary>
     public sealed class SliderModSettingsEntryDefinition(
         string id,
@@ -189,9 +189,10 @@ namespace STS2RitsuLib.Settings
     ///     <c>ModSettingsSectionBuilder.AddSlider</c> overload taking <see cref="IModSettingsValueBinding{T}" /> of
     ///     <see cref="float" />; separate from <see cref="SliderModSettingsEntryDefinition" /> to avoid float/double
     ///     drift and refresh feedback loops.
-    ///     内部 <c>float</c> 滑条条目（旧管线）。仅由已废弃的 <c>ModSettingsSectionBuilder.AddSlider</c>
-    ///     重载产生，该重载接收 <c>float</c> 的 <c>IModSettingsValueBinding{T}</c>；它与
-    ///     <c>SliderModSettingsEntryDefinition</c> 分离，以避免 float/double 漂移和刷新反馈循环。
+    ///     内部 <see cref="float" /> slider 条目（旧版管线）。仅由已过时的
+    ///     <c>ModSettingsSectionBuilder.AddSlider</c> 重载生成，该重载接收 <see cref="float" /> 的
+    ///     <see cref="IModSettingsValueBinding{T}" />；它与 <see cref="SliderModSettingsEntryDefinition" /> 分离，以避免 float/double
+    ///     漂移和刷新反馈循环。
     /// </summary>
     public sealed class FloatSliderModSettingsEntryDefinition(
         string id,
@@ -259,7 +260,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Discrete choice control over <typeparamref name="TValue" /> with fixed <see cref="Options" />.
-    ///     针对 <c>TValue</c> 的离散选择控件，使用固定 <c>Options</c>。
+    ///     基于 <typeparamref name="TValue" />、具有固定 <see cref="Options" /> 的离散 choice 控件。
     /// </summary>
     public sealed class ChoiceModSettingsEntryDefinition<TValue>(
         string id,
@@ -330,6 +331,7 @@ namespace STS2RitsuLib.Settings
         }
 
         /// <summary>
+        ///     Full constructor including color picker options.
         ///     完整构造函数（含拾色器选项）。
         /// </summary>
         public ColorModSettingsEntryDefinition(
@@ -348,21 +350,23 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Backing binding for the color string.
-        ///     Backing binding 用于 the color string.
+        ///     颜色字符串的后备绑定。
         /// </summary>
         public IModSettingsValueBinding<string> Binding { get; }
 
         /// <summary>
         ///     When false, the picker does not expose the alpha channel (matches BaseLib
-        ///     当 false, the picker does not expose the alpha channel (matches BaseLib
         ///     <c>[ConfigColorPicker(EditAlpha=false)]</c>).
+        ///     为 false 时，选择器不公开 alpha 通道（匹配 BaseLib
+        ///     <c>[ConfigColorPicker(EditAlpha=false)]</c>）。
         /// </summary>
         public bool EditAlpha { get; }
 
         /// <summary>
         ///     When true, enables HDR / intensity editing on the Godot picker (BaseLib only applies this for
-        ///     当 true, enables HDR / intensity editing on the Godot picker (BaseLib only applies this 用于
         ///     <see cref="Godot.Color" /> properties).
+        ///     为 true 时，在 Godot 选择器上启用 HDR / intensity 编辑（BaseLib 仅对
+        ///     <see cref="Godot.Color" /> 属性应用此项）。
         /// </summary>
         public bool EditIntensity { get; }
 
@@ -391,7 +395,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Shared base for single-line and multiline string entries.
-    ///     Shared base 用于 single-line 和 multiline string entries.
+    ///     单行和多行字符串条目的共享基类。
     /// </summary>
     public abstract class StringFieldModSettingsEntryDefinition(
         string id,
@@ -403,7 +407,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Backing binding for the text value.
-        ///     Backing binding 用于 the text value.
+        ///     文本值的后备绑定。
         /// </summary>
         public IModSettingsValueBinding<string> Binding { get; } = binding;
 
@@ -415,7 +419,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Maximum character count when set.
-        ///     最大 character count when set。
+        ///     设置时的最大字符数。
         /// </summary>
         public int? MaxLength { get; } = maxLength;
 
@@ -439,7 +443,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Single-line text field.
-    ///     中文说明：Single-line text field.
+    ///     单行文本字段。
     /// </summary>
     public sealed class StringModSettingsEntryDefinition(
         string id,
@@ -452,9 +456,9 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Optional visual validation for the current text (e.g. red border when <see langword="false" />).
-        ///     可选 visual 有效ation 用于 the current text (e.g. red border 当 <see langword="false" />).
         ///     Does not block commits; mirrors optional ModConfig TextInput <c>Validator</c> styling.
-        ///     Does not block commits; mirrors 可选 ModConfig TextInput <c>Validator</c> styling.
+        ///     当前文本的可选视觉校验（例如 <see langword="false" /> 时显示红色边框）。
+        ///     不会阻止提交；对应可选 ModConfig TextInput <c>Validator</c> 样式。
         /// </summary>
         public Func<string, bool>? ValueValidationVisual { get; init; }
 
@@ -466,7 +470,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Multiline text field.
-    ///     中文说明：Multiline text field.
+    ///     多行文本字段。
     /// </summary>
     public sealed class MultilineStringModSettingsEntryDefinition(
         string id,
@@ -485,7 +489,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Key binding capture row writing a string token to <see cref="Binding" />.
-    ///     中文说明：Key binding capture row writing a string token to <c>Binding</c>.
+    ///     将字符串 token 写入 <see cref="Binding" /> 的按键绑定捕获行。
     /// </summary>
     public sealed class KeyBindingModSettingsEntryDefinition(
         string id,
@@ -499,7 +503,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Backing binding for the serialized key string.
-        ///     Backing binding 用于 the serialized key string.
+        ///     序列化按键字符串的后备绑定。
         /// </summary>
         public IModSettingsValueBinding<string> Binding { get; } = binding;
 
@@ -546,7 +550,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Multi-key binding capture row writing a binding list to <see cref="Binding" />.
-    ///     中文说明：Multi-key binding capture row writing a binding list to <c>Binding</c>.
+    ///     将绑定列表写入 <see cref="Binding" /> 的多按键绑定捕获行。
     /// </summary>
     public sealed class MultiKeyBindingModSettingsEntryDefinition(
         string id,
@@ -560,7 +564,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Binding that stores the normalized list of captured hotkeys.
-        ///     中文说明：Binding that stores the normalized list of captured hotkeys.
+        ///     存储已捕获热键规范化列表的绑定。
         /// </summary>
         public IModSettingsValueBinding<List<string>> Binding { get; } =
             binding is IStructuredModSettingsValueBinding<List<string>>
@@ -581,7 +585,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Whether left/right modifier keys are distinguished while recording.
-        ///     表示是否 left/right modifier keys are distinguished while recording。
+        ///     录制时是否区分左右 modifier 键。
         /// </summary>
         public bool DistinguishModifierSides { get; } = distinguishModifierSides;
 
@@ -610,9 +614,8 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Non-persisted button that invokes <see cref="Action" />.
-    ///     中文说明：Non-persisted button that invokes <c>Action</c>.
-    ///     Non-persisted button that invokes <c>action</c>.
-    ///     中文说明：Non-persisted button that invokes <c>action</c>.
+    ///     调用 <see cref="Action" /> 的非持久化按钮。
+    ///     调用 <c>action</c> 的非持久化按钮。
     /// </summary>
     public sealed class ButtonModSettingsEntryDefinition(
         string id,
@@ -625,19 +628,19 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Caption on the button control.
-        ///     中文说明：Caption on the button control.
+        ///     按钮控件上的标题。
         /// </summary>
         public ModSettingsText ButtonText { get; } = buttonText;
 
         /// <summary>
         ///     Callback when the button is activated.
-        ///     Callback 当 the button is 章节ivated.
+        ///     按钮激活时的回调。
         /// </summary>
         public Action Action { get; } = action;
 
         /// <summary>
         ///     Visual emphasis (normal, primary, danger).
-        ///     中文说明：Visual emphasis (normal, primary, danger).
+        ///     视觉强调级别（normal、primary、danger）。
         /// </summary>
         public ModSettingsButtonTone Tone { get; } = tone;
 
@@ -649,9 +652,9 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Button that receives <see cref="IModSettingsUiActionHost" /> so callbacks can refresh the pane after async work
-    ///     Button that receives <c>IModSettingsUiActionHost</c> so callbacks can refresh the pane 之后 async work
     ///     (e.g. native file dialogs).
-    ///     中文说明：(e.g. native file dialogs).
+    ///     接收 <see cref="IModSettingsUiActionHost" /> 的按钮，使回调可在异步工作后刷新面板
+    ///     （例如原生文件对话框）。
     /// </summary>
     public sealed class HostContextButtonModSettingsEntryDefinition(
         string id,
@@ -664,21 +667,21 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Caption on the button control.
-        ///     中文说明：Caption on the button control.
+        ///     按钮控件上的标题。
         /// </summary>
         public ModSettingsText ButtonText { get; } = buttonText;
 
         /// <summary>
         ///     Callback when the button is activated; use <see cref="IModSettingsUiActionHost.RequestRefresh" /> after
-        ///     Callback 当 the button is 章节ivated; 使用 <c>IModSettingsUiActionHost.RequestRefresh</c> 之后
         ///     mutating bindings outside the control graph.
-        ///     中文说明：mutating bindings outside the control graph.
+        ///     按钮激活时的回调；在控件图之外修改绑定后使用
+        ///     <see cref="IModSettingsUiActionHost.RequestRefresh" />。
         /// </summary>
         public Action<IModSettingsUiActionHost> Action { get; } = action;
 
         /// <summary>
         ///     Visual emphasis (normal, primary, danger).
-        ///     中文说明：Visual emphasis (normal, primary, danger).
+        ///     视觉强调级别（normal、primary、danger）。
         /// </summary>
         public ModSettingsButtonTone Tone { get; } = tone;
 
@@ -690,7 +693,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Section heading without a control.
-    ///     Section heading 带有out a control.
+    ///     不带控件的 section 标题。
     /// </summary>
     public sealed class HeaderModSettingsEntryDefinition(
         string id,
@@ -706,10 +709,9 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Read-only rich text block; <see cref="ModSettingsEntryDefinition.Label" /> is the main body and
-    ///     中文说明：Read-only rich text block; <c>ModSettingsEntryDefinition.Label</c> is the main body and
-    ///     Read-only rich text block; <c>ModSettingsEntryDefinition.Label</c> is the main body and
-    ///     中文说明：Read-only rich text block; <c>ModSettingsEntryDefinition.Label</c> is the main body and
     ///     <see cref="ModSettingsEntryDefinition.Description" /> is an optional subtitle.
+    ///     只读富文本块；<see cref="ModSettingsEntryDefinition.Label" /> 是正文，
+    ///     <see cref="ModSettingsEntryDefinition.Description" /> 是可选副标题。
     /// </summary>
     public sealed class ParagraphModSettingsEntryDefinition(
         string id,
@@ -720,7 +722,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Maximum height of the paragraph body before scrolling.
-        ///     最大 height of the paragraph body before scrolling。
+        ///     段落正文开始滚动前的最大高度。
         /// </summary>
         public float? MaxBodyHeight { get; } = maxBodyHeight;
 
@@ -743,7 +745,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Main rich-text body shown inside the card.
-        ///     Main rich-text body shown inside the 卡牌.
+        ///     显示在卡片内的富文本正文。
         /// </summary>
         public ModSettingsText Body { get; } = body;
 
@@ -767,13 +769,13 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Descriptive body text shown under the title.
-        ///     中文说明：Descriptive body text shown under the title.
+        ///     显示在标题下方的描述正文。
         /// </summary>
         public ModSettingsText Body { get; } = body;
 
         /// <summary>
         ///     Binding chips shown in the right-hand column.
-        ///     中文说明：Binding chips shown in the right-hand column.
+        ///     显示在右侧列中的绑定 chip。
         /// </summary>
         public IReadOnlyList<ModSettingsText> Bindings { get; } = bindings;
 
@@ -785,7 +787,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Static image preview from <see cref="TextureProvider" />.
-    ///     Static image preview 从 <c>TextureProvider</c>.
+    ///     来自 <see cref="TextureProvider" /> 的静态图像预览。
     /// </summary>
     public sealed class ImageModSettingsEntryDefinition(
         string id,
@@ -797,13 +799,13 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Lazy texture source for the preview.
-        ///     Lazy 纹理 source 用于 the preview.
+        ///     预览用的延迟纹理来源。
         /// </summary>
         public Func<Texture2D?> TextureProvider { get; } = textureProvider;
 
         /// <summary>
         ///     Height of the preview area in pixels.
-        ///     中文说明：Height of the preview area in pixels.
+        ///     预览区域的高度，单位为像素。
         /// </summary>
         public float PreviewHeight { get; } = previewHeight;
 
@@ -827,7 +829,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Factory that creates the row control.
-        ///     Factory that 创建 the row control.
+        ///     创建行控件的工厂。
         /// </summary>
         public Func<IModSettingsUiActionHost, Control> ControlFactory { get; } = controlFactory;
 

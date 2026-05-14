@@ -2,22 +2,20 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Feature bits advertised in <see cref="RitsuLibSidecarHandshakeBinary" />.
-    ///     中文说明：Feature bits advertised in <c>RitsuLibSidecarHandshakeBinary</c>.
+    ///     <see cref="RitsuLibSidecarHandshakeBinary" /> 中宣告的 feature bit。
     /// </summary>
     [Flags]
     public enum RitsuLibSidecarPeerFeatures : uint
     {
         /// <summary>
         ///     No optional features advertised.
-        ///     No 可选 features advertised.
+        ///     未宣告可选 feature。
         /// </summary>
         None = 0,
 
         /// <summary>
         ///     Chunked large-payload reassembly (opcode <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" />).
-        ///     中文说明：Chunked large-payload reassembly (opcode <c>RitsuLibSidecarControlOpcodes.ChunkedFrame</c>).
-        ///     Chunked large-payload reassembly (opcode <c>RitsuLibSidecarControlOpcodes.ChunkedFrame</c>).
-        ///     中文说明：Chunked large-payload reassembly (opcode <c>RitsuLibSidecarControlOpcodes.ChunkedFrame</c>).
+        ///     分块大型载荷重组（opcode <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" />）。
         /// </summary>
         ChunkedStreams = 1 << 0,
     }

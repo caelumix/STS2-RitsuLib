@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Coordinates adaptive room/combat/victory music playback in response to game lifecycle transitions.
-    ///     中文说明：Coordinates adaptive room/combat/victory music playback in response to game lifecycle transitions.
+    ///     根据游戏生命周期转换，协调自适应房间/战斗/胜利音乐播放。
     /// </summary>
     public sealed class AudioAdaptiveMusicDirector : IDisposable
     {
@@ -33,13 +33,13 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Shared singleton director.
-        ///     中文说明：Shared singleton director.
+        ///     共享的单例 director。
         /// </summary>
         public static AudioAdaptiveMusicDirector Shared { get; } = new();
 
         /// <summary>
         ///     Disposes framework lifecycle subscriptions owned by this director.
-        ///     Disposes framework lifecycle subscriptions owned 通过 this director.
+        ///     释放此 director 拥有的框架生命周期订阅。
         /// </summary>
         public void Dispose()
         {
@@ -54,7 +54,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Starts following the supplied adaptive music plan and returns a handle for later shutdown.
-        ///     Starts following the supplied adaptive music plan 和 返回 a handle 用于 later shutdown.
+        ///     开始跟随提供的自适应音乐计划，并返回用于稍后关闭的句柄。
         /// </summary>
         public AudioAdaptiveMusicHandle Attach(AudioAdaptiveMusicPlan plan)
         {
@@ -66,7 +66,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Removes a previously attached adaptive music handle from lifecycle tracking.
-        ///     Removes a previously attached adaptive music handle 从 lifecycle tracking.
+        ///     从生命周期跟踪中移除先前附加的自适应音乐句柄。
         /// </summary>
         public void Detach(AudioAdaptiveMusicHandle handle)
         {

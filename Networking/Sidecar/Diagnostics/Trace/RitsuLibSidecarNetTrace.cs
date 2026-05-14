@@ -5,8 +5,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Sidecar wire tracing via <see cref="RitsuLibFramework.CreateLogger(string, LogType)" /> with
-    ///     Sidecar wire tracing via <c>RitsuLibFramework.创建Logger(string, LogType)</c> 带有
     ///     <see cref="Const.ModId" /> and <see cref="LogType.Network" />.
+    ///     通过 <see cref="RitsuLibFramework.CreateLogger(string, LogType)" /> 进行 sidecar 线追踪，使用
+    ///     <see cref="Const.ModId" /> 和 <see cref="LogType.Network" />。
     /// </summary>
     internal static class RitsuLibSidecarNetTrace
     {

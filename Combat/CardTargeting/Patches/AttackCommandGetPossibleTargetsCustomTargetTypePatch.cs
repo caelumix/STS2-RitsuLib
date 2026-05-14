@@ -7,7 +7,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Replaces <see cref="AttackCommand.GetPossibleTargets" /> result when custom filtered targets are attached.
-    ///     当攻击命令附加了自定义筛选目标时，替换 <c>AttackCommand.GetPossibleTargets</c> 的返回结果。
+    ///     当攻击命令附加了自定义筛选目标时，替换 <see cref="AttackCommand.GetPossibleTargets" /> 的返回结果。
     /// </summary>
     internal sealed class AttackCommandGetPossibleTargetsCustomTargetTypePatch : IPatchMethod
     {
@@ -26,7 +26,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
         /// <summary>
         ///     Targets <see cref="AttackCommand.GetPossibleTargets" />.
-        ///     目标方法为 <c>AttackCommand.GetPossibleTargets</c>。
+        ///     目标方法为 <see cref="AttackCommand.GetPossibleTargets" />。
         /// </summary>
         public static ModPatchTarget[] GetTargets()
         {

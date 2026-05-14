@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeFactories
 {
     /// <summary>
     ///     Procedural <see cref="Control" /> root from <see cref="Texture2D" /> (full <see cref="TextureRect" />).
-    ///     从 <c>Texture2D</c> 生成 procedural <c>Control</c> root（完整 <c>TextureRect</c>）。
+    ///     从 <see cref="Texture2D" /> 构建程序化 <see cref="Control" /> 根节点（完整 <see cref="TextureRect" />）。
     /// </summary>
     internal sealed class RitsuTextureRectControlNodeFactory() : RitsuGodotNodeFactory<Control>([])
     {

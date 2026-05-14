@@ -7,7 +7,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 {
     /// <summary>
     ///     Publishes a lifecycle event when <see cref="NGameOverScreen" /> is created from run state and save data.
-    ///     当 <c>NGameOverScreen</c> 从跑局状态和存档数据创建时发布生命周期事件。
+    ///     当 <see cref="NGameOverScreen" /> 从跑局状态和存档数据创建时发布生命周期事件。
     /// </summary>
     public class GameOverScreenLifecyclePatch : IPatchMethod
     {
@@ -32,7 +32,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
         /// <summary>
         ///     Harmony postfix: when creation succeeds, publishes <see cref="GameOverScreenCreatedEvent" />.
-        ///     Harmony postfix：创建成功时发布 <c>GameOverScreenCreatedEvent</c>。
+        ///     Harmony postfix：创建成功时发布 <see cref="GameOverScreenCreatedEvent" />。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(RunState runState, SerializableRun serializableRun, NGameOverScreen? __result)

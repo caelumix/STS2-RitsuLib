@@ -8,7 +8,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
     ///     RitsuLib-defined <see cref="TargetType" /> extensions minted via <see cref="DynamicEnumValueMinter{TEnum}" />.
     ///     Unlike BaseLib's CustomEnum system, these values are generated deterministically from stable string ids and
     ///     live entirely in the reserved high-value band.
-    ///     由 RitsuLib 定义并通过 <c>DynamicEnumValueMinter{TEnum}</c> 铸造的 <c>TargetType</c> 扩展。
+    ///     由 RitsuLib 定义并通过 <see cref="DynamicEnumValueMinter{TEnum}" /> 铸造的 <see cref="TargetType" /> 扩展。
     ///     与 BaseLib 的 CustomEnum 体系不同，这些值由稳定字符串 id 确定性生成，并位于保留的高位值区间。
     /// </summary>
     public static class CustomTargetType
@@ -92,7 +92,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Whether <paramref name="type" /> is one of RitsuLib's custom target types.
-        ///     判断 <c>type</c> 是否属于 RitsuLib 定义的自定义目标类型。
+        ///     判断 <paramref name="type" /> 是否属于 RitsuLib 定义的自定义目标类型。
         /// </summary>
         public static bool IsRitsuCustom(TargetType type)
         {
@@ -101,7 +101,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Whether <paramref name="type" /> is registered as a custom single-target type.
-        ///     判断 <c>type</c> 是否已注册为自定义单体目标类型。
+        ///     判断 <paramref name="type" /> 是否已注册为自定义单体目标类型。
         /// </summary>
         public static bool IsCustomSingleTargetType(TargetType type)
         {
@@ -110,7 +110,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Whether <paramref name="type" /> is registered as a custom multi-target type.
-        ///     判断 <c>type</c> 是否已注册为自定义群体目标类型。
+        ///     判断 <paramref name="type" /> 是否已注册为自定义群体目标类型。
         /// </summary>
         public static bool IsCustomMultiTargetType(TargetType type)
         {

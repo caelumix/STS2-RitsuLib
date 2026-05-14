@@ -7,7 +7,7 @@ namespace STS2RitsuLib.Patching.Core
 {
     /// <summary>
     ///     Extension methods for ModPatcher to support advanced patch builders.
-    ///     面向 ModPatcher 的扩展方法，用于支持高级补丁构建器。
+    ///     ModPatcher 的扩展方法，用于支持高级 patch 构建器。
     /// </summary>
     public static class ModPatcherExtensions
     {
@@ -24,7 +24,7 @@ namespace STS2RitsuLib.Patching.Core
 
         /// <summary>
         ///     Register patches from an IModPatchProvider type.
-        ///     从 IModPatchProvider 类型注册补丁。
+        ///     从 IModPatchProvider 类型注册 patch。
         /// </summary>
         public static void RegisterPatches<T>(this ModPatcher patcher) where T : IModPatches
         {
@@ -34,7 +34,8 @@ namespace STS2RitsuLib.Patching.Core
         /// <summary>
         ///     Register patches from an IPatchMethod type (single patch)
         ///     or a class containing multiple IPatchMethod nested classes.
-        ///     从 IPatchMethod 类型（单个补丁）或包含多个 IPatchMethod 嵌套类的类注册补丁。
+        ///     从 IPatchMethod 类型注册 patch（单个 patch），
+        ///     或从包含多个 IPatchMethod 嵌套类的类注册。
         /// </summary>
         public static void RegisterPatch<TPatch>(this ModPatcher patcher) where TPatch : IPatchMethod
         {

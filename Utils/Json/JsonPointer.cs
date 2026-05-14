@@ -4,15 +4,15 @@ namespace STS2RitsuLib.Utils.Json
 {
     /// <summary>
     ///     RFC 6901 JSON Pointer helpers for <see cref="JsonNode" /> DOM navigation and mutation.
-    ///     RFC 6901 JSON Pointer helpers 用于 <c>JsonNode</c> DOM navigation 和 mutation.
     ///     https://www.rfc-editor.org/rfc/rfc6901
-    ///     中文说明：https://www.rfc-editor.org/rfc/rfc6901
+    ///     RFC 6901 JSON Pointer helpers 用于 <see cref="JsonNode" /> DOM navigation 和 mutation.
+    ///     https://www.rfc-edit或.或g/rfc/rfc6901
     /// </summary>
     public static class JsonPointer
     {
         /// <summary>
         ///     Checks whether the pointer selects the document root.
-        ///     中文说明：Checks whether the pointer selects the document root.
+        ///     检查指针是否选择文档根。
         /// </summary>
         public static bool IsRoot(string? pointer)
         {
@@ -25,7 +25,7 @@ namespace STS2RitsuLib.Utils.Json
 
         /// <summary>
         ///     Normalizes a JSON Pointer fragment for DOM navigation (leading slash optional when authoring).
-        ///     Normalizes a JSON Pointer fragment 用于 DOM navigation (leading slash 可选 当 authoring).
+        ///     规范化用于 DOM 导航的 JSON Pointer 片段（编写时可省略前导斜杠）。
         /// </summary>
         public static string Normalize(string rawPointer)
         {
@@ -38,7 +38,7 @@ namespace STS2RitsuLib.Utils.Json
 
         /// <summary>
         ///     Resolves a node under <paramref name="root" /> by JSON Pointer, or <c>null</c> when not found.
-        ///     解析 a node under <c>root</c> by JSON Pointer, or <c>null</c> when not found。
+        ///     通过 JSON Pointer 解析 <paramref name="root" /> 下的节点；未找到时为 <c>null</c>。
         /// </summary>
         public static JsonNode? Get(JsonNode root, string jsonPointer)
         {
@@ -67,9 +67,9 @@ namespace STS2RitsuLib.Utils.Json
 
         /// <summary>
         ///     Sets <paramref name="value" /> at <paramref name="jsonPointer" /> under an object root.
-        ///     设置 <c>value</c> at <c>jsonPointer</c> under an object root.
         ///     Null removes the property when targeting an object.
-        ///     Null removes the property 当 targeting an object.
+        ///     在对象根下的 <paramref name="jsonPointer" /> 位置设置 <paramref name="value" />。
+        ///     目标为对象时，null 会移除该属性。
         /// </summary>
         public static void Set(JsonObject documentRoot, string jsonPointer, JsonNode? value)
         {
@@ -127,7 +127,7 @@ namespace STS2RitsuLib.Utils.Json
 
         /// <summary>
         ///     Enumerates decoded JSON Pointer segments.
-        ///     中文说明：Enumerates decoded JSON Pointer segments.
+        ///     枚举已解码的 JSON Pointer 段。
         /// </summary>
         public static IEnumerable<string> EnumerateSegments(string jsonPointer)
         {

@@ -9,7 +9,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeFactories
 {
     /// <summary>
     ///     Converts mod <see cref="NEnergyCounter" /> scenes (or procedural layers) into game-ready energy orbs.
-    ///     将 mod <c>NEnergyCounter</c> 场景（或 procedural layer）转换为游戏可用的能量球。
+    ///     将 mod <see cref="NEnergyCounter" /> 场景（或程序化图层）转换为游戏可用的能量充能球。
     /// </summary>
     internal sealed class RitsuNEnergyCounterNodeFactory() : RitsuGodotNodeFactory<NEnergyCounter>([
         new RitsuGodotNodeSlot<NParticlesContainer>("%EnergyVfxBack"),

@@ -7,13 +7,14 @@ namespace STS2RitsuLib.Scaffolding.Characters
     /// <summary>
     ///     Extension methods on <see cref="Creature" /> and <see cref="Player" /> for common combat queries
     ///     (powers, orbs, energy).
-    ///     <c>Creature</c> 和 <c>Player</c> 的常用战斗查询扩展方法（能力、充能球、能量）。
+    ///     <see cref="Creature" /> 和 <see cref="Player" /> 上用于常见战斗查询
+    ///     （能力、orb、能量）的扩展方法。
     /// </summary>
     public static class CharacterCombatExtensions
     {
         /// <summary>
         ///     Returns the first active power instance of type <typeparamref name="TPower" />, if any.
-        ///     返回第一个类型为 <c>TPower</c> 的激活能力实例；若不存在则返回 null。
+        ///     返回类型为 <typeparamref name="TPower" /> 的第一个活动能力实例（如果有）。
         /// </summary>
         public static TPower? FindPower<TPower>(this Creature creature) where TPower : PowerModel
         {
@@ -24,7 +25,8 @@ namespace STS2RitsuLib.Scaffolding.Characters
         /// <summary>
         ///     Whether the creature currently has at least <paramref name="minimumAmount" /> stacks of
         ///     <typeparamref name="TPower" />.
-        ///     此生物当前是否至少拥有 <c>minimumAmount</c> 层 <c>TPower</c>。
+        ///     生物当前是否至少有 <paramref name="minimumAmount" /> 层
+        ///     <typeparamref name="TPower" />。
         /// </summary>
         public static bool HasPower<TPower>(this Creature creature, int minimumAmount = 1) where TPower : PowerModel
         {
@@ -34,7 +36,7 @@ namespace STS2RitsuLib.Scaffolding.Characters
 
         /// <summary>
         ///     Current stack count of <typeparamref name="TPower" />, or zero if absent.
-        ///     <c>TPower</c> 的当前层数；不存在时为 0。
+        ///     <typeparamref name="TPower" /> 的当前层数；不存在时为零。
         /// </summary>
         public static int GetPowerAmount<TPower>(this Creature creature) where TPower : PowerModel
         {
@@ -44,7 +46,7 @@ namespace STS2RitsuLib.Scaffolding.Characters
 
         /// <summary>
         ///     Whether the player’s orb queue currently contains at least one orb of type <typeparamref name="TOrb" />.
-        ///     玩家充能球队列当前是否至少包含一个类型为 <c>TOrb</c> 的充能球。
+        ///     玩家的 orb 队列当前是否至少包含一个 <typeparamref name="TOrb" /> 类型的 orb。
         /// </summary>
         public static bool HasOrb<TOrb>(this Player player) where TOrb : OrbModel
         {
@@ -54,7 +56,7 @@ namespace STS2RitsuLib.Scaffolding.Characters
 
         /// <summary>
         ///     Counts orbs of type <typeparamref name="TOrb" /> in the queue.
-        ///     统计队列中类型为 <c>TOrb</c> 的充能球数量。
+        ///     统计队列中 <typeparamref name="TOrb" /> 类型的 orb 数量。
         /// </summary>
         public static int GetOrbCount<TOrb>(this Player player) where TOrb : OrbModel
         {

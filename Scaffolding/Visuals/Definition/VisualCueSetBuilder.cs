@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 {
     /// <summary>
     ///     Fluent builder for <see cref="VisualCueSet" /> (single textures and frame sequences per cue).
-    ///     <c>VisualCueSet</c> 的流式 builder（每个 cue 可绑定单贴图或帧序列）。
+    ///     <see cref="VisualCueSet" /> 的流式构建器（每个 cue 对应单张纹理和帧序列）。
     /// </summary>
     public sealed class VisualCueSetBuilder
     {
@@ -30,7 +30,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
         /// <summary>
         ///     Binds one static texture to a cue (e.g. <c>idle</c>, <c>die</c>). Removes a frame sequence for the same
         ///     cue key if present.
-        ///     将一个静态贴图绑定到 cue（例如 <c>idle</c>、<c>die</c>）。如果同一 cue key 已有帧序列，则移除该帧序列。
+        ///     将一个静态纹理绑定到 cue（例如 <c>idle</c>、<c>die</c>）。如果同一
+        ///     cue 键存在帧序列，则移除它。
         /// </summary>
         public VisualCueSetBuilder Single(string cueKey, string texturePath)
         {
@@ -58,7 +59,6 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Binds a frame sequence configured via <paramref name="configure" />.
-        ///     绑定一个通过 <c>configure</c> 配置的帧序列。
         /// </summary>
         public VisualCueSetBuilder Sequence(string cueKey, Action<VisualFrameSequenceBuilder> configure)
         {

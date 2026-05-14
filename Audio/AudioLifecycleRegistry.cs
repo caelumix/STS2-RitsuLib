@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Central registry that stops scoped handles when framework lifecycle events fire.
-    ///     Central 注册表 that stops scoped handles 当 framework lifecycle 事件s fire.
+    ///     中央注册表，在框架生命周期事件触发时停止带作用域的句柄。
     /// </summary>
     public sealed class AudioLifecycleRegistry : IDisposable
     {
@@ -30,13 +30,13 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Shared singleton registry.
-        ///     Shared singleton 注册表.
+        ///     共享的单例注册表。
         /// </summary>
         public static AudioLifecycleRegistry Shared { get; } = new();
 
         /// <summary>
         ///     Disposes framework lifecycle subscriptions owned by this registry.
-        ///     Disposes framework lifecycle subscriptions owned 通过 this 注册表.
+        ///     释放此注册表拥有的框架生命周期订阅。
         /// </summary>
         public void Dispose()
         {
@@ -47,7 +47,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Attaches a handle to either a manual token or a built-in scope.
-        ///     Attaches a handle to either a manual token 或 a built-in scope.
+        ///     将句柄附加到手动 token 或内置作用域。
         /// </summary>
         public void Attach(IAudioHandle handle, AudioPlaybackOptions? options)
         {
@@ -65,7 +65,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Removes a handle from all tracked scopes and tokens.
-        ///     Removes a handle 从 all tracked scopes 和 tokens.
+        ///     从所有已跟踪作用域和 token 中移除句柄。
         /// </summary>
         public void Detach(IAudioHandle handle)
         {
@@ -78,7 +78,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Stops and releases every handle attached to a built-in scope.
-        ///     Stops 和 releases every handle attached to a built-in scope.
+        ///     停止并释放附加到内置作用域的每个句柄。
         /// </summary>
         public bool StopScope(AudioLifecycleScope scope, bool allowFadeOut = true)
         {
@@ -99,7 +99,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Stops and releases every handle attached to a manual token.
-        ///     Stops 和 releases every handle attached to a manual token.
+        ///     停止并释放附加到手动 token 的每个句柄。
         /// </summary>
         public bool StopScope(AudioScopeToken token, bool allowFadeOut = true)
         {

@@ -4,45 +4,47 @@ namespace STS2RitsuLib.Patching.Models
 {
     /// <summary>
     ///     Describes a static patch type targeting one vanilla method by reflection.
-    ///     Describes a static patch type targeting one 原版 method 通过 reflection.
+    ///     描述一个通过反射定位单个原版方法的静态 patch 类型。
     /// </summary>
     /// <param name="id">
     ///     Stable patch identifier.
-    ///     稳定的 patch identifier。
+    ///     稳定的 patch 标识符。
     /// </param>
     /// <param name="targetType">
     ///     Declaring type of the method to patch.
-    ///     中文说明：Declaring type of the method to patch.
+    ///     要 patch 的方法的声明类型。
     /// </param>
     /// <param name="methodName">
     ///     Name of the method to patch.
-    ///     中文说明：Name of the method to patch.
+    ///     要 patch 的方法名称。
     /// </param>
     /// <param name="patchType">
     ///     Type containing optional Harmony <c>Prefix</c>/<c>Postfix</c>/<c>Transpiler</c>/
-    ///     Type containing 可选 Harmony <c>Prefix</c>/<c>Postfix</c>/<c>Transpiler</c>/
     ///     <c>Finalizer</c>.
+    ///     包含可选 Harmony <c>Prefix</c>/<c>Postfix</c>/<c>Transpiler</c>/
+    ///     <c>Finalizer</c> 的类型。
     /// </param>
     /// <param name="isCritical">
     ///     Whether failure should block the patcher.
-    ///     表示是否 failure should block the patcher。
+    ///     失败是否应阻止 patcher。
     /// </param>
     /// <param name="description">
     ///     Optional description; defaults to <c>Patch Type.Method</c>.
-    ///     可选 description; defaults to <c>Patch Type.Method</c>.
+    ///     可选描述；默认为 <c>Patch Type.Method</c>。
     /// </param>
     /// <param name="parameterTypes">
     ///     Method parameter types for overload resolution; null selects by name only.
-    ///     Method parameter types 用于 over加载 resolution; null selects 通过 name only.
+    ///     用于重载解析的方法参数类型；null 表示只按名称选择。
     /// </param>
     /// <param name="ignoreIfTargetMissing">
     ///     When true, missing targets produce an ignored result instead of failure.
-    ///     为 true 时，missing targets produce an ignored result instead of failure。
+    ///     为 true 时，缺失目标会产生 ignored 结果而非失败。
     /// </param>
     /// <param name="harmonyMethodType">
     ///     Harmony <see cref="MethodType" /> for target resolution (e.g. <see cref="MethodType.Async" />), matching
-    ///     Harmony <c>MethodType</c> 用于 target resolution (e.g. <c>MethodType.Async</c>), matching
     ///     <c>[HarmonyPatch(..., MethodType.X)]</c>.
+    ///     用于目标解析的 Harmony <see cref="MethodType" />（例如 <see cref="MethodType.Async" />），匹配
+    ///     <c>[HarmonyPatch(..., MethodType.X)]</c>。
     /// </param>
     public class ModPatchInfo(
         string id,
@@ -57,40 +59,41 @@ namespace STS2RitsuLib.Patching.Models
     {
         /// <summary>
         ///     Legacy constructor without <see cref="HarmonyMethodType" />; forwards to
-        ///     Legacy constructor 带有out <c>HarmonyMethodType</c>; 用于wards to
         ///     <see cref="MethodType.Normal" />.
+        ///     不含 <see cref="HarmonyMethodType" /> 的旧版构造函数；转发到
+        ///     <see cref="MethodType.Normal" />。
         /// </summary>
         /// <param name="id">
         ///     Stable patch identifier.
-        ///     稳定的 patch identifier。
+        ///     稳定的 patch 标识符。
         /// </param>
         /// <param name="targetType">
         ///     Declaring type of the method to patch.
-        ///     中文说明：Declaring type of the method to patch.
+        ///     要 patch 的方法的声明类型。
         /// </param>
         /// <param name="methodName">
         ///     Name of the method to patch.
-        ///     中文说明：Name of the method to patch.
+        ///     要 patch 的方法名称。
         /// </param>
         /// <param name="patchType">
         ///     Type containing Harmony patch methods.
-        ///     中文说明：Type containing Harmony patch methods.
+        ///     包含 Harmony patch 方法的类型。
         /// </param>
         /// <param name="isCritical">
         ///     Whether failure should block the patcher.
-        ///     表示是否 failure should block the patcher。
+        ///     是否让失败阻止 patcher。
         /// </param>
         /// <param name="description">
         ///     Human-readable description.
-        ///     人类可读的 description。
+        ///     便于阅读的描述。
         /// </param>
         /// <param name="parameterTypes">
         ///     Method parameter types for overload resolution.
-        ///     Method parameter types 用于 over加载 resolution.
+        ///     用于重载解析的方法参数类型。
         /// </param>
         /// <param name="ignoreIfTargetMissing">
         ///     When true, missing targets are ignored.
-        ///     为 true 时，missing targets are ignored。
+        ///     为 true 时，忽略缺失的目标。
         /// </param>
         public ModPatchInfo(
             string id,
@@ -116,55 +119,55 @@ namespace STS2RitsuLib.Patching.Models
 
         /// <summary>
         ///     Unique patch id.
-        ///     中文说明：Unique patch id.
+        ///     唯一 patch id。
         /// </summary>
         public string Id { get; } = id;
 
         /// <summary>
         ///     Type that declares the original method.
-        ///     中文说明：Type that declares the original method.
+        ///     声明原始方法的类型。
         /// </summary>
         public Type TargetType { get; } = targetType;
 
         /// <summary>
         ///     Original method name.
-        ///     中文说明：Original method name.
+        ///     原始方法名。
         /// </summary>
         public string MethodName { get; } = methodName;
 
         /// <summary>
         ///     Patch class applied via Harmony.
-        ///     中文说明：Patch class applied via Harmony.
+        ///     通过 Harmony 应用的 patch 类。
         /// </summary>
         public Type PatchType { get; } = patchType;
 
         /// <summary>
         ///     Whether this patch is critical.
-        ///     表示是否 this patch is critical。
+        ///     此 patch 是否为关键 patch。
         /// </summary>
         public bool IsCritical { get; } = isCritical;
 
         /// <summary>
         ///     Parameter signature for overload resolution, when needed.
-        ///     Parameter signature 用于 over加载 resolution, 当 needed.
+        ///     需要时用于重载解析的参数签名。
         /// </summary>
         public Type[]? ParameterTypes { get; } = parameterTypes;
 
         /// <summary>
         ///     When true, a missing vanilla method yields an ignored success result.
-        ///     为 true 时，a missing vanilla method yields an ignored success result。
+        ///     为 true 时，缺失的原版方法会产生被忽略的成功结果。
         /// </summary>
         public bool IgnoreIfTargetMissing { get; } = ignoreIfTargetMissing;
 
         /// <summary>
         ///     Harmony method-type discriminator used when resolving the original <see cref="System.Reflection.MethodBase" />.
-        ///     Harmony method-type discriminator used 当 resolving the original <c>System.Reflection.MethodBase</c>.
+        ///     解析原始 <see cref="System.Reflection.MethodBase" /> 时使用的 Harmony 方法类型判别器。
         /// </summary>
         public MethodType HarmonyMethodType { get; } = harmonyMethodType;
 
         /// <summary>
         ///     Human-readable description of the patch.
-        ///     人类可读的 description of the patch。
+        ///     patch 的便于阅读的描述。
         /// </summary>
         public string Description { get; } =
             string.IsNullOrEmpty(description) ? $"Patch {targetType.Name}.{methodName}" : description;

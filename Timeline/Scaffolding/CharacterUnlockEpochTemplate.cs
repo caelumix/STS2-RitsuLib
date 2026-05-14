@@ -10,7 +10,7 @@ namespace STS2RitsuLib.Timeline.Scaffolding
     /// </summary>
     /// <typeparam name="TCharacter">
     ///     Character model type being unlocked.
-    ///     Character 模型 type being unlocked.
+    ///     正在解锁的角色模型类型。
     /// </typeparam>
     public abstract class CharacterUnlockEpochTemplate<TCharacter> : ModEpochTemplate
         where TCharacter : CharacterModel
@@ -20,7 +20,7 @@ namespace STS2RitsuLib.Timeline.Scaffolding
 
         /// <summary>
         ///     Additional epoch types to append when this unlock fires; default none.
-        ///     Additional epoch types to append 当 this unlock fires; default none.
+        ///     要追加的额外纪元类型 当此解锁触发时; 默认为无。
         /// </summary>
         protected virtual IEnumerable<Type> ExpansionEpochTypes => [];
 

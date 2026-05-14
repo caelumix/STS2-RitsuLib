@@ -6,11 +6,12 @@ namespace STS2RitsuLib.Timeline.Scaffolding
 {
     /// <summary>
     ///     Base <see cref="StoryModel" /> that derives its id from <see cref="StoryKey" />. Epoch order comes from
-    ///     Base <c>Story模型</c> that derives its id 从 <c>StoryKey</c>. Epoch order comes 从
     ///     <see cref="ModTimelineRegistry.RegisterStoryEpoch{TStory, TEpoch}" /> (or
     ///     <see cref="TimelineColumnPackEntry{TStory}" />),
     ///     not from an overridden type list.
-    ///     not 从 an overridden type list.
+    ///     基类 <see cref="StoryModel" /> 其 id 派生自 <see cref="StoryKey" />. 纪元顺序来自
+    ///     <see cref="TimelineColumnPackEntry{TStory}" />),
+    ///     而不是来自重写的类型列表。
     /// </summary>
     public abstract class ModStoryTemplate : StoryModel
     {
@@ -25,7 +26,7 @@ namespace STS2RitsuLib.Timeline.Scaffolding
 
         /// <summary>
         ///     Human-readable story key slugified into the model id.
-        ///     人类可读的 story key slugified into the model id。
+        ///     会转换为模型 id 的人类可读故事键。
         /// </summary>
         protected abstract string StoryKey { get; }
 

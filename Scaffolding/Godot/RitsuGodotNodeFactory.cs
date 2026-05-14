@@ -5,7 +5,7 @@ namespace STS2RitsuLib.Scaffolding.Godot
 {
     /// <summary>
     ///     Non-generic factory entry point used by <see cref="RitsuGodotNodeFactoryRegistry" />.
-    ///     由 <c>RitsuGodotNodeFactoryRegistry</c> 使用的非泛型工厂入口。
+    ///     Non-generic 工厂 条目 point used by <see cref="RitsuGodotNodeFactoryRegistry" />。
     /// </summary>
     internal abstract class RitsuGodotNodeFactory
     {
@@ -13,20 +13,20 @@ namespace STS2RitsuLib.Scaffolding.Godot
 
         /// <summary>
         ///     Builds a root node without running <see cref="CompleteBareRoot" /> (used for <c>Texture2D</c> → visuals).
-        ///     构建根节点但不运行 <c>CompleteBareRoot</c>（用于 <c>Texture2D</c> → visuals）。
+        ///     构建一个根节点，而不运行 <see cref="CompleteBareRoot" />（用于 <c>Texture2D</c> → 视觉）。
         /// </summary>
         public abstract Node CreateBareFromResource(object resource);
 
         /// <summary>
         ///     Fills unique slots / children for a bare root (same as <c>ConvertScene(target, null)</c>).
-        ///     为 bare root 填充 unique slot / child（等同于 <c>ConvertScene(target, null)</c>）。
+        ///     为裸根节点填充唯一槽位 / 子节点（与 <c>ConvertScene(target, null)</c> 相同）。
         /// </summary>
         public abstract void CompleteBareRoot(Node bare);
     }
 
     /// <summary>
     ///     Describes a named child expected under a converted Godot scene root (unique <c>%Name</c> or path lookup).
-    ///     描述转换后的 Godot 场景根节点下期望存在的命名子节点（unique <c>%Name</c> 或路径查找）。
+    ///     Describes a named child expected under a converted Godot 场景 根节点 (unique <c>%Name</c> or 路径 lookup)。
     /// </summary>
     internal interface IRitsuGodotNodeSlot
     {
@@ -41,7 +41,7 @@ namespace STS2RitsuLib.Scaffolding.Godot
 
     /// <summary>
     ///     Slot metadata for <see cref="RitsuGodotNodeFactory{T}" /> (mirrors baselib <c>NodeInfo&lt;T&gt;</c>).
-    ///     <c>RitsuGodotNodeFactory{T}</c> 的 slot 元数据（对应 baselib 的 <c>NodeInfo&lt;T&gt;</c>）。
+    ///     <see cref="RitsuGodotNodeFactory{T}" /> 的槽位元数据（对应 baselib 的 <c>NodeInfo&lt;T&gt;</c>）。
     /// </summary>
     internal sealed record RitsuGodotNodeSlot<TExpected>(string Path, bool MakeNameUnique = true) : IRitsuGodotNodeSlot
         where TExpected : Node
@@ -69,7 +69,7 @@ namespace STS2RitsuLib.Scaffolding.Godot
 
     /// <summary>
     ///     Base class for typed procedural / scene conversion factories.
-    ///     类型化 procedural / scene 转换工厂的基类。
+    ///     强类型程序化 / 场景转换工厂的基类。
     /// </summary>
     internal abstract class RitsuGodotNodeFactory<T> : RitsuGodotNodeFactory where T : Node, new()
     {
@@ -105,7 +105,7 @@ namespace STS2RitsuLib.Scaffolding.Godot
 
         /// <summary>
         ///     When <paramref name="resource" /> is unsupported, throw with a clear message.
-        ///     当不支持 <c>resource</c> 时，抛出带有清晰信息的异常。
+        ///     当 <paramref name="resource" /> 不受支持时，抛出清晰的消息。
         /// </summary>
         protected abstract T CreateBareFromResourceImpl(object resource);
 
@@ -232,9 +232,9 @@ namespace STS2RitsuLib.Scaffolding.Godot
         ///     Packed-scene children often still reference the old root as <see cref="Node.Owner" /> after
         ///     <c>RemoveChild</c>. Godot warns and can break unique-name resolution if reparenting under a new root with
         ///     the same scene name without clearing first (matches Godot log: inconsistent owner).
-        ///     packed scene 的子节点在 <c>RemoveChild</c> 后经常仍把旧根节点作为 <c>Node.Owner</c>。
-        ///     如果不先清空 owner 就 reparent 到同名的新根节点下，Godot 会警告并且可能破坏 unique-name 解析
-        ///     （对应 Godot 日志：inconsistent owner）。
+        ///     packed scene 子节点在 <c>RemoveChild</c> 后通常仍以旧根节点作为 <see cref="Node.Owner" />。
+        ///     如果在未先清理的情况下重挂到具有相同场景名称的新根节点下，Godot 会警告并可能破坏唯一名称解析
+        ///     （匹配 Godot 日志：所有者不一致）。
         /// </summary>
         private static void ClearSubtreeOwnersForReparent(Node node)
         {

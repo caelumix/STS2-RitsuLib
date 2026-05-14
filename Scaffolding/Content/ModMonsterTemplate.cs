@@ -15,21 +15,21 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     Use <see cref="RitsuGodotNodeFactories" /> for explicit <c>CreateFromResource</c> / <c>CreateFromScenePath</c>
     ///     construction. Register with <c>ModContentRegistry.RegisterMonster&lt;T&gt;()</c> or <c>Monster&lt;T&gt;()</c> on
     ///     the pack builder.
-    ///     Mod 怪物的基础 <c>MonsterModel</c>：<c>IModMonsterAssetOverrides</c> 提供视觉场景路径；
-    ///     也可以重写 <c>TryCreateCreatureVisuals</c> 直接用代码构建 <c>NCreatureVisuals</c>。
-    ///     如需显式 <c>CreateFromResource</c> / <c>CreateFromScenePath</c> 构造，请使用
-    ///     <c>RitsuGodotNodeFactories</c>。请通过 <c>ModContentRegistry.RegisterMonster&lt;T&gt;()</c> 或 pack builder 上的
-    ///     <c>Monster&lt;T&gt;()</c> 注册。
+    ///     Mod 怪物的基础 <see cref="MonsterModel" />：<see cref="IModMonsterAssetOverrides" /> 提供视觉场景
+    ///     路径；也可以重写 <see cref="TryCreateCreatureVisuals" /> 直接用代码构建 <see cref="NCreatureVisuals" />。
+    ///     如需显式 <see cref="RitsuGodotNodeFactories" /> 构造 <c>CreateFromResource</c> / <c>CreateFromScenePath</c>，
+    ///     请在包构建器上通过 <c>ModContentRegistry.RegisterMonster&lt;T&gt;()</c> 或 <c>Monster&lt;T&gt;()</c>
+    ///     注册。
     /// </summary>
     /// <remarks>
     ///     When the monster's visuals should use a <see cref="ModAnimStateMachine" /> for combat triggers, override
     ///     <see cref="SetupCustomCombatAnimationStateMachine" /> to drive the creature with a
     ///     <see cref="ModAnimStateMachine" /> (the same state-machine pipeline used by
     ///     <see cref="STS2RitsuLib.Scaffolding.Characters.ModCharacterTemplate{TCardPool,TRelicPool,TPotionPool}" />).
-    ///     当怪物视觉需要使用 <c>ModAnimStateMachine</c> 响应战斗触发时，请重写
-    ///     <c>SetupCustomCombatAnimationStateMachine</c> 来驱动该生物；这与
     ///     <see cref="STS2RitsuLib.Scaffolding.Characters.ModCharacterTemplate{TCardPool,TRelicPool,TPotionPool}" />
-    ///     使用的是同一套状态机管线。
+    ///     当怪物视觉应使用 <see cref="ModAnimStateMachine" /> 处理战斗 trigger 时，请重写
+    ///     <see cref="SetupCustomCombatAnimationStateMachine" />，用 <see cref="ModAnimStateMachine" /> 驱动该生物（与
+    ///     使用的状态机管线相同）。
     /// </remarks>
 #pragma warning disable CS0618
     // Template keeps the obsolete IModMonsterCreatureVisualsFactory wired so existing derived classes and external
@@ -84,7 +84,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Non-null value becomes combat visuals; otherwise paths (<see cref="CustomVisualsPath" /> / vanilla) apply.
-        ///     返回非 null 值时作为战斗视觉；否则使用路径（<c>CustomVisualsPath</c> / 原版）。
+        ///     返回非 null 值时作为战斗视觉；否则使用路径（<see cref="CustomVisualsPath" /> / 原版）。
         /// </summary>
         protected virtual NCreatureVisuals? TryCreateCreatureVisuals()
         {
@@ -96,9 +96,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     hit / attack / cast / die / relaxed). Return <see langword="null" /> to defer to vanilla
         ///     <see cref="MonsterModel.GenerateAnimator" />. Prefer <see cref="ModAnimStateMachines.Standard" /> to
         ///     match baselib semantics.
-        ///     可选重写，用于生成已完整接线的 Spine <c>CreatureAnimator</c>（idle / hit / attack / cast / die /
-        ///     relaxed 状态图）。返回 <see langword="null" /> 则交给原版 <c>MonsterModel.GenerateAnimator</c>。
-        ///     优先使用 <c>ModAnimStateMachines.Standard</c> 以匹配 baselib 语义。
+        ///     可选重写，用于生成已完整接线的 Spine <see cref="CreatureAnimator" />（idle / hit / attack / cast / die /
+        ///     relaxed 状态图）。返回 <see langword="null" /> 则交给原版 <see cref="MonsterModel.GenerateAnimator" />。
+        ///     优先使用 <see cref="ModAnimStateMachines.Standard" /> 以匹配 baselib 语义。
         /// </summary>
         /// <param name="controller">
         ///     Spine controller attached to the monster's combat visuals.
@@ -114,9 +114,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     animation backend, including Spine via <see cref="ModAnimStateMachineBuilder.BuildSpine" />). Return
         ///     <see langword="null" /> to defer to vanilla Spine <see cref="CreatureAnimator" /> triggers or the vanilla
         ///     single-shot playback path when there is no Spine animator.
-        ///     可选重写，用于为怪物战斗视觉生成 <c>ModAnimStateMachine</c>（可使用任意动画后端，包括通过
-        ///     <c>ModAnimStateMachineBuilder.BuildSpine</c> 使用 Spine）。返回 <see langword="null" /> 时，
-        ///     会回退到原版 Spine <c>CreatureAnimator</c> 触发，或在没有 Spine animator 时回退到原版单次播放路径。
+        ///     可选重写，用于为怪物战斗视觉生成 <see cref="ModAnimStateMachine" />（可使用任意动画后端，包括通过
+        ///     <see cref="ModAnimStateMachineBuilder.BuildSpine" /> 使用 Spine）。返回 <see langword="null" /> 时，
+        ///     会回退到原版 Spine <see cref="CreatureAnimator" /> 触发，或在没有 Spine animator 时回退到原版单次播放路径。
         /// </summary>
         /// <param name="visualsRoot">
         ///     Combat visuals root node.

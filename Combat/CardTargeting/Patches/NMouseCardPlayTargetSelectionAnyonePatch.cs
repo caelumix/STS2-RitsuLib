@@ -9,9 +9,10 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Routes mouse targeting to <c>SingleCreatureTargeting</c> for <see cref="CustomTargetType.Anyone" />,
-    ///     Routes mo使用 targeting to <c>SingleCreatureTargeting</c> 用于 <c>CustomTargetType.Anyone</c>,
     ///     enabling selection of any living creature across faction boundaries.
-    ///     enabling selection of any living creature across faction boundaries.
+    ///     将 <see cref="CustomTargetType.Anyone" /> 的鼠标目标选择路由到 <c>SingleCreatureTargeting</c>，
+    ///     允许跨阵营边界选择任何存活生物。
+    ///     允许跨阵营边界选择任何存活生物。
     /// </summary>
     internal sealed class NMouseCardPlayTargetSelectionAnyonePatch : IPatchMethod
     {

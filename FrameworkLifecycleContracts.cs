@@ -2,39 +2,40 @@ namespace STS2RitsuLib
 {
     /// <summary>
     ///     Base type for framework lifecycle notifications published through
-    ///     Base type 用于 framework lifecycle notifications published through
     ///     <see cref="RitsuLibFramework.SubscribeLifecycle" />.
+    ///     通过 <see cref="RitsuLibFramework.SubscribeLifecycle" /> 发布的框架生命周期通知的
+    ///     基类型。
     /// </summary>
     public interface IFrameworkLifecycleEvent
     {
         /// <summary>
         ///     UTC timestamp when the event was raised.
-        ///     UTC timestamp 当 the 事件 was raised.
+        ///     事件引发时的 UTC 时间戳。
         /// </summary>
         DateTimeOffset OccurredAtUtc { get; }
     }
 
     /// <summary>
     ///     Marker for events that are replayed to new subscribers when <c>replayCurrentState</c> is true.
-    ///     Marker 用于 事件s that are replayed to new subscribers 当 <c>replayCurrentState</c> is true.
+    ///     当 <c>replayCurrentState</c> 为 true 时，会向新订阅者重放的事件标记。
     /// </summary>
     public interface IReplayableFrameworkLifecycleEvent : IFrameworkLifecycleEvent;
 
     /// <summary>
     ///     Fired while the RitsuLib framework is initializing (before mods complete setup).
-    ///     Fired while the RitsuLib framework is initializing (之前 mods complete 设置up).
+    ///     RitsuLib 框架初始化期间触发（在 mod 完成设置之前）。
     /// </summary>
     /// <param name="FrameworkModId">
     ///     Manifest id of the framework mod.
-    ///     中文说明：Manifest id of the framework mod.
+    ///     框架 mod 的清单 id。
     /// </param>
     /// <param name="FrameworkVersion">
     ///     Framework assembly or package version string.
-    ///     Framework assembly 或 package version string.
+    ///     框架程序集或包版本字符串。
     /// </param>
     /// <param name="OccurredAtUtc">
     ///     When the event was raised.
-    ///     当 the 事件 was raised.
+    ///     事件引发的时间。
     /// </param>
     public readonly record struct FrameworkInitializingEvent(
         string FrameworkModId,
@@ -44,19 +45,19 @@ namespace STS2RitsuLib
 
     /// <summary>
     ///     Fired after framework initialization finished.
-    ///     Fired 之后 framework initialization finished.
+    ///     框架初始化完成后触发。
     /// </summary>
     /// <param name="FrameworkModId">
     ///     Manifest id of the framework mod.
-    ///     中文说明：Manifest id of the framework mod.
+    ///     框架 mod 的清单 id。
     /// </param>
     /// <param name="IsActive">
     ///     Whether the framework considers itself active for this session.
-    ///     表示是否 the framework considers itself active for this session。
+    ///     框架是否认为自己在本会话中处于活动状态。
     /// </param>
     /// <param name="OccurredAtUtc">
     ///     When the event was raised.
-    ///     当 the 事件 was raised.
+    ///     事件引发的时间。
     /// </param>
     public readonly record struct FrameworkInitializedEvent(
         string FrameworkModId,
@@ -66,11 +67,11 @@ namespace STS2RitsuLib
 
     /// <summary>
     ///     Fired before profile-scoped services are initialized.
-    ///     Fired 之前 档案-scoped services are initialized.
+    ///     在档案作用域服务初始化之前触发。
     /// </summary>
     /// <param name="OccurredAtUtc">
     ///     When the event was raised.
-    ///     当 the 事件 was raised.
+    ///     事件引发的时间。
     /// </param>
     public readonly record struct ProfileServicesInitializingEvent(
         DateTimeOffset OccurredAtUtc
@@ -78,15 +79,15 @@ namespace STS2RitsuLib
 
     /// <summary>
     ///     Fired after profile-scoped services are ready.
-    ///     Fired 之后 档案-scoped services are ready.
+    ///     在档案作用域服务就绪后触发。
     /// </summary>
     /// <param name="ProfileId">
     ///     Active profile identifier.
-    ///     active 档案 identifier.
+    ///     活动档案标识符。
     /// </param>
     /// <param name="OccurredAtUtc">
     ///     When the event was raised.
-    ///     当 the 事件 was raised.
+    ///     事件引发的时间。
     /// </param>
     public readonly record struct ProfileServicesInitializedEvent(
         int ProfileId,
@@ -95,17 +96,17 @@ namespace STS2RitsuLib
 
     /// <summary>
     ///     Receives strongly typed lifecycle events from <see cref="RitsuLibFramework.SubscribeLifecycle" />.
-    ///     Receives strongly typed lifecycle 事件s 从 <c>RitsuLibFramework.SubscribeLifecycle</c>.
+    ///     接收来自 <see cref="RitsuLibFramework.SubscribeLifecycle" /> 的强类型生命周期事件。
     /// </summary>
     public interface ILifecycleObserver
     {
         /// <summary>
         ///     Called for each lifecycle event; implementors typically switch on concrete event types.
-        ///     Called 用于 each lifecycle 事件; implementors typically switch on concrete 事件 types.
+        ///     针对每个生命周期事件调用；实现通常会按具体事件类型分支。
         /// </summary>
         /// <param name="evt">
         ///     The event instance.
-        ///     该 event instance。
+        ///     事件实例。
         /// </param>
         void OnEvent(IFrameworkLifecycleEvent evt);
     }

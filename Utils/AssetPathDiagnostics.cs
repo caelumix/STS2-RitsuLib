@@ -18,9 +18,9 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Logs once when a mod character asset profile supplies a non-empty path that does not resolve
-        ///     Logs once 当 a mod character 资源 档案 supplies a non-empty 路径 that does not 解析
         ///     (empty overrides are ignored by callers).
-        ///     (empty overrides are ignored 通过 callers).
+        ///     当 mod 角色资源档案提供了无法解析的非空路径时记录一次日志
+        ///     （空覆盖值会被调用方忽略）。
         /// </summary>
         internal static void WarnModCharacterAssetOverrideMissing(object owner, string memberName, string path)
         {

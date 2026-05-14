@@ -78,7 +78,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Maintains selection-policy scope for vanilla character-select flows.
-    ///     Maintains selection-policy scope 用于 原版 character-select flows.
+    ///     为原版角色选择流程维护选择策略作用域。
     /// </summary>
     public class CharacterVanillaSelectionPolicyPatches : IPatchMethod
     {
@@ -107,7 +107,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Enters selection scope for character-list consumers.
-        ///     Enters selection scope 用于 character-list consumers.
+        ///     为角色列表消费者进入选择作用域。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Prefix(MethodBase __originalMethod)
@@ -117,7 +117,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Ensures scope cleanup even when target method throws.
-        ///     Ensures scope cleanup even 当 target method throws.
+        ///     即使目标方法抛出，也确保作用域清理。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Finalizer(MethodBase __originalMethod)
@@ -128,9 +128,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Applies scoped selection policy to <see cref="ModelDb.AllCharacters" />.
-    ///     中文说明：Applies scoped selection policy to <c>ModelDb.AllCharacters</c>.
-    ///     Applies scoped selection policy to <c>ModelDb.AllCharacters</c>.
-    ///     中文说明：Applies scoped selection policy to <c>ModelDb.AllCharacters</c>.
+    ///     将带作用域的选择策略应用到 <see cref="ModelDb.AllCharacters" />。
     /// </summary>
     public class CharacterVanillaSelectionPolicyAllCharactersPatch : IPatchMethod
     {
@@ -151,7 +149,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Filters getter result according to current selection scope.
-        ///     过滤 getter result according to current selection scope.
+        ///     根据当前选择作用域过滤 getter 结果。
         /// </summary>
         [HarmonyAfter(Const.BaseLibHarmonyId, Const.FrameworkContentRegistryHarmonyId)]
         [HarmonyPriority(Priority.Last)]

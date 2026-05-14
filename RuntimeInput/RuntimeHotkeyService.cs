@@ -5,9 +5,9 @@ namespace STS2RitsuLib.RuntimeInput
 {
     /// <summary>
     ///     Provides a settings-independent runtime hotkey API that parses persisted binding strings and
-    ///     Provides a 设置-independent runtime hotkey API that parses persisted binding strings and
     ///     registers input callbacks against a shared router node.
-    ///     注册 input callbacks against a shared router node。
+    ///     提供与设置无关的运行时热键 API，用于解析持久化绑定字符串，并
+    ///     针对共享路由器节点注册输入回调。
     /// </summary>
     public static class RuntimeHotkeyService
     {
@@ -17,7 +17,7 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Ensures the shared router will be attached when the game root becomes ready.
-        ///     Ensures the shared router will be attached 当 the game root becomes ready.
+        ///     确保游戏根节点 ready 后会附加共享路由器。
         /// </summary>
         public static void Initialize()
         {
@@ -32,7 +32,7 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Returns read-only snapshots for all currently registered runtime hotkeys.
-        ///     返回 read-only snapshots for all currently registered runtime hotkeys。
+        ///     返回所有当前已注册运行时热键的只读快照。
         /// </summary>
         public static IReadOnlyList<RuntimeHotkeyRegistrationInfo> GetRegisteredHotkeys()
         {
@@ -44,7 +44,7 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Returns detailed read-only snapshots for all currently registered runtime hotkeys, including every binding.
-        ///     返回 detailed read-only snapshots for all currently registered runtime hotkeys, including every binding。
+        ///     返回所有当前已注册运行时热键的详细只读快照，包括每个绑定。
         /// </summary>
         public static IReadOnlyList<RuntimeHotkeyRegistrationDetails> GetRegisteredHotkeyDetails()
         {
@@ -56,19 +56,19 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Tries to return the currently registered hotkey snapshot for a stable registration id.
-        ///     Tries to 返回 the currently 已注册 hotkey snapshot 用于 a stable 注册 id.
+        ///     尝试返回稳定注册 id 对应的当前已注册热键快照。
         /// </summary>
         /// <param name="id">
         ///     Stable registration id to locate.
-        ///     稳定的 registration id to locate。
+        ///     要定位的稳定注册 id。
         /// </param>
         /// <param name="registrationInfo">
         ///     Registration snapshot when a matching id exists.
-        ///     Registration snapshot 当 a matching id exists.
+        ///     存在匹配 id 时的注册快照。
         /// </param>
         /// <returns>
         ///     <c>true</c> when a matching registration was found.
-        ///     <c>true</c> 当 a matching 注册 was found.
+        ///     找到匹配注册时为 <c>true</c>。
         /// </returns>
         public static bool TryGetRegisteredHotkey(string id, out RuntimeHotkeyRegistrationInfo registrationInfo)
         {
@@ -88,19 +88,19 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Attempts to normalize a persisted binding string into the runtime hotkey canonical format.
-        ///     Attempts to normalize a persisted binding string into the runtime hotkey canonical 用于mat.
+        ///     尝试将持久化绑定字符串规范化为运行时热键规范格式。
         /// </summary>
         /// <param name="bindingText">
         ///     Binding text to normalize.
-        ///     中文说明：Binding text to normalize.
+        ///     要规范化的绑定文本。
         /// </param>
         /// <param name="normalizedBinding">
         ///     Canonical binding string when parsing succeeds.
-        ///     Canonical binding string 当 parsing succeeds.
+        ///     解析成功时的规范绑定字符串。
         /// </param>
         /// <returns>
         ///     <c>true</c> when the binding string was parsed successfully.
-        ///     <c>true</c> 当 the binding string was parsed successfully.
+        ///     绑定字符串成功解析时为 <c>true</c>。
         /// </returns>
         public static bool TryNormalizeBinding(string? bindingText, out string normalizedBinding)
         {
@@ -109,15 +109,15 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Returns the normalized binding string, or <paramref name="fallback" /> when parsing fails.
-        ///     返回 the normalized binding string, or <c>fallback</c> when parsing fails。
+        ///     返回规范化绑定字符串；解析失败时返回 <paramref name="fallback" />。
         /// </summary>
         /// <param name="bindingText">
         ///     Binding text to normalize.
-        ///     中文说明：Binding text to normalize.
+        ///     要规范化的绑定文本。
         /// </param>
         /// <param name="fallback">
         ///     Fallback value returned when parsing fails.
-        ///     Fallback value 返回ed 当 parsing fails.
+        ///     解析失败时返回的回退值。
         /// </param>
         public static string NormalizeOrDefault(string? bindingText, string fallback)
         {
@@ -126,23 +126,23 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Registers a runtime hotkey directly from a persisted binding string.
-        ///     注册 a runtime hotkey directly from a persisted binding string。
+        ///     直接从持久化绑定字符串注册运行时热键。
         /// </summary>
         /// <param name="bindingText">
         ///     Persisted binding string to parse.
-        ///     中文说明：Persisted binding string to parse.
+        ///     要解析的持久化绑定字符串。
         /// </param>
         /// <param name="callback">
         ///     Callback invoked when the hotkey matches.
-        ///     Callback invoked 当 the hotkey matches.
+        ///     热键匹配时调用的回调。
         /// </param>
         /// <param name="options">
         ///     Optional router behavior overrides.
-        ///     可选 router behavior overrides.
+        ///     可选路由器行为覆盖。
         /// </param>
         /// <returns>
         ///     A handle that supports explicit rebind and unregister operations.
-        ///     一个 handle that supports explicit rebind and unregister operations。
+        ///     支持显式重新绑定和注销操作的句柄。
         /// </returns>
         /// <exception cref="FormatException">Thrown when <paramref name="bindingText" /> is invalid.</exception>
         public static IRuntimeHotkeyHandle Register(string bindingText, Action callback,
@@ -153,23 +153,23 @@ namespace STS2RitsuLib.RuntimeInput
 
         /// <summary>
         ///     Registers one logical runtime hotkey against multiple persisted binding strings.
-        ///     注册 one logical runtime hotkey against multiple persisted binding strings。
+        ///     针对多个持久化绑定字符串注册一个逻辑运行时热键。
         /// </summary>
         /// <param name="bindingTexts">
         ///     Persisted binding strings to parse.
-        ///     中文说明：Persisted binding strings to parse.
+        ///     要解析的持久化绑定字符串。
         /// </param>
         /// <param name="callback">
         ///     Callback invoked when any registered binding matches.
-        ///     Callback invoked 当 any 已注册 binding matches.
+        ///     任意已注册绑定匹配时调用的回调。
         /// </param>
         /// <param name="options">
         ///     Optional router behavior overrides.
-        ///     可选 router behavior overrides.
+        ///     可选路由器行为覆盖。
         /// </param>
         /// <returns>
         ///     A handle that supports explicit rebind and unregister operations.
-        ///     一个 handle that supports explicit rebind and unregister operations。
+        ///     支持显式重新绑定和注销操作的句柄。
         /// </returns>
         /// <exception cref="FormatException">Thrown when any binding is invalid.</exception>
         public static IRuntimeHotkeyHandle Register(IEnumerable<string> bindingTexts, Action callback,

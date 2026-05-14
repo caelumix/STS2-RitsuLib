@@ -10,7 +10,8 @@ namespace STS2RitsuLib.Unlocks.Patches
     /// <summary>
     ///     Skips vanilla character-unlock epoch grants when the inferred epoch id is unusable at runtime for mod
     ///     characters.
-    ///     当推断出的 epoch ID 在运行时无法用于 mod 角色时，跳过原版角色解锁 epoch 授予。
+    ///     当推断出的纪元 id 对 mod
+    ///     角色在运行时不可安全使用时，跳过原版角色解锁纪元授予。
     /// </summary>
     public class CharacterUnlockEpochRuntimeCompatibilityPatch : IPatchMethod
     {
@@ -35,7 +36,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
         /// <summary>
         ///     Returns false to cancel the original method when the expected epoch cannot be used safely.
-        ///     当预期 epoch 无法安全使用时返回 false 以取消原方法。
+        ///     当预期纪元无法安全使用时，返回 false 以取消原始方法。
         /// </summary>
         public static bool Prefix(Player localPlayer, int act)
         {

@@ -8,7 +8,7 @@ namespace STS2RitsuLib.Utils.Persistence.Migration
     {
         /// <summary>
         ///     Default JSON property name for the persisted schema version integer.
-        ///     持久化 schema 版本整数使用的默认 JSON 属性名。
+        ///     持久化 schema 版本整数的默认 JSON 属性名。
         /// </summary>
         public const string SchemaVersionProperty = "schema_version";
     }

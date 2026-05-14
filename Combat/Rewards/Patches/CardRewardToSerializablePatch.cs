@@ -9,7 +9,8 @@ namespace STS2RitsuLib.Combat.Rewards.Patches
     /// <summary>
     ///     Replaces <see cref="CardReward.ToSerializable" /> when vanilla cannot serialize Flags,
     ///     CustomCardPool, or CardPoolFilter.
-    ///     当原版无法序列化 Flags、CustomCardPool 或 CardPoolFilter 时，替换
+    ///     <c>CardReward.ToSerializable</c>。
+    ///     当原版无法序列化 Flags、CustomCardPool 或 CardPoolFilter 时，替换 <see cref="CardReward.ToSerializable" />。
     ///     <c>CardReward.ToSerializable</c>。
     /// </summary>
     internal sealed class CardRewardToSerializablePatch : IPatchMethod

@@ -6,17 +6,17 @@ namespace STS2RitsuLib.Interop
 {
     /// <summary>
     ///     Builds <see cref="ReflectionStaticChannel" /> instances from static method naming conventions.
-    ///     根据静态方法命名约定构建 <c>ReflectionStaticChannel</c> 实例。
+    ///     根据静态方法命名约定构建 <see cref="ReflectionStaticChannel" /> 实例。
     /// </summary>
     public static class ReflectionStaticChannelBinder
     {
         /// <summary>
         ///     Binds optional JSON tiers and required object resolvers described by <paramref name="convention" />.
-        ///     绑定 <c>convention</c> 描述的可选 JSON tier 和必需 object resolver。
+        ///     绑定 <paramref name="convention" /> 描述的可选 JSON tier 和必需 object resolver。
         /// </summary>
         /// <param name="providerType">
         ///     Static-method provider type to reflect against.
-        ///     要反射的静态方法 provider 类型。
+        ///     要反射的静态方法提供方类型。
         /// </param>
         /// <param name="convention">
         ///     Method names for object resolvers and optional JSON DOM hooks.

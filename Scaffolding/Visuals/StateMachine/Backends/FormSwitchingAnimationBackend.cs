@@ -6,23 +6,30 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     ///     <see cref="IAnimationBackend" /> multiplexer that keeps one backend active at a time and allows runtime
     ///     form switching (for example, swapping between multiple child visuals under one persistent
     ///     <see cref="MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals" /> root).
-    ///     <c>IAnimationBackend</c> 多路复用器：同一时间保持一个后端激活，并允许运行时切换形态
-    ///     （例如在一个持久 <c>MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals</c> 根节点下切换多个子视觉）。
+    ///     <see cref="IAnimationBackend" /> 复用器：同一时间只保持一个后端活动，并允许运行时
+    ///     形态切换（例如在一个持久的 <see cref="MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals" />
+    ///     根节点下切换多个子视觉）。
     /// </summary>
     /// <remarks>
     ///     <para>
     ///         This backend is intended for the "single visuals root, switch child form" pattern: each form gets its
     ///         own child backend (Spine, animated sprite, animation player, ...), and
     ///         <see cref="SwitchForm" /> swaps the active backend without rebuilding the creature node.
-    ///         此后端用于“单一视觉根节点，切换子形态”模式：每个形态都有自己的子后端（Spine、animated sprite、
-    ///         animation player 等），<c>SwitchForm</c> 会在不重建生物节点的情况下切换激活后端。
     ///     </para>
     ///     <para>
     ///         If <c>replayCurrent</c> is <see langword="true" />, switching replays the current logical
     ///         animation id on the newly selected form when possible; otherwise callers typically follow with an
     ///         explicit trigger (for example <c>SetTrigger("Idle")</c>).
-    ///         如果 <c>replayCurrent</c> 为 <see langword="true" />，切换时会尽可能在新选择的形态上重播当前逻辑动画 id；
-    ///         否则调用方通常会随后发出显式 trigger（例如 <c>SetTrigger("Idle")</c>）。
+    ///     </para>
+    ///     <para>
+    ///         此后端用于“单一视觉根节点、切换子形态”模式：每个形态都有自己的
+    ///         子后端（Spine、animated sprite、animation player 等），并由
+    ///         <see cref="SwitchForm" /> 在不重建生物节点的情况下切换活动后端。
+    ///     </para>
+    ///     <para>
+    ///         如果 <c>replayCurrent</c> 为 <see langword="true" />，切换时会在可能的情况下于新选中的形态上重放当前逻辑
+    ///         动画 id；否则调用方通常会接着显式触发
+    ///         一次触发器（例如 <c>SetTrigger("Idle")</c>）。
     ///     </para>
     /// </remarks>
     public sealed class FormSwitchingAnimationBackend : IAnimationBackend

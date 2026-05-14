@@ -3,7 +3,7 @@ namespace STS2RitsuLib.Interop
     /// <summary>
     ///     Reflection-bound static accessors for generic keyed data exchange (persistence, settings DOM tiers,
     ///     networking payloads, …).
-    ///     用于通用 keyed data exchange 的反射绑定静态访问器（持久化、settings DOM tier、网络 payload 等）。
+    ///     用于通用 keyed 数据交换的反射绑定静态访问器（持久化、settings DOM 层、网络载荷等）。
     /// </summary>
     public sealed class ReflectionStaticChannel
     {
@@ -21,7 +21,7 @@ namespace STS2RitsuLib.Interop
 
         /// <summary>
         ///     Provider type these delegates target.
-        ///     这些 delegate 指向的 provider 类型。
+        ///     这些委托指向的提供方类型。
         /// </summary>
         public Type ProviderType { get; }
 

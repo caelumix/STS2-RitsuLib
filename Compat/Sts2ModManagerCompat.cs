@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Compat
 {
     /// <summary>
     ///     Central entry for enumerating the host <see cref="ModManager" />'s mod lists.
-    ///     Central entry 用于 enumerating the host <c>ModManager</c>'s mod lists.
+    ///     枚举宿主 <see cref="ModManager" /> 的 mod 列表的中央入口。
     /// </summary>
     internal static class Sts2ModManagerCompat
     {
@@ -15,7 +15,7 @@ namespace STS2RitsuLib.Compat
 
         /// <summary>
         ///     All registered mods (including disabled / not loaded), for manifest name/description lookup.
-        ///     All 已注册 mods (including 禁用 / not loaded), 用于 manifest name/description lookup.
+        ///     所有已注册 mod（包括禁用/未加载的 mod），用于清单名称/描述查找。
         /// </summary>
         internal static IEnumerable<Mod> EnumerateModsForManifestLookup()
         {

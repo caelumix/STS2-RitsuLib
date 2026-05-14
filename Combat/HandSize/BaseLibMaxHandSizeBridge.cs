@@ -13,13 +13,13 @@ namespace STS2RitsuLib.Combat.HandSize
 {
     /// <summary>
     ///     Bridge for BaseLib max-hand-size capability:
-    ///     Bridge 用于 BaseLib max-hand-size capability:
-    ///     1) detect whether BaseLib hand-size patches are active;
     ///     1) detect whether BaseLib hand-size patches are active;
     ///     2) patch BaseLib calculator postfix so both libraries share modifier data;
-    ///     中文说明：2) patch BaseLib calculator postfix so both libraries share modifier data;
     ///     3) resolve BaseLib value as authoritative source when available.
-    ///     3) 解析 BaseLib value as authoritative source 当 可用.
+    ///     BaseLib 最大手牌数能力的桥接：
+    ///     1) 检测 BaseLib 手牌数补丁是否处于活动状态；
+    ///     2) 为 BaseLib 计算器 postfix 打补丁，使两个库共享 modifier 数据；
+    ///     3) 可用时将 BaseLib 值解析为权威来源。
     /// </summary>
     internal static class BaseLibMaxHandSizeBridge
     {

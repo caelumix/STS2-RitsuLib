@@ -7,7 +7,7 @@ namespace STS2RitsuLib.Relics.Patches
 {
     /// <summary>
     ///     Applies mod refinement mappings before vanilla <see cref="TouchOfOrobas.RefinementUpgrades" /> and fallback.
-    ///     Applies mod refinement mappings 之前 原版 <c>TouchOfOrobas.RefinementUpgrades</c> 和 fallback.
+    ///     在原版 <see cref="TouchOfOrobas.RefinementUpgrades" /> 和回退逻辑之前应用 mod 精炼映射。
     /// </summary>
     internal sealed class TouchOfOrobasGetUpgradedStarterRelicPatch : IPatchMethod
     {

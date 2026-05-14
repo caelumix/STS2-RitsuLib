@@ -7,9 +7,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     After <see cref="NCardTrailVfx.Create" />, applies <see cref="IModCharacterAssetOverrides.CustomTrailStyle" />
-    ///     之后 <c>NCardTrailVfx.创建</c>, applies <c>IModCharacterAssetOverrides.自定义TrailStyle</c>
     ///     modulates and widths to line, particle, and sprite nodes when present.
-    ///     modulates 和 widths to line, particle, 和 sprite nodes 当 present.
+    ///     在 <see cref="NCardTrailVfx.Create" /> 之后，如果存在，则将 <see cref="IModCharacterAssetOverrides.CustomTrailStyle" /> 的
+    ///     modulate 和宽度应用到 line、particle 和 sprite 节点。
     /// </summary>
     public class CharacterTrailStyleOverridePatch : IPatchMethod
     {
@@ -32,7 +32,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Mutates the created trail instance in place when the owning card’s character supplies a trail style.
-        ///     Mutates the created trail instance in place 当 the owning 卡牌’s character supplies a trail style.
+        ///     当所属卡牌的角色提供 trail style 时，原地修改已创建的 trail 实例。
         /// </summary>
         public static void Postfix(Control card, ref NCardTrailVfx? __result)
             // ReSharper restore InconsistentNaming

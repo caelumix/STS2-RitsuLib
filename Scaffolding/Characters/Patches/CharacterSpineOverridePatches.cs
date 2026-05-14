@@ -8,6 +8,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     After a combat creature node becomes ready, optionally swaps in mod Spine skeleton data from
+    ///     之后 a combat creature node becomes ready, 可选ly swaps in mod Spine skeleton data 从
     ///     <see cref="IModCharacterAssetOverrides.CustomCombatSpineSkeletonDataPath" /> when visuals support it.
     /// </summary>
     public class CharacterCombatSpineOverridePatch : IPatchMethod
@@ -31,6 +32,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Loads and applies the override skeleton resource to the player’s combat visuals when eligible.
+        ///     加载 and applies the override skeleton resource to the player’s combat visuals when eligible。
         /// </summary>
         public static void Postfix(NCreature __instance)
             // ReSharper restore InconsistentNaming

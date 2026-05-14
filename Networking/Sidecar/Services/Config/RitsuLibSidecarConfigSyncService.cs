@@ -7,6 +7,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Event payload for one topic state change.
+    ///     事件 payload 用于 one topic state change.
     /// </summary>
     public readonly record struct SidecarConfigTopicChangedEvent(
         string Topic,
@@ -33,6 +34,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
     /// <summary>
     ///     Host-authoritative sidecar config synchronization service.
+    ///     中文说明：Host-authoritative sidecar config synchronization service.
     /// </summary>
     public static class RitsuLibSidecarConfigSyncService
     {
@@ -61,11 +63,13 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Raised when a topic state is updated locally or from remote snapshot/decision.
+        ///     Raised 当 a topic state is 更新d locally 或 从 remote snapshot/decision.
         /// </summary>
         public static event Action<SidecarConfigTopicChangedEvent>? TopicChanged;
 
         /// <summary>
         ///     Registers a synchronized config topic with request policy and delta apply logic.
+        ///     注册 a synchronized config topic with request policy and delta apply logic。
         /// </summary>
         public static void RegisterTopic<TState, TDelta>(
             string topic,
@@ -118,6 +122,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Sends a client-side config change request using a direct net service reference.
+        ///     中文说明：Sends a client-side config change request using a direct net service reference.
         /// </summary>
         public static bool TryRequestClientChange<TDelta>(INetGameService? netService, string topic, TDelta delta,
             string reason = "")
@@ -131,6 +136,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Sends a client-side config change request using <see cref="RunManager" />.
+        ///     Sends a client-side config change request using <c>跑局Manager</c>.
         /// </summary>
         public static bool TryRequestClientChange<TDelta>(RunManager? runManager, string topic, TDelta delta,
             string reason = "")
@@ -144,6 +150,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Reads cached topic state and revision.
+        ///     Reads cached topic state 和 revision.
         /// </summary>
         public static bool TryGetTopicState<TState>(string topic, out TState? state, out long revision)
         {
@@ -164,6 +171,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host publishes current topic snapshot and raises the local topic-change event.
+        ///     Host publishes current topic snapshot 和 raises the local topic-change 事件.
         /// </summary>
         public static void PublishHostState(INetGameService? netService, string topic, ulong changedBy, string reason)
         {

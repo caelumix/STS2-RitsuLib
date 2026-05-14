@@ -43,7 +43,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Subscribes to game profile changes and seeds <see cref="CurrentProfileId" />.
-        ///     订阅游戏档案变化，并初始化 <see cref="CurrentProfileId" />。
+        ///     订阅游戏档案变化，并初始化 <c>CurrentProfileId</c>。
         /// </summary>
         public void Initialize()
         {
@@ -64,7 +64,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Updates <see cref="CurrentProfileId" /> and notifies subscribers when the value changes.
-        ///     更新 <see cref="CurrentProfileId" />，并在值变化时通知订阅者。
+        ///     更新 <c>CurrentProfileId</c>，并在值变化时通知订阅者。
         /// </summary>
         public void OnProfileChanged(int newProfileId)
         {
@@ -80,7 +80,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Re-reads the profile id from the game and applies <see cref="OnProfileChanged" /> if needed.
-        ///     从游戏重新读取档案 id，并在需要时应用 <see cref="OnProfileChanged" />。
+        ///     从游戏重新读取档案 id，并在需要时应用 <c>OnProfileChanged</c>。
         /// </summary>
         public void RefreshCurrentProfile()
         {
@@ -91,7 +91,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Returns the account-level mod data root for <paramref name="modId" /> (not profile-specific).
-        ///     返回 <paramref name="modId" /> 的账号级 Mod 数据根目录（不绑定特定档案）。
+        ///     返回 <c>modId</c> 的账号级 Mod 数据根目录（不绑定特定档案）。
         /// </summary>
         public static string GetAccountBasePath(string modId = Const.ModId)
         {
@@ -102,7 +102,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Returns the profile subdirectory path for <see cref="CurrentProfileId" />.
-        ///     返回 <see cref="CurrentProfileId" /> 对应的档案子目录路径。
+        ///     返回 <c>CurrentProfileId</c> 对应的档案子目录路径。
         /// </summary>
         public string GetProfileDirectory()
         {
@@ -111,7 +111,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Returns the game's relative profile directory name for <paramref name="profileId" />.
-        ///     返回 <paramref name="profileId" /> 对应的游戏相对档案目录名。
+        ///     返回 <c>profileId</c> 对应的游戏相对档案目录名。
         /// </summary>
         public static string GetProfileDirectory(int profileId)
         {
@@ -120,7 +120,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Resolves the base storage path for <paramref name="scope" /> using <see cref="CurrentProfileId" />.
-        ///     使用 <see cref="CurrentProfileId" /> 解析 <paramref name="scope" /> 的基础存储路径。
+        ///     使用 <c>CurrentProfileId</c> 解析 <c>scope</c> 的基础存储路径。
         /// </summary>
         public string GetBasePath(SaveScope scope)
         {
@@ -129,7 +129,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Resolves the base storage path for <paramref name="scope" /> and explicit profile/mod ids.
-        ///     使用显式档案 id 和 Mod id 解析 <paramref name="scope" /> 的基础存储路径。
+        ///     使用显式档案 id 和 Mod id 解析 <c>scope</c> 的基础存储路径。
         /// </summary>
         public static string GetBasePath(SaveScope scope, int profileId, string modId = Const.ModId)
         {
@@ -145,8 +145,8 @@ namespace STS2RitsuLib.Utils.Persistence
         /// <summary>
         ///     Resolves the base storage path for <paramref name="scope" /> using a supplied
         ///     <paramref name="context" /> (e.g. run fingerprint stem for <see cref="SaveScope.RunSidecar" />).
-        ///     使用提供的 <paramref name="context" /> 解析 <paramref name="scope" /> 的基础存储路径
-        ///     （例如 <see cref="SaveScope.RunSidecar" /> 所需的 run 指纹 stem）。
+        ///     使用提供的 <c>context</c> 解析 <c>scope</c> 的基础存储路径
+        ///     （例如 <c>SaveScope.RunSidecar</c> 所需的 run 指纹 stem）。
         /// </summary>
         public static string GetBasePath(SaveScope scope, StorageContext context, string modId = Const.ModId)
         {
@@ -166,7 +166,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Returns the full path for <paramref name="fileName" /> under the active profile and framework mod id.
-        ///     返回当前激活档案和框架 Mod id 下 <paramref name="fileName" /> 的完整路径。
+        ///     返回当前激活档案和框架 Mod id 下 <c>fileName</c> 的完整路径。
         /// </summary>
         public string GetFilePath(string fileName, SaveScope scope)
         {
@@ -176,7 +176,7 @@ namespace STS2RitsuLib.Utils.Persistence
         /// <summary>
         ///     Returns the full path for <paramref name="fileName" /> using explicit <paramref name="profileId" />
         ///     and the framework mod id.
-        ///     使用显式 <paramref name="profileId" /> 和框架 Mod id，返回 <paramref name="fileName" /> 的完整路径。
+        ///     使用显式 <c>profileId</c> 和框架 Mod id，返回 <c>fileName</c> 的完整路径。
         /// </summary>
         public static string GetFilePath(string fileName, SaveScope scope, int profileId)
         {
@@ -186,7 +186,7 @@ namespace STS2RitsuLib.Utils.Persistence
         /// <summary>
         ///     Returns the full path for <paramref name="fileName" /> under the active profile and
         ///     <paramref name="modId" />.
-        ///     返回当前激活档案和 <paramref name="modId" /> 下 <paramref name="fileName" /> 的完整路径。
+        ///     返回当前激活档案和 <c>modId</c> 下 <c>fileName</c> 的完整路径。
         /// </summary>
         public string GetFilePath(string fileName, SaveScope scope, string modId)
         {
@@ -195,7 +195,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Returns the full path for <paramref name="fileName" /> using explicit profile and mod ids.
-        ///     使用显式档案 id 和 Mod id，返回 <paramref name="fileName" /> 的完整路径。
+        ///     使用显式档案 id 和 Mod id，返回 <c>fileName</c> 的完整路径。
         /// </summary>
         public static string GetFilePath(string fileName, SaveScope scope, int profileId, string modId)
         {
@@ -205,8 +205,8 @@ namespace STS2RitsuLib.Utils.Persistence
         /// <summary>
         ///     Returns the full path for <paramref name="fileName" /> using a supplied
         ///     <paramref name="context" /> (e.g. run fingerprint stem for <see cref="SaveScope.RunSidecar" />).
-        ///     使用提供的 <paramref name="context" /> 返回 <paramref name="fileName" /> 的完整路径
-        ///     （例如 <see cref="SaveScope.RunSidecar" /> 所需的 run 指纹 stem）。
+        ///     使用提供的 <c>context</c> 返回 <c>fileName</c> 的完整路径
+        ///     （例如 <c>SaveScope.RunSidecar</c> 所需的 run 指纹 stem）。
         /// </summary>
         public static string GetFilePath(string fileName, SaveScope scope, StorageContext context,
             string modId = Const.ModId)
@@ -219,7 +219,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Deletes all profile-scoped mod files for <paramref name="profileId" />.
-        ///     删除 <paramref name="profileId" /> 下所有档案作用域的 Mod 文件。
+        ///     删除 <c>profileId</c> 下所有档案作用域的 Mod 文件。
         /// </summary>
         public static void DeleteProfileData(int profileId, string modId = Const.ModId)
         {

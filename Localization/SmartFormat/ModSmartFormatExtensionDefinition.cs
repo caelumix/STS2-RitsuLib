@@ -2,6 +2,7 @@ namespace STS2RitsuLib.Localization.SmartFormat
 {
     /// <summary>
     ///     Registered SmartFormat extension instance and its owning mod metadata.
+    ///     Registered SmartFormat extension instance 和 its owning mod metadata.
     /// </summary>
     public sealed record ModSmartFormatExtensionDefinition(
         string OwnerModId,

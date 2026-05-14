@@ -4,6 +4,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Control payloads for selective gap reports and reassembly completion (SACK-style flow).
+    ///     Control payload 用于 selective gap reports 和 reassembly completion (SACK-style flow).
     /// </summary>
     internal static class RitsuLibSidecarChunkGapBinary
     {

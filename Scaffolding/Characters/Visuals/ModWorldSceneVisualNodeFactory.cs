@@ -24,8 +24,8 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
         ///     When <paramref name="character" /> defines <see cref="IModCharacterAssetOverrides.WorldProceduralVisuals" />
         ///     merchant data, returns a new <see cref="NMerchantCharacter" /> with a non-Spine sprite child; otherwise
         ///     <see langword="null" />.
-        ///     当 <paramref name="character" /> 定义了 <see cref="IModCharacterAssetOverrides.WorldProceduralVisuals" />
-        ///     商人数据时，返回带非 Spine sprite 子节点的新 <see cref="NMerchantCharacter" />；否则返回
+        ///     当 <c>character</c> 定义了 <c>IModCharacterAssetOverrides.WorldProceduralVisuals</c>
+        ///     商人数据时，返回带非 Spine sprite 子节点的新 <c>NMerchantCharacter</c>；否则返回
         ///     <see langword="null" />。
         /// </summary>
         public static NMerchantCharacter? TryInstantiateMerchantCharacter(CharacterModel character)
@@ -49,9 +49,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
         ///     tree compatible with vanilla scripts (hitbox, thought anchors, selection reticle from base game assets).
         ///     The <see cref="Sprite2D" /> named <c>Visuals</c> is parented under <c>ControlRoot</c> so vanilla
         ///     <c>FlipX</c> matches BaseLib <c>NRestSiteCharacterFactory</c> rest-site layouts.
-        ///     当玩家角色定义休息点程序化视觉时，构建与原版脚本兼容的 <see cref="NRestSiteCharacter" /> 树
+        ///     当玩家角色定义休息点程序化视觉时，构建与原版脚本兼容的 <c>NRestSiteCharacter</c> 树
         ///     （hitbox、思考气泡 anchor、来自基础游戏资源的选择 reticle）。名为 <c>Visuals</c> 的
-        ///     <see cref="Sprite2D" /> 会挂在 <c>ControlRoot</c> 下，使原版 <c>FlipX</c> 与 BaseLib
+        ///     <c>Sprite2D</c> 会挂在 <c>ControlRoot</c> 下，使原版 <c>FlipX</c> 与 BaseLib
         ///     <c>NRestSiteCharacterFactory</c> 的休息点布局匹配。
         /// </summary>
         public static NRestSiteCharacter? TryCreateRestSiteCharacter(Player player, int characterIndex)

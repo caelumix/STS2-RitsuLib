@@ -6,9 +6,9 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     ///     <see cref="IAnimationBackend" /> dispatcher that selects the first child backend reporting
     ///     <see cref="IAnimationBackend.HasAnimation" /> for a given id and routes <see cref="Play" /> /
     ///     <see cref="Queue" /> to it.
-    ///     <see cref="IAnimationBackend" /> 调度器：为给定 id 选择第一个报告
-    ///     <see cref="IAnimationBackend.HasAnimation" /> 的子后端，并将 <see cref="Play" /> /
-    ///     <see cref="Queue" /> 路由给它。
+    ///     <c>IAnimationBackend</c> 调度器：为给定 id 选择第一个报告
+    ///     <c>IAnimationBackend.HasAnimation</c> 的子后端，并将 <c>Play</c> /
+    ///     <c>Queue</c> 路由给它。
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -17,7 +17,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     ///         <see cref="STS2RitsuLib.Scaffolding.Visuals.StateMachine.ModAnimStateMachineBuilder" />.
     ///         优先级遵循插入顺序。典型接线（cue 帧序列和静态贴图优先，然后 Spine，再 Godot animation player，
     ///         最后 animated sprite）由
-    ///         <see cref="STS2RitsuLib.Scaffolding.Visuals.StateMachine.ModAnimStateMachineBuilder" /> 生成。
+    ///         <c>STS2RitsuLib.Scaffolding.Visuals.StateMachine.ModAnimStateMachineBuilder</c> 生成。
     ///     </para>
     ///     <para>
     ///         Only one child is <c>active</c> at a time. Switching to a different backend during
@@ -26,9 +26,9 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     ///         alongside the newly activated one. <see cref="Queue" /> across backends is deferred until the
     ///         current backend reports <see cref="Completed" />, at which point the stashed
     ///         <c>(backend, id, loop)</c> triple is activated.
-    ///         同一时间只有一个子后端是 <c>active</c>。在 <see cref="Play" /> 期间切换到不同后端时，会为之前激活的 id
-    ///         触发 <see cref="Interrupted" />，并对离开的后端调用 <see cref="IAnimationBackend.Stop" />，避免它与新激活后端
-    ///         同时继续播放。跨后端的 <see cref="Queue" /> 会推迟到当前后端报告 <see cref="Completed" /> 后执行，此时会激活暂存的
+    ///         同一时间只有一个子后端是 <c>active</c>。在 <c>Play</c> 期间切换到不同后端时，会为之前激活的 id
+    ///         触发 <c>Interrupted</c>，并对离开的后端调用 <c>IAnimationBackend.Stop</c>，避免它与新激活后端
+    ///         同时继续播放。跨后端的 <c>Queue</c> 会推迟到当前后端报告 <c>Completed</c> 后执行，此时会激活暂存的
     ///         <c>(backend, id, loop)</c> 三元组。
     ///     </para>
     /// </remarks>
@@ -43,7 +43,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 
         /// <summary>
         ///     Creates a composite from <paramref name="backends" /> (priority order).
-        ///     根据 <paramref name="backends" /> 创建组合后端（按优先级顺序）。
+        ///     根据 <c>backends</c> 创建组合后端（按优先级顺序）。
         /// </summary>
         public CompositeAnimationBackend(IReadOnlyList<IAnimationBackend> backends, Node? ownerNode = null)
         {

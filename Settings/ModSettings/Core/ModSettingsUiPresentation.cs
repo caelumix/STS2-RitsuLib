@@ -12,7 +12,7 @@ namespace STS2RitsuLib.Settings
         ///     Per-entry <see cref="ParagraphModSettingsEntryDefinition.MaxBodyHeight" /> overrides this when set.
         ///     段落条目正文（来自 <c>AddParagraph</c>）在启用内部垂直滚动前的默认最大高度。
         ///     <c>null</c>（默认）表示不限制高度，文本随布局增长。设置了逐条目的
-        ///     <see cref="ParagraphModSettingsEntryDefinition.MaxBodyHeight" /> 时会覆盖此值。
+        ///     <c>ParagraphModSettingsEntryDefinition.MaxBodyHeight</c> 时会覆盖此值。
         /// </summary>
         public static float? ParagraphMaxBodyHeight { get; set; }
     }

@@ -6,12 +6,16 @@ namespace STS2RitsuLib.Relics
 {
     /// <summary>
     ///     Holds mod-supplied mappings for <see cref="ArchaicTooth" /> transcendence and
+    ///     Holds mod-supplied mappings 用于 <c>ArchaicTooth</c> transcendence and
     ///     <see cref="TouchOfOrobas" /> refinement, applied via framework Harmony patches.
     /// </summary>
     /// <remarks>
     ///     Target models are stored as CLR <see cref="Type" /> and resolved through <see cref="ModelDb.GetByIdOrNull{T}" />
+    ///     Target Models are stored as CLR <c>Type</c> 和 resolved through <c>ModelDb.GetByIdOrNull{T}</c>
     ///     at patch time so registration can run during mod <c>Apply()</c> before <see cref="ModelDb" /> has injected mod
+    ///     at patch time so 注册 can 跑局 期间 mod <c>Apply()</c> 之前 <c>ModelDb</c> has injected mod
     ///     content into <c>_contentById</c>. Starter keys use <see cref="ModelDb.GetId{T}" /> (metadata only).
+    ///     content into <c>_contentById</c>. Starter keys 使用 <c>ModelDb.GetId{T}</c> (metadata only).
     /// </remarks>
     internal static class OrobasAncientUpgradeRegistry
     {
@@ -69,6 +73,7 @@ namespace STS2RitsuLib.Relics
 
         /// <summary>
         ///     Distinct ancient card templates registered by mods (for <see cref="ArchaicTooth.TranscendenceCards" />).
+        ///     Distinct ancient 卡牌 templates 已注册 通过 mods (用于 <c>ArchaicTooth.TranscendenceCards</c>).
         /// </summary>
         internal static IReadOnlyList<CardModel> GetRegisteredTranscendenceAncientTemplates()
         {

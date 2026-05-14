@@ -6,7 +6,9 @@ namespace STS2RitsuLib.Timeline.Scaffolding
 {
     /// <summary>
     ///     Base <see cref="EpochModel" /> for mods with optional <see cref="IModEpochAssetOverrides" /> timeline portrait
+    ///     Base <c>Epoch模型</c> 用于 mods 带有 可选 <c>IModEpochAssetOverrides</c> timeline 肖像
     ///     paths. Unlock-epoch templates in this namespace inherit from this type.
+    ///     路径. Unlock-epoch templates in this namespace inherit 从 this type.
     /// </summary>
     public abstract class ModEpochTemplate : EpochModel, IModEpochAssetOverrides
     {

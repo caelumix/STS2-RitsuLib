@@ -5,7 +5,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Registers built-in custom target predicates after <see cref="ModelDb.Init" />.
-    ///     在 <see cref="ModelDb.Init" /> 完成后注册内置自定义目标谓词。
+    ///     在 <c>ModelDb.Init</c> 完成后注册内置自定义目标谓词。
     /// </summary>
     internal sealed class ModelDbInitCustomTargetTypeRegistrationPatch : IPatchMethod
     {

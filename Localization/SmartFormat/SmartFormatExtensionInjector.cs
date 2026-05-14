@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Localization.SmartFormat
 {
     /// <summary>
     ///     Injects registered mod SmartFormat extensions into a live <c>SmartFormatter</c> instance.
+    ///     Injects 已注册 mod SmartFormat extensions into a live <c>SmartFormatter</c> instance.
     /// </summary>
     public static class SmartFormatExtensionInjector
     {
@@ -14,6 +15,7 @@ namespace STS2RitsuLib.Localization.SmartFormat
 
         /// <summary>
         ///     Injects all registered sources first, then formatters.
+        ///     Injects all 已注册 sources first, then 用于matters.
         /// </summary>
         public static void InjectAll(SmartFormatter formatter)
         {
@@ -28,6 +30,7 @@ namespace STS2RitsuLib.Localization.SmartFormat
 
         /// <summary>
         ///     Injects a single registered extension into <paramref name="formatter" />.
+        ///     Injects a single 已注册 extension into <c>用于matter</c>.
         /// </summary>
         public static void Inject(
             SmartFormatter formatter,

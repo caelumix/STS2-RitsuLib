@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Content
     {
         /// <summary>
         ///     Registers a generated placeholder card: no mod-authored CLR type, stable entry from
+        ///     Registers a generated placeholder 卡牌: no mod-authored CLR type, stable entry 从
         ///     <paramref name="stableEntryStem" />.
         /// </summary>
         public void RegisterPlaceholderCard<TPool>(string stableEntryStem,
@@ -17,6 +18,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers a generated placeholder card with an explicit public entry option.
+        ///     注册 a generated placeholder card with an explicit public entry option。
         /// </summary>
         public void RegisterPlaceholderCard<TPool>(ModelPublicEntryOptions publicEntry,
             PlaceholderCardDescriptor descriptor)
@@ -28,6 +30,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers a generated placeholder relic from <paramref name="stableEntryStem" /> and
+        ///     Registers a generated placeholder 遗物 从 <c>stableEntryStem</c> and
         ///     <paramref name="descriptor" />.
         /// </summary>
         public void RegisterPlaceholderRelic<TPool>(string stableEntryStem,
@@ -39,6 +42,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers a generated placeholder relic with explicit <paramref name="publicEntry" />.
+        ///     注册 a generated placeholder relic with explicit <c>publicEntry</c>。
         /// </summary>
         public void RegisterPlaceholderRelic<TPool>(ModelPublicEntryOptions publicEntry,
             PlaceholderRelicDescriptor descriptor)
@@ -50,6 +54,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers a generated placeholder potion from <paramref name="stableEntryStem" /> and
+        ///     Registers a generated placeholder potion 从 <c>stableEntryStem</c> and
         ///     <paramref name="descriptor" />.
         /// </summary>
         public void RegisterPlaceholderPotion<TPool>(string stableEntryStem,
@@ -61,6 +66,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers a generated placeholder potion with explicit <paramref name="publicEntry" />.
+        ///     注册 a generated placeholder potion with explicit <c>publicEntry</c>。
         /// </summary>
         public void RegisterPlaceholderPotion<TPool>(ModelPublicEntryOptions publicEntry,
             PlaceholderPotionDescriptor descriptor)

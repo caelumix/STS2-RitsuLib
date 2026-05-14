@@ -19,6 +19,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     CLR full names for numeric primitives that may appear in <see cref="ModSettingsClipboardEnvelope.TypeName" />.
+        ///     CLR full names 用于 numeric primitives that may appear in <c>ModSettingsClipboardEnvelope.TypeName</c>.
         /// </summary>
         private static readonly FrozenSet<string> NumericEnvelopeTypeFullNames = new[]
         {
@@ -58,7 +59,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Applies a value captured in <see cref="ModSettingsChromeBindingSnapshot" /> onto <paramref name="binding" />
+        ///     Applies a value captured in <c>ModSettingsChromeBindingSnapshot</c> onto <c>binding</c>
         ///     (same compatibility rules as a value clipboard envelope with no source-binding match requirement).
+        ///     (same compatibility rules as a value clipboard envelope 带有 no source-binding match requirement).
         /// </summary>
         internal static bool TryApplySerializedValueToBinding<TValue>(
             IModSettingsValueBinding<TValue> binding,
@@ -395,7 +398,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Loose scalar coercion is only for same declared CLR type (e.g. schema/shape mismatch) or safe numeric widening;
+        ///     Loose scalar coercion is only 用于 same declared CLR type (e.g. schema/shape mismatch) 或 safe numeric widening;
         ///     it must not turn unrelated copies (e.g. slider <see cref="double" />) into <see cref="string" /> choice keys.
+        ///     中文说明：it must not turn unrelated copies (e.g. slider <c>double</c>) into <c>string</c> choice keys.
         /// </summary>
         private static bool CanCoerceClipboardEnvelopeScalarTo(Type targetValueType, string envelopeTypeName)
         {

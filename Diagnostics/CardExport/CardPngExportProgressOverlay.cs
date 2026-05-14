@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Diagnostics.CardExport
 {
     /// <summary>
     ///     Full-screen blocking overlay with a progress bar while batch PNG export runs.
+    ///     Full-screen blocking overlay 带有 a progress bar while batch PNG export runs.
     /// </summary>
     internal sealed partial class CardPngExportProgressOverlay : CanvasLayer
     {

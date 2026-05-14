@@ -5,14 +5,14 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     /// <summary>
     ///     <see cref="IAnimationBackend" /> driver for Godot <see cref="AnimationTree" /> with an
     ///     <see cref="AnimationNodeStateMachine" /> root.
-    ///     根节点为 <see cref="AnimationNodeStateMachine" /> 的 Godot <see cref="AnimationTree" />
-    ///     <see cref="IAnimationBackend" /> 驱动。
+    ///     根节点为 <c>AnimationNodeStateMachine</c> 的 Godot <c>AnimationTree</c>
+    ///     <c>IAnimationBackend</c> 驱动。
     /// </summary>
     /// <remarks>
     ///     State ids map to state-machine node names, and <see cref="Play" /> dispatches through
     ///     <see cref="AnimationNodeStateMachinePlayback.Travel" />.
-    ///     状态 id 映射到状态机节点名，<see cref="Play" /> 通过
-    ///     <see cref="AnimationNodeStateMachinePlayback.Travel" /> 派发。
+    ///     状态 id 映射到状态机节点名，<c>Play</c> 通过
+    ///     <c>AnimationNodeStateMachinePlayback.Travel</c> 派发。
     /// </remarks>
     public sealed class AnimationTreeStateMachineBackend : IAnimationBackend
     {
@@ -28,11 +28,11 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 
         /// <summary>
         ///     Wraps <paramref name="tree" /> and binds to its state-machine playback.
-        ///     包装 <paramref name="tree" /> 并绑定到其状态机 playback。
+        ///     包装 <c>tree</c> 并绑定到其状态机 playback。
         /// </summary>
         /// <exception cref="ArgumentException">
         ///     Thrown when <paramref name="tree" /> is not configured as a state-machine tree.
-        ///     当 <paramref name="tree" /> 未配置为状态机 tree 时抛出。
+        ///     当 <c>tree</c> 未配置为状态机 tree 时抛出。
         /// </exception>
         public AnimationTreeStateMachineBackend(AnimationTree tree)
         {

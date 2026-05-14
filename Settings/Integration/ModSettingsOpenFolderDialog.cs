@@ -4,6 +4,7 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Reusable <see cref="FileDialog" /> in <c>OpenDir</c> mode for writing a folder path to a settings binding.
+    ///     Reusable <c>FileDialog</c> in <c>OpenDir</c> mode 用于 writing a folder 路径 to a 设置 binding.
     /// </summary>
     internal static class ModSettingsOpenFolderDialog
     {

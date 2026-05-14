@@ -6,8 +6,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     /// <summary>
     ///     <see cref="IAnimationBackend" /> driver for cue-based visuals backed by
     ///     <see cref="VisualCueSet" /> (static textures and/or <see cref="VisualFrameSequence" />).
-    ///     基于 <see cref="VisualCueSet" /> 的 cue 视觉 <see cref="IAnimationBackend" /> 驱动
-    ///     （静态贴图和/或 <see cref="VisualFrameSequence" />）。
+    ///     基于 <c>VisualCueSet</c> 的 cue 视觉 <c>IAnimationBackend</c> 驱动
+    ///     （静态贴图和/或 <c>VisualFrameSequence</c>）。
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -15,14 +15,14 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     ///         <see cref="VisualCueSet.TexturePathByCue" /> (fallback static texture). Frame sequences are played
     ///         through <see cref="CueFrameSequencePlayer" />; its <c>Finished</c> signal is converted to
     ///         <see cref="Completed" />.
-    ///         动画 id 映射到 <see cref="VisualCueSet.FrameSequenceByCue" />（优先）或
-    ///         <see cref="VisualCueSet.TexturePathByCue" />（静态贴图回退）中的 cue key。帧序列通过
-    ///         <see cref="CueFrameSequencePlayer" /> 播放；其 <c>Finished</c> 信号会转换为 <see cref="Completed" />。
+    ///         动画 id 映射到 <c>VisualCueSet.FrameSequenceByCue</c>（优先）或
+    ///         <c>VisualCueSet.TexturePathByCue</c>（静态贴图回退）中的 cue key。帧序列通过
+    ///         <c>CueFrameSequencePlayer</c> 播放；其 <c>Finished</c> 信号会转换为 <c>Completed</c>。
     ///     </para>
     ///     <para>
     ///         Non-looping static cues raise <see cref="Completed" /> on the next idle frame so the state machine
     ///         can advance without re-entering the caller synchronously.
-    ///         非循环静态 cue 会在下一次 idle frame 触发 <see cref="Completed" />，这样状态机可以推进且不会同步重入调用方。
+    ///         非循环静态 cue 会在下一次 idle frame 触发 <c>Completed</c>，这样状态机可以推进且不会同步重入调用方。
     ///     </para>
     /// </remarks>
     public sealed class CueAnimationBackend : IAnimationBackend
@@ -38,7 +38,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 
         /// <summary>
         ///     Binds cues <paramref name="cues" /> to sprite <paramref name="sprite" /> rooted at <paramref name="root" />.
-        ///     将 cue <paramref name="cues" /> 绑定到以 <paramref name="root" /> 为根的 sprite <paramref name="sprite" />。
+        ///     将 cue <c>cues</c> 绑定到以 <c>root</c> 为根的 sprite <c>sprite</c>。
         /// </summary>
         public CueAnimationBackend(Node root, Sprite2D sprite, VisualCueSet cues)
         {

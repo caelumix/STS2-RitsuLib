@@ -5,11 +5,13 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Long-lived Studio event instances (manual start/stop/release).
+    ///     Long-lived Studio 事件 instances (manual start/stop/release).
     /// </summary>
     public static class FmodStudioEventInstances
     {
         /// <summary>
         ///     Creates a typed event handle for a Studio event source.
+        ///     创建 a typed event handle for a Studio event source。
         /// </summary>
         public static AudioEventHandle? TryCreateHandle(AudioSource source, AudioPlaybackOptions? options = null)
         {
@@ -28,6 +30,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Creates a Studio event or snapshot instance; null when creation fails.
+        ///     创建 a Studio event or snapshot instance; null when creation fails。
         /// </summary>
         public static GodotObject? TryCreate(string eventOrSnapshotPath)
         {
@@ -47,7 +50,9 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Raw <c>FmodServer.check_event_path</c>; does not use <c>FmodStudioServer.TryCheckEventPath</c> guids-table
+        ///     Raw <c>FmodServer.check_事件_路径</c>; does not 使用 <c>FmodStudioServer.TryCheck事件路径</c> guids-table
         ///     shortcut.
+        ///     中文说明：shortcut.
         /// </summary>
         private static bool? ProbeStudioHasEventPath(string eventPath)
         {
@@ -59,6 +64,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Creates a Studio instance from an event or snapshot GUID string (same underlying call as the editor tools).
+        ///     创建 a Studio instance from an event or snapshot GUID string (same underlying call as the editor tools)。
         /// </summary>
         public static GodotObject? TryCreateFromGuid(string eventGuid)
         {
@@ -90,6 +96,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Calls <c>start</c> on the instance when non-null.
+        ///     Calls <c>start</c> on the instance 当 non-null.
         /// </summary>
         public static bool TryStart(GodotObject? instance)
         {
@@ -110,6 +117,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Stops the instance; <paramref name="allowFadeOut" /> maps to FMOD stop mode.
+        ///     中文说明：Stops the instance; <c>allowFadeOut</c> maps to FMOD stop mode.
         /// </summary>
         public static bool TryStop(GodotObject? instance, bool allowFadeOut = true)
         {
@@ -130,6 +138,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Releases native resources for the instance; errors are logged only.
+        ///     Releases native 资源s 用于 the instance; errors are logged only.
         /// </summary>
         public static void TryRelease(GodotObject? instance)
         {

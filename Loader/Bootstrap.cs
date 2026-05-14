@@ -8,6 +8,7 @@ namespace STS2RitsuLib.Loader
 {
     /// <summary>
     ///     Entry assembly for the multi-variant RitsuLib bundle: loads the matching <c>STS2-RitsuLib.dll</c> from
+    ///     Entry assembly 用于 the multi-variant RitsuLib bundle: 加载 the matching <c>STS2-RitsuLib.dll</c> 从
     ///     <c>lib/&lt;compat&gt;/</c> into the default ALC, then forwards to the real framework initializer.
     /// </summary>
     [ModInitializer(nameof(Initialize))]

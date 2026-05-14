@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Content
 {
     /// <summary>
     ///     Shape-only configuration for a generated placeholder card (no card logic).
+    ///     Shape-only configuration 用于 a generated placeholder 卡牌 (no 卡牌 logic).
     /// </summary>
     public readonly record struct PlaceholderCardDescriptor(
         int BaseCost = 1,
@@ -16,6 +17,7 @@ namespace STS2RitsuLib.Content
 
     /// <summary>
     ///     Shape-only configuration for a generated placeholder relic (no relic logic).
+    ///     Shape-only configuration 用于 a generated placeholder 遗物 (no 遗物 logic).
     /// </summary>
     public readonly record struct PlaceholderRelicDescriptor(
         RelicRarity Rarity = RelicRarity.Common,
@@ -34,6 +36,7 @@ namespace STS2RitsuLib.Content
 
     /// <summary>
     ///     Shape-only configuration for a generated placeholder potion (no potion effect).
+    ///     Shape-only configuration 用于 a generated placeholder potion (no potion effect).
     /// </summary>
     public readonly record struct PlaceholderPotionDescriptor(
         PotionRarity Rarity = PotionRarity.Common,

@@ -7,6 +7,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 {
     /// <summary>
     ///     Keeps extra corner amount labels in sync with <see cref="NPower" />.
+    ///     Keeps extra corner amount labels in sync 带有 <c>NPower</c>.
     /// </summary>
     public sealed class NPowerExtraCornerAmountLabelsPatch : IPatchMethod
     {
@@ -28,6 +29,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NPower.RefreshAmount</c>.
+        ///     Harmony 后置补丁 用于 <c>NPower.RefreshAmount</c>.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NPower __instance)
@@ -38,6 +40,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Clears extra corner labels when the combat power node exits the tree.
+    ///     Clears extra corner labels 当 the combat 能力 node exits the tree.
     /// </summary>
     public sealed class NPowerExtraCornerAmountLabelsExitTreePatch : IPatchMethod
     {
@@ -58,6 +61,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NPower._ExitTree</c>.
+        ///     Harmony 后置补丁 用于 <c>NPower._ExitTree</c>.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NPower __instance)
@@ -68,6 +72,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Keeps extra corner labels in sync with <see cref="NRelicInventoryHolder" />.
+    ///     Keeps extra corner labels in sync 带有 <c>NRelicInventoryHolder</c>.
     /// </summary>
     public sealed class NRelicInventoryHolderExtraCornerAmountLabelsPatch : IPatchMethod
     {
@@ -89,6 +94,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NRelicInventoryHolder.RefreshAmount</c>.
+        ///     Harmony 后置补丁 用于 <c>NRelicInventoryHolder.RefreshAmount</c>.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NRelicInventoryHolder __instance)
@@ -99,6 +105,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Clears relic extra labels when the holder exits the tree.
+    ///     Clears 遗物 extra labels 当 the holder exits the tree.
     /// </summary>
     public sealed class NRelicInventoryHolderExtraCornerAmountLabelsExitTreePatch : IPatchMethod
     {
@@ -119,6 +126,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NRelicInventoryHolder._ExitTree</c>.
+        ///     Harmony 后置补丁 用于 <c>NRelicInventoryHolder._ExitTree</c>.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NRelicInventoryHolder __instance)
@@ -129,6 +137,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Keeps extra corner labels in sync with <see cref="NIntent" />.
+    ///     Keeps extra corner labels in sync 带有 <c>NIntent</c>.
     /// </summary>
     public sealed class NIntentExtraCornerAmountLabelsPatch : IPatchMethod
     {
@@ -150,6 +159,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NIntent.UpdateVisuals</c>.
+        ///     Harmony 后置补丁 用于 <c>NIntent.更新Visuals</c>.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NIntent __instance)
@@ -160,6 +170,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
     /// <summary>
     ///     Clears intent extra labels when the intent node exits the tree.
+    ///     Clears intent extra labels 当 the intent node exits the tree.
     /// </summary>
     public sealed class NIntentExtraCornerAmountLabelsExitTreePatch : IPatchMethod
     {
@@ -180,6 +191,7 @@ namespace STS2RitsuLib.Combat.Ui.Patches
 
         /// <summary>
         ///     Harmony postfix for <c>NIntent._ExitTree</c>.
+        ///     Harmony 后置补丁 用于 <c>NIntent._ExitTree</c>.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix(NIntent __instance)

@@ -13,60 +13,73 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Optional encounter presentation and preload paths; use <see cref="ModEncounterTemplate" /> or implement on a mod
+    ///     可选 encounter presentation 和 pre加载 路径; 使用 <c>ModEncounterTemplate</c> 或 implement on a mod
     ///     <see cref="EncounterModel" />.
     /// </summary>
     public interface IModEncounterAssetOverrides
     {
         /// <summary>
         ///     Path bundle; <c>Custom*</c> properties mirror these fields unless overridden.
+        ///     路径包；<c>Custom*</c> properties mirror these fields unless overridden。
         /// </summary>
         EncounterAssetProfile AssetProfile => EncounterAssetProfile.Empty;
 
         /// <summary>
         ///     Override packed scene for <c>EncounterModel.CreateScene</c>.
+        ///     Override packed 场景 用于 <c>EncounterModel.创建场景</c>.
         /// </summary>
         string? CustomEncounterScenePath => AssetProfile.EncounterScenePath;
 
         /// <summary>
         ///     Override main combat background scene when building <see cref="BackgroundAssets" /> for this encounter.
+        ///     Override main combat 背景 场景 当 building <c>BackgroundAssets</c> 用于 this encounter.
         /// </summary>
         string? CustomBackgroundScenePath => AssetProfile.BackgroundScenePath;
 
         /// <summary>
         ///     Override layers directory (<c>_bg_</c> / <c>_fg_</c>); when null, vanilla per-id folder is used with custom main
+        ///     Override layers directory (<c>_bg_</c> / <c>_fg_</c>); 当 null, 原版 per-id folder is used 带有 自定义 main
         ///     scene if set.
+        ///     场景 如果 设置.
         /// </summary>
         string? CustomBackgroundLayersDirectoryPath => AssetProfile.BackgroundLayersDirectoryPath;
 
         /// <summary>
         ///     Override <c>EncounterModel.BossNodePath</c> (Spine <c>.tres</c> or base path used for map node art).
+        ///     Override <c>EncounterModel.BossNode路径</c> (Spine <c>.tres</c> 或 base 路径 used 用于 map node art).
         /// </summary>
         string? CustomBossNodePath => AssetProfile.BossNodeSpinePath;
 
         /// <summary>
         ///     Extra paths merged into <c>GetAssetPaths</c> for preloading.
+        ///     Extra 路径 merged into <c>GetResourcePaths</c> 用于 preloading.
         /// </summary>
         IEnumerable<string>? CustomExtraAssetPaths => AssetProfile.ExtraAssetPaths;
 
         /// <summary>
         ///     When non-null and non-empty after filtering to existing resources, replaces <c>MapNodeAssetPaths</c>.
+        ///     当 non-null 和 non-empty 之后 过滤ing to existing 资源s, replaces <c>MapNodeResourcePaths</c>.
         /// </summary>
         IEnumerable<string>? CustomMapNodeAssetPaths => AssetProfile.MapNodeAssetPaths;
 
         /// <summary>
         ///     When set and the resource exists, overrides <see cref="ImageHelper.GetRoomIconPath" /> for this encounter id.
+        ///     当 设置 和 the 资源 exists, overrides <c>ImageHelper.GetRoom图标路径</c> 用于 this encounter id.
         /// </summary>
         string? CustomRunHistoryIconPath => AssetProfile.RunHistoryIconPath;
 
         /// <summary>
         ///     When set and the resource exists, overrides <see cref="ImageHelper.GetRoomIconOutlinePath" /> for this encounter
+        ///     当 设置 和 the 资源 exists, overrides <c>ImageHelper.GetRoom图标Outline路径</c> 用于 this encounter
         ///     id.
+        ///     中文说明：id.
         /// </summary>
         string? CustomRunHistoryIconOutlinePath => AssetProfile.RunHistoryIconOutlinePath;
     }
 
     /// <summary>
     ///     Patches <see cref="EncounterModel.CreateScene" /> for mod encounter scene path overrides.
+    ///     为 mod encounter scene path overrides 补丁 <c>EncounterModel.CreateScene</c>。
     /// </summary>
     public class EncounterCreateScenePatch : IPatchMethod
     {
@@ -88,6 +101,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Instantiates <see cref="IModEncounterAssetOverrides.CustomEncounterScenePath" /> when the resource exists.
+        ///     Instantiates <c>IModEncounterAssetOverrides.自定义Encounter场景路径</c> 当 the 资源 exists.
         /// </summary>
         public static bool Prefix(EncounterModel __instance, ref Control __result)
             // ReSharper restore InconsistentNaming
@@ -112,7 +126,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
     /// <summary>
     ///     Patches <c>EncounterModel.CreateBackgroundAssetsForCustom</c> to honor mod background scene and/or layers
+    ///     Patches <c>EncounterModel.CreateBackgroundAssetsForCustom</c> to honor mod 背景 场景 and/or layers
     ///     directory.
+    ///     中文说明：directory.
     /// </summary>
     public class EncounterCreateBackgroundAssetsForCustomPatch : IPatchMethod
     {
@@ -138,6 +154,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Path-based <see cref="ActBackgroundLayersFactory" /> when overrides supply paths; otherwise
+        ///     路径-based <c>章节BackgroundLayersFactory</c> 当 overrides supply 路径; otherwise
         ///     <see cref="ModEncounterTemplate" /> programmatic slot from
         ///     <see cref="EncounterGetBackgroundAssetsProgrammaticPrepPatch" />.
         /// </summary>
@@ -201,6 +218,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
     /// <summary>
     ///     Patches <see cref="EncounterModel.BossNodePath" /> for mod map node spine overrides.
+    ///     为 mod map node spine overrides 补丁 <c>EncounterModel.BossNodePath</c>。
     /// </summary>
     public class EncounterBossNodePathPatch : IPatchMethod
     {
@@ -222,6 +240,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModEncounterAssetOverrides.CustomBossNodePath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModEncounterAssetOverrides.CustomBossNodePath</c>。
         /// </summary>
         public static bool Prefix(EncounterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -245,6 +264,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
     /// <summary>
     ///     Patches <see cref="EncounterModel.MapNodeAssetPaths" /> when a mod supplies an explicit path list.
+    ///     补丁 <c>EncounterModel.MapNodeAssetPaths</c> when a mod supplies an explicit path list。
     /// </summary>
     public class EncounterMapNodeAssetPathsPatch : IPatchMethod
     {
@@ -266,6 +286,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Replaces enumeration with existing resources from
+        ///     Replaces enumeration 带有 existing 资源s 从
         ///     <see cref="IModEncounterAssetOverrides.CustomMapNodeAssetPaths" />.
         /// </summary>
         public static bool Prefix(EncounterModel __instance, ref IEnumerable<string> __result)
@@ -297,6 +318,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
     /// <summary>
     ///     Merges mod encounter paths into <see cref="EncounterModel.GetAssetPaths" /> for preloading.
+    ///     Merges mod encounter 路径 into <c>EncounterModel.GetResourcePaths</c> 用于 preloading.
     /// </summary>
     public class EncounterGetAssetPathsPatch : IPatchMethod
     {
@@ -319,6 +341,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Appends encounter scene override, extra paths, and all <c>.tscn</c> under the configured layers directory.
+        ///     Appends encounter 场景 override, extra 路径, 和 all <c>.tscn</c> under the configured layers directory.
         /// </summary>
         public static void Postfix(EncounterModel __instance, IRunState runState, ref IEnumerable<string> __result)
             // ReSharper restore InconsistentNaming

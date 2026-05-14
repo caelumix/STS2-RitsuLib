@@ -5,22 +5,31 @@ namespace STS2RitsuLib.TopBar
 {
     /// <summary>
     ///     Per-mod registration surface for extra top-bar buttons. Mirrors the ergonomics of
+    ///     Per-mod 注册 surface 用于 extra top-bar buttons. Mirrors the ergonomics of
     ///     <c>ModCardPileRegistry</c> (fluent <c>For(modId).RegisterOwned(localStem, spec)</c>), but is
     ///     fully decoupled from the card-pile subsystem — the button only knows how to show an icon,
+    ///     fully decoupled 从 the 卡牌-pile subsystem — the button only knows how to show an 图标,
     ///     expose a hover-tip and run a click callback.
+    ///     expose a hover-tip 和 跑局 a click callback.
     /// </summary>
     /// <remarks>
     ///     <para>
     ///         Ids follow the ritsulib <c>MODID_CATEGORY_TYPENAME</c> public-entry convention via
+    ///         中文说明：Ids follow the ritsulib <c>MODID_CATEGORY_TYPENAME</c> public-entry convention via
     ///         <see cref="ModContentRegistry.GetQualifiedTopBarButtonId" /> (middle segment fixed to
     ///         <c>TOPBARBUTTON</c>). The registered id is also the stem for <c>static_hover_tips</c>
     ///         title / description keys (<c>{id}.title</c> / <c>{id}.description</c>).
+    ///         中文说明：title / description keys (<c>{id}.title</c> / <c>{id}.description</c>).
     ///     </para>
     ///     <para>
     ///         Registrations do not need to be frozen alongside <c>ModelDb</c>: top-bar buttons are mounted
+    ///         Registrations do not need to be frozen alongside <c>ModelDb</c>: top-bar buttons are mounted
     ///         when the top bar node is ready, which happens after model init. The registry therefore
+    ///         当 the top bar node is ready, which happens 之后 模型 init. The 注册表 therefore
     ///         simply de-duplicates by id (same mod re-registering the same stem returns the existing
+    ///         simply de-duplicates 通过 id (same mod re-registering the same stem 返回 the existing
     ///         definition).
+    ///         中文说明：definition).
     ///     </para>
     /// </remarks>
     public sealed class ModTopBarButtonRegistry
@@ -44,6 +53,7 @@ namespace STS2RitsuLib.TopBar
 
         /// <summary>
         ///     Returns the singleton registry for <paramref name="modId" />, creating it on first use.
+        ///     返回 the singleton registry for <c>modId</c>, creating it on first use。
         /// </summary>
         public static ModTopBarButtonRegistry For(string modId)
         {
@@ -62,6 +72,7 @@ namespace STS2RitsuLib.TopBar
 
         /// <summary>
         ///     Registers a top-bar button owned by this registry's mod. The id is produced by
+        ///     Registers a top-bar button owned 通过 this 注册表's mod. The id is produced by
         ///     <see cref="ModContentRegistry.GetQualifiedTopBarButtonId" /> — passing the same
         ///     <paramref name="localStem" /> twice returns the existing definition.
         /// </summary>
@@ -76,7 +87,9 @@ namespace STS2RitsuLib.TopBar
 
         /// <summary>
         ///     Registers a top-bar button using a raw global id. Prefer <see cref="RegisterOwned" /> to
+        ///     中文说明：Registers a top-bar button using a raw global id. Prefer <c>RegisterOwned</c> to
         ///     keep ids mod-scoped.
+        ///     中文说明：keep ids mod-scoped.
         /// </summary>
         public ModTopBarButtonDefinition Register(string id, ModTopBarButtonSpec spec)
         {
@@ -88,6 +101,7 @@ namespace STS2RitsuLib.TopBar
 
         /// <summary>
         ///     Looks up a definition by id; returns false when the id is unknown.
+        ///     Looks up a definition 通过 id; 返回 false 当 the id is unknown.
         /// </summary>
         public static bool TryGet(string id, out ModTopBarButtonDefinition definition)
         {
@@ -101,7 +115,9 @@ namespace STS2RitsuLib.TopBar
 
         /// <summary>
         ///     Snapshot of every registered button, ordered by <see cref="ModTopBarButtonDefinition.Order" />
+        ///     Snapshot of every 已注册 button, ordered 通过 <c>ModTopBarButtonDefinition.Order</c>
         ///     then id for stability.
+        ///     then id 用于 stability.
         /// </summary>
         public static ModTopBarButtonDefinition[] GetDefinitionsSnapshot()
         {

@@ -7,7 +7,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     When an ancient uses <see cref="AncientEventPresentationAssetProfile.StageProcedural" />, supplies a tiny packed
+    ///     当 an ancient 使用 <c>AncientEventPresentationAssetProfile.StageProcedural</c>, supplies a tiny packed
     ///     placeholder so <see cref="EventModel.CreateBackgroundScene" /> does not require a real background <c>tscn</c> path.
+    ///     placeholder so <c>EventModel.CreateBackground场景</c> does not require a real 背景 <c>tscn</c> 路径.
     /// </summary>
     public class AncientEventProceduralBackgroundScenePatch : IPatchMethod
     {
@@ -30,6 +32,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Short-circuits background scene load when the ancient uses procedural stage layers.
+        ///     Short-circuits 背景 场景 加载 当 the ancient 使用 procedural stage layers.
         /// </summary>
         public static bool Prefix(EventModel __instance, ref PackedScene __result)
             // ReSharper restore InconsistentNaming

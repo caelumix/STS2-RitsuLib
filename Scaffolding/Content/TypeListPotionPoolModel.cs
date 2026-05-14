@@ -5,16 +5,21 @@ namespace STS2RitsuLib.Scaffolding.Content
 {
     /// <summary>
     ///     Potion pool base that builds potions from declared CLR types and can override energy icon paths on pools.
+    ///     Potion pool base that builds potions 从 declared CLR types 和 can override energy 图标 路径 on pools.
     /// </summary>
     public abstract class TypeListPotionPoolModel : PotionPoolModel, IModBigEnergyIconPool, IModTextEnergyIconPool
     {
         /// <summary>
         ///     Legacy hook: enumerating potion types on the pool class. Prefer registering each potion through
+        ///     中文说明：Legacy hook: enumerating potion types on the pool class. Prefer registering each potion through
         ///     <c>ModContentRegistry.RegisterPotion&lt;TPool, TPotion&gt;()</c>,
         ///     <c>CreateContentPack.Potion&lt;TPool, TPotion&gt;()</c>,
         ///     or a manifest <c>PotionRegistrationEntry</c> so <c>ModHelper.AddModelToPool</c> injects them without
+        ///     or a manifest <c>PotionRegistrationEntry</c> so <c>ModHelper.Add模型ToPool</c> injects them 带有out
         ///     duplicating the same <see cref="PotionModel" /> instances when this property also lists those types.
+        ///     duplicating the same <c>PotionModel</c> instances 当 this property also lists those types.
         ///     Defaults to an empty sequence.
+        ///     中文说明：Defaults to an empty sequence.
         /// </summary>
         [Obsolete(
             "Prefer ModContentRegistry / CreateContentPack .Potion<TPool, TPotion>() or manifest PotionRegistrationEntry. "

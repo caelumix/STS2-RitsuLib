@@ -5,7 +5,9 @@ namespace STS2RitsuLib.Combat.HealthBars
 {
     /// <summary>
     ///     Invokes <c>SetHpBarContainerSizeWithOffsetsImmediately</c> on <see cref="NHealthBar" />.
+    ///     Invokes <c>SetHpBarContainerSizeWithOffsetImmediately</c> on <c>NHealthBar</c>.
     ///     Requires a publicized STS2 assembly.
+    ///     中文说明：Requires a publicized STS2 assembly.
     /// </summary>
     internal static class NHealthBarGraftCompat
     {

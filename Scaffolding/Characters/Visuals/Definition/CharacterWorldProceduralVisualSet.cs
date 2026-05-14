@@ -7,7 +7,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals.Definition
     ///     <c>tscn</c> scenes. Built with <see cref="CharacterWorldProceduralVisualSetBuilder" /> or
     ///     <see cref="ModCharacterWorldSceneVisuals" />.
     ///     商人 / 休息点视觉的纯数据定义，让 mod 作者可以不编写专用 <c>tscn</c> 场景。可通过
-    ///     <see cref="CharacterWorldProceduralVisualSetBuilder" /> 或 <see cref="ModCharacterWorldSceneVisuals" /> 构建。
+    ///     <c>CharacterWorldProceduralVisualSetBuilder</c> 或 <c>ModCharacterWorldSceneVisuals</c> 构建。
     /// </summary>
     /// <param name="Merchant">
     ///     Merchant-room shell + cues (e.g. <c>relaxed_loop</c>, <c>die</c>).
@@ -23,7 +23,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals.Definition
 
     /// <summary>
     ///     Merchant-room procedural visuals: uses <see cref="VisualCueSet" /> (textures / frame sequences per cue).
-    ///     商人房间程序化视觉：使用 <see cref="VisualCueSet" />（逐 cue 贴图 / 帧序列）。
+    ///     商人房间程序化视觉：使用 <c>VisualCueSet</c>（逐 cue 贴图 / 帧序列）。
     /// </summary>
     /// <param name="CueSet">
     ///     Texture / frame sequences keyed by animation name.

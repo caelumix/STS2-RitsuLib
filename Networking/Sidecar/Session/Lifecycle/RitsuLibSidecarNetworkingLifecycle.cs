@@ -5,7 +5,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Hooks framework lifecycle and keeps sidecar session state aligned with the current net service. Handshake
+    ///     Hooks framework lifecycle 和 keeps sidecar session state aligned 带有 the current net service. Handshake
     ///     negotiation is attempted only for peers marked <see cref="RitsuLibSidecarPeerReachability.Supported" />.
+    ///     negotiation is attempted only 用于 peers marked <c>RitsuLibSidecarPeerReachability.Supported</c>.
     /// </summary>
     public static class RitsuLibSidecarNetworkingLifecycle
     {
@@ -17,6 +19,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Subscribes once per process (idempotent). Called from <see cref="RitsuLibSidecarProtocol.EnsureDefaultHandlers" />.
+        ///     Subscribes once per process (idempotent). Called 从 <c>RitsuLibSidecarProtocol.EnsureDefaultHandlers</c>.
         /// </summary>
         public static void EnsureHooksInstalled()
         {

@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     Eagerly builds combat animation state machines once combat visuals are ready for opted-in creature models.
+    ///     Eagerly builds combat animation state machines once combat visuals are ready 用于 opted-in creature Models.
     /// </summary>
     public class NCreatureCombatAnimationInitialBootstrapPatch : IPatchMethod
     {
@@ -28,7 +29,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Builds the state machine early so initialization and initial-state playback happen as part of visuals
+        ///     Builds the state machine early so initialization 和 initial-state playback happen as part of visuals
         ///     readiness instead of waiting for the first trigger.
+        ///     readiness instead of waiting 用于 the first trigger.
         /// </summary>
         public static void Postfix(NCreature __instance)
         {

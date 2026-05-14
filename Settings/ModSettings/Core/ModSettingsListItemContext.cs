@@ -89,7 +89,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     True when <see cref="Binding" /> exposes structured copy/paste.
-        ///     当 <see cref="Binding" /> 暴露结构化复制/粘贴能力时为 true。
+        ///     当 <c>Binding</c> 暴露结构化复制/粘贴能力时为 true。
         /// </summary>
         public bool SupportsStructuredClipboard => Binding is IStructuredModSettingsValueBinding<TItem>;
 
@@ -102,7 +102,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Writes <paramref name="item" /> back into the list at <see cref="Index" />.
-        ///     将 <paramref name="item" /> 写回列表中的 <see cref="Index" /> 位置。
+        ///     将 <c>item</c> 写回列表中的 <c>Index</c> 位置。
         /// </summary>
         public void Update(TItem item)
         {
@@ -120,7 +120,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Moves the row up when <see cref="CanMoveUp" />.
-        ///     当 <see cref="CanMoveUp" /> 时向上移动此行。
+        ///     当 <c>CanMoveUp</c> 时向上移动此行。
         /// </summary>
         public void MoveUp()
         {
@@ -129,7 +129,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Moves the row down when <see cref="CanMoveDown" />.
-        ///     当 <see cref="CanMoveDown" /> 时向下移动此行。
+        ///     当 <c>CanMoveDown</c> 时向下移动此行。
         /// </summary>
         public void MoveDown()
         {
@@ -176,7 +176,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Copies <see cref="Item" /> using structured clipboard when available.
-        ///     可用时使用结构化剪贴板复制 <see cref="Item" />。
+        ///     可用时使用结构化剪贴板复制 <c>Item</c>。
         /// </summary>
         public bool TryCopyToClipboard(ModSettingsClipboardScope scope = ModSettingsClipboardScope.Self)
         {
@@ -199,7 +199,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Pastes into this row and calls <see cref="Update" /> on success; shows UI feedback on failure.
-        ///     粘贴到此行，并在成功时调用 <see cref="Update" />；失败时显示 UI 反馈。
+        ///     粘贴到此行，并在成功时调用 <c>Update</c>；失败时显示 UI 反馈。
         /// </summary>
         public bool TryPasteFromClipboard()
         {
@@ -219,7 +219,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Projects a child field of <typeparamref name="TItem" /> as its own binding (nested editors).
-        ///     将 <typeparamref name="TItem" /> 的子字段投影为独立绑定（用于嵌套编辑器）。
+        ///     将 <c>TItem</c> 的子字段投影为独立绑定（用于嵌套编辑器）。
         /// </summary>
         public IModSettingsValueBinding<TValue> Project<TValue>(
             string dataKey,
@@ -232,7 +232,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Instantiates any <see cref="ModSettingsEntryDefinition" /> under this row’s UI context.
-        ///     在此行的 UI 上下文中实例化任意 <see cref="ModSettingsEntryDefinition" />。
+        ///     在此行的 UI 上下文中实例化任意 <c>ModSettingsEntryDefinition</c>。
         /// </summary>
         public Control CreateEntry(ModSettingsEntryDefinition entry)
         {
@@ -241,7 +241,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Convenience wrapper that builds a nested list entry for <typeparamref name="TChild" />.
-        ///     便捷包装方法，用于为 <typeparamref name="TChild" /> 构建嵌套列表条目。
+        ///     便捷包装方法，用于为 <c>TChild</c> 构建嵌套列表条目。
         /// </summary>
         public Control CreateListEditor<TChild>(
             string id,

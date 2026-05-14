@@ -8,14 +8,21 @@ namespace STS2RitsuLib.Timeline.Patches
 {
     /// <summary>
     ///     Vanilla <see cref="MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen.InitScreen" /> only passes epochs
+    ///     原版 <c>MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen.InitScreen</c> only passes epochs
     ///     that already exist in <see cref="MegaCrit.Sts2.Core.Saves.ProgressState.Epochs" /> into
+    ///     that already exist in <c>MegaCrit.Sts2.Core.保存.ProgressState.Epochs</c> into
     ///     <see cref="MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen.AddEpochSlots" />.
     ///     Mod story lines are not inserted into the save until gameplay or expansion runs
+    ///     Mod story lines are not inserted into the 保存 until gameplay 或 expansion runs
     ///     <see cref="MegaCrit.Sts2.Core.Saves.ProgressState.UnlockSlot" />, so mod columns would stay missing while the
     ///     underlying unlock flow stays correct. Cold open (<c>isAnimated: false</c>) merges only after vanilla Neow&apos;s
+    ///     underlying unlock flow stays correct. Cold open (<c>isAnimated: false</c>) merges only 之后 原版 Neow&apos;s
     ///     primary expansion has started (see <see cref="ModTimelineNeowCoExpansion.HasVanillaNeowTimelineExpansionStarted" />
+    ///     primary expansion has started (see <c>ModTimelineNeowCoExpansion.HasVanillaNeowTimelineExpansionStarted</c>
     ///     ).
+    ///     中文说明：).
     ///     Animated expansion merges only when <see cref="NeowEpoch.QueueUnlocks" /> just queued that batch (pending flag from
+    ///     Animated expansion merges only 当 <c>NeowEpoch.QueueUnlocks</c> just queued that batch (pending flag 从
     ///     <see cref="QueueTimelineExpansionUnlockModSlotsAfterNeowPatch" />).
     /// </summary>
     public sealed class NTimelineScreenAddEpochSlotsMergeModTemplatesPatch : IPatchMethod
@@ -43,6 +50,7 @@ namespace STS2RitsuLib.Timeline.Patches
 
         /// <summary>
         ///     Cold: merge after Neow primary expansion has touched save. Animated: merge only with pending from Neow
+        ///     Cold: merge 之后 Neow primary expansion has touched 保存. Animated: merge only 带有 pending 从 Neow
         ///     <see cref="NeowEpoch.QueueUnlocks" /> plus matching slot batch.
         /// </summary>
         public static void Prefix(List<EpochSlotData> slotsToAdd, bool isAnimated)

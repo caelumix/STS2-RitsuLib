@@ -9,9 +9,13 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Fixes <see cref="NMouseCardPlay" /> targeting selection for <see cref="TargetType.AnyPlayer" />.
+    ///     Fixes <c>NMouseCardPlay</c> targeting selection 用于 <c>TargetType.AnyPlayer</c>.
     ///     Vanilla routes AnyPlayer to <c>MultiCreatureTargeting</c> (no arrow, no target selection).
+    ///     原版 routes AnyPlayer to <c>MultiCreatureTargeting</c> (no arrow, no target selection).
     ///     This patch routes it to <c>SingleCreatureTargeting</c> which already fully supports AnyPlayer
+    ///     中文说明：This patch routes it to <c>SingleCreatureTargeting</c> which already fully supports AnyPlayer
     ///     through <see cref="NTargetManager" />.
+    ///     中文说明：through <c>NTargetManager</c>.
     /// </summary>
     internal sealed class NMouseCardPlayTargetSelectionAnyPlayerPatch : IPatchMethod
     {

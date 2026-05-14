@@ -13,6 +13,10 @@ namespace STS2RitsuLib.CardTags.Patches
     ///     <see cref="CardModel.CanonicalTags" />. Keeps <see cref="ModCardTemplate.RegisteredCardTagIds" /> separate
     ///     from <c>CanonicalTags</c> so mods can still override canonical vanilla tags without dropping declarative mod
     ///     tags.
+    ///     在原版 <c>CardModel.Tags</c> 基于 <c>CardModel.CanonicalTags</c> 实体化底层 <c>_tags</c>
+    ///     集合后，将已生成的 mod <c>CardTag</c> 值播种到每个 <c>ModCardTemplate</c> 实例。
+    ///     让 <c>ModCardTemplate.RegisteredCardTagIds</c> 与 <c>CanonicalTags</c> 保持分离，使 mod 仍可覆盖
+    ///     原版规范标签而不会丢失声明式 mod 标签。
     /// </summary>
     public sealed class CardModelTagsModSeedPatch : IPatchMethod
     {
@@ -39,6 +43,7 @@ namespace STS2RitsuLib.CardTags.Patches
         /// <summary>
         ///     Unions minted <see cref="CardTag" /> values into the physical <see cref="HashSet{T}" /> storage the first
         ///     time the getter runs.
+        ///     在 getter 首次运行时，将已生成的 <c>CardTag</c> 值合并到底层物理 <c>HashSet{T}</c> 存储中。
         /// </summary>
         public static void Postfix(CardModel __instance, IEnumerable<CardTag> __result)
         {

@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Initiates sidecar capability negotiation over <see cref="RitsuLibSidecarControlOpcodes.Handshake" />.
+    ///     中文说明：Initiates sidecar capability negotiation over <c>RitsuLibSidecarControlOpcodes.Handshake</c>.
     /// </summary>
     public static class RitsuLibSidecarConnectionExchange
     {
@@ -23,7 +24,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <remarks>
         ///     Cleared when <see cref="RitsuLibSidecarSessionManager.Epoch" /> changes; successful negotiation marks the
+        ///     Cleared 当 <c>RitsuLibSidecarSessionManager.Epoch</c> changes; successful negotiation marks the
         ///     peer completed until disconnect or epoch rollover; negotiation failure removes the peer entry for retry.
+        ///     peer completed until disconnect 或 epoch rollover; negotiation failure removes the peer entry 用于 retry.
         /// </remarks>
         private static readonly Dictionary<ulong, HelloOutboundNegotiationState> NegotiationByPeer = [];
 
@@ -31,6 +34,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Drops outbound handshake pacing / ack bookkeeping for one peer (e.g. multiplayer disconnect hooks).
+        ///     Drops outbound handshake pacing / ack bookkeeping 用于 one peer (e.g. multiplayer disconnect hooks).
         /// </summary>
         public static void RemoveNegotiationStateForPeer(ulong peerNetId)
         {
@@ -42,6 +46,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Correlates a received handshake ack against the outbound attempt started by this assembly.
+        ///     Correlates a received handshake ack against the outbound attempt started 通过 this assembly.
         /// </summary>
         public static void NotifyOutboundHandshakeAck(ulong responderNetId, bool negotiationOk)
         {
@@ -70,7 +75,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Drops all outbound handshake bookkeeping immediately after multiplayer session teardown (paired with epoch
+        ///     Drops all outbound handshake bookkeeping immediately 之后 multiplayer session teardown (paired 带有 epoch
         ///     advancement from <see cref="RitsuLibSidecarSessionManager.ObserveNetService" />(<see langword="null" />)).
+        ///     advancement 从 <c>RitsuLibSidecarSessionManager.ObserveNetService</c>(<see langword="null" />)).
         /// </summary>
         public static void DiscardNegotiationStateAfterSessionEnds()
         {
@@ -84,6 +91,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Expires outbound handshake ack waits when the transport delivers no ack before the deadline.
+        ///     Expires outbound handshake ack waits 当 the transport delivers no ack 之前 the deadline.
         /// </summary>
         public static void TickHandshakeNegotiation()
         {
@@ -101,6 +109,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Same as <see cref="TrySendClientHelloIfReachable" /> using <see cref="RunManager.Instance" />’s
+        ///     Same as <c>TrySendClientHelloIfReachable</c> using <c>跑局Manager.Instance</c>’s
         ///     <see cref="RunManager.NetService" /> (non-null only after run setup; use lobby ctor patches for
         ///     <see cref="MegaCrit.Sts2.Core.Multiplayer.Game.Lobby.StartRunLobby" /> phase).
         /// </summary>
@@ -111,6 +120,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Attempts sidecar handshake only for peers already resolved as
+        ///     Attempts sidecar handshake only 用于 peers already resolved as
         ///     <see cref="RitsuLibSidecarPeerReachability.Supported" />.
         /// </summary>
         public static void TrySendClientHelloIfReachable(INetGameService? netService)

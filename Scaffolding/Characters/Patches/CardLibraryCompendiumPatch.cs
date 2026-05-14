@@ -14,17 +14,29 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     Adds a pool-filter button for each registered mod character in the card library compendium (skips
+    ///     Adds a pool-filter button 用于 each 已注册 mod character in the 卡牌 library compendium (skips
     ///     characters with <see cref="IModCharacterVanillaSelectionPolicy.HideInCardLibraryCompendium" />), and
+    ///     characters 带有 <c>IModCharacter原版SelectionPolicy.HideInCardLibraryCompendium</c>), and
     ///     re-applies pool-filter art from <see cref="CharacterModel.IconTexture" /> (so
+    ///     re-applies pool-过滤 art 从 <c>Character模型.图标纹理</c> (so
     ///     <see
     ///         cref="ModContentRegistry.RegisterCharacterAssetReplacement(string, Scaffolding.Characters.CharacterAssetProfile)" />
+    ///     cref="ModContentRegistry.RegisterCharacterAssetReplacement(string, Scaffolding.Characters.CharacterAssetProfile)"
+    ///     />
     ///     icons match everywhere).
+    ///     Icons match everywhere).
     ///     Without this patch, mod character cards are not visible in any filter category, and opening
+    ///     Without this patch, mod character 卡牌s are not visible in any 过滤 category, 和 opening
     ///     the card library during a run with a mod character causes a KeyNotFoundException crash.
+    ///     该 card library during a run with a mod character causes a KeyNotFoundException crash。
     ///     Mod-character rows use <see cref="CardLibraryCompendiumPlacementDefaults.DefaultCharacterRowRules" /> unless
+    ///     Mod-character rows 使用 <c>CardLibraryCompendiumPlacementDefaults.DefaultCharacterRowRules</c> unless
     ///     overridden via <see cref="IModCharacterCardLibraryCompendiumPlacement" /> (or the template virtual). Optional
+    ///     overridden via <c>IModCharacterCardLibraryCompendiumPlacement</c> (or the template virtual). 可选
     ///     shared-pool filters use end-of-strip placement when no rules are supplied. All rows share one placement pass
+    ///     shared-pool 过滤 使用 end-of-strip placement 当 no rules are supplied. All rows share one placement pass
     ///     (vanilla anchor priority list, mod-to-mod constraint relaxation, unified sort, then insertion).
+    ///     (原版 anchor priority list, mod-to-mod constraint relaxation, unified sort, then insertion).
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -49,7 +61,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Clones vanilla pool-filter UI for each mod character and wires pool predicates so compendium filtering
+        ///     Clones 原版 pool-过滤 UI 用于 each mod character 和 wires pool predicates so compendium 过滤ing
         ///     works without <c>KeyNotFoundException</c>.
+        ///     works 带有out <c>KeyNotFoundException</c>.
         /// </summary>
         public static void Postfix(
                 NCardLibrary __instance,
@@ -132,8 +146,11 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     A pool-filter control to clone the Image <see cref="ShaderMaterial" /> from, and the fallback icon
+        ///     A pool-过滤 control to clone the Image <c>Shader材质</c> 从, 和 the fallback 图标
         ///     source for shared compendium rows. When the base game has already created mod character filters,
+        ///     source 用于 shared compendium rows. 当 the base game has already created mod character 过滤,
         ///     the leftmost of those in the pool strip; otherwise the first present vanilla
+        ///     the leftmost of those in the pool strip; otherwise the first present 原版
         ///     <see cref="NCardPoolFilter" /> (strip order) from
         ///     <see cref="CardLibraryCompendiumVanillaFilterNames.AllInStripOrder" />.
         /// </summary>
@@ -161,6 +178,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Leftmost <see cref="NCardPoolFilter" /> under the compendium pool strip that is in
+        ///     Leftmost <c>NCardPool过滤</c> under the compendium pool strip that is in
         ///     <paramref name="cardPoolFilters" />, for a stable clone source; otherwise
         ///     <c>Values.First()</c>.
         /// </summary>

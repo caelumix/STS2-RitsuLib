@@ -11,8 +11,8 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     Base <see cref="AncientEventModel" /> with helpers for option keys, relic rewards that complete the ancient flow,
     ///     optional <see cref="IModAncientEventAssetOverrides" /> presentation paths, and dialogue loaded from the
     ///     <c>ancients</c> localization table (<see cref="AncientDialogueLocalization.BuildDialogueSetForModAncient" />).
-    ///     <see cref="AncientEventModel" /> 的 mod 基类：提供选项键辅助、会完成 ancient 流程的遗物奖励、
-    ///     可选 <see cref="IModAncientEventAssetOverrides" /> 表现路径，以及从 <c>ancients</c> 本地化表加载的对话
+    ///     <c>AncientEventModel</c> 的 mod 基类：提供选项键辅助、会完成 ancient 流程的遗物奖励、
+    ///     可选 <c>IModAncientEventAssetOverrides</c> 表现路径，以及从 <c>ancients</c> 本地化表加载的对话
     ///     （<see cref="AncientDialogueLocalization.BuildDialogueSetForModAncient" />）。
     /// </summary>
     public abstract class ModAncientEventTemplate : AncientEventModel, IModAncientEventAssetOverrides
@@ -64,7 +64,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Builds a namespaced option key for <paramref name="pageName" /> / <paramref name="optionName" /> under this ancient
         ///     id.
-        ///     在此 ancient id 下为 <paramref name="pageName" /> / <paramref name="optionName" /> 构建带命名空间的选项键。
+        ///     在此 ancient id 下为 <c>pageName</c> / <c>optionName</c> 构建带命名空间的选项键。
         /// </summary>
         protected string ModOptionKey(string pageName, string optionName)
         {
@@ -75,7 +75,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Shortcut for <see cref="ModOptionKey" /> with the <c>INITIAL</c> page.
-        ///     使用 <c>INITIAL</c> 页面调用 <see cref="ModOptionKey" /> 的快捷方法。
+        ///     使用 <c>INITIAL</c> 页面调用 <c>ModOptionKey</c> 的快捷方法。
         /// </summary>
         protected new string InitialOptionKey(string optionName)
         {
@@ -84,7 +84,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Creates a relic option that obtains the relic for the event owner and calls <see cref="AncientEventModel.Done" />.
-        ///     创建一个遗物选项：为事件拥有者获得该遗物，并调用 <see cref="AncientEventModel.Done" />。
+        ///     创建一个遗物选项：为事件拥有者获得该遗物，并调用 <c>AncientEventModel.Done</c>。
         /// </summary>
         protected EventOption CreateModRelicOption<T>(string pageName = "INITIAL") where T : RelicModel
         {
@@ -93,7 +93,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Creates a relic option that obtains <paramref name="relic" /> for the owner and completes the ancient.
-        ///     创建一个遗物选项：为拥有者获得 <paramref name="relic" /> 并完成该 ancient。
+        ///     创建一个遗物选项：为拥有者获得 <c>relic</c> 并完成该 ancient。
         /// </summary>
         protected EventOption CreateModRelicOption(RelicModel relic, string pageName = "INITIAL")
         {
@@ -114,8 +114,8 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     Creates a relic option with an explicit post-pick handler and localization key.
         ///     When <see cref="EventModel.Owner" /> is still null (e.g. dev-console completion on <c>AllPossibleOptions</c>),
         ///     <paramref name="relic" />.Owner is left unset until the option runs or real event flow assigns it.
-        ///     创建一个带显式选择后处理器和本地化键的遗物选项。当 <see cref="EventModel.Owner" /> 仍为 null
-        ///     （例如开发控制台在 <c>AllPossibleOptions</c> 上补全）时，<paramref name="relic" />.Owner 会保持未设置，
+        ///     创建一个带显式选择后处理器和本地化键的遗物选项。当 <c>EventModel.Owner</c> 仍为 null
+        ///     （例如开发控制台在 <c>AllPossibleOptions</c> 上补全）时，<c>relic</c>.Owner 会保持未设置，
         ///     直到选项执行或真实事件流程为其赋值。
         /// </summary>
         protected EventOption CreateModRelicOption(

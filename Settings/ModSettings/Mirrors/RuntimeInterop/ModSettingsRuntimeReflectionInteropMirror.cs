@@ -2,8 +2,10 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Public entry points for registering runtime-reflection mod settings providers (types that expose
+    ///     Public entry points 用于 registering runtime-reflection mod 设置 providers (types that expose
     ///     <c>CreateRitsuLibSettingsSchema</c> and value resolvers without a compile-time dependency from RitsuLib on the
     ///     provider assembly).
+    ///     中文说明：provider assembly).
     /// </summary>
     public static class ModSettingsRuntimeReflectionInteropMirror
     {

@@ -5,11 +5,13 @@ namespace STS2RitsuLib.Ui.Shell
 {
     /// <summary>
     ///     Paths for the shell themes folder under global mod data.
+    ///     路径s 用于 the shell themes folder under global mod data.
     /// </summary>
     public static class RitsuShellThemePaths
     {
         /// <summary>
         ///     Virtual <c>user://</c> path to the shell themes directory.
+        ///     Virtual <c>使用r://</c> 路径 to the shell themes directory.
         /// </summary>
         public static string GetShellThemesDirectoryVirtual()
         {
@@ -19,6 +21,7 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Creates the shell themes directory if needed; returns the globalized absolute path.
+        ///     创建 the shell themes directory if needed; returns the globalized absolute path。
         /// </summary>
         public static bool TryEnsureShellThemesDirectory(out string absolutePath)
         {

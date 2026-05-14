@@ -6,7 +6,9 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Overrides <see cref="CardModel.CanPlayTargeting" /> for <see cref="CustomTargetType.Anyone" />:
+    ///     Overrides <c>CardModel.CanPlayTargeting</c> 用于 <c>CustomTargetType.Anyone</c>:
     ///     any living creature is valid.
+    ///     any living creature is 有效.
     /// </summary>
     internal sealed class CardModelCanPlayTargetingAnyonePatch : IPatchMethod
     {

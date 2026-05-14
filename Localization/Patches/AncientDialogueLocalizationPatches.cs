@@ -7,6 +7,7 @@ namespace STS2RitsuLib.Localization.Patches
 {
     /// <summary>
     ///     Harmony patch that injects mod-character ancient dialogues from localization before
+    ///     Harmony patch that injects mod-character ancient dialogues 从 localization 之前
     ///     <c>AncientDialogueSet.PopulateLocKeys</c> runs.
     /// </summary>
     public class AncientDialoguePopulateLocKeysPatch : IPatchMethod
@@ -35,6 +36,7 @@ namespace STS2RitsuLib.Localization.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Ensures mod-character lines are merged once per ancient before vanilla localization key population.
+        ///     Ensures mod-character lines are merged once per ancient 之前 原版 localization key population.
         /// </summary>
         public static void Prefix(AncientDialogueSet __instance, string ancientEntry)
             // ReSharper restore InconsistentNaming

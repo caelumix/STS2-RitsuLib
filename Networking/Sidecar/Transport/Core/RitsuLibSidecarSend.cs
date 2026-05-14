@@ -7,13 +7,18 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Sends raw sidecar envelopes on the vanilla transport without using the game INetMessage serialization path.
+    ///     Sends raw sidecar envelopes on the 原版 transport 带有out using the game INetMessage serialization 路径.
     /// </summary>
     public static class RitsuLibSidecarSend
     {
         /// <summary>
         ///     Maps <see cref="NetTransferMode" /> to a recommended ENet channel distinct from vanilla 0/1.
+        ///     Maps <c>NetTransferMode</c> to a recommended ENet channel distinct 从 原版 0/1.
         /// </summary>
-        /// <param name="mode">Reliable or unreliable send mode.</param>
+        /// <param name="mode">
+        ///     Reliable or unreliable send mode.
+        ///     Reliable 或 unreliable send mode.
+        /// </param>
         public static int RecommendedChannel(NetTransferMode mode)
         {
             // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
@@ -27,6 +32,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Client sends one envelope to the host.
+        ///     中文说明：Client sends one envelope to the host.
         /// </summary>
         public static bool TrySendToHost(
             RunManager? runManager,
@@ -39,7 +45,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Client sends one envelope to the host using an existing <see cref="INetGameService" /> (e.g. lobby
+        ///     中文说明：Client sends one envelope to the host using an existing <c>INetGameService</c> (e.g. lobby
         ///     before <see cref="RunManager" /> has <see cref="RunManager.NetService" /> assigned).
+        ///     之前 <c>跑局Manager</c> has <c>跑局Manager.NetService</c> assigned).
         /// </summary>
         public static bool TrySendToHost(
             INetGameService? netService,
@@ -80,6 +88,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host sends one envelope to a single peer.
+        ///     中文说明：Host sends one envelope to a single peer.
         /// </summary>
         public static bool TrySendToPeer(
             RunManager? runManager,
@@ -135,6 +144,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host broadcasts to every peer that is ready for vanilla-style broadcast replication.
+        ///     Host broadcasts to every peer that is ready 用于 原版-style broadcast replication.
         /// </summary>
         public static bool TryBroadcastToReadyPeers(
             RunManager? runManager,
@@ -203,8 +213,11 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host sends the same raw envelope to every <see cref="NetHostGameService.ConnectedPeers" /> entry, without
+        ///     Host sends the same raw envelope to every <c>NetHostGameService.ConnectedPeers</c> entry, 带有out
         ///     requiring <see cref="MegaCrit.Sts2.Core.Entities.Multiplayer.NetClientData.readyForBroadcasting" />. Use in lobby
+        ///     requiring <c>MegaCrit.Sts2.Core.Entities.Multiplayer.NetClientData.readyForBroadcasting</c>. 使用 in lobby
         ///     (or any phase before vanilla marks peers ready) when ready-only broadcast would skip every peer.
+        ///     (or any phase 之前 原版 marks peers ready) 当 ready-only broadcast would skip every peer.
         /// </summary>
         public static bool TryBroadcastToAllConnectedClients(
             INetGameService? netService,

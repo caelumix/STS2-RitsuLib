@@ -2,6 +2,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Opcode dispatch for sidecar payloads. Registration uses the same 64-bit opcodes as
+    ///     Opcode dispatch 用于 sidecar payload. Registration 使用 the same 64-bit opcodes as
     ///     <see cref="RitsuLibSidecarOpcodes.For" />.
     /// </summary>
     public static class RitsuLibSidecarBus
@@ -13,6 +14,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Registers or replaces a handler for an opcode. Unregister when leaving multiplayer to avoid leaks.
+        ///     注册 or replaces a handler for an opcode. Unregister when leaving multiplayer to avoid leaks。
         /// </summary>
         public static void RegisterHandler(ulong opcode, Action<RitsuLibSidecarDispatchContext> handler)
         {
@@ -25,6 +27,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Removes a handler for the opcode, if present.
+        ///     Removes a handler 用于 the opcode, 如果 present.
         /// </summary>
         public static void UnregisterHandler(ulong opcode)
         {
@@ -36,6 +39,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Removes all opcode handlers (e.g. when leaving multiplayer).
+        ///     Removes all opcode handlers (e.g. 当 leaving multiplayer).
         /// </summary>
         public static void ClearHandlers()
         {
@@ -47,6 +51,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Number of active <see cref="WaitForNextAsync" /> waiters (snapshot under lock).
+        ///     中文说明：Number of active <c>WaitForNextAsync</c> waiters (snapshot under lock).
+        ///     Number of active <c>WaitForNextAsync</c> waiters (snapshot under lock).
+        ///     中文说明：Number of active <c>WaitForNextAsync</c> waiters (snapshot under lock).
         /// </summary>
         public static int GetPendingWaiterCount()
         {
@@ -58,7 +65,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Removes every pending <see cref="WaitForNextAsync" /> waiter and completes each task as canceled. Does
+        ///     Removes every pending <c>WaitForNextAsync</c> waiter 和 completes each task as canceled. Does
         ///     not remove opcode handlers (including built-in control handlers).
+        ///     中文说明：not remove opcode handlers (including built-in control handlers).
         /// </summary>
         public static void CancelAllPendingWaits()
         {
@@ -75,12 +84,17 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Waits once for a matching opcode packet, useful for request/reply control flows.
+        ///     Waits once 用于 a matching opcode packet, 使用ful 用于 request/reply control flows.
         /// </summary>
         /// <remarks>
         ///     Timeout uses <see cref="CancellationToken.None" /> on <see cref="Task.Delay(TimeSpan, CancellationToken)" />;
+        ///     Timeout 使用 <c>CancellationToken.None</c> on <c>Task.Delay(TimeSpan, CancellationToken)</c>;
         ///     user cancellation is observed through <paramref name="cancellationToken" /> separately so both paths
+        ///     使用r cancellation is observed through <c>cancellationToken</c> separately so both 路径
         ///     can complete the waiter without linking tokens. The completed task’s continuations are not marshaled to
+        ///     can complete the waiter 带有out linking tokens. The completed task’s continuations are not marshaled to
         ///     the Godot main loop; use
+        ///     the Godot main loop; 使用
         ///     <see cref="RitsuLibSidecarGodotMainLoopScheduling.ContinueOnGodotMainLoopAsync{T}(Task{T})" /> when needed.
         /// </remarks>
         public static Task<RitsuLibSidecarDispatchContext> WaitForNextAsync(
@@ -120,6 +134,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     When a waiter was registered but the matching send failed, removes it and completes the task with
+        ///     当 a waiter was 已注册 but the matching send failed, removes it 和 completes the task 带有
         ///     <paramref name="exception" /> so the waiter list does not leak.
         /// </summary>
         internal static bool TryFailWaitIfStillPending(Task<RitsuLibSidecarDispatchContext> waitTask,

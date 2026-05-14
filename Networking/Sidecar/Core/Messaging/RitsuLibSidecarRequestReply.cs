@@ -5,19 +5,24 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Request/await-reply helpers on top of <see cref="RitsuLibSidecarBus.WaitForNextAsync" /> for precise callback
+    ///     Request/await-reply helpers on top of <c>RitsuLibSidecarBus.WaitForNextAsync</c> 用于 precise callback
     ///     control flow. Continuations after <c>await</c> often run on the thread pool; use
+    ///     control flow. Continuations 之后 <c>await</c> often 跑局 on the thread pool; 使用
     ///     <see cref="RitsuLibSidecarGodotMainLoopScheduling.ContinueOnGodotMainLoopAsync{T}(System.Threading.Tasks.Task{T})" />
     ///     when the follow-up must touch Godot nodes or scene-tree-only APIs.
+    ///     当 the follow-up must touch Godot nodes 或 场景-tree-only APIs.
     /// </summary>
     public static class RitsuLibSidecarRequestReply
     {
         /// <summary>
         ///     Default timeout used by request/reply helpers.
+        ///     默认 timeout used by request/reply helpers。
         /// </summary>
         public static readonly TimeSpan DefaultReplyTimeout = TimeSpan.FromSeconds(5);
 
         /// <summary>
         ///     Client sends request to host and awaits one matching reply opcode.
+        ///     Client sends request to host 和 awaits one matching reply opcode.
         /// </summary>
         public static async Task<RitsuLibSidecarDispatchContext> SendRequestToHostAndWaitReplyAsync(
             RunManager? runManager,
@@ -50,7 +55,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Client → host request/reply with an 8-byte correlation in the header extension; reply must use the same
+        ///     Client → host request/reply 带有 an 8-byte correlation in the header extension; reply must 使用 the same
         ///     correlation after the delivery byte (see <see cref="RitsuLibSidecarRequestCorrelation" />).
+        ///     correlation 之后 the delivery byte (see <c>RitsuLibSidecarRequestCorrelation</c>).
         /// </summary>
         public static async Task<RitsuLibSidecarDispatchContext> SendCorrelatedRequestToHostAndWaitReplyAsync(
             RunManager? runManager,
@@ -89,6 +96,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Typed client → host request/reply: encodes <paramref name="request" />, adds correlation, waits for
+        ///     Typed client → host request/reply: encodes <c>request</c>, adds correlation, waits 用于
         ///     <paramref name="responseCodec" /> opcode, decodes the reply payload.
         /// </summary>
         public static async Task<TResponse> SendCorrelatedRequestToHostAsync<TRequest, TResponse>(
@@ -136,6 +144,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host sends request to one peer and awaits one matching reply opcode.
+        ///     Host sends request to one peer 和 awaits one matching reply opcode.
         /// </summary>
         public static async Task<RitsuLibSidecarDispatchContext> SendRequestToPeerAndWaitReplyAsync(
             RunManager? runManager,
@@ -170,6 +179,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host → peer request/reply with correlation in the header extension; reply must echo the same correlation.
+        ///     Host → peer request/reply 带有 correlation in the header extension; reply must echo the same correlation.
         /// </summary>
         public static async Task<RitsuLibSidecarDispatchContext> SendCorrelatedRequestToPeerAndWaitReplyAsync(
             RunManager? runManager,
@@ -211,6 +221,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Typed host → peer request/reply with correlation.
+        ///     Typed host → peer request/reply 带有 correlation.
         /// </summary>
         public static async Task<TResponse> SendCorrelatedRequestToPeerAsync<TRequest, TResponse>(
             RunManager? runManager,

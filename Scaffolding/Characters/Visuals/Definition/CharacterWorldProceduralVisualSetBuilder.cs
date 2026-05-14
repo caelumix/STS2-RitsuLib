@@ -5,7 +5,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals.Definition
 {
     /// <summary>
     ///     Fluent builder for <see cref="CharacterWorldProceduralVisualSet" />.
-    ///     <see cref="CharacterWorldProceduralVisualSet" /> 的流式 builder。
+    ///     <c>CharacterWorldProceduralVisualSet</c> 的流式 builder。
     /// </summary>
     public sealed class CharacterWorldProceduralVisualSetBuilder
     {
@@ -38,7 +38,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals.Definition
 
         /// <summary>
         ///     Uses <see cref="ModVisualCues.CueSet" /> output for the merchant room.
-        ///     为商人房间使用 <see cref="ModVisualCues.CueSet" /> 的输出。
+        ///     为商人房间使用 <c>ModVisualCues.CueSet</c> 的输出。
         /// </summary>
         public CharacterWorldProceduralVisualSetBuilder Merchant(Action<VisualCueSetBuilder> configure)
         {
@@ -62,7 +62,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals.Definition
 
         /// <summary>
         ///     Uses <see cref="ModVisualCues.CueSet" /> output for the rest site.
-        ///     为休息点使用 <see cref="ModVisualCues.CueSet" /> 的输出。
+        ///     为休息点使用 <c>ModVisualCues.CueSet</c> 的输出。
         /// </summary>
         public CharacterWorldProceduralVisualSetBuilder RestSite(Action<VisualCueSetBuilder> configure)
         {

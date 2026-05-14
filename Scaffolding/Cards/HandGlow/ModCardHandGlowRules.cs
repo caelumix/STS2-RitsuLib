@@ -10,8 +10,8 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandGlow
     ///     members, or by registering with <see cref="ModCardHandGlowRegistry" /> /
     ///     <see cref="STS2RitsuLib.Content.ModContentRegistry" /> (see
     ///     <c>RegisterCardHandGlow&lt;TCard&gt;</c> on the content registry).
-    ///     声明式手牌高亮规则，镜像原版 <see cref="CardModel.ShouldGlowGold" />（卡牌可打出且奖励 /
-    ///     强化文本行激活时的金色边框）和 <see cref="CardModel.ShouldGlowRed" />（同伴缺失等警告状态的红色边框）。
+    ///     声明式手牌高亮规则，镜像原版 <c>CardModel.ShouldGlowGold</c>（卡牌可打出且奖励 /
+    ///     强化文本行激活时的金色边框）和 <c>CardModel.ShouldGlowRed</c>（同伴缺失等警告状态的红色边框）。
     ///     可通过重写 protected <c>ShouldGlow*Internal</c> 成员应用，也可通过
     ///     <see cref="ModCardHandGlowRegistry" /> / <see cref="STS2RitsuLib.Content.ModContentRegistry" />
     ///     注册（见 content registry 上的 <c>RegisterCardHandGlow&lt;TCard&gt;</c>）。
@@ -21,14 +21,14 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandGlow
         /// <summary>
         ///     When this returns true for a card instance, the hand UI may show the gold highlight (same channel as
         ///     <see cref="CardModel.ShouldGlowGoldInternal" />).
-        ///     对卡牌实例返回 true 时，手牌 UI 可显示金色高亮（与 <see cref="CardModel.ShouldGlowGoldInternal" /> 同通道）。
+        ///     对卡牌实例返回 true 时，手牌 UI 可显示金色高亮（与 <c>CardModel.ShouldGlowGoldInternal</c> 同通道）。
         /// </summary>
         public Func<CardModel, bool>? GoldWhenBonusActive { get; init; }
 
         /// <summary>
         ///     When this returns true, the hand UI may show the red highlight (same channel as
         ///     <see cref="CardModel.ShouldGlowRedInternal" />).
-        ///     返回 true 时，手牌 UI 可显示红色高亮（与 <see cref="CardModel.ShouldGlowRedInternal" /> 同通道）。
+        ///     返回 true 时，手牌 UI 可显示红色高亮（与 <c>CardModel.ShouldGlowRedInternal</c> 同通道）。
         /// </summary>
         public Func<CardModel, bool>? RedWhenHandWarning { get; init; }
 
@@ -68,7 +68,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandGlow
         /// <summary>
         ///     Merges with <paramref name="other" /> by OR-ing each channel (useful when multiple mods register the same
         ///     card type, or you split rules across calls).
-        ///     通过对每个通道做 OR 与 <paramref name="other" /> 合并（适用于多个 mod 注册同一卡牌类型，或将规则拆到多次调用中）。
+        ///     通过对每个通道做 OR 与 <c>other</c> 合并（适用于多个 mod 注册同一卡牌类型，或将规则拆到多次调用中）。
         /// </summary>
         public ModCardHandGlowRules Or(ModCardHandGlowRules other)
         {

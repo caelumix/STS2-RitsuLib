@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Localization.Patches
 {
     /// <summary>
     ///     Bridges <c>LocTable.HasEntry</c> to <see cref="I18NLocTableBridge" /> for virtual <c>MODID_I18N_STEM</c> tables.
+    ///     Bridges <c>LocTable.HasEntry</c> to <c>I18NLocTableBridge</c> 用于 virtual <c>MODID_I18N_STEM</c> tables.
     /// </summary>
     public class LocTableHasEntryI18NBridgePatch : IPatchMethod
     {
@@ -30,7 +31,9 @@ namespace STS2RitsuLib.Localization.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Resolves the key lookup through <see cref="STS2RitsuLib.Utils.I18N" /> when the table name matches a
+        ///     解析 the key lookup through <c>STS2RitsuLib.Utils.I18N</c> 当 the table name matches a
         ///     registered virtual I18N table id.
+        ///     已注册 virtual I18N table id.
         /// </summary>
         [HarmonyPriority(Priority.First)]
         public static bool Prefix(LocTable __instance, string key, ref bool __result)
@@ -47,6 +50,7 @@ namespace STS2RitsuLib.Localization.Patches
 
     /// <summary>
     ///     Bridges <c>LocTable.GetRawText</c> to <see cref="I18NLocTableBridge" /> for virtual <c>MODID_I18N_STEM</c> tables.
+    ///     Bridges <c>LocTable.GetRawText</c> to <c>I18NLocTableBridge</c> 用于 virtual <c>MODID_I18N_STEM</c> tables.
     /// </summary>
     public class LocTableGetRawTextI18NBridgePatch : IPatchMethod
     {
@@ -71,6 +75,7 @@ namespace STS2RitsuLib.Localization.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Returns the I18N-backed raw template when the table name matches a registered virtual I18N table id.
+        ///     返回 the I18N-backed raw template when the table name matches a registered virtual I18N table id。
         /// </summary>
         [HarmonyPriority(Priority.First)]
         public static bool Prefix(LocTable __instance, string key, ref string __result)
@@ -90,7 +95,9 @@ namespace STS2RitsuLib.Localization.Patches
 
     /// <summary>
     ///     Bridges <c>LocTable.GetLocString</c> to <see cref="I18NLocTableBridge" /> for virtual <c>MODID_I18N_STEM</c>
+    ///     Bridges <c>LocTable.GetLocString</c> to <c>I18NLocTableBridge</c> 用于 virtual <c>MODID_I18N_STEM</c>
     ///     tables.
+    ///     中文说明：tables.
     /// </summary>
     public class LocTableGetLocStringI18NBridgePatch : IPatchMethod
     {
@@ -115,6 +122,7 @@ namespace STS2RitsuLib.Localization.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Returns a <see cref="LocString" /> pointing at the virtual table id when the I18N dictionary contains the key.
+        ///     返回 a <c>LocString</c> pointing at the virtual table id when the I18N dictionary contains the key。
         /// </summary>
         [HarmonyPriority(Priority.First)]
         public static bool Prefix(LocTable __instance, string key, ref LocString __result)

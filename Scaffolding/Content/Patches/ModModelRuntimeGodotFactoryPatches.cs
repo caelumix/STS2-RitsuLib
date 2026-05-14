@@ -12,12 +12,15 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Harmony patches that call mod runtime Godot factory interfaces from vanilla model entry points. Prefixes use
+    ///     Harmony patches that call mod runtime Godot factory interfaces 从 原版 模型 entry points. Prefixes 使用
     ///     Harmony <c>Priority.First</c> so path-based overrides still run when factories return <c>null</c>.
+    ///     Harmony <c>Priority.First</c> so 路径-based overrides still 跑局 当 factories 返回 <c>null</c>.
     /// </summary>
     public static class ModModelRuntimeGodotFactoryPatches
     {
         /// <summary>
         ///     Patches <see cref="MonsterModel.CreateVisuals" /> for <see cref="IModCreatureVisualsFactory" />.
+        ///     为 <c>IModCreatureVisualsFactory</c> 补丁 <c>MonsterModel.CreateVisuals</c>。
         /// </summary>
         public class MonsterCreatureVisualsRuntimeFactoryPatch : IPatchMethod
         {
@@ -40,7 +43,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Uses <see cref="IModCreatureVisualsFactory.TryCreateCreatureVisuals" /> when it returns non-null,
+            ///     使用 <c>IModCreatureVisualsFactory.TryCreateCreatureVisuals</c> 当 it 返回 non-null,
             ///     falling back to the obsolete <see cref="IModMonsterCreatureVisualsFactory" /> for existing mods.
+            ///     falling back to the obsolete <c>IModMonsterCreatureVisualsFactory</c> 用于 existing mods.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(MonsterModel __instance, ref NCreatureVisuals __result)
@@ -65,6 +70,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Patches <see cref="CharacterModel.CreateVisuals" /> for <see cref="IModCreatureVisualsFactory" />.
+        ///     为 <c>IModCreatureVisualsFactory</c> 补丁 <c>CharacterModel.CreateVisuals</c>。
         /// </summary>
         public class CharacterCreatureVisualsRuntimeFactoryPatch : IPatchMethod
         {
@@ -87,7 +93,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Uses <see cref="IModCreatureVisualsFactory.TryCreateCreatureVisuals" /> when it returns non-null,
+            ///     使用 <c>IModCreatureVisualsFactory.TryCreateCreatureVisuals</c> 当 it 返回 non-null,
             ///     falling back to the obsolete <see cref="IModCharacterCreatureVisualsFactory" /> for existing mods.
+            ///     falling back to the obsolete <c>IModCharacterCreatureVisualsFactory</c> 用于 existing mods.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(CharacterModel __instance, ref NCreatureVisuals __result)
@@ -112,6 +120,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Patches <see cref="CharacterModel.GenerateAnimator" /> for
+        ///     Patches <c>Character模型.GenerateAnimator</c> 用于
         ///     <see cref="IModCreatureAnimatorFactory" />.
         /// </summary>
         public class CharacterCreatureAnimatorRuntimeFactoryPatch : IPatchMethod
@@ -135,7 +144,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Uses <see cref="IModCreatureAnimatorFactory.TryCreateCreatureAnimator" /> when it returns non-null,
+            ///     使用 <c>IModCreatureAnimatorFactory.TryCreateCreatureAnimator</c> 当 it 返回 non-null,
             ///     falling back to the obsolete <see cref="IModCharacterCreatureAnimatorFactory" /> for existing mods.
+            ///     falling back to the obsolete <c>IModCharacterCreatureAnimatorFactory</c> 用于 existing mods.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(CharacterModel __instance, MegaSprite controller, ref CreatureAnimator __result)
@@ -160,6 +171,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Patches <see cref="MonsterModel.GenerateAnimator" /> for <see cref="IModCreatureAnimatorFactory" />.
+        ///     为 <c>IModCreatureAnimatorFactory</c> 补丁 <c>MonsterModel.GenerateAnimator</c>。
         /// </summary>
         public class MonsterCreatureAnimatorRuntimeFactoryPatch : IPatchMethod
         {
@@ -182,6 +194,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Uses <see cref="IModCreatureAnimatorFactory.TryCreateCreatureAnimator" /> when it returns non-null.
+            ///     使用 <c>IModCreatureAnimatorFactory.TryCreateCreatureAnimator</c> 当 it 返回 non-null.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(MonsterModel __instance, MegaSprite controller, ref CreatureAnimator __result)
@@ -201,6 +214,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Patches <see cref="EncounterModel.CreateScene" /> for <see cref="IModEncounterCombatSceneFactory" />.
+        ///     为 <c>IModEncounterCombatSceneFactory</c> 补丁 <c>EncounterModel.CreateScene</c>。
         /// </summary>
         public class EncounterCombatSceneRuntimeFactoryPatch : IPatchMethod
         {
@@ -223,6 +237,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Uses <see cref="IModEncounterCombatSceneFactory.TryCreateEncounterCombatScene" /> when it returns non-null.
+            ///     使用 <c>IModEncounterCombatSceneFactory.TryCreateEncounterCombat场景</c> 当 it 返回 non-null.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(EncounterModel __instance, ref Control __result)
@@ -242,6 +257,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Patches <see cref="EventModel.CreateScene" /> for <see cref="IModEventLayoutPackedSceneFactory" />.
+        ///     为 <c>IModEventLayoutPackedSceneFactory</c> 补丁 <c>EventModel.CreateScene</c>。
         /// </summary>
         public class EventLayoutPackedSceneRuntimeFactoryPatch : IPatchMethod
         {
@@ -264,6 +280,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Uses <see cref="IModEventLayoutPackedSceneFactory.TryCreateLayoutPackedScene" /> when it returns non-null.
+            ///     使用 <c>IModEventLayoutPackedSceneFactory.TryCreateLayoutPacked场景</c> 当 it 返回 non-null.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(EventModel __instance, ref PackedScene __result)
@@ -283,6 +300,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Patches <see cref="EventModel.CreateBackgroundScene" /> for
+        ///     Patches <c>EventModel.CreateBackground场景</c> 用于
         ///     <see cref="IModEventBackgroundPackedSceneFactory" />.
         /// </summary>
         public class EventBackgroundPackedSceneRuntimeFactoryPatch : IPatchMethod
@@ -306,7 +324,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Uses <see cref="IModEventBackgroundPackedSceneFactory.TryCreateBackgroundPackedScene" /> when it returns
+            ///     使用 <c>IModEventBackgroundPacked场景Factory.TryCreateBackgroundPacked场景</c> 当 it 返回
             ///     non-null.
+            ///     中文说明：non-null.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(EventModel __instance, ref PackedScene __result)
@@ -326,6 +346,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Patches <c>EventModel.HasVfx</c> for <see cref="IModEventVfxFactory" />.
+        ///     为 <c>IModEventVfxFactory</c> 补丁 <c>EventModel.HasVfx</c>。
         /// </summary>
         public class EventHasVfxRuntimeFactoryPatch : IPatchMethod
         {
@@ -347,6 +368,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Yields <c>true</c> when <see cref="IModEventVfxFactory.SuppliesCustomEventVfx" /> is set.
+            ///     Yields <c>true</c> 当 <c>IModEventVfxFactory.Supplies自定义EventVfx</c> is 设置.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(EventModel __instance, ref bool __result)
@@ -362,6 +384,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Patches <see cref="EventModel.CreateVfx" /> for <see cref="IModEventVfxFactory" />.
+        ///     为 <c>IModEventVfxFactory</c> 补丁 <c>EventModel.CreateVfx</c>。
         /// </summary>
         public class EventCreateVfxRuntimeFactoryPatch : IPatchMethod
         {
@@ -383,6 +406,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Uses <see cref="IModEventVfxFactory.TryCreateEventVfx" /> when it returns non-null.
+            ///     使用 <c>IModEventVfxFactory.TryCreateEventVfx</c> 当 it 返回 non-null.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(EventModel __instance, ref Node2D __result)
@@ -402,6 +426,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Patches <see cref="OrbModel.CreateSprite" /> for <see cref="IModOrbSpriteFactory" />.
+        ///     为 <c>IModOrbSpriteFactory</c> 补丁 <c>OrbModel.CreateSprite</c>。
         /// </summary>
         public class OrbSpriteRuntimeFactoryPatch : IPatchMethod
         {
@@ -424,6 +449,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             // ReSharper disable InconsistentNaming
             /// <summary>
             ///     Uses <see cref="IModOrbSpriteFactory.TryCreateOrbSprite" /> when it returns non-null.
+            ///     使用 <c>IMod充能球SpriteFactory.TryCreateOrbSprite</c> 当 it 返回 non-null.
             /// </summary>
             [HarmonyPriority(Priority.First)]
             public static bool Prefix(OrbModel __instance, ref Node2D __result)

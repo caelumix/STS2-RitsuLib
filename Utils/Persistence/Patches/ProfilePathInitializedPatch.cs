@@ -5,7 +5,9 @@ namespace STS2RitsuLib.Utils.Persistence.Patches
 {
     /// <summary>
     ///     Framework trigger point for safe data operations.
+    ///     Framework trigger point 用于 safe data operations.
     ///     Fires after SaveManager has initialized/switched profile path, then forwards to DataReadyLifecycle.
+    ///     Fires 之后 保存Manager has initialized/switched 档案 路径, then 用于wards to DataReadyLifecycle.
     /// </summary>
     public class ProfilePathInitializedPatch : IPatchMethod
     {
@@ -30,6 +32,7 @@ namespace STS2RitsuLib.Utils.Persistence.Patches
 
         /// <summary>
         ///     Publishes data-ready lifecycle notifications after profile path initialization completes.
+        ///     Publishes data-ready lifecycle notifications 之后 档案 路径 initialization completes.
         /// </summary>
         public static void Postfix()
         {

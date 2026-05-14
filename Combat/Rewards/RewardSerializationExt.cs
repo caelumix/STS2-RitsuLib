@@ -7,8 +7,11 @@ namespace STS2RitsuLib.Combat.Rewards
 {
     /// <summary>
     ///     Sideband storage for extended reward serialization data.
+    ///     Sideband storage 用于 extended reward serialization data.
     ///     Attached to <see cref="SerializableReward" /> instances via <see cref="ConditionalWeakTable{TKey,TValue}" />.
+    ///     中文说明：Attached to <c>SerializableReward</c> instances via <c>ConditionalWeakTable{TKey,TValue}</c>.
     ///     Persisted in <see cref="SerializableRoom.EncounterState" /> under keys prefixed with
+    ///     Persisted in <c>SerializableRoom.EncounterState</c> under keys prefixed 带有
     ///     <see cref="KeyPrefix" />.
     /// </summary>
     internal static class RewardSerializationExt

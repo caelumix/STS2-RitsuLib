@@ -8,8 +8,8 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
     ///     <c>Modulate</c> after vanilla playable / gold / red). Register with
     ///     <see cref="ModCardHandOutlineRegistry" /> or <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;()</c>.
     ///     自定义手牌描边染色（在原版 playable / gold / red 之后驱动
-    ///     <see cref="MegaCrit.Sts2.Core.Nodes.Cards.NCardHighlight" /> 的 <c>Modulate</c>）。请通过
-    ///     <see cref="ModCardHandOutlineRegistry" /> 或
+    ///     <c>MegaCrit.Sts2.Core.Nodes.Cards.NCardHighlight</c> 的 <c>Modulate</c>）。请通过
+    ///     <c>ModCardHandOutlineRegistry</c> 或
     ///     <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;()</c> 注册。
     /// </summary>
     /// <param name="When">
@@ -23,7 +23,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
     /// <param name="Priority">
     ///     When several rules match, the highest <paramref name="Priority" /> wins; ties favor the most recently registered
     ///     rule.
-    ///     多条规则匹配时，最高 <paramref name="Priority" /> 胜出；相同优先级时，最近注册的规则胜出。
+    ///     多条规则匹配时，最高 <c>Priority</c> 胜出；相同优先级时，最近注册的规则胜出。
     /// </param>
     /// <param name="VisibleWhenUnplayable">
     ///     If true, the highlight is forced visible with this color even when the card is not playable and vanilla would not
@@ -39,7 +39,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
         /// <summary>
         ///     Optional dynamic color resolver. When assigned and <see cref="When" /> passes, this is evaluated each refresh
         ///     to produce the current hand outline color.
-        ///     可选动态颜色解析器。设置后且 <see cref="When" /> 通过时，每次刷新都会评估它以生成当前手牌描边颜色。
+        ///     可选动态颜色解析器。设置后且 <c>When</c> 通过时，每次刷新都会评估它以生成当前手牌描边颜色。
         /// </summary>
         public Func<CardModel, Color>? DynamicColor { get; init; }
 

@@ -8,9 +8,13 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Fixes <see cref="NCardPlay.TryPlayCard" /> for <see cref="TargetType.AnyPlayer" /> in multiplayer.
+    ///     Fixes <c>NCardPlay.TryPlay卡牌</c> 用于 <c>TargetType.AnyPlayer</c> in multiplayer.
     ///     Vanilla treats AnyPlayer as a non-targeted type, calling <c>TryManualPlay(null)</c>
+    ///     原版 treats AnyPlayer as a non-targeted type, calling <c>TryManualPlay(null)</c>
+    ///     and discarding the selected target.
     ///     and discarding the selected target.
     ///     Direct field/method access where the publicized STS2 reference exposes them; <c>Cleanup(bool)</c> remains
+    ///     中文说明：Direct field/method access where the publicized STS2 reference exposes them; <c>Cleanup(bool)</c> remains
     ///     <c>protected</c> in the reference build, so invocation uses Harmony <see cref="AccessTools" />.
     /// </summary>
     internal sealed class NCardPlayTryPlayCardAnyPlayerPatch : IPatchMethod

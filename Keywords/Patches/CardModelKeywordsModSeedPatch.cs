@@ -15,6 +15,13 @@ namespace STS2RitsuLib.Keywords.Patches
     ///     <c>CanonicalKeywords</c> without dropping their mod keyword declarations. Seeding is tracked per
     ///     instance with a <see cref="ConditionalWeakTable{TKey,TValue}" /> marker so the postfix executes the
     ///     resolution loop exactly once per card lifetime (subsequent calls are an O(1) early-out).
+    ///     在原版 <c>CardModel.get_Keywords</c> materialize 底层 <c>_keywords</c> set 后，
+    ///     将 minted mod <c>CardKeyword</c> 值 seed 到每个 <c>ModCardTemplate</c> 实例上。
+    ///     这会让 <c>ModCardTemplate.RegisteredKeywordIds</c> 作为独立于原版
+    ///     <c>CardModel.CanonicalKeywords</c> 的通道保留，因此下游 mod 仍可 override
+    ///     <c>CanonicalKeywords</c>，而不会丢失其 mod keyword 声明。seeding 通过
+    ///     <c>ConditionalWeakTable{TKey,TValue}</c> marker 按实例追踪，使 postfix 在每张 card 生命周期内
+    ///     只执行一次解析循环（后续调用为 O(1) early-out）。
     /// </summary>
     public sealed class CardModelKeywordsModSeedPatch : IPatchMethod
     {
@@ -45,6 +52,11 @@ namespace STS2RitsuLib.Keywords.Patches
         ///     <c>HashSet&lt;CardKeyword&gt;</c> field, so direct casts are safe and the writes flow into the real
         ///     storage used by subsequent reads, <c>AddKeyword</c>/<c>RemoveKeyword</c>, and
         ///     <c>DeepCloneFields</c>.
+        ///     在 getter 首次运行时，将 card 的 <c>ModCardTemplate.RegisteredKeywordIds</c> 对应 minted
+        ///     <c>CardKeyword</c> 值 union 到原版 keyword set 中。返回的
+        ///     <c>IReadOnlySet&lt;CardKeyword&gt;</c> 实际上是私有 <c>HashSet&lt;CardKeyword&gt;</c> 字段，
+        ///     因此直接 cast 是安全的，写入会流入后续 read、<c>AddKeyword</c>/<c>RemoveKeyword</c> 与
+        ///     <c>DeepCloneFields</c> 使用的真实存储。
         /// </summary>
         public static void Postfix(CardModel __instance, IReadOnlySet<CardKeyword> __result)
         {

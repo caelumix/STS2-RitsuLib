@@ -4,13 +4,17 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Sidecar demux runs inside Harmony prefixes on <see cref="MegaCrit.Sts2.Core.Multiplayer.NetHostGameService" />
+    ///     Sidecar demux runs inside Harmony 前置补丁es on <c>MegaCrit.Sts2.Core.Multiplayer.NetHostGameService</c>
     ///     / client receive entry points; <see cref="RitsuLibSidecarBus.Dispatch" /> therefore shares that callback’s
+    ///     / client receive entry points; <c>RitsuLibSidecarBus.Dispatch</c> therefore shares that callback’s
     ///     threading model (not documented as Godot main thread).
+    ///     threading 模型 (not documented as Godot main thread).
     /// </summary>
     internal static class RitsuLibSidecarReceivePipeline
     {
         /// <summary>
         ///     When true, vanilla <see cref="MegaCrit.Sts2.Core.Multiplayer.NetMessageBus" /> must not see this packet.
+        ///     为 true 时，vanilla <c>MegaCrit.Sts2.Core.Multiplayer.NetMessageBus</c> must not see this packet。
         /// </summary>
         internal static bool ShouldSuppressVanillaDeserialize(
             ulong senderId,

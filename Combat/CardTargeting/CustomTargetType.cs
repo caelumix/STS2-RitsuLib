@@ -8,7 +8,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
     ///     RitsuLib-defined <see cref="TargetType" /> extensions minted via <see cref="DynamicEnumValueMinter{TEnum}" />.
     ///     Unlike BaseLib's CustomEnum system, these values are generated deterministically from stable string ids and
     ///     live entirely in the reserved high-value band.
-    ///     由 RitsuLib 定义并通过 <see cref="DynamicEnumValueMinter{TEnum}" /> 铸造的 <see cref="TargetType" /> 扩展。
+    ///     由 RitsuLib 定义并通过 <c>DynamicEnumValueMinter{TEnum}</c> 铸造的 <c>TargetType</c> 扩展。
     ///     与 BaseLib 的 CustomEnum 体系不同，这些值由稳定字符串 id 确定性生成，并位于保留的高位值区间。
     /// </summary>
     public static class CustomTargetType
@@ -20,7 +20,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
         ///     This is a visual-only targeting mode: the card's play action still runs once with <c>null</c> target
         ///     unless the card model itself implements a different behavior.
         ///     在战斗房间内所有存活生物上显示多目标指示器的群体目标模式。
-        ///     该模式仅影响可视化：除非卡牌模型自行实现其他行为，否则打牌逻辑仍会以 <c>null</c> 目标执行一次。
+        ///     该模式仅影响可视化：除非CardModel自行实现其他行为，否则打牌逻辑仍会以 <c>null</c> 目标执行一次。
         /// </summary>
         public static TargetType Everyone { get; } = Mint("everyone");
 
@@ -92,7 +92,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Whether <paramref name="type" /> is one of RitsuLib's custom target types.
-        ///     判断 <paramref name="type" /> 是否属于 RitsuLib 定义的自定义目标类型。
+        ///     判断 <c>type</c> 是否属于 RitsuLib 定义的自定义目标类型。
         /// </summary>
         public static bool IsRitsuCustom(TargetType type)
         {
@@ -101,7 +101,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Whether <paramref name="type" /> is registered as a custom single-target type.
-        ///     判断 <paramref name="type" /> 是否已注册为自定义单体目标类型。
+        ///     判断 <c>type</c> 是否已注册为自定义单体目标类型。
         /// </summary>
         public static bool IsCustomSingleTargetType(TargetType type)
         {
@@ -110,7 +110,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Whether <paramref name="type" /> is registered as a custom multi-target type.
-        ///     判断 <paramref name="type" /> 是否已注册为自定义群体目标类型。
+        ///     判断 <c>type</c> 是否已注册为自定义群体目标类型。
         /// </summary>
         public static bool IsCustomMultiTargetType(TargetType type)
         {

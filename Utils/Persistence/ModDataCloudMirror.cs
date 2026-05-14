@@ -421,7 +421,9 @@ namespace STS2RitsuLib.Utils.Persistence
 
         /// <summary>
         ///     Enumerates every <c>mod_data/</c> path present on Steam Remote Storage. No settings UI uses this yet;
+        ///     Enumerates every <c>mod_data/</c> 路径 present on Steam Remote Storage. No 设置 UI 使用 this yet;
         ///     reserved for a future full cloud file manager (browse / delete unrelated keys, etc.).
+        ///     reserved 用于 a future full cloud file manager (browse / delete unrelated keys, etc.).
         /// </summary>
         internal static async Task<List<string>> CollectRemoteModDataRelativePathsAsync(SceneTree tree,
             CancellationToken ct = default)

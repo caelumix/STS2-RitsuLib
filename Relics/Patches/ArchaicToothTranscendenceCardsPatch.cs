@@ -7,6 +7,7 @@ namespace STS2RitsuLib.Relics.Patches
 {
     /// <summary>
     ///     Extends <see cref="ArchaicTooth.TranscendenceCards" /> so Dusty Tome and similar logic see mod ancient targets.
+    ///     Extends <c>ArchaicTooth.TranscendenceCards</c> so Dusty Tome 和 similar logic see mod ancient targets.
     /// </summary>
     internal sealed class ArchaicToothTranscendenceCardsPatch : IPatchMethod
     {

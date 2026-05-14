@@ -5,7 +5,9 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
 {
     /// <summary>
     ///     Visuals for extra badges on <see cref="MegaCrit.Sts2.Core.Nodes.Relics.NRelicInventoryHolder" />, matched to
+    ///     Visuals 用于 extra badges on <c>MegaCrit.Sts2.Core.Nodes.Relics.NRelicInventoryHolder</c>, matched to
     ///     relic <c>%AmountLabel</c> (see sts-2-source <c>scenes/relics/relic_inventory_holder.tscn</c>).
+    ///     遗物 <c>%AmountLabel</c> (see sts-2-source <c>场景s/Relics/遗物_inventory_holder.tscn</c>).
     /// </summary>
     internal static class ExtraCornerRelicAmountStyle
     {

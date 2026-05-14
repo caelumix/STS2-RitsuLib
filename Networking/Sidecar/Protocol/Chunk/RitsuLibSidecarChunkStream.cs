@@ -4,7 +4,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Splits a large user payload into <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" /> messages with
+    ///     Splits a large 使用r payload into <c>RitsuLibSidecarControlOpcodes.ChunkedFrame</c> messages 带有
     ///     per-segment CRC32; loss recovery uses selective gap reports and re-sends only missing parts (see
+    ///     per-segment CRC32; loss recovery 使用 selective gap reports 和 re-sends only missing parts (see
     ///     <see cref="RitsuLibSidecarControlOpcodes.ChunkStreamSelectiveNack" />).
     /// </summary>
     public static class RitsuLibSidecarChunkStream
@@ -13,6 +15,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Generates a new monotonically increasing stream id (per process) for chunked sends.
+        ///     Generates a new monotonically increasing stream id (per process) 用于 chunked sends.
         /// </summary>
         public static ulong AllocateStreamId()
         {
@@ -21,7 +24,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Sends <paramref name="full" /> in multiple <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" /> envelopes
+        ///     中文说明：Sends <c>full</c> in multiple <c>RitsuLibSidecarControlOpcodes.ChunkedFrame</c> envelopes
         ///     to the host.
+        ///     中文说明：to the host.
         /// </summary>
         public static void TrySendToHost(
             RunManager? runManager,
@@ -44,6 +49,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Sends a chunked stream from host to a single client.
+        ///     Sends a chunked stream 从 host to a single client.
         /// </summary>
         public static void TrySendToPeer(
             RunManager? runManager,
@@ -67,6 +73,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host: sends a chunked stream to every ready-to-broadcast peer.
+        ///     中文说明：Host: sends a chunked stream to every ready-to-broadcast peer.
         /// </summary>
         public static void TrySendBroadcast(
             RunManager? runManager,

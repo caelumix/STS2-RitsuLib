@@ -6,7 +6,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 {
     /// <summary>
     ///     <see cref="IAnimationBackend" /> driver for Spine via <see cref="MegaSprite" />.
-    ///     通过 <see cref="MegaSprite" /> 驱动 Spine 的 <see cref="IAnimationBackend" />。
+    ///     通过 <c>MegaSprite</c> 驱动 Spine 的 <c>IAnimationBackend</c>。
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -14,7 +14,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     ///         signals; behaviour mirrors <see cref="MegaCrit.Sts2.Core.Animation.CreatureAnimator" /> (including
     ///         looping-state random time-scale and start offset for natural idle variation).
     ///         连接 <c>animation_started</c>、<c>animation_completed</c> 和 <c>animation_interrupted</c> 信号；
-    ///         行为镜像 <see cref="MegaCrit.Sts2.Core.Animation.CreatureAnimator" />（包括循环状态的随机时间缩放和起始偏移，
+    ///         行为镜像 <c>MegaCrit.Sts2.Core.Animation.CreatureAnimator</c>（包括循环状态的随机时间缩放和起始偏移，
     ///         用于自然 idle 变化）。
     ///     </para>
     /// </remarks>
@@ -29,7 +29,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
 
         /// <summary>
         ///     Wraps the given <paramref name="controller" /> and hooks its lifecycle signals.
-        ///     包装给定 <paramref name="controller" /> 并挂接其生命周期信号。
+        ///     包装给定 <c>controller</c> 并挂接其生命周期信号。
         /// </summary>
         public SpineAnimationBackend(MegaSprite controller)
         {
@@ -104,9 +104,9 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
         ///     <see cref="Interrupted" /> / <see cref="Completed" /> silent as required by
         ///     <see cref="IAnimationBackend.Stop" />.
         ///     MegaSpine 绑定没有暴露干净的 “stop track” API；此后端通过将 animation state time scale 设置为
-        ///     <c>0</c> 来暂停播放。角色会冻结在当前姿势，直到再次调用 <see cref="Play" />（它会恢复 time scale）。
-        ///     这会按 <see cref="IAnimationBackend.Stop" /> 的要求保持 <see cref="Interrupted" /> /
-        ///     <see cref="Completed" /> 静默。
+        ///     <c>0</c> 来暂停播放。角色会冻结在当前姿势，直到再次调用 <c>Play</c>（它会恢复 time scale）。
+        ///     这会按 <c>IAnimationBackend.Stop</c> 的要求保持 <c>Interrupted</c> /
+        ///     <c>Completed</c> 静默。
         /// </remarks>
         public void Stop()
         {

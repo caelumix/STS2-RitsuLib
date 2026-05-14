@@ -10,7 +10,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     After <see cref="NAncientEventLayout.InitializeVisuals" />, replaces the background subtree with procedural
+    ///     之后 <c>NAncientEventLayout.InitializeVisuals</c>, replaces the 背景 subtree 带有 procedural
     ///     layered sprites when <see cref="AncientEventPresentationAssetProfile.StageProcedural" /> is set.
+    ///     layered sprites 当 <c>AncientEventPresentationAssetProfile.StageProcedural</c> is 设置.
     /// </summary>
     public class NAncientEventLayoutProceduralStagePatch : IPatchMethod
     {
@@ -39,6 +41,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Replaces the instantiated background subtree with procedural sprites when <c>StageProcedural</c> is set.
+        ///     Replaces the instantiated 背景 subtree 带有 procedural sprites 当 <c>StageProcedural</c> is 设置.
         /// </summary>
         public static void Postfix(NAncientEventLayout __instance)
         {

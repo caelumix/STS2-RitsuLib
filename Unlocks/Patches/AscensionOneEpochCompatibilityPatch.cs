@@ -14,6 +14,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 {
     /// <summary>
     ///     Replaces vanilla ascension-one epoch checks for mod-owned characters with registry-driven epoch grants.
+    ///     将 mod 角色的原版进阶一 epoch 检查替换为由注册表驱动的 epoch 授予。
     /// </summary>
     public class AscensionOneEpochCompatibilityPatch : IPatchMethod
     {
@@ -40,6 +41,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
         /// <summary>
         ///     Obtains the registered ascension-one epoch when appropriate; skips vanilla when handled.
+        ///     在适当时取得已注册的进阶一 epoch；处理成功时跳过原版逻辑。
         /// </summary>
         public static bool Prefix(SerializablePlayer serializablePlayer, SerializableRun serializableRun)
         {
@@ -90,6 +92,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
     /// <summary>
     ///     Replaces vanilla post-run character-unlock epoch checks for mod characters with registry-driven grants.
+    ///     将 mod 角色的原版跑后角色解锁 epoch 检查替换为由注册表驱动的授予。
     /// </summary>
     public class PostRunCharacterUnlockEpochCompatibilityPatch : IPatchMethod
     {
@@ -116,6 +119,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
         /// <summary>
         ///     Obtains the registered post-run character-unlock epoch when appropriate; skips vanilla when handled.
+        ///     在适当时取得已注册的跑后角色解锁 epoch；处理成功时跳过原版逻辑。
         /// </summary>
         public static bool Prefix(SerializablePlayer serializablePlayer, SerializableRun serializableRun)
         {
@@ -163,6 +167,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
     /// <summary>
     ///     Overrides ascension reveal queries for characters with a registered reveal epoch dependency.
+    ///     对已注册揭示 epoch 依赖的角色覆盖进阶揭示查询。
     /// </summary>
     public class AscensionEpochRevealCompatibilityPatch : IPatchMethod
     {
@@ -185,6 +190,7 @@ namespace STS2RitsuLib.Unlocks.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Sets the result from save state when a custom ascension reveal epoch is registered.
+        ///     注册了自定义进阶揭示 epoch 时，根据存档状态设置结果。
         /// </summary>
         [HarmonyPriority(Priority.First)]
         public static bool Prefix(ModelId characterId, ref bool __result)

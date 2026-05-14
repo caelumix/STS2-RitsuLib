@@ -85,13 +85,13 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Raised after translations are reloaded (locale change or <see cref="ForceReload" />).
-        ///     在翻译重载后触发（语言切换或调用 <see cref="ForceReload" />）。
+        ///     在翻译重载后触发（语言切换或调用 <c>ForceReload</c>）。
         /// </summary>
         public event Action? Changed;
 
         /// <summary>
         ///     Returns the translation for <paramref name="key" /> or <paramref name="fallback" /> if missing.
-        ///     返回 <paramref name="key" /> 对应的翻译；缺失时返回 <paramref name="fallback" />。
+        ///     返回 <c>key</c> 对应的翻译；缺失时返回 <c>fallback</c>。
         /// </summary>
         public string Get(string key, string fallback)
         {
@@ -102,7 +102,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns true and outputs the translation when <paramref name="key" /> exists.
-        ///     当 <paramref name="key" /> 存在时返回 true，并输出对应翻译。
+        ///     当 <c>key</c> 存在时返回 true，并输出对应翻译。
         /// </summary>
         public bool TryGet(string key, out string value)
         {
@@ -113,7 +113,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns true when <paramref name="key" /> exists in the current merged dictionary.
-        ///     当 <paramref name="key" /> 存在于当前合并字典中时返回 true。
+        ///     当 <c>key</c> 存在于当前合并字典中时返回 true。
         /// </summary>
         public bool ContainsKey(string key)
         {
@@ -206,7 +206,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Reloads translations for the current resolved language and raises <see cref="Changed" />.
-        ///     为当前解析出的语言重新加载翻译，并触发 <see cref="Changed" />。
+        ///     为当前解析出的语言重新加载翻译，并触发 <c>Changed</c>。
         /// </summary>
         public void ForceReload()
         {
@@ -483,7 +483,7 @@ namespace STS2RitsuLib.Utils
         ///     </list>
         ///     The returned value is always normalized by <see cref="NormalizeLanguageCode" /> and falls back to
         ///     <c>eng</c> when unknown.
-        ///     返回值始终会经过 <see cref="NormalizeLanguageCode" /> 规范化；未知时回退到 <c>eng</c>。
+        ///     返回值始终会经过 <c>NormalizeLanguageCode</c> 规范化；未知时回退到 <c>eng</c>。
         /// </remarks>
         public static string ResolveCurrentLanguageCode()
         {

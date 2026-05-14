@@ -10,14 +10,14 @@ namespace STS2RitsuLib
         ///     Registers an <see cref="ArchaicTooth" /> transcendence pair: when the player’s deck contains
         ///     <typeparamref name="TStarterCard" />, obtaining the relic transforms it into <typeparamref name="TAncientCard" />
         ///     (preserving upgrade state and enchantments, same as vanilla starters).
-        ///     注册一组 <see cref="ArchaicTooth" /> 超越映射：当玩家牌组包含 <typeparamref name="TStarterCard" /> 时，
-        ///     获得该遗物会将其转换为 <typeparamref name="TAncientCard" />（保留升级状态和附魔，与原版初始牌一致）。
+        ///     注册一组 <c>ArchaicTooth</c> 超越映射：当玩家牌组包含 <c>TStarterCard</c> 时，
+        ///     获得该遗物会将其转换为 <c>TAncientCard</c>（保留升级状态和附魔，与原版初始牌一致）。
         /// </summary>
         /// <remarks>
         ///     Uses <see cref="ModelDb.GetId{T}" /> for the starter key and stores <typeparamref name="TAncientCard" /> as a
         ///     type for lazy <see cref="ModelDb" /> resolution so this is safe during content-pack <c>Apply()</c>.
-        ///     使用 <see cref="ModelDb.GetId{T}" /> 作为初始牌键，并把 <typeparamref name="TAncientCard" /> 保存为类型，
-        ///     以便延迟通过 <see cref="ModelDb" /> 解析，因此可安全地在内容包 <c>Apply()</c> 阶段调用。
+        ///     使用 <c>ModelDb.GetId{T}</c> 作为初始牌键，并把 <c>TAncientCard</c> 保存为类型，
+        ///     以便延迟通过 <c>ModelDb</c> 解析，因此可安全地在内容包 <c>Apply()</c> 阶段调用。
         /// </remarks>
         /// <param name="registeringModId">
         ///     Optional mod id for log messages when mappings are replaced.
@@ -37,15 +37,15 @@ namespace STS2RitsuLib
         /// <summary>
         ///     Registers an <see cref="ArchaicTooth" /> transcendence mapping using an explicit starter id and ancient card
         ///     type.
-        ///     使用显式初始牌 id 和远古牌类型注册 <see cref="ArchaicTooth" /> 超越映射。
+        ///     使用显式初始牌 id 和远古牌类型注册 <c>ArchaicTooth</c> 超越映射。
         /// </summary>
         /// <param name="starterCardId">
         ///     Deck card model id to match.
-        ///     要匹配的牌组卡牌模型 id。
+        ///     要匹配的牌组CardModel id。
         /// </param>
         /// <param name="ancientCardType">
         ///     Concrete card type; resolved via <see cref="ModelDb" /> when the blessing runs.
-        ///     具体卡牌类型；祝福执行时通过 <see cref="ModelDb" /> 解析。
+        ///     具体卡牌类型；祝福执行时通过 <c>ModelDb</c> 解析。
         /// </param>
         /// <param name="registeringModId">
         ///     Optional mod id for log messages when mappings are replaced.
@@ -60,14 +60,14 @@ namespace STS2RitsuLib
         /// <summary>
         ///     Registers a <see cref="TouchOfOrobas" /> refinement pair: when the player’s starter relic is
         ///     <typeparamref name="TStarterRelic" />, the blessing replaces it with <typeparamref name="TUpgradedRelic" />.
-        ///     注册一组 <see cref="TouchOfOrobas" /> 精炼映射：当玩家初始遗物为
-        ///     <typeparamref name="TStarterRelic" /> 时，该祝福会将其替换为 <typeparamref name="TUpgradedRelic" />。
+        ///     注册一组 <c>TouchOfOrobas</c> 精炼映射：当玩家初始遗物为
+        ///     <c>TStarterRelic</c> 时，该祝福会将其替换为 <c>TUpgradedRelic</c>。
         /// </summary>
         /// <remarks>
         ///     Uses <see cref="ModelDb.GetId{T}" /> for the starter key and stores the upgraded relic as a type for lazy
         ///     <see cref="ModelDb" /> resolution so this is safe during content-pack <c>Apply()</c>.
-        ///     使用 <see cref="ModelDb.GetId{T}" /> 作为初始遗物键，并把升级遗物保存为类型，
-        ///     以便延迟通过 <see cref="ModelDb" /> 解析，因此可安全地在内容包 <c>Apply()</c> 阶段调用。
+        ///     使用 <c>ModelDb.GetId{T}</c> 作为初始遗物键，并把升级遗物保存为类型，
+        ///     以便延迟通过 <c>ModelDb</c> 解析，因此可安全地在内容包 <c>Apply()</c> 阶段调用。
         /// </remarks>
         /// <param name="registeringModId">
         ///     Optional mod id for log messages when mappings are replaced.
@@ -86,7 +86,7 @@ namespace STS2RitsuLib
 
         /// <summary>
         ///     Registers a <see cref="TouchOfOrobas" /> refinement mapping using explicit starter id and upgraded relic type.
-        ///     使用显式初始遗物 id 和升级遗物类型注册 <see cref="TouchOfOrobas" /> 精炼映射。
+        ///     使用显式初始遗物 id 和升级遗物类型注册 <c>TouchOfOrobas</c> 精炼映射。
         /// </summary>
         /// <param name="starterRelicId">
         ///     Starter relic instance id to match.
@@ -94,7 +94,7 @@ namespace STS2RitsuLib
         /// </param>
         /// <param name="upgradedRelicType">
         ///     Concrete relic type; resolved via <see cref="ModelDb" /> when the blessing runs.
-        ///     具体遗物类型；祝福执行时通过 <see cref="ModelDb" /> 解析。
+        ///     具体遗物类型；祝福执行时通过 <c>ModelDb</c> 解析。
         /// </param>
         /// <param name="registeringModId">
         ///     Optional mod id for log messages when mappings are replaced.

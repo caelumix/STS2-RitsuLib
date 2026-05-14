@@ -7,6 +7,7 @@ namespace STS2RitsuLib.Ui.Toast
 {
     /// <summary>
     ///     Global toast entrypoint for framework and mod callers.
+    ///     Global toast entrypoint 用于 framework 和 mod callers.
     /// </summary>
     public static class RitsuToastService
     {
@@ -49,6 +50,7 @@ namespace STS2RitsuLib.Ui.Toast
 
         /// <summary>
         ///     Enqueues a toast request for display.
+        ///     Enqueues a toast request 用于 display.
         /// </summary>
         public static void Show(RitsuToastRequest request)
         {
@@ -63,6 +65,9 @@ namespace STS2RitsuLib.Ui.Toast
 
         /// <summary>
         ///     Enqueues a default informational toast.
+        ///     中文说明：Enqueues a default informational toast.
+        ///     Enqueues a default informational toast.
+        ///     中文说明：Enqueues a default informational toast.
         /// </summary>
         public static void ShowInfo(string body, string? title = null, Action? onClick = null)
         {
@@ -71,6 +76,7 @@ namespace STS2RitsuLib.Ui.Toast
 
         /// <summary>
         ///     Enqueues a default warning toast.
+        ///     中文说明：Enqueues a default warning toast.
         /// </summary>
         public static void ShowWarning(string body, string? title = null, Action? onClick = null)
         {
@@ -79,6 +85,7 @@ namespace STS2RitsuLib.Ui.Toast
 
         /// <summary>
         ///     Enqueues a default error toast.
+        ///     中文说明：Enqueues a default error toast.
         /// </summary>
         public static void ShowError(string body, string? title = null, Action? onClick = null)
         {

@@ -4,23 +4,31 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Binary layout for <see cref="RitsuLibSidecarControlOpcodes.Handshake" /> and <c>HandshakeAck</c> payloads.
+    ///     Binary layout 用于 <c>RitsuLibSidecarControlOpcodes.Handshake</c> 和 <c>HandshakeAck</c> payload.
     /// </summary>
     public static class RitsuLibSidecarHandshakeBinary
     {
         /// <summary>
         ///     Length of a <see cref="RitsuLibSidecarControlOpcodes.Handshake" /> body: version, max version, features (all
+        ///     中文说明：Length of a <c>RitsuLibSidecarControlOpcodes.Handshake</c> body: version, max version, features (all
         ///     big-endian where multi-byte).
+        ///     中文说明：big-endian where multi-byte).
         /// </summary>
         public const int HandshakePayloadSize = RitsuLibSidecarHandshakeLayout.HandshakePayloadSize;
 
         /// <summary>
         ///     Length of a <see cref="RitsuLibSidecarControlOpcodes.HandshakeAck" /> body: selected version, ok byte,
+        ///     中文说明：Length of a <c>RitsuLibSidecarControlOpcodes.HandshakeAck</c> body: selected version, ok byte,
         ///     ack-sender features.
+        ///     中文说明：ack-sender features.
         /// </summary>
         public const int AckPayloadSize = RitsuLibSidecarHandshakeLayout.AckPayloadSize;
 
         /// <summary>
         ///     Serializes a hello payload; <paramref name="d" /> must be at least <see cref="HandshakePayloadSize" />.
+        ///     中文说明：Serializes a hello payload; <c>d</c> must be at least <c>HandshakePayloadSize</c>.
+        ///     Serializes a hello payload; <c>d</c> must be at least <c>HandshakePayloadSize</c>.
+        ///     中文说明：Serializes a hello payload; <c>d</c> must be at least <c>HandshakePayloadSize</c>.
         /// </summary>
         public static void WriteHandshake(Span<byte> d, ushort wireFormatVersion, ushort supportedWireFormatVersionMax,
             RitsuLibSidecarPeerFeatures features)
@@ -42,6 +50,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Deserializes a hello body from a full <see cref="RitsuLibSidecarControlOpcodes.Handshake" /> message payload.
+        ///     Deserializes a hello body 从 a full <c>RitsuLibSidecarControlOpcodes.Handshake</c> message payload.
         /// </summary>
         public static void ReadHandshake(ReadOnlySpan<byte> d, out ushort wireFormatVersion,
             out ushort supportedWireFormatVersionMax, out RitsuLibSidecarPeerFeatures features)
@@ -60,6 +69,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Serializes an ack; <paramref name="d" /> must be at least <see cref="AckPayloadSize" />.
+        ///     中文说明：Serializes an ack; <c>d</c> must be at least <c>AckPayloadSize</c>.
+        ///     Serializes an ack; <c>d</c> must be at least <c>AckPayloadSize</c>.
+        ///     中文说明：Serializes an ack; <c>d</c> must be at least <c>AckPayloadSize</c>.
         /// </summary>
         public static void WriteAck(
             Span<byte> d,
@@ -82,6 +94,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Deserializes an ack body from a <see cref="RitsuLibSidecarControlOpcodes.HandshakeAck" /> message payload.
+        ///     Deserializes an ack body 从 a <c>RitsuLibSidecarControlOpcodes.HandshakeAck</c> message payload.
         /// </summary>
         public static void ReadAck(
             ReadOnlySpan<byte> d,

@@ -11,7 +11,7 @@ namespace STS2RitsuLib.Scaffolding.Combat
     {
         /// <summary>
         ///     Returns whether <paramref name="model" />'s owner is currently in the "Play" turn phase.
-        ///     返回 <paramref name="model" /> 的拥有者当前是否处于 “Play” 回合阶段。
+        ///     返回 <c>model</c> 的拥有者当前是否处于 “Play” 回合阶段。
         /// </summary>
         public static bool IsOwnerPlayPhase(this CardModel model)
         {

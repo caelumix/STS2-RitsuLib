@@ -8,7 +8,9 @@ namespace STS2RitsuLib.Models
 {
     /// <summary>
     ///     Convenience <see cref="SingletonModel" /> base type that can self-subscribe to run and combat hooks.
+    ///     Convenience <c>Singleton模型</c> base type that can self-subscribe to 跑局 和 combat hooks.
     ///     This avoids repeating reflection-based hook registration boilerplate in each singleton model.
+    ///     This avoids repeating reflection-based hook 注册 boilerplate in each singleton 模型.
     /// </summary>
     public abstract class HookedSingletonModel : SingletonModel
     {
@@ -26,9 +28,16 @@ namespace STS2RitsuLib.Models
 
         /// <summary>
         ///     Creates the singleton instance and optionally subscribes it to the corresponding hook streams.
+        ///     创建 the singleton instance and optionally subscribes it to the corresponding hook streams。
         /// </summary>
-        /// <param name="receiveCombatHooks">When true, subscribes the singleton to combat hook callbacks.</param>
-        /// <param name="receiveRunHooks">When true, subscribes the singleton to run hook callbacks.</param>
+        /// <param name="receiveCombatHooks">
+        ///     When true, subscribes the singleton to combat hook callbacks.
+        ///     为 true 时，subscribes the singleton to combat hook callbacks。
+        /// </param>
+        /// <param name="receiveRunHooks">
+        ///     When true, subscribes the singleton to run hook callbacks.
+        ///     为 true 时，subscribes the singleton to run hook callbacks。
+        /// </param>
         protected HookedSingletonModel(bool receiveCombatHooks, bool receiveRunHooks)
         {
             ShouldReceiveCombatHooks = receiveCombatHooks;
@@ -79,9 +88,16 @@ namespace STS2RitsuLib.Models
 
         /// <summary>
         ///     Provides the run-scoped sub-models that should receive run-state hook callbacks for this singleton.
+        ///     Provides the 跑局-scoped sub-Models that should receive 跑局-state hook callbacks 用于 this singleton.
         /// </summary>
-        /// <param name="runState">The current run state.</param>
-        /// <returns>The models to subscribe for run hooks.</returns>
+        /// <param name="runState">
+        ///     The current run state.
+        ///     该 current run state。
+        /// </param>
+        /// <returns>
+        ///     The models to subscribe for run hooks.
+        ///     该 models to subscribe for run hooks。
+        /// </returns>
         protected IEnumerable<AbstractModel> RunSubModels(RunState runState)
         {
             return [this];
@@ -89,9 +105,16 @@ namespace STS2RitsuLib.Models
 
         /// <summary>
         ///     Provides the combat-scoped sub-models that should receive combat-state hook callbacks for this singleton.
+        ///     Provides the combat-scoped sub-Models that should receive combat-state hook callbacks 用于 this singleton.
         /// </summary>
-        /// <param name="combatState">The current combat state.</param>
-        /// <returns>The models to subscribe for combat hooks.</returns>
+        /// <param name="combatState">
+        ///     The current combat state.
+        ///     该 current combat state。
+        /// </param>
+        /// <returns>
+        ///     The models to subscribe for combat hooks.
+        ///     该 models to subscribe for combat hooks。
+        /// </returns>
         protected IEnumerable<AbstractModel> CombatSubModels(CombatState combatState)
         {
             return [this];

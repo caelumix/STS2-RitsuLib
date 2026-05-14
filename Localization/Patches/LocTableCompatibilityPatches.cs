@@ -50,6 +50,7 @@ namespace STS2RitsuLib.Localization.Patches
 
     /// <summary>
     ///     When <see cref="RitsuLibSettingsStore.IsLocTableCompatEnabled" /> is true, returns a placeholder
+    ///     当 <c>RitsuLibSettingsStore.IsLocTableCompatEnabled</c> is true, 返回 a placeholder
     ///     <c>LocString</c> and logs <c>[Localization][DebugCompat]</c> once per key for misses in
     ///     <c>LocTable.GetLocString</c>. When false, vanilla throw-on-miss behavior applies.
     /// </summary>
@@ -77,6 +78,7 @@ namespace STS2RitsuLib.Localization.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Short-circuits the target method with a synthesized loc string when a placeholder is required.
+        ///     Short-circuits the target method 带有 a synthesized loc string 当 a placeholder is required.
         /// </summary>
         public static bool Prefix(LocTable __instance, string key, ref LocString __result)
             // ReSharper restore InconsistentNaming
@@ -95,8 +97,11 @@ namespace STS2RitsuLib.Localization.Patches
 
     /// <summary>
     ///     When <see cref="RitsuLibSettingsStore.IsLocTableCompatEnabled" /> is true, returns the raw key
+    ///     当 <c>RitsuLibSettingsStore.IsLocTableCompatEnabled</c> is true, 返回 the raw key
     ///     string and logs <c>[Localization][DebugCompat]</c> once per key for misses in <c>LocTable.GetRawText</c>.
+    ///     string 和 logs <c>[Localization][DebugCompat]</c> once per key 用于 misses in <c>LocTable.GetRawText</c>.
     ///     When false, vanilla throw-on-miss behavior applies.
+    ///     为 false 时，vanilla throw-on-miss behavior applies。
     /// </summary>
     public class LocTableGetRawTextCompatibilityPatch : IPatchMethod
     {
@@ -122,6 +127,7 @@ namespace STS2RitsuLib.Localization.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Short-circuits the target method with the key as raw text when a placeholder is required.
+        ///     Short-circuits the target method 带有 the key as raw text 当 a placeholder is required.
         /// </summary>
         public static bool Prefix(LocTable __instance, string key, ref string __result)
             // ReSharper restore InconsistentNaming

@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
 {
     /// <summary>
     ///     Last-resort font when no vanilla reference control is available (e.g. node not ready).
+    ///     Last-resort font 当 no 原版 reference control is 可用 (e.g. node not ready).
     /// </summary>
     internal static class ExtraCornerCombatFallbackFonts
     {

@@ -8,11 +8,13 @@ namespace STS2RitsuLib.Diagnostics
 {
     /// <summary>
     ///     Writes a UTF-8 text report of all Harmony-patched methods (similar to standalone dump mods).
+    ///     写入 a UTF-8 text report of all Harmony-patched methods (similar to standalone dump mods)。
     /// </summary>
     internal static class HarmonyPatchDumpWriter
     {
         /// <summary>
         ///     Resolves <c>user://</c> / <c>res://</c> via Godot and returns an absolute filesystem path.
+        ///     解析 <c>user://</c> / <c>res://</c> via Godot and returns an absolute filesystem path。
         /// </summary>
         internal static string? TryResolveFilesystemPath(string rawPath)
         {

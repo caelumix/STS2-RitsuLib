@@ -2,7 +2,9 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Expands refresh invalidation along equivalence and UI propagation edges so selective refresh specs stay aligned
+    ///     Expands refresh invalidation along equivalence 和 UI propagation edges so selective refresh specs stay aligned
     ///     with mark-dirty and flush without requiring every decorator to be listed explicitly.
+    ///     带有 mark-dirty 和 flush 带有out requiring every decorator to be listed explicitly.
     /// </summary>
     internal static class ModSettingsBindingInvalidationTopology
     {

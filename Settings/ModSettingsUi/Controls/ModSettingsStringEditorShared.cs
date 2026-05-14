@@ -5,6 +5,7 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Max-length clamping and string-field theming shared by single-line and multiline controls.
+    ///     Max-length clamping 和 string-field theming shared 通过 single-line 和 multiline controls.
     /// </summary>
     internal static class ModSettingsStringEditorShared
     {

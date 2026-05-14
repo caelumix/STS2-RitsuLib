@@ -4,8 +4,11 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     When <see cref="RitsuModSettingsSubmenu.MarkDirty" /> is called on this binding, these bindings are also
+    ///     当 <c>RitsuModSettingsSubmenu.MarkDirty</c> is called on this binding, these bindings are also
     ///     marked dirty so selective refresh specs and autosave see the same invalidation (e.g. projected field → list
+    ///     marked dirty so selective refresh specs 和 auto保存 see the same invalidation (e.g. projected field → list
     ///     root, decorator → inner).
+    ///     中文说明：root, decorator → inner).
     /// </summary>
     internal interface IModSettingsUiRefreshPropagation
     {
@@ -14,12 +17,17 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Bindings that participate in UI refresh invalidation as a group (e.g. decorator + inner store).
+    ///     中文说明：Bindings that participate in UI refresh invalidation as a group (e.g. decorator + inner store).
+    ///     Bindings that participate in UI refresh invalidation as a group (e.g. decorator + inner store).
+    ///     中文说明：Bindings that participate in UI refresh invalidation as a group (e.g. decorator + inner store).
     /// </summary>
     internal interface IModSettingsUiRefreshEquivalence
     {
         /// <summary>
         ///     Other binding instances that should count as the same target for selective refresh (typically the inner
+        ///     Other binding instances that should count as the same target 用于 selective refresh (typically the inner
         ///     binding when <see cref="ModSettingsDebugShowcaseBinding{TValue}" /> wraps an in-memory binding).
+        ///     binding 当 <c>ModSettingsDebugShowcaseBinding{TValue}</c> wraps an in-memory binding).
         /// </summary>
         IReadOnlyList<IModSettingsBinding> UiRefreshAlsoTreatAsDirty { get; }
     }
@@ -33,7 +41,9 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Declares when a registered settings UI refresh callback should run relative to bindings that were marked
+    ///     Declares 当 a 已注册 设置 UI refresh callback should 跑局 relative to bindings that were marked
     ///     dirty since the last flush.
+    ///     中文说明：dirty since the last flush.
     /// </summary>
     internal readonly record struct ModSettingsUiRefreshSpec(
         ModSettingsRefreshRegistrationKind Kind,

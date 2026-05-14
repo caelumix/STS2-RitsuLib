@@ -1,10 +1,16 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 namespace STS2RitsuLib.Utils
 {
     /// <summary>
     ///     Non-generic helper class to cache reflection information per type.
+    ///     中文说明：Non-generic helper class to cache reflection information per type.
+    ///     Non-generic helper class to cache reflection information per type.
+    ///     中文说明：Non-generic helper class to cache reflection information per type.
     ///     Avoids static fields in generic types while maintaining performance.
+    ///     中文说明：Avoids static fields in generic types while maintaining performance.
+    ///     Avoids static fields in generic types while maintaining performance.
+    ///     中文说明：Avoids static fields in generic types while maintaining performance.
     /// </summary>
     internal static class PropertyCache
     {

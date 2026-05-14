@@ -58,11 +58,11 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     / … style: pass <c>ModCardTagRegistry.For(<paramref name="modId" />)</c> or
         ///     <see cref="RitsuLibFramework.GetCardTagRegistry" />. The value is not read; <see cref="CardTags" /> is
         ///     always the per-mod singleton from <c>ModCardTagRegistry.For</c>.
-        ///     与 5 参数 <see cref="ModContentPackContext" /> 主构造函数相同。接受
-        ///     <paramref name="cardTagRegistry" /> 参数是为了让调用点可以镜像
+        ///     与 5 参数 <c>ModContentPackContext</c> 主构造函数相同。接受
+        ///     <c>cardTagRegistry</c> 参数是为了让调用点可以镜像
         ///     <see cref="RitsuLibFramework.GetContentRegistry" /> / <see cref="RitsuLibFramework.GetKeywordRegistry" />
-        ///     等风格：可传入 <c>ModCardTagRegistry.For(<paramref name="modId" />)</c> 或
-        ///     <see cref="RitsuLibFramework.GetCardTagRegistry" />。该值不会被读取；<see cref="CardTags" /> 始终来自
+        ///     等风格：可传入 <c>ModCardTagRegistry.For(<c>modId</c>)</c> 或
+        ///     <c>RitsuLibFramework.GetCardTagRegistry</c>。该值不会被读取；<c>CardTags</c> 始终来自
         ///     <c>ModCardTagRegistry.For</c> 的每 Mod 单例。
         /// </summary>
         public ModContentPackContext(
@@ -81,8 +81,8 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     mirror <see cref="RitsuLibFramework.GetCardPileRegistry" /> style alongside content / keywords /
         ///     card tags. The value is not read; <see cref="CardPiles" /> is always the per-mod singleton.
         ///     与 6 参数兼容构造函数相同，接受牌堆注册表，使调用点可以在 content / keywords / card tags 旁边
-        ///     镜像 <see cref="RitsuLibFramework.GetCardPileRegistry" /> 风格。该值不会被读取；
-        ///     <see cref="CardPiles" /> 始终是每 Mod 单例。
+        ///     镜像 <c>RitsuLibFramework.GetCardPileRegistry</c> 风格。该值不会被读取；
+        ///     <c>CardPiles</c> 始终是每 Mod 单例。
         /// </summary>
         public ModContentPackContext(
             string modId,
@@ -100,7 +100,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Custom <see cref="CardTag" /> surface for <see cref="ModId" />; same singleton as
         ///     <c>ModCardTagRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetCardTagRegistry</c>.
-        ///     <see cref="ModId" /> 的自定义 <see cref="CardTag" /> 入口；与
+        ///     <c>ModId</c> 的自定义 <c>CardTag</c> 入口；与
         ///     <c>ModCardTagRegistry.For(ModId)</c> 和 <c>RitsuLibFramework.GetCardTagRegistry</c> 是同一个单例。
         /// </summary>
         public ModCardTagRegistry CardTags => ModCardTagRegistry.For(ModId);
@@ -108,7 +108,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Custom <see cref="CardPile" /> surface for <see cref="ModId" />; same singleton as
         ///     <c>ModCardPileRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetCardPileRegistry</c>.
-        ///     <see cref="ModId" /> 的自定义 <see cref="CardPile" /> 入口；与
+        ///     <c>ModId</c> 的自定义 <c>CardPile</c> 入口；与
         ///     <c>ModCardPileRegistry.For(ModId)</c> 和 <c>RitsuLibFramework.GetCardPileRegistry</c> 是同一个单例。
         /// </summary>
         public ModCardPileRegistry CardPiles => ModCardPileRegistry.For(ModId);
@@ -116,7 +116,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     SmartFormat extension surface for <see cref="ModId" />; same singleton as
         ///     <c>ModSmartFormatExtensionRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetSmartFormatRegistry</c>.
-        ///     <see cref="ModId" /> 的 SmartFormat 扩展入口；与
+        ///     <c>ModId</c> 的 SmartFormat 扩展入口；与
         ///     <c>ModSmartFormatExtensionRegistry.For(ModId)</c> 和 <c>RitsuLibFramework.GetSmartFormatRegistry</c>
         ///     是同一个单例。
         /// </summary>
@@ -125,7 +125,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Top-bar button surface for <see cref="ModId" />; same singleton as
         ///     <c>ModTopBarButtonRegistry.For(ModId)</c> and <c>RitsuLibFramework.GetTopBarButtonRegistry</c>.
-        ///     <see cref="ModId" /> 的顶部栏按钮入口；与 <c>ModTopBarButtonRegistry.For(ModId)</c> 和
+        ///     <c>ModId</c> 的顶部栏按钮入口；与 <c>ModTopBarButtonRegistry.For(ModId)</c> 和
         ///     <c>RitsuLibFramework.GetTopBarButtonRegistry</c> 是同一个单例。
         /// </summary>
         public ModTopBarButtonRegistry TopBarButtons => ModTopBarButtonRegistry.For(ModId);
@@ -147,7 +147,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Starts a builder for the given <paramref name="modId" />.
-        ///     为给定 <paramref name="modId" /> 启动构建器。
+        ///     为给定 <c>modId</c> 启动构建器。
         /// </summary>
         public static ModContentPackBuilder For(string modId)
         {
@@ -157,7 +157,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacter{TCharacter}" />.
-        ///     将 <see cref="ModContentRegistry.RegisterCharacter{TCharacter}" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterCharacter{TCharacter}</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder Character<TCharacter>() where TCharacter : CharacterModel
         {
@@ -166,7 +166,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterBadge{TBadge}" />.
-        ///     将 <see cref="ModContentRegistry.RegisterBadge{TBadge}" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterBadge{TBadge}</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder Badge<TBadge>() where TBadge : ModBadgeTemplate
         {
@@ -189,7 +189,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int)" />.
-        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int)" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int)</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterCard<TCharacter, TCard>(int count = 1)
             where TCharacter : CharacterModel
@@ -200,7 +200,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int,int)" />.
-        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int,int)" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterCharacterStarterCard{TCharacter,TCard}(int,int)</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterCard<TCharacter, TCard>(int count, int order)
             where TCharacter : CharacterModel
@@ -211,7 +211,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int)" />.
-        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int)" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int)</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterRelic<TCharacter, TRelic>(int count = 1)
             where TCharacter : CharacterModel
@@ -222,7 +222,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int,int)" />.
-        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int,int)" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterCharacterStarterRelic{TCharacter,TRelic}(int,int)</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterRelic<TCharacter, TRelic>(int count, int order)
             where TCharacter : CharacterModel
@@ -233,7 +233,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int)" />.
-        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int)" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int)</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterPotion<TCharacter, TPotion>(int count = 1)
             where TCharacter : CharacterModel
@@ -244,7 +244,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int,int)" />.
-        ///     将 <see cref="ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int,int)" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterCharacterStarterPotion{TCharacter,TPotion}(int,int)</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder CharacterStarterPotion<TCharacter, TPotion>(int count, int order)
             where TCharacter : CharacterModel
@@ -267,7 +267,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterAct{TAct}" />.
-        ///     将 <see cref="ModContentRegistry.RegisterAct{TAct}" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterAct{TAct}</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder Act<TAct>() where TAct : ActModel
         {
@@ -276,7 +276,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEnterForce{TAct}" />.
-        ///     将 <see cref="ModContentRegistry.RegisterActEnterForce{TAct}" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterActEnterForce{TAct}</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder ActEnterForce<TAct>(int slotIndex, int priority,
             Func<ActEnterResolveContext, bool> eligibility)
@@ -287,7 +287,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEnterUniformPool" />.
-        ///     将 <see cref="ModContentRegistry.RegisterActEnterUniformPool" /> 加入队列。
+        ///     将 <c>ModContentRegistry.RegisterActEnterUniformPool</c> 加入队列。
         /// </summary>
         public ModContentPackBuilder ActEnterUniformPool(int slotIndex)
         {
@@ -296,6 +296,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEnterUniformPoolCandidate{TAct}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterActEnterUniformPoolCandidate{TAct}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterActEnterUniformPoolCandidate{TAct}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterActEnterUniformPoolCandidate{TAct}</c>.
         /// </summary>
         public ModContentPackBuilder ActEnterUniformPoolCandidate<TAct>(int slotIndex,
             Func<ActEnterResolveContext, bool> eligibility)
@@ -306,6 +309,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEnterWeightedPool" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterActEnterWeightedPool</c>.
+        ///     Queues <c>ModContentRegistry.RegisterActEnterWeightedPool</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterActEnterWeightedPool</c>.
         /// </summary>
         public ModContentPackBuilder ActEnterWeightedPool(int slotIndex)
         {
@@ -314,6 +320,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEnterWeightedPoolCandidate{TAct}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterActEnterWeightedPoolCandidate{TAct}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterActEnterWeightedPoolCandidate{TAct}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterActEnterWeightedPoolCandidate{TAct}</c>.
         /// </summary>
         public ModContentPackBuilder ActEnterWeightedPoolCandidate<TAct>(int slotIndex,
             Func<ActEnterResolveContext, bool> eligibility, Func<ActEnterResolveContext, double> weight)
@@ -325,6 +334,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEnterWeightedPoolBaseline" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterActEnterWeightedPoolBaseline</c>.
+        ///     Queues <c>ModContentRegistry.RegisterActEnterWeightedPoolBaseline</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterActEnterWeightedPoolBaseline</c>.
         /// </summary>
         public ModContentPackBuilder ActEnterWeightedPoolBaseline(int slotIndex,
             Func<ActEnterResolveContext, double> weight)
@@ -334,6 +346,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEncounter{TAct,TEncounter}" /> (encounter only in that act).
+        ///     Queues <c>ModContentRegistry.Register章节Encounter{TAct,TEncounter}</c> (encounter only in that 章节).
         /// </summary>
         public ModContentPackBuilder ActEncounter<TAct, TEncounter>()
             where TAct : ActModel
@@ -344,7 +357,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterGlobalEncounter{TEncounter}" /> (encounter merged into every act’s
+        ///     Queues <c>ModContentRegistry.RegisterGlobalEncounter{TEncounter}</c> (encounter merged into every 章节’s
         ///     encounter pool).
+        ///     中文说明：encounter pool).
         /// </summary>
         public ModContentPackBuilder GlobalEncounter<TEncounter>() where TEncounter : EncounterModel
         {
@@ -353,6 +368,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterMonster{TMonster}" /> (standalone monster type + patched
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterMonster{TMonster}</c> (standalone monster type + patched
+        ///     Queues <c>ModContentRegistry.RegisterMonster{TMonster}</c> (standalone monster type + patched
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterMonster{TMonster}</c> (standalone monster type + patched
         ///     <c>ModelDb.Monsters</c> merge).
         /// </summary>
         public ModContentPackBuilder Monster<TMonster>() where TMonster : MonsterModel
@@ -362,6 +380,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>RegisterCard&lt;TPool, TCard&gt;()</c> on the content registry with default public entry options.
+        ///     Queues <c>Register卡牌&lt;TPool, T卡牌&gt;()</c> on the content 注册表 带有 default public entry options.
         /// </summary>
         public ModContentPackBuilder Card<TPool, TCard>()
             where TPool : CardPoolModel
@@ -372,6 +391,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>RegisterCard&lt;TPool, TCard&gt;(ModelPublicEntryOptions)</c> on the content registry.
+        ///     Queues <c>Register卡牌&lt;TPool, T卡牌&gt;(模型PublicEntryOptions)</c> on the content 注册表.
         /// </summary>
         public ModContentPackBuilder Card<TPool, TCard>(ModelPublicEntryOptions publicEntry)
             where TPool : CardPoolModel
@@ -382,6 +402,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCardHandGlow{TCard}" /> for hand gold/red highlight rules.
+        ///     Queues <c>ModContentRegistry.RegisterCardHandGlow{T卡牌}</c> 用于 hand gold/red highlight rules.
         /// </summary>
         public ModContentPackBuilder CardHandGlow<TCard>(ModCardHandGlowRules rules) where TCard : CardModel
         {
@@ -390,6 +411,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;(...)</c> for custom hand-highlight colors.
+        ///     Queues <c>ModContentRegistry.RegisterCardHandOutline&lt;T卡牌&gt;(...)</c> 用于 自定义 hand-highlight colors.
         /// </summary>
         public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineRule rule) where TCard : CardModel
         {
@@ -398,6 +420,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers a generated placeholder card (no custom CLR type). Prefer this for quick WIP flow.
+        ///     注册 a generated placeholder card (no custom CLR type). Prefer this for quick WIP flow。
         /// </summary>
         public ModContentPackBuilder PlaceholderCard<TPool>(string stableEntryStem,
             PlaceholderCardDescriptor descriptor = default)
@@ -408,6 +431,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers a card with a stable public entry stem when you already have a concrete card type.
+        ///     注册 a card with a stable public entry stem when you already have a concrete card type。
         /// </summary>
         public ModContentPackBuilder PlaceholderCard<TPool, TCard>(string stableEntryStem)
             where TPool : CardPoolModel
@@ -418,6 +442,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>RegisterRelic&lt;TPool, TRelic&gt;()</c> with default public entry options.
+        ///     Queues <c>Register遗物&lt;TPool, T遗物&gt;()</c> 带有 default public entry options.
         /// </summary>
         public ModContentPackBuilder Relic<TPool, TRelic>()
             where TPool : RelicPoolModel
@@ -428,6 +453,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>RegisterRelic&lt;TPool, TRelic&gt;(ModelPublicEntryOptions)</c>.
+        ///     Queues <c>Register遗物&lt;TPool, T遗物&gt;(模型PublicEntryOptions)</c>.
         /// </summary>
         public ModContentPackBuilder Relic<TPool, TRelic>(ModelPublicEntryOptions publicEntry)
             where TPool : RelicPoolModel
@@ -438,6 +464,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues placeholder relic emission via <c>RegisterPlaceholderRelic&lt;TPool&gt;(...)</c>.
+        ///     Queues placeholder 遗物 emission via <c>RegisterPlaceholder遗物&lt;TPool&gt;(...)</c>.
         /// </summary>
         public ModContentPackBuilder PlaceholderRelic<TPool>(string stableEntryStem,
             PlaceholderRelicDescriptor descriptor = default)
@@ -448,6 +475,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers a relic type using a stable entry stem mapped through <see cref="ModelPublicEntryOptions.FromStem" />.
+        ///     注册 a relic type using a stable entry stem mapped through <c>ModelPublicEntryOptions.FromStem</c>。
         /// </summary>
         public ModContentPackBuilder PlaceholderRelic<TPool, TRelic>(string stableEntryStem)
             where TPool : RelicPoolModel
@@ -458,6 +486,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>RegisterPotion&lt;TPool, TPotion&gt;()</c> with default public entry options.
+        ///     Queues <c>RegisterPotion&lt;TPool, TPotion&gt;()</c> 带有 default public entry options.
         /// </summary>
         public ModContentPackBuilder Potion<TPool, TPotion>()
             where TPool : PotionPoolModel
@@ -468,6 +497,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>RegisterPotion&lt;TPool, TPotion&gt;(ModelPublicEntryOptions)</c>.
+        ///     Queues <c>RegisterPotion&lt;TPool, TPotion&gt;(模型PublicEntryOptions)</c>.
         /// </summary>
         public ModContentPackBuilder Potion<TPool, TPotion>(ModelPublicEntryOptions publicEntry)
             where TPool : PotionPoolModel
@@ -478,6 +508,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues placeholder potion emission via <c>RegisterPlaceholderPotion&lt;TPool&gt;(...)</c>.
+        ///     中文说明：Queues placeholder potion emission via <c>RegisterPlaceholderPotion&lt;TPool&gt;(...)</c>.
         /// </summary>
         public ModContentPackBuilder PlaceholderPotion<TPool>(string stableEntryStem,
             PlaceholderPotionDescriptor descriptor = default)
@@ -488,6 +519,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers a potion type using a stable entry stem mapped through <see cref="ModelPublicEntryOptions.FromStem" />.
+        ///     注册 a potion type using a stable entry stem mapped through <c>ModelPublicEntryOptions.FromStem</c>。
         /// </summary>
         public ModContentPackBuilder PlaceholderPotion<TPool, TPotion>(string stableEntryStem)
             where TPool : PotionPoolModel
@@ -498,6 +530,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterPower{TPower}" />.
+        ///     Queues <c>ModContentRegistry.Register能力{T能力}</c>.
         /// </summary>
         public ModContentPackBuilder Power<TPower>() where TPower : PowerModel
         {
@@ -506,6 +539,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="RitsuLibFramework.RegisterHealthBarForecast{TSource}" /> for a non-power forecast source.
+        ///     Queues <c>RitsuLibFramework.RegisterHealthBarForecast{TSource}</c> 用于 a non-能力 用于ecast source.
         /// </summary>
         public ModContentPackBuilder HealthBarForecast<TSource>(string? sourceId = null)
             where TSource : IHealthBarForecastSource, new()
@@ -515,6 +549,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterOrb{TOrb}" />.
+        ///     Queues <c>ModContentRegistry.Register充能球{T充能球}</c>.
         /// </summary>
         public ModContentPackBuilder Orb<TOrb>() where TOrb : OrbModel
         {
@@ -523,6 +558,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterEnchantment{TEnchantment}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterEnchantment{TEnchantment}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterEnchantment{TEnchantment}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterEnchantment{TEnchantment}</c>.
         /// </summary>
         public ModContentPackBuilder Enchantment<TEnchantment>() where TEnchantment : EnchantmentModel
         {
@@ -531,6 +569,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterAffliction{TAffliction}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterAffliction{TAffliction}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterAffliction{TAffliction}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterAffliction{TAffliction}</c>.
         /// </summary>
         public ModContentPackBuilder Affliction<TAffliction>() where TAffliction : AfflictionModel
         {
@@ -539,6 +580,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterAchievement{TAchievement}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterAchievement{TAchievement}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterAchievement{TAchievement}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterAchievement{TAchievement}</c>.
         /// </summary>
         public ModContentPackBuilder Achievement<TAchievement>() where TAchievement : AchievementModel
         {
@@ -547,6 +591,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterSingleton{TSingleton}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterSingleton{TSingleton}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterSingleton{TSingleton}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterSingleton{TSingleton}</c>.
         /// </summary>
         public ModContentPackBuilder Singleton<TSingleton>() where TSingleton : SingletonModel
         {
@@ -555,6 +602,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterGoodModifier{TModifier}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterGoodModifier{TModifier}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterGoodModifier{TModifier}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterGoodModifier{TModifier}</c>.
         /// </summary>
         public ModContentPackBuilder GoodModifier<TModifier>() where TModifier : ModifierModel
         {
@@ -563,6 +613,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterBadModifier{TModifier}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterBadModifier{TModifier}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterBadModifier{TModifier}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterBadModifier{TModifier}</c>.
         /// </summary>
         public ModContentPackBuilder BadModifier<TModifier>() where TModifier : ModifierModel
         {
@@ -571,6 +624,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterSharedCardPool{TPool}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterSharedCardPool{TPool}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterSharedCardPool{TPool}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterSharedCardPool{TPool}</c>.
         /// </summary>
         public ModContentPackBuilder SharedCardPool<TPool>() where TPool : CardPoolModel
         {
@@ -579,6 +635,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterCardLibraryCompendiumSharedPoolFilter{TPool}(string,string)" />.
+        ///     Queues <c>ModContentRegistry.RegisterCardLibraryCompendiumSharedPool过滤{TPool}(string,string)</c>.
         /// </summary>
         public ModContentPackBuilder CardLibraryCompendiumSharedPoolFilter<TPool>(string stableId,
             string iconTexturePath)
@@ -590,9 +647,13 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues
+        ///     中文说明：Queues
         ///     <see
         ///         cref="ModContentRegistry.RegisterCardLibraryCompendiumSharedPoolFilter{TPool}(string,string,IReadOnlyList{CardLibraryCompendiumPlacementRule}?)" />
+        ///     cref="ModContentRegistry.RegisterCardLibraryCompendiumSharedPool过滤{TPool}(string,string,IReadOnlyList{CardLibraryCompendiumPlacementRule}?)"
+        ///     />
         ///     .
+        ///     中文说明：.
         /// </summary>
         public ModContentPackBuilder CardLibraryCompendiumSharedPoolFilter<TPool>(
             string stableId,
@@ -607,6 +668,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterSharedRelicPool{TPool}" />.
+        ///     Queues <c>ModContentRegistry.RegisterShared遗物Pool{TPool}</c>.
         /// </summary>
         public ModContentPackBuilder SharedRelicPool<TPool>() where TPool : RelicPoolModel
         {
@@ -615,6 +677,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterSharedPotionPool{TPool}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterSharedPotionPool{TPool}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterSharedPotionPool{TPool}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterSharedPotionPool{TPool}</c>.
         /// </summary>
         public ModContentPackBuilder SharedPotionPool<TPool>() where TPool : PotionPoolModel
         {
@@ -623,6 +688,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterSharedEvent{TEvent}" />.
+        ///     Queues <c>ModContentRegistry.RegisterShared事件{T事件}</c>.
         /// </summary>
         public ModContentPackBuilder SharedEvent<TEvent>() where TEvent : EventModel
         {
@@ -631,6 +697,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActEvent{TAct,TEvent}" />.
+        ///     Queues <c>ModContentRegistry.Register章节事件{TAct,T事件}</c>.
         /// </summary>
         public ModContentPackBuilder ActEvent<TAct, TEvent>()
             where TAct : ActModel
@@ -641,6 +708,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterSharedAncient{TAncient}" />.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterSharedAncient{TAncient}</c>.
+        ///     Queues <c>ModContentRegistry.RegisterSharedAncient{TAncient}</c>.
+        ///     中文说明：Queues <c>ModContentRegistry.RegisterSharedAncient{TAncient}</c>.
         /// </summary>
         public ModContentPackBuilder SharedAncient<TAncient>() where TAncient : AncientEventModel
         {
@@ -649,6 +719,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterActAncient{TAct,TAncient}" />.
+        ///     Queues <c>ModContentRegistry.Register章节Ancient{TAct,TAncient}</c>.
         /// </summary>
         public ModContentPackBuilder ActAncient<TAct, TAncient>()
             where TAct : ActModel
@@ -659,6 +730,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModContentRegistry.RegisterAncientOption{TAncient}" /> for injecting extra initial options.
+        ///     Queues <c>ModContentRegistry.RegisterAncientOption{TAncient}</c> 用于 injecting extra initial options.
         /// </summary>
         public ModContentPackBuilder AncientOption<TAncient>(ModAncientOptionRule rule)
             where TAncient : AncientEventModel
@@ -668,6 +740,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModSmartFormatExtensionRegistry.Register{TFormatter}" />.
+        ///     Queues <c>ModSmartFormatExtension注册表.Register{TFormatter}</c>.
         /// </summary>
         public ModContentPackBuilder SmartFormatter<TFormatter>(int order = 0)
             where TFormatter : IFormatter, new()
@@ -677,6 +750,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModSmartFormatExtensionRegistry.RegisterFormatterType" />.
+        ///     Queues <c>ModSmartFormatExtension注册表.RegisterFormatterType</c>.
         /// </summary>
         public ModContentPackBuilder SmartFormatter(Type formatterType, int order = 0)
         {
@@ -685,6 +759,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModSmartFormatExtensionRegistry.RegisterSource{TSource}" />.
+        ///     Queues <c>ModSmartFormatExtension注册表.RegisterSource{TSource}</c>.
         /// </summary>
         public ModContentPackBuilder SmartFormatSource<TSource>(int order = 0)
             where TSource : ISource, new()
@@ -694,6 +769,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModSmartFormatExtensionRegistry.RegisterSourceType" />.
+        ///     Queues <c>ModSmartFormatExtension注册表.RegisterSourceType</c>.
         /// </summary>
         public ModContentPackBuilder SmartFormatSource(Type sourceType, int order = 0)
         {
@@ -702,7 +778,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>ModKeywordRegistry.RegisterCardKeywordOwnedByLocNamespace</c> (qualified id for both
+        ///     Queues <c>ModKeywordRegistry.Register卡牌KeywordOwnedByLocNamespace</c> (qualified id 用于 both
         ///     keyword id and <c>card_keywords</c> <c>{id}.title</c> / <c>.description</c> keys).
+        ///     keyword id 和 <c>卡牌_keywords</c> <c>{id}.title</c> / <c>.description</c> keys).
         /// </summary>
         public ModContentPackBuilder CardKeywordOwnedByLocNamespace(
             string localKeywordStem,
@@ -717,6 +795,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>ModKeywordRegistry.RegisterCardKeywordOwnedByLocNamespace</c> with legacy hover defaults.
+        ///     Queues <c>ModKeywordRegistry.Register卡牌KeywordOwnedByLocNamespace</c> 带有 legacy hover defaults.
         /// </summary>
         public ModContentPackBuilder CardKeywordOwnedByLocNamespace(
             string localKeywordStem,
@@ -731,6 +810,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues extended <see cref="ModKeywordRegistry" /> card-keyword registration (placement + hover-tip flags).
+        ///     Queues extended <c>ModKeywordRegistry</c> 卡牌-keyword 注册 (placement + hover-tip flags).
         /// </summary>
         [Obsolete(
             "Prefer CardKeywordOwnedByLocNamespace(localKeywordStem, ...) so the keyword id is mod-qualified; flat ids collide globally.")]
@@ -762,6 +842,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Legacy <c>CardKeyword</c> signature preserved for older mods; forwards with prior hover-tip behavior.
+        ///     Legacy <c>卡牌Keyword</c> signature preserved 用于 older mods; 用于wards 带有 prior hover-tip behavior.
         /// </summary>
         [Obsolete(
             "Prefer CardKeywordOwnedByLocNamespace(localKeywordStem, ...) so the keyword id is mod-qualified; flat ids collide globally.")]
@@ -777,6 +858,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>ModKeywordRegistry.RegisterOwned</c> (mod-local stem → qualified id).
+        ///     中文说明：Queues <c>ModKeywordRegistry.RegisterOwned</c> (mod-local stem → qualified id).
+        ///     Queues <c>ModKeywordRegistry.RegisterOwned</c> (mod-local stem → qualified id).
+        ///     中文说明：Queues <c>ModKeywordRegistry.RegisterOwned</c> (mod-local stem → qualified id).
         /// </summary>
         public ModContentPackBuilder KeywordOwned(
             string localKeywordStem,
@@ -795,6 +879,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <c>ModKeywordRegistry.RegisterOwned</c> with legacy hover defaults.
+        ///     Queues <c>ModKeywordRegistry.RegisterOwned</c> 带有 legacy hover defaults.
         /// </summary>
         public ModContentPackBuilder KeywordOwned(
             string localKeywordStem,
@@ -817,6 +902,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues extended <see cref="ModKeywordRegistry" /> keyword registration (placement + hover-tip flags).
+        ///     Queues extended <c>ModKeywordRegistry</c> keyword 注册 (placement + hover-tip flags).
         /// </summary>
         [Obsolete(
             "Prefer KeywordOwned(localKeywordStem, ...) so the keyword id is mod-qualified; flat ids collide globally.")]
@@ -837,6 +923,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Legacy <c>Keyword</c> signature preserved for older mods; forwards with prior hover-tip behavior.
+        ///     Legacy <c>Keyword</c> signature preserved 用于 older mods; 用于wards 带有 prior hover-tip behavior.
         /// </summary>
         [Obsolete(
             "Prefer KeywordOwned(localKeywordStem, ...) so the keyword id is mod-qualified; flat ids collide globally.")]
@@ -861,6 +948,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineRegistry.RegisterEpoch{TEpoch}" />.
+        ///     Queues <c>ModTimeline注册表.RegisterEpoch{TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder Epoch<TEpoch>() where TEpoch : EpochModel, new()
         {
@@ -869,6 +957,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineRegistry.RegisterStoryEpoch{TStory, TEpoch}" /> (epoch + story column order).
+        ///     Queues <c>ModTimeline注册表.RegisterStoryEpoch{TStory, TEpoch}</c> (epoch + story column order).
         /// </summary>
         public ModContentPackBuilder StoryEpoch<TStory, TEpoch>()
             where TStory : StoryModel, new()
@@ -879,7 +968,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineLayoutRegistry.RegisterTimelineSlot" /> for a <see cref="ModEpochTemplate" />
+        ///     Queues <c>ModTimelineLayoutRegistry.RegisterTimelineSlot</c> 用于 a <c>ModEpochTemplate</c>
         ///     when not using <see cref="TimelineColumnPackEntry{TStory}" />.
+        ///     当 not using <c>TimelineColumnPackEntry{TStory}</c>.
         /// </summary>
         public ModContentPackBuilder ModEpochTimelineSlot<TEpoch>(EpochEra era, int eraPosition)
             where TEpoch : ModEpochTemplate
@@ -890,6 +981,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineLayoutRegistry.RegisterAutoTimelineSlot" /> for a <see cref="ModEpochTemplate" />.
+        ///     Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlot</c> 用于 a <c>ModEpochTemplate</c>.
         /// </summary>
         public ModContentPackBuilder ModEpochAutoTimelineSlot<TEpoch>(EpochEra era)
             where TEpoch : ModEpochTemplate
@@ -899,6 +991,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineLayoutRegistry.RegisterAutoTimelineSlotBeforeEraColumn" />.
+        ///     中文说明：Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlotBeforeEraColumn</c>.
+        ///     Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlotBeforeEraColumn</c>.
+        ///     中文说明：Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlotBeforeEraColumn</c>.
         /// </summary>
         public ModContentPackBuilder ModEpochAutoTimelineSlotBeforeColumn<TEpoch>(EpochEra anchorEra)
             where TEpoch : ModEpochTemplate
@@ -910,6 +1005,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineLayoutRegistry.RegisterAutoTimelineSlotAfterEraColumn" />.
+        ///     Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlot之后EraColumn</c>.
         /// </summary>
         public ModContentPackBuilder ModEpochAutoTimelineSlotAfterColumn<TEpoch>(EpochEra anchorEra)
             where TEpoch : ModEpochTemplate
@@ -920,6 +1016,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineLayoutRegistry.RegisterAutoTimelineSlotInEraColumn" />.
+        ///     中文说明：Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlotInEraColumn</c>.
+        ///     Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlotInEraColumn</c>.
+        ///     中文说明：Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlotInEraColumn</c>.
         /// </summary>
         public ModContentPackBuilder ModEpochAutoTimelineSlotInColumn<TEpoch>(EpochEra anchorEra)
             where TEpoch : ModEpochTemplate
@@ -930,6 +1029,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineLayoutRegistry.RegisterAutoTimelineSlotBeforeEpochColumn" />.
+        ///     Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlot之前EpochColumn</c>.
         /// </summary>
         public ModContentPackBuilder ModEpochAutoTimelineSlotBeforeEpochColumn<TEpoch, TReferenceEpoch>()
             where TEpoch : ModEpochTemplate
@@ -942,6 +1042,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineLayoutRegistry.RegisterAutoTimelineSlotAfterEpochColumn" />.
+        ///     Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlot之后EpochColumn</c>.
         /// </summary>
         public ModContentPackBuilder ModEpochAutoTimelineSlotAfterEpochColumn<TEpoch, TReferenceEpoch>()
             where TEpoch : ModEpochTemplate
@@ -954,6 +1055,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineLayoutRegistry.RegisterAutoTimelineSlotInEpochColumn" />.
+        ///     中文说明：Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlotInEpochColumn</c>.
+        ///     Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlotInEpochColumn</c>.
+        ///     中文说明：Queues <c>ModTimelineLayoutRegistry.RegisterAutoTimelineSlotInEpochColumn</c>.
         /// </summary>
         public ModContentPackBuilder ModEpochAutoTimelineSlotInEpochColumn<TEpoch, TReferenceEpoch>()
             where TEpoch : ModEpochTemplate
@@ -966,7 +1070,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="TimelineColumnPackEntry{TStory}" /> — one fluent block for column order + per-epoch unlock
+        ///     Queues <c>TimelineColumnPackEntry{TStory}</c> — one fluent block 用于 column order + per-epoch unlock
         ///     bindings (recommended over many separate pack entry types).
+        ///     中文说明：bindings (recommended over many separate pack entry types).
         /// </summary>
         public ModContentPackBuilder TimelineColumn<TStory>(Action<TimelineColumnBuilder<TStory>> configure)
             where TStory : StoryModel, new()
@@ -977,6 +1083,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTimelineRegistry.RegisterStory{TStory}" />.
+        ///     Queues <c>ModTimeline注册表.RegisterStory{TStory}</c>.
         /// </summary>
         public ModContentPackBuilder Story<TStory>() where TStory : StoryModel, new()
         {
@@ -985,6 +1092,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.RequireEpoch{TModel,TEpoch}" />.
+        ///     Queues <c>ModUnlockRegistry.RequireEpoch{T模型,TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder RequireEpoch<TModel, TEpoch>()
             where TModel : AbstractModel
@@ -995,6 +1103,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="BindCardUnlockEpochPackEntry{TEpoch}" /> — each card listed on
+        ///     Queues <c>BindCardUnlockEpochPackEntry{TEpoch}</c> — each 卡牌 listed on
         ///     <typeparamref name="TEpoch" /> requires that epoch before appearing in pools.
         /// </summary>
         public ModContentPackBuilder BindCardUnlockEpoch<TEpoch>()
@@ -1005,6 +1114,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="BindRelicUnlockEpochPackEntry{TEpoch}" /> — each relic listed on
+        ///     Queues <c>BindRelicUnlockEpochPackEntry{TEpoch}</c> — each 遗物 listed on
         ///     <typeparamref name="TEpoch" /> requires that epoch before appearing in pools.
         /// </summary>
         public ModContentPackBuilder BindRelicUnlockEpoch<TEpoch>()
@@ -1015,6 +1125,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.UnlockEpochAfterRunAs{TCharacter,TEpoch}" />.
+        ///     Queues <c>ModUnlockRegistry.UnlockEpochAfter跑局As{TCharacter,TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder UnlockEpochAfterRunAs<TCharacter, TEpoch>()
             where TCharacter : CharacterModel
@@ -1025,6 +1136,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.UnlockEpochAfterWinAs{TCharacter,TEpoch}" />.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterWinAs{TCharacter,TEpoch}</c>.
+        ///     Queues <c>ModUnlockRegistry.UnlockEpochAfterWinAs{TCharacter,TEpoch}</c>.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterWinAs{TCharacter,TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder UnlockEpochAfterWinAs<TCharacter, TEpoch>()
             where TCharacter : CharacterModel
@@ -1035,6 +1149,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.UnlockEpochAfterAscensionWin{TCharacter,TEpoch}" />.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterAscensionWin{TCharacter,TEpoch}</c>.
+        ///     Queues <c>ModUnlockRegistry.UnlockEpochAfterAscensionWin{TCharacter,TEpoch}</c>.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterAscensionWin{TCharacter,TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder UnlockEpochAfterAscensionWin<TCharacter, TEpoch>(int ascensionLevel)
             where TCharacter : CharacterModel
@@ -1045,6 +1162,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.UnlockEpochAfterRunCount{TEpoch}" />.
+        ///     Queues <c>ModUnlockRegistry.UnlockEpochAfter跑局Count{TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder UnlockEpochAfterRunCount<TEpoch>(int requiredRuns, bool requireVictory = false)
             where TEpoch : EpochModel, new()
@@ -1054,6 +1172,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.UnlockEpochAfterEliteVictories{TCharacter,TEpoch}" />.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterEliteVictories{TCharacter,TEpoch}</c>.
+        ///     Queues <c>ModUnlockRegistry.UnlockEpochAfterEliteVictories{TCharacter,TEpoch}</c>.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterEliteVictories{TCharacter,TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder UnlockEpochAfterEliteVictories<TCharacter, TEpoch>(int requiredEliteWins = 15)
             where TCharacter : CharacterModel
@@ -1064,6 +1185,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.UnlockEpochAfterBossVictories{TCharacter,TEpoch}" />.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterBossVictories{TCharacter,TEpoch}</c>.
+        ///     Queues <c>ModUnlockRegistry.UnlockEpochAfterBossVictories{TCharacter,TEpoch}</c>.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterBossVictories{TCharacter,TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder UnlockEpochAfterBossVictories<TCharacter, TEpoch>(int requiredBossWins = 15)
             where TCharacter : CharacterModel
@@ -1074,6 +1198,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.UnlockEpochAfterAscensionOneWin{TCharacter,TEpoch}" />.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterAscensionOneWin{TCharacter,TEpoch}</c>.
+        ///     Queues <c>ModUnlockRegistry.UnlockEpochAfterAscensionOneWin{TCharacter,TEpoch}</c>.
+        ///     中文说明：Queues <c>ModUnlockRegistry.UnlockEpochAfterAscensionOneWin{TCharacter,TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder UnlockEpochAfterAscensionOneWin<TCharacter, TEpoch>()
             where TCharacter : CharacterModel
@@ -1084,6 +1211,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.RevealAscensionAfterEpoch{TCharacter,TEpoch}" />.
+        ///     中文说明：Queues <c>ModUnlockRegistry.RevealAscensionAfterEpoch{TCharacter,TEpoch}</c>.
+        ///     Queues <c>ModUnlockRegistry.RevealAscensionAfterEpoch{TCharacter,TEpoch}</c>.
+        ///     中文说明：Queues <c>ModUnlockRegistry.RevealAscensionAfterEpoch{TCharacter,TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder RevealAscensionAfterEpoch<TCharacter, TEpoch>()
             where TCharacter : CharacterModel
@@ -1094,6 +1224,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModUnlockRegistry.UnlockCharacterAfterRunAs{TCharacter,TEpoch}" />.
+        ///     Queues <c>ModUnlockRegistry.UnlockCharacterAfter跑局As{TCharacter,TEpoch}</c>.
         /// </summary>
         public ModContentPackBuilder UnlockCharacterAfterRunAs<TCharacter, TEpoch>()
             where TCharacter : CharacterModel
@@ -1104,6 +1235,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends a manifest <see cref="IContentRegistrationEntry" /> step.
+        ///     中文说明：Appends a manifest <c>IContentRegistrationEntry</c> step.
         /// </summary>
         public ModContentPackBuilder Entry(IContentRegistrationEntry entry)
         {
@@ -1113,6 +1245,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends each content registration entry in order.
+        ///     Appends each content 注册 entry in order.
         /// </summary>
         public ModContentPackBuilder Entries(IEnumerable<IContentRegistrationEntry> entries)
         {
@@ -1126,6 +1259,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends a typed <see cref="KeywordRegistrationEntry" /> registration step.
+        ///     Appends a typed <c>KeywordRegistrationEntry</c> 注册 step.
         /// </summary>
         public ModContentPackBuilder Keyword(KeywordRegistrationEntry entry)
         {
@@ -1135,6 +1269,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends each keyword registration entry in order.
+        ///     Appends each keyword 注册 entry in order.
         /// </summary>
         public ModContentPackBuilder Keywords(IEnumerable<KeywordRegistrationEntry> entries)
         {
@@ -1148,6 +1283,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModCardTagRegistry.RegisterOwned" /> for a local stem under this pack’s mod id.
+        ///     Queues <c>ModCardTagRegistry.RegisterOwned</c> 用于 a local stem under this pack’s mod id.
         /// </summary>
         public ModContentPackBuilder CardTagOwned(string localTagStem)
         {
@@ -1156,6 +1292,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends a <see cref="CardTagRegistrationEntry" /> registration step.
+        ///     Appends a <c>卡牌TagRegistrationEntry</c> 注册 step.
         /// </summary>
         public ModContentPackBuilder CardTag(CardTagRegistrationEntry entry)
         {
@@ -1165,6 +1302,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends each card-tag registration entry in order.
+        ///     Appends each 卡牌-tag 注册 entry in order.
         /// </summary>
         public ModContentPackBuilder CardTags(IEnumerable<CardTagRegistrationEntry> entries)
         {
@@ -1178,6 +1316,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModCardPileRegistry.RegisterOwned" /> for a local stem under this pack’s mod id.
+        ///     Queues <c>ModCardPile注册表.RegisterOwned</c> 用于 a local stem under this pack’s mod id.
         /// </summary>
         public ModContentPackBuilder CardPileOwned(string localPileStem, ModCardPileSpec? spec = null)
         {
@@ -1186,6 +1325,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends a <see cref="CardPileRegistrationEntry" /> registration step.
+        ///     Appends a <c>CardPileRegistrationEntry</c> 注册 step.
         /// </summary>
         public ModContentPackBuilder CardPile(CardPileRegistrationEntry entry)
         {
@@ -1195,6 +1335,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModCardPileRegistry.Register" /> for a raw global id.
+        ///     Queues <c>ModCardPile注册表.Register</c> 用于 a raw global id.
         /// </summary>
         public ModContentPackBuilder CardPile(string id, ModCardPileSpec spec)
         {
@@ -1203,6 +1344,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends each card-pile registration entry in order.
+        ///     Appends each 卡牌-pile 注册 entry in order.
         /// </summary>
         public ModContentPackBuilder CardPiles(IEnumerable<CardPileRegistrationEntry> entries)
         {
@@ -1216,6 +1358,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTopBarButtonRegistry.RegisterOwned" /> for a local stem under this pack’s mod id.
+        ///     Queues <c>ModTopBarButton注册表.RegisterOwned</c> 用于 a local stem under this pack’s mod id.
         /// </summary>
         public ModContentPackBuilder TopBarButtonOwned(string localButtonStem, ModTopBarButtonSpec spec)
         {
@@ -1224,6 +1367,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends a <see cref="TopBarButtonRegistrationEntry" /> registration step.
+        ///     Appends a <c>TopBarButtonRegistrationEntry</c> 注册 step.
         /// </summary>
         public ModContentPackBuilder TopBarButton(TopBarButtonRegistrationEntry entry)
         {
@@ -1233,6 +1377,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="ModTopBarButtonRegistry.Register" /> for a raw global id.
+        ///     Queues <c>ModTopBarButton注册表.Register</c> 用于 a raw global id.
         /// </summary>
         public ModContentPackBuilder TopBarButton(string id, ModTopBarButtonSpec spec)
         {
@@ -1241,6 +1386,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends each top-bar-button registration entry in order.
+        ///     Appends each top-bar-button 注册 entry in order.
         /// </summary>
         public ModContentPackBuilder TopBarButtons(IEnumerable<TopBarButtonRegistrationEntry> entries)
         {
@@ -1254,6 +1400,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers <see cref="ModContentRegistry" /> entries (character, cards, relics, powers, …).
+        ///     注册 <c>ModContentRegistry</c> entries (character, cards, relics, powers, …)。
         /// </summary>
         public ModContentPackBuilder ContentManifest(IEnumerable<IContentRegistrationEntry>? entries)
         {
@@ -1262,6 +1409,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers <see cref="ModKeywordRegistry" /> entries (separate from ModelDb content).
+        ///     注册 <c>ModKeywordRegistry</c> entries (separate from ModelDb content)。
         /// </summary>
         public ModContentPackBuilder KeywordManifest(IEnumerable<KeywordRegistrationEntry>? entries)
         {
@@ -1270,6 +1418,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers <see cref="ModCardTagRegistry" /> entries (custom <c>CardTag</c> ids separate from ModelDb).
+        ///     注册 <c>ModCardTagRegistry</c> entries (custom <c>CardTag</c> ids separate from ModelDb)。
         /// </summary>
         public ModContentPackBuilder CardTagManifest(IEnumerable<CardTagRegistrationEntry>? entries)
         {
@@ -1278,6 +1427,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers <see cref="ModCardPileRegistry" /> entries (custom <c>CardPile</c> ids separate from ModelDb).
+        ///     注册 <c>ModCardPileRegistry</c> entries (custom <c>CardPile</c> ids separate from ModelDb)。
         /// </summary>
         public ModContentPackBuilder CardPileManifest(IEnumerable<CardPileRegistrationEntry>? entries)
         {
@@ -1286,6 +1436,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers <see cref="ModTopBarButtonRegistry" /> entries.
+        ///     注册 <c>ModTopBarButtonRegistry</c> entries。
         /// </summary>
         public ModContentPackBuilder TopBarButtonManifest(IEnumerable<TopBarButtonRegistrationEntry>? entries)
         {
@@ -1294,6 +1445,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers <see cref="ModTimelineRegistry" /> / <see cref="ModUnlockRegistry" /> via
+        ///     Registers <c>ModTimeline注册表</c> / <c>ModUnlockRegistry</c> via
         ///     <see cref="IModContentPackEntry" /> (story–epoch bindings, unlock rules). Usually applied after content so
         ///     <c>RequireEpoch</c> can resolve character ids.
         /// </summary>
@@ -1304,14 +1456,17 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Convenience batch for optional content and keyword manifest enumerables.
+        ///     Convenience batch 用于 可选 content 和 keyword manifest enumerables.
         /// </summary>
         /// <remarks>
         ///     <see cref="IContentRegistrationEntry" /> may include
         ///     <see cref="ArchaicToothTranscendenceRegistrationEntry{TStarterCard,TAncientCard}" />,
         ///     <see cref="TouchOfOrobasRefinementRegistrationEntry{TStarterRelic,TUpgradedRelic}" />, and related Orobas
         ///     entries alongside cards/relics/etc. Keywords use a different registry; prefer
+        ///     entries alongside 卡牌s/Relics/etc. Keywords 使用 a different 注册表; prefer
         ///     <see cref="ContentManifest" /> / <see cref="KeywordManifest" /> / <see cref="PackManifest" /> when you want
         ///     that split to be explicit.
+        ///     中文说明：that split to be explicit.
         /// </remarks>
         public ModContentPackBuilder Manifest(
             IEnumerable<IContentRegistrationEntry>? contentEntries = null,
@@ -1328,6 +1483,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Convenience batch including optional <see cref="IModContentPackEntry" /> steps (timeline bindings, unlocks).
+        ///     Convenience batch including 可选 <c>IModContentPackEntry</c> steps (timeline bindings, unlocks).
         /// </summary>
         public ModContentPackBuilder Manifest(
             IEnumerable<IContentRegistrationEntry>? contentEntries,
@@ -1343,6 +1499,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends a <see cref="IModContentPackEntry" /> (timeline / unlock / other pack surface).
+        ///     中文说明：Appends a <c>IModContentPackEntry</c> (timeline / unlock / other pack surface).
         /// </summary>
         public ModContentPackBuilder PackEntry(IModContentPackEntry entry)
         {
@@ -1352,6 +1509,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends each <see cref="IModContentPackEntry" /> in order.
+        ///     中文说明：Appends each <c>IModContentPackEntry</c> in order.
         /// </summary>
         public ModContentPackBuilder PackEntries(IEnumerable<IModContentPackEntry>? entries)
         {
@@ -1366,7 +1524,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="RitsuLibFramework.RegisterArchaicToothTranscendenceMapping{TStarterCard,TAncientCard}" />
+        ///     Queues <c>RitsuLibFramework.RegisterArchaicToothTranscendenceMapping{TStarter卡牌,TAncient卡牌}</c>
         ///     using this pack’s <see cref="ModContentPackContext.ModId" />.
+        ///     中文说明：using this pack’s <c>ModContentPackContext.ModId</c>.
         /// </summary>
         public ModContentPackBuilder ArchaicToothTranscendence<TStarterCard, TAncientCard>()
             where TStarterCard : CardModel
@@ -1378,7 +1538,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues ArchaicTooth transcendence registration by starter card id and ancient card type, using this pack’s
+        ///     Queues ArchaicTooth transcendence 注册 通过 starter 卡牌 id 和 ancient 卡牌 type, using this pack’s
         ///     mod id.
+        ///     中文说明：mod id.
         /// </summary>
         public ModContentPackBuilder ArchaicToothTranscendence(ModelId starterCardId, Type ancientCardType)
         {
@@ -1392,7 +1554,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues <see cref="RitsuLibFramework.RegisterTouchOfOrobasRefinementMapping{TStarterRelic,TUpgradedRelic}" />
+        ///     Queues <c>RitsuLibFramework.RegisterTouchOfOrobasRefinementMapping{TStarter遗物,TUpgraded遗物}</c>
         ///     using this pack’s mod id.
+        ///     中文说明：using this pack’s mod id.
         /// </summary>
         public ModContentPackBuilder TouchOfOrobasRefinement<TStarterRelic, TUpgradedRelic>()
             where TStarterRelic : RelicModel
@@ -1404,7 +1568,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Queues TouchOfOrobas refinement registration by starter relic id and upgraded relic type, using this pack’s
+        ///     Queues TouchOfOrobas refinement 注册 通过 starter 遗物 id 和 upgraded 遗物 type, using this pack’s
         ///     mod id.
+        ///     中文说明：mod id.
         /// </summary>
         public ModContentPackBuilder TouchOfOrobasRefinement(ModelId starterRelicId, Type upgradedRelicType)
         {
@@ -1418,6 +1584,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Appends an arbitrary delegate executed during <see cref="Apply" />.
+        ///     Appends an arbitrary delegate executed 期间 <c>Apply</c>.
         /// </summary>
         public ModContentPackBuilder Custom(Action<ModContentPackContext> step)
         {
@@ -1426,6 +1593,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Materializes registries for the builder’s mod id without running queued steps.
+        ///     材质izes registries 用于 the builder’s mod id 带有out running queued steps.
         /// </summary>
         public ModContentPackContext BuildContext()
         {
@@ -1441,7 +1609,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Schedules all queued registration steps to apply during the framework discovery window and returns the
+        ///     Schedules all queued 注册 steps to apply 期间 the framework discovery window 和 返回 the
         ///     materialized context for this mod id.
+        ///     材质ized context 用于 this mod id.
         /// </summary>
         public ModContentPackContext Apply()
         {

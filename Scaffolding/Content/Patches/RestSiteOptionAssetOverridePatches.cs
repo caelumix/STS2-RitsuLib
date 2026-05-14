@@ -8,6 +8,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Patches <see cref="RestSiteOption.Icon" /> to load a custom texture when the option implements
+    ///     Patches <c>RestSiteOption.图标</c> to 加载 a 自定义 纹理 当 the option implements
     ///     <see cref="IModRestSiteOptionAssetOverrides" />.
     /// </summary>
     public class RestSiteOptionIconPatch : IPatchMethod
@@ -30,6 +31,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Loads the texture from <see cref="IModRestSiteOptionAssetOverrides.CustomIconPath" /> when present.
+        ///     加载 the texture from <c>IModRestSiteOptionAssetOverrides.CustomIconPath</c> when present。
         /// </summary>
         public static bool Prefix(RestSiteOption __instance, ref Texture2D __result)
             // ReSharper restore InconsistentNaming
@@ -44,7 +46,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
     /// <summary>
     ///     Patches <see cref="RestSiteOption.Title" /> to return a custom <see cref="LocString" /> when the option
+    ///     Patches <c>RestSiteOption.Title</c> to 返回 a 自定义 <c>LocString</c> 当 the option
     ///     implements <see cref="IModRestSiteOptionCustomTitle" />.
+    ///     implements <c>IModRestSiteOptionCustomTitle</c>.
     /// </summary>
     public class RestSiteOptionTitlePatch : IPatchMethod
     {
@@ -66,6 +70,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Returns <see cref="IModRestSiteOptionCustomTitle.CustomTitle" /> when non-null.
+        ///     返回 <c>IModRestSiteOptionCustomTitle.CustomTitle</c> when non-null。
         /// </summary>
         public static bool Prefix(RestSiteOption __instance, ref LocString __result)
             // ReSharper restore InconsistentNaming

@@ -2,6 +2,7 @@ namespace STS2RitsuLib.RuntimeInput
 {
     /// <summary>
     ///     Immutable snapshot describing one active runtime hotkey registration.
+    ///     Immutable snapshot describing one active runtime hotkey 注册.
     /// </summary>
     public sealed record RuntimeHotkeyRegistrationInfo(
         string CurrentBinding,
@@ -18,18 +19,21 @@ namespace STS2RitsuLib.RuntimeInput
     {
         /// <summary>
         ///     All currently active bindings for this hotkey, in display order.
+        ///     All currently active bindings 用于 this hotkey, in display order.
         /// </summary>
         public IReadOnlyList<string> CurrentBindings { get; init; } =
             string.IsNullOrWhiteSpace(CurrentBinding) ? [] : [CurrentBinding];
 
         /// <summary>
         ///     Per-binding modifier-only flags aligned with <see cref="CurrentBindings" />.
+        ///     Per-binding modifier-only flags aligned 带有 <c>CurrentBindings</c>.
         /// </summary>
         public IReadOnlyList<bool> BindingModifierOnlyStates { get; init; } = [IsModifierOnly];
     }
 
     /// <summary>
     ///     Detailed immutable snapshot describing one active runtime hotkey registration, including all bindings.
+    ///     Detailed immutable snapshot describing one active runtime hotkey 注册, including all bindings.
     /// </summary>
     public sealed record RuntimeHotkeyRegistrationDetails(
         IReadOnlyList<string> CurrentBindings,
@@ -46,16 +50,19 @@ namespace STS2RitsuLib.RuntimeInput
     {
         /// <summary>
         ///     First active binding, kept for compatibility with single-binding consumers.
+        ///     First active binding, kept 用于 compatibility 带有 single-binding consumers.
         /// </summary>
         public string CurrentBinding => CurrentBindings.FirstOrDefault() ?? string.Empty;
 
         /// <summary>
         ///     Whether the first active binding is modifier-only.
+        ///     表示是否 the first active binding is modifier-only。
         /// </summary>
         public bool IsModifierOnly => BindingModifierOnlyStates.FirstOrDefault();
 
         /// <summary>
         ///     Down-converts this detailed snapshot to the legacy single-binding view.
+        ///     中文说明：Down-converts this detailed snapshot to the legacy single-binding view.
         /// </summary>
         public RuntimeHotkeyRegistrationInfo ToRegistrationInfo()
         {

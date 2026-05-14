@@ -8,6 +8,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline.Patches
 {
     /// <summary>
     ///     Keeps dynamic hand-outline colors fresh by polling once per process frame while the holder is alive.
+    ///     Keeps dynamic hand-outline colors fresh 通过 polling once per process frame while the holder is alive.
     /// </summary>
     internal sealed class NHandCardHolderDynamicOutlineTickPatch : IPatchMethod
     {

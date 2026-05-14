@@ -6,8 +6,10 @@ namespace STS2RitsuLib.Timeline
 {
     /// <summary>
     ///     Central registration for <see cref="ModEpochTemplate" /> timeline placement: <see cref="EpochEra" /> column and
+    ///     Central 注册 用于 <c>ModEpochTemplate</c> timeline placement: <c>EpochEra</c> column and
     ///     <c>EraPosition</c> within that column. Vanilla <see cref="EpochModel" /> instances are pre-seeded so mod slots
     ///     cannot silently overlap base-game cells.
+    ///     中文说明：cannot silently overlap base-game cells.
     /// </summary>
     public static class ModTimelineLayoutRegistry
     {
@@ -15,11 +17,13 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Scan downward when placing a column strictly before an anchor era (horizontal / enum int order).
+        ///     Scan downward 当 placing a column strictly 之前 an anchor era (horizontal / enum int order).
         /// </summary>
         private const int MinEraIntScan = -100_000;
 
         /// <summary>
         ///     Scan upward when placing a column strictly after an anchor era.
+        ///     Scan upward 当 placing a column strictly 之后 an anchor era.
         /// </summary>
         private const int MaxEraIntScan = 100_000;
 
@@ -35,6 +39,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers an explicit slot. Throws if the cell is already used by vanilla or another mod registration.
+        ///     注册 an explicit slot. Throws if the cell is already used by vanilla or another mod registration。
         /// </summary>
         public static void RegisterTimelineSlot(Type epochType, EpochEra era, int eraPosition, string modId)
         {
@@ -66,7 +71,9 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers the lowest non-negative <c>EraPosition</c> in <paramref name="era" /> that is not occupied by
+        ///     中文说明：Registers the lowest non-negative <c>EraPosition</c> in <c>era</c> that is not occupied by
         ///     vanilla or prior mod registrations.
+        ///     原版 或 prior mod 注册s.
         /// </summary>
         public static void RegisterAutoTimelineSlot(Type epochType, EpochEra era, string modId)
         {
@@ -98,9 +105,12 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Places this epoch in the leftmost timeline column whose <see cref="EpochEra" /> integer is strictly less than
+        ///     中文说明：Places this epoch in the leftmost timeline column whose <c>EpochEra</c> integer is strictly less than
         ///     <paramref name="anchorEra" />, preferring <c>EraPosition == 0</c> (a dedicated “root” column), then any free
         ///     slot in that column. Matches vanilla <see cref="MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen" />
+        ///     slot in that column. Matches 原版 <c>MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen</c>
         ///     column ordering (smaller era int = further left).
+        ///     中文说明：column ordering (smaller era int = further left).
         /// </summary>
         public static void RegisterAutoTimelineSlotBeforeEraColumn(Type epochType, EpochEra anchorEra, string modId)
         {
@@ -119,6 +129,9 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Same as <see cref="RegisterAutoTimelineSlotBeforeEraColumn" /> but the anchor is the reference epoch’s
+        ///     中文说明：Same as <c>RegisterAutoTimelineSlotBeforeEraColumn</c> but the anchor is the reference epoch’s
+        ///     Same as <c>RegisterAutoTimelineSlotBeforeEraColumn</c> but the anchor is the reference epoch’s
+        ///     中文说明：Same as <c>RegisterAutoTimelineSlotBeforeEraColumn</c> but the anchor is the reference epoch’s
         ///     <see cref="EpochModel.Era" /> (its column).
         /// </summary>
         public static void RegisterAutoTimelineSlotBeforeEpochColumn(Type epochType, Type referenceEpochType,
@@ -145,6 +158,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Places this epoch in the rightmost practical column with era int strictly greater than
+        ///     Places this epoch in the rightmost practical column 带有 era int strictly greater than
         ///     <paramref name="anchorEra" /> (scanning upward from <c>anchor + 1</c>), preferring position 0.
         /// </summary>
         public static void RegisterAutoTimelineSlotAfterEraColumn(Type epochType, EpochEra anchorEra, string modId)
@@ -164,6 +178,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Anchor is <see cref="EpochModel.Era" /> of <paramref name="referenceEpochType" />.
+        ///     Anchor is <c>Epoch模型.Era</c> of <c>referenceEpochType</c>.
         /// </summary>
         public static void RegisterAutoTimelineSlotAfterEpochColumn(Type epochType, Type referenceEpochType,
             string modId)
@@ -189,6 +204,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Places this epoch into the same era column as <paramref name="anchorEra" />, using the first free position.
+        ///     中文说明：Places this epoch into the same era column as <c>anchorEra</c>, using the first free position.
         /// </summary>
         public static void RegisterAutoTimelineSlotInEraColumn(Type epochType, EpochEra anchorEra, string modId)
         {
@@ -197,7 +213,9 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Places this epoch into the same era column as <paramref name="referenceEpochType" />, using the first free
+        ///     中文说明：Places this epoch into the same era column as <c>referenceEpochType</c>, using the first free
         ///     position.
+        ///     中文说明：position.
         /// </summary>
         public static void RegisterAutoTimelineSlotInEpochColumn(Type epochType, Type referenceEpochType,
             string modId)
@@ -379,7 +397,9 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Claims the first free slot in <paramref name="era" />; if <paramref name="preferPositionZeroOnly" />, only
+        ///     Claims the first free slot in <c>era</c>; 如果 <c>preferPositionZeroOnly</c>, only
         ///     tries position 0.
+        ///     中文说明：tries position 0.
         /// </summary>
         private static bool TryClaimFirstFreeInColumnLocked(Type epochType, EpochEra era, bool preferPositionZeroOnly)
         {

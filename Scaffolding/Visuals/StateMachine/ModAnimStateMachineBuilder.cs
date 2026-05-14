@@ -10,8 +10,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
     ///     Fluent builder for <see cref="ModAnimStateMachine" />. Declare named states, per-state loop / next-state
     ///     / bounds metadata, per-state branches, and any-state transitions; finalise by calling one of the
     ///     <c>Build</c> overloads with an <see cref="IAnimationBackend" /> or a visuals root.
-    ///     <see cref="ModAnimStateMachine" /> 的流式 builder。可声明命名状态、逐状态循环 / next-state /
-    ///     bounds 元数据、逐状态分支和 any-state 转换；最后用 <see cref="IAnimationBackend" /> 或视觉根节点调用某个
+    ///     <c>ModAnimStateMachine</c> 的流式 builder。可声明命名状态、逐状态循环 / next-state /
+    ///     bounds 元数据、逐状态分支和 any-state 转换；最后用 <c>IAnimationBackend</c> 或视觉根节点调用某个
     ///     <c>Build</c> 重载完成构建。
     /// </summary>
     /// <remarks>
@@ -20,7 +20,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
     ///         by the chosen backend, <see cref="ModAnimStateMachine" /> will skip playback for that state and log a
     ///         warning on entry.
     ///         Builder 不会根据后端动画可用性校验 id：如果某个状态 id 无法由所选后端解析，
-    ///         <see cref="ModAnimStateMachine" /> 会在进入该状态时跳过播放并记录 warning。
+    ///         <c>ModAnimStateMachine</c> 会在进入该状态时跳过播放并记录 warning。
     ///     </para>
     /// </remarks>
     public sealed class ModAnimStateMachineBuilder
@@ -47,9 +47,9 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         ///     <paramref name="loop" />. Returns a scope object so the caller can chain
         ///     <see cref="StateScope.WithNext" />, <see cref="StateScope.WithBounds" />, and
         ///     <see cref="StateScope.AsInitial" />.
-        ///     声明一个使用后端动画 id <paramref name="id" /> 和循环提示 <paramref name="loop" /> 的状态。
-        ///     返回 scope 对象，方便调用方继续链式调用 <see cref="StateScope.WithNext" />、
-        ///     <see cref="StateScope.WithBounds" /> 和 <see cref="StateScope.AsInitial" />。
+        ///     声明一个使用后端动画 id <c>id</c> 和循环提示 <c>loop</c> 的状态。
+        ///     返回 scope 对象，方便调用方继续链式调用 <c>StateScope.WithNext</c>、
+        ///     <c>StateScope.WithBounds</c> 和 <c>StateScope.AsInitial</c>。
         /// </summary>
         public StateScope AddState(string id, bool loop = false)
         {
@@ -66,8 +66,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         /// <summary>
         ///     Adds a branch from state <paramref name="fromId" /> for trigger <paramref name="trigger" /> to state
         ///     <paramref name="toId" />. Optional <paramref name="condition" /> guards activation.
-        ///     为 trigger <paramref name="trigger" /> 添加从状态 <paramref name="fromId" /> 到状态
-        ///     <paramref name="toId" /> 的分支。可选 <paramref name="condition" /> 用作激活 guard。
+        ///     为 trigger <c>trigger</c> 添加从状态 <c>fromId</c> 到状态
+        ///     <c>toId</c> 的分支。可选 <c>condition</c> 用作激活 guard。
         /// </summary>
         public ModAnimStateMachineBuilder AddBranch(string fromId, string trigger, string toId,
             Func<bool>? condition = null)
@@ -82,8 +82,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         /// <summary>
         ///     Adds an any-state branch for trigger <paramref name="trigger" /> to <paramref name="toId" />
         ///     (guarded by optional <paramref name="condition" />).
-        ///     为 trigger <paramref name="trigger" /> 添加到 <paramref name="toId" /> 的 any-state 分支
-        ///     （可由可选 <paramref name="condition" /> 保护）。
+        ///     为 trigger <c>trigger</c> 添加到 <c>toId</c> 的 any-state 分支
+        ///     （可由可选 <c>condition</c> 保护）。
         /// </summary>
         public ModAnimStateMachineBuilder AddAnyState(string trigger, string toId, Func<bool>? condition = null)
         {
@@ -94,7 +94,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         /// <summary>
         ///     Materialises the graph against <paramref name="backend" /> and returns a started
         ///     <see cref="ModAnimStateMachine" />.
-        ///     针对 <paramref name="backend" /> 实体化状态图，并返回已启动的 <see cref="ModAnimStateMachine" />。
+        ///     针对 <c>backend</c> 实体化状态图，并返回已启动的 <c>ModAnimStateMachine</c>。
         /// </summary>
         public ModAnimStateMachine Build(IAnimationBackend backend)
         {
@@ -107,7 +107,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         /// <summary>
         ///     Convenience overload: wraps <paramref name="controller" /> in a <see cref="SpineAnimationBackend" />
         ///     and builds the machine.
-        ///     便捷重载：将 <paramref name="controller" /> 包装为 <see cref="SpineAnimationBackend" /> 并构建状态机。
+        ///     便捷重载：将 <c>controller</c> 包装为 <c>SpineAnimationBackend</c> 并构建状态机。
         /// </summary>
         public ModAnimStateMachine BuildSpine(MegaSprite controller)
         {
@@ -117,17 +117,17 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         /// <summary>
         ///     Convenience overload: composes cue / Spine / Godot animation player / animated-sprite backends
         ///     rooted at <paramref name="visualsRoot" /> and builds the machine.
-        ///     便捷重载：以 <paramref name="visualsRoot" /> 为根组合 cue / Spine / Godot animation player /
+        ///     便捷重载：以 <c>visualsRoot</c> 为根组合 cue / Spine / Godot animation player /
         ///     animated-sprite 后端，并构建状态机。
         /// </summary>
         /// <param name="visualsRoot">
         ///     Visuals root (typically an <see cref="MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals" />).
-        ///     视觉根节点（通常是 <see cref="MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals" />）。
+        ///     视觉根节点（通常是 <c>MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals</c>）。
         /// </param>
         /// <param name="character">
         ///     Optional character model; used when <paramref name="cueSet" /> is <see langword="null" />
         ///     to pull cue data from <c>IModCharacterAssetOverrides</c>.
-        ///     可选角色模型；当 <paramref name="cueSet" /> 为 <see langword="null" /> 时，用于从
+        ///     可选角色模型；当 <c>cueSet</c> 为 <see langword="null" /> 时，用于从
         ///     <c>IModCharacterAssetOverrides</c> 拉取 cue 数据。
         /// </param>
         /// <param name="cueSet">
@@ -194,7 +194,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
 
         /// <summary>
         ///     Fluent scope returned by <see cref="ModAnimStateMachineBuilder.AddState" /> for per-state metadata.
-        ///     <see cref="ModAnimStateMachineBuilder.AddState" /> 返回的流式 scope，用于设置逐状态元数据。
+        ///     <c>ModAnimStateMachineBuilder.AddState</c> 返回的流式 scope，用于设置逐状态元数据。
         /// </summary>
         public sealed class StateScope
         {
@@ -209,7 +209,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
 
             /// <summary>
             ///     Sets <see cref="ModAnimState.NextState" /> for the current state (by target id).
-            ///     为当前状态设置 <see cref="ModAnimState.NextState" />（通过目标 id）。
+            ///     为当前状态设置 <c>ModAnimState.NextState</c>（通过目标 id）。
             /// </summary>
             public StateScope WithNext(string nextStateId)
             {
@@ -220,8 +220,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
             /// <summary>
             ///     Sets <see cref="ModAnimState.BoundsContainer" /> tag emitted via
             ///     <see cref="ModAnimStateMachine.BoundsUpdated" /> on enter.
-            ///     设置进入状态时通过 <see cref="ModAnimStateMachine.BoundsUpdated" /> 发出的
-            ///     <see cref="ModAnimState.BoundsContainer" /> 标签。
+            ///     设置进入状态时通过 <c>ModAnimStateMachine.BoundsUpdated</c> 发出的
+            ///     <c>ModAnimState.BoundsContainer</c> 标签。
             /// </summary>
             public StateScope WithBounds(string boundsContainer)
             {

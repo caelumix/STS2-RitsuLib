@@ -5,12 +5,15 @@ namespace STS2RitsuLib.Utils.Json
 {
     /// <summary>
     ///     RFC 7386 JSON Merge Patch utilities for <see cref="JsonNode" /> DOM.
+    ///     RFC 7386 JSON Merge Patch utilities 用于 <c>JsonNode</c> DOM.
     /// </summary>
     public static class JsonMergePatch
     {
         /// <summary>
         ///     Applies an RFC 7386 merge patch to <paramref name="target" /> and returns the merged result.
+        ///     Applies an RFC 7386 merge patch to <c>target</c> 和 返回 the merged result.
         ///     When <paramref name="patch" /> is not an object, the result is the patch itself (replacement).
+        ///     当 <c>patch</c> is not an object, the result is the patch itself (replacement).
         /// </summary>
         public static JsonNode? Apply(JsonNode? target, JsonNode? patch)
         {
@@ -26,6 +29,7 @@ namespace STS2RitsuLib.Utils.Json
 
         /// <summary>
         ///     Applies an RFC 7386 merge patch to <paramref name="target" /> in-place.
+        ///     中文说明：Applies an RFC 7386 merge patch to <c>target</c> in-place.
         /// </summary>
         public static void ApplyInPlace(JsonObject target, JsonObject patch)
         {

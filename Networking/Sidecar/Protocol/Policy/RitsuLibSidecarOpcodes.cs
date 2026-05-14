@@ -5,7 +5,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Sidecar opcodes are 64-bit. Values <c>0</c> through <see cref="FixedProtocolOpcodeMaxInclusive" /> are
+    ///     中文说明：Sidecar opcodes are 64-bit. Values <c>0</c> through <c>FixedProtocolOpcodeMaxInclusive</c> are
     ///     reserved for framework and shared-library fixed protocols; <see cref="For" /> only yields values in
+    ///     reserved 用于 framework 和 shared-library fixed protocols; <c>For</c> only yields values in
     ///     <c>[<see cref="HashDerivedOpcodeMin" />, ulong.MaxValue]</c>.
     /// </summary>
     public static class RitsuLibSidecarOpcodes
@@ -14,11 +16,13 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Upper bound of the reserved range for fixed (non-hashed) framework / library opcodes.
+        ///     Upper bound of the reserved range 用于 fixed (non-hashed) framework / library opcodes.
         /// </summary>
         public const ulong FixedProtocolOpcodeMaxInclusive = 0xFFFF;
 
         /// <summary>
         ///     Lower bound of opcodes returned by <see cref="For" /> (above the reserved range).
+        ///     Lower bound of opcodes 返回ed 通过 <c>For</c> (above the reserved range).
         /// </summary>
         public const ulong HashDerivedOpcodeMin = FixedProtocolOpcodeMaxInclusive + 1;
 
@@ -26,9 +30,11 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Returns a stable opcode for a mod-owned message kind. Input is UTF-8 concatenation
+        ///     返回 a stable opcode 用于 a mod-owned message kind. Input is UTF-8 concatenation
         ///     <c>modId + U+0000 + messageKind</c>. The value is always at least
         ///     <see cref="HashDerivedOpcodeMin" />, so it never falls in the reserved block
         ///     <c>0</c>–<see cref="FixedProtocolOpcodeMaxInclusive" />. Change <paramref name="messageKind" /> when the
+        ///     payload contract changes.
         ///     payload contract changes.
         /// </summary>
         public static ulong For(string modId, string messageKind)

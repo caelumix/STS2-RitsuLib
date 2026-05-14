@@ -17,7 +17,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     Replaces <c>MoveCreaturesToDifferentLayerAndDisableUi</c> so game-over layout works for mod characters that
+    ///     Replaces <c>MoveCreaturesToDifferentLayerAndDisableUi</c> so game-over layout works 用于 mod characters that
     ///     use non-Spine or differently structured combat visuals.
+    ///     使用 non-Spine 或 differently structured combat visuals.
     /// </summary>
     public class CharacterGameOverScreenCompatibilityPatch : IPatchMethod
     {
@@ -46,7 +48,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Runs a safe reimplementation of creature relocation; returns <c>false</c> to skip the original method on
+        ///     runs a safe reimplementation of creature relocation; 返回 <c>false</c> to skip the original method on
         ///     success, or <c>true</c> to fall back if an unexpected error occurs.
+        ///     success, 或 <c>true</c> to fall back 如果 an unexpected error occurs.
         /// </summary>
         public static bool Prefix(NGameOverScreen __instance)
             // ReSharper restore InconsistentNaming

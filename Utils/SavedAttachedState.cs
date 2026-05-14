@@ -8,7 +8,9 @@ namespace STS2RitsuLib.Utils
 {
     /// <summary>
     ///     Stores mod-attached state on arbitrary reference objects and bridges it through <see cref="SavedProperties" />
+    ///     Stores mod-attached state on arbitrary reference objects 和 bridges it through <c>savedProperties</c>
     ///     for models that participate in vanilla save serialization.
+    ///     用于 Models that participate in 原版 保存 serialization.
     /// </summary>
     public sealed class SavedAttachedState<TKey, TValue> where TKey : class
     {
@@ -18,6 +20,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Creates persisted attached state using an optional parameterless factory for default values.
+        ///     创建 persisted attached state using an optional parameterless factory for default values。
         /// </summary>
         public SavedAttachedState(string name, Func<TValue>? defaultValueFactory = null, int order = 0)
             : this(name, _ => defaultValueFactory != null ? defaultValueFactory() : default!, order)
@@ -26,6 +29,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Creates persisted attached state using an optional per-key factory for default values.
+        ///     创建 persisted attached state using an optional per-key factory for default values。
         /// </summary>
         public SavedAttachedState(string name, Func<TKey, TValue>? valueFactory, int order = 0)
         {
@@ -40,6 +44,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Gets or sets the attached value for <paramref name="key" />.
+        ///     Gets 或 设置 the attached value 用于 <c>key</c>.
         /// </summary>
         public TValue this[TKey key]
         {
@@ -49,6 +54,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Determines whether an entry exists for <paramref name="key" /> (without creating one).
+        ///     Determines whether an entry exists 用于 <c>key</c> (带有out creating one).
         /// </summary>
         public bool ContainsKey(TKey key)
         {
@@ -58,8 +64,12 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Adds an entry for <paramref name="key" /> if absent.
+        ///     Adds an entry 用于 <c>key</c> 如果 absent.
         /// </summary>
-        /// <returns>True if the entry was added; false if <paramref name="key" /> already had a value.</returns>
+        /// <returns>
+        ///     True if the entry was added; false if <paramref name="key" /> already had a value.
+        ///     True 如果 the entry was added; false 如果 <c>key</c> already had a value.
+        /// </returns>
         public bool TryAdd(TKey key, TValue value)
         {
             ArgumentNullException.ThrowIfNull(key);
@@ -68,6 +78,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Adds an entry for <paramref name="key" />.
+        ///     Adds an entry 用于 <c>key</c>.
         /// </summary>
         /// <exception cref="ArgumentException">An entry for <paramref name="key" /> already exists.</exception>
         public void Add(TKey key, TValue value)
@@ -79,6 +90,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns the existing value for <paramref name="key" /> or adds <paramref name="value" /> and returns it.
+        ///     返回 the existing value for <c>key</c> or adds <c>value</c> and returns it。
         /// </summary>
         public TValue GetOrAdd(TKey key, TValue value)
         {
@@ -88,6 +100,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns the existing value for <paramref name="key" /> or creates one with <paramref name="valueFactory" />.
+        ///     返回 the existing value for <c>key</c> or creates one with <c>valueFactory</c>。
         /// </summary>
         public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
         {
@@ -98,6 +111,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns the existing value for <paramref name="key" /> or creates and stores one.
+        ///     返回 the existing value for <c>key</c> or creates and stores one。
         /// </summary>
         public TValue GetOrCreate(TKey key)
         {
@@ -107,6 +121,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns the value for <paramref name="key" /> if present; otherwise <c>default(TValue)</c>.
+        ///     返回 the value for <c>key</c> if present; otherwise <c>default(TValue)</c>。
         /// </summary>
         public TValue? GetValueOrDefault(TKey key)
         {
@@ -116,6 +131,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Returns the value for <paramref name="key" /> if present; otherwise <paramref name="defaultValue" />.
+        ///     返回 the value for <c>key</c> if present; otherwise <c>defaultValue</c>。
         /// </summary>
         public TValue GetValueOrDefault(TKey key, TValue defaultValue)
         {
@@ -125,6 +141,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Attempts to read the attached value without creating it.
+        ///     Attempts to read the attached value 带有out creating it.
         /// </summary>
         public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
@@ -142,6 +159,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Replaces the stored value for <paramref name="key" /> and returns <paramref name="value" />.
+        ///     Replaces the stored value 用于 <c>key</c> 和 返回 <c>value</c>.
         /// </summary>
         public TValue Set(TKey key, TValue value)
         {
@@ -153,6 +171,9 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Mutates the stored value in place using <paramref name="updater" />.
+        ///     中文说明：Mutates the stored value in place using <c>updater</c>.
+        ///     Mutates the stored value in place using <c>updater</c>.
+        ///     中文说明：Mutates the stored value in place using <c>updater</c>.
         /// </summary>
         public TValue Update(TKey key, Func<TValue, TValue> updater)
         {
@@ -163,8 +184,12 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Removes any value attached to <paramref name="key" />.
+        ///     中文说明：Removes any value attached to <c>key</c>.
         /// </summary>
-        /// <returns>True if an entry was removed.</returns>
+        /// <returns>
+        ///     True if an entry was removed.
+        ///     True 如果 an entry was removed.
+        /// </returns>
         public bool Remove(TKey key)
         {
             ArgumentNullException.ThrowIfNull(key);
@@ -173,8 +198,12 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Removes the value attached to <paramref name="key" /> if present.
+        ///     Removes the value attached to <c>key</c> 如果 present.
         /// </summary>
-        /// <returns>True if an entry was removed.</returns>
+        /// <returns>
+        ///     True if an entry was removed.
+        ///     True 如果 an entry was removed.
+        /// </returns>
         public bool TryRemove(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
             ArgumentNullException.ThrowIfNull(key);
@@ -198,6 +227,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Removes all in-memory entries from the table (does not unregister the saved field or alter disk data).
+        ///     Removes all in-memory entries 从 the table (does not unregister the saved field 或 alter disk data).
         /// </summary>
         public void Clear()
         {

@@ -7,7 +7,9 @@ namespace STS2RitsuLib.Compat
 {
     /// <summary>
     ///     Applies skeleton overrides whether visuals expose legacy <c>Body</c> or newer <c>SpineBody</c>
+    ///     Applies skeleton overrides whether visuals expose legacy <c>Body</c> 或 newer <c>SpineBody</c>
     ///     (<see cref="MegaSprite" />).
+    ///     中文说明：(<c>MegaSprite</c>).
     /// </summary>
     internal static class NCreatureVisualsSpineCompat
     {

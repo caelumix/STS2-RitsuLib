@@ -4,7 +4,9 @@ namespace STS2RitsuLib.Audio.Internal
 {
     /// <summary>
     ///     Mirrors <c>audio_manager_proxy.gd</c> bookkeeping for <c>event:/…</c> paths that exist only via guids.txt + mod
+    ///     Mirrors <c>audio_manager_proxy.gd</c> bookkeeping 用于 <c>事件:/…</c> 路径 that exist only via guids.txt + mod
     ///     banks (no strings.bank path table).
+    ///     banks (no strings.bank 路径 table).
     /// </summary>
     internal static class GuidMappedNaudioStudioProxy
     {

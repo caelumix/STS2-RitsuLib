@@ -18,9 +18,13 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Fixes <see cref="NControllerCardPlay.Start" /> for <see cref="TargetType.AnyPlayer" /> in multiplayer.
+    ///     Fixes <c>NControllerCardPlay.Start</c> 用于 <c>TargetType.AnyPlayer</c> in multiplayer.
     ///     Vanilla routes AnyPlayer to <c>MultiCreatureTargeting</c> (confirm-to-play, no arrow).
+    ///     原版 routes AnyPlayer to <c>MultiCreatureTargeting</c> (confirm-to-play, no arrow).
     ///     This patch routes it to a custom single-creature targeting flow with the correct
+    ///     This patch routes it to a 自定义 single-creature targeting flow 带有 the correct
     ///     candidate list (all living players including self).
+    ///     中文说明：candidate list (all living players including self).
     /// </summary>
     internal sealed class NControllerCardPlayStartAnyPlayerPatch : IPatchMethod
     {
@@ -99,9 +103,12 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
     /// <summary>
     ///     Fixes <see cref="NControllerCardPlay" />'s private <c>SingleCreatureTargeting</c> for
+    ///     Fixes <c>NControllerCardPlay</c>'s private <c>SingleCreatureTargeting</c> 用于
     ///     <see cref="TargetType.AnyPlayer" />. Vanilla's switch only handles AnyEnemy and AnyAlly,
     ///     leaving the candidate list empty for AnyPlayer (immediately cancels).
+    ///     leaving the candidate list empty 用于 AnyPlayer (immediately cancels).
     ///     This patch provides the correct list: all living player creatures.
+    ///     中文说明：This patch provides the correct list: all living player creatures.
     /// </summary>
     internal sealed class NControllerCardPlaySingleTargetingAnyPlayerPatch : IPatchMethod
     {

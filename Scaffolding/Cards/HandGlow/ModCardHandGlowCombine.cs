@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandGlow
 {
     /// <summary>
     ///     Combinators for <see cref="ModCardHandGlowRules" /> predicates (<c>Func&lt;CardModel, bool&gt;</c>).
-    ///     <see cref="ModCardHandGlowRules" /> 谓词（<c>Func&lt;CardModel, bool&gt;</c>）的组合器。
+    ///     <c>ModCardHandGlowRules</c> 谓词（<c>Func&lt;CardModel, bool&gt;</c>）的组合器。
     /// </summary>
     public static class ModCardHandGlowCombine
     {

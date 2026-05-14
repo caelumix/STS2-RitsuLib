@@ -5,7 +5,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     External override registry for card frame/banner materials.
+    ///     External override 注册表 用于 卡牌 frame/banner 材质s.
     ///     Intended for models that cannot implement RitsuLib interfaces directly (for example, vanilla cards).
+    ///     Intended 用于 Models that cannot implement RitsuLib interfaces directly (用于 example, 原版 卡牌s).
     /// </summary>
     public static class ExternalCardMaterialOverrideRegistry
     {
@@ -22,6 +24,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces a frame material provider.
+        ///     注册 or replaces a frame material provider。
         /// </summary>
         public static void RegisterFrameProvider(string key, Func<CardModel, Material?> provider)
         {
@@ -37,6 +40,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces a banner material provider.
+        ///     注册 or replaces a banner material provider。
         /// </summary>
         public static void RegisterBannerProvider(string key, Func<CardModel, Material?> provider)
         {
@@ -52,6 +56,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Removes a frame material provider by key.
+        ///     Removes a frame 材质 provider 通过 key.
         /// </summary>
         public static bool UnregisterFrameProvider(string key)
         {
@@ -69,6 +74,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Removes a banner material provider by key.
+        ///     Removes a banner 材质 provider 通过 key.
         /// </summary>
         public static bool UnregisterBannerProvider(string key)
         {
@@ -86,6 +92,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Registers or replaces a pool-frame material provider.
+        ///     注册 or replaces a pool-frame material provider。
         /// </summary>
         public static void RegisterPoolFrameProvider(string key, Func<CardPoolModel, Material?> provider)
         {
@@ -101,6 +108,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Removes a pool-frame material provider by key.
+        ///     Removes a pool-frame 材质 provider 通过 key.
         /// </summary>
         public static bool UnregisterPoolFrameProvider(string key)
         {
@@ -118,6 +126,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Clears all frame and banner providers.
+        ///     Clears all frame 和 banner providers.
         /// </summary>
         public static void Clear()
         {

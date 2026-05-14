@@ -78,6 +78,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Maintains selection-policy scope for vanilla character-select flows.
+    ///     Maintains selection-policy scope 用于 原版 character-select flows.
     /// </summary>
     public class CharacterVanillaSelectionPolicyPatches : IPatchMethod
     {
@@ -106,6 +107,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Enters selection scope for character-list consumers.
+        ///     Enters selection scope 用于 character-list consumers.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Prefix(MethodBase __originalMethod)
@@ -115,6 +117,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Ensures scope cleanup even when target method throws.
+        ///     Ensures scope cleanup even 当 target method throws.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Finalizer(MethodBase __originalMethod)
@@ -125,6 +128,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Applies scoped selection policy to <see cref="ModelDb.AllCharacters" />.
+    ///     中文说明：Applies scoped selection policy to <c>ModelDb.AllCharacters</c>.
+    ///     Applies scoped selection policy to <c>ModelDb.AllCharacters</c>.
+    ///     中文说明：Applies scoped selection policy to <c>ModelDb.AllCharacters</c>.
     /// </summary>
     public class CharacterVanillaSelectionPolicyAllCharactersPatch : IPatchMethod
     {
@@ -145,6 +151,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Filters getter result according to current selection scope.
+        ///     过滤 getter result according to current selection scope.
         /// </summary>
         [HarmonyAfter(Const.BaseLibHarmonyId, Const.FrameworkContentRegistryHarmonyId)]
         [HarmonyPriority(Priority.Last)]

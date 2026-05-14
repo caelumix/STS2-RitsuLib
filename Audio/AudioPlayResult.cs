@@ -2,6 +2,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Structured outcome of a playback request.
+    ///     中文说明：Structured outcome of a playback request.
     /// </summary>
     public sealed class AudioPlayResult
     {
@@ -14,26 +15,31 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Playback outcome category.
+        ///     中文说明：Playback outcome category.
         /// </summary>
         public AudioPlayStatus Status { get; }
 
         /// <summary>
         ///     Handle created for the request when one exists.
+        ///     Handle created 用于 the request 当 one exists.
         /// </summary>
         public IAudioHandle? Handle { get; }
 
         /// <summary>
         ///     Optional diagnostic message.
+        ///     可选 diagnostic message.
         /// </summary>
         public string? Message { get; }
 
         /// <summary>
         ///     True when playback started successfully.
+        ///     当 playback started successfully 时为 true。
         /// </summary>
         public bool Succeeded => Status == AudioPlayStatus.Started;
 
         /// <summary>
         ///     Creates a successful result.
+        ///     创建 a successful result。
         /// </summary>
         public static AudioPlayResult Started(IAudioHandle? handle = null, string? message = null)
         {
@@ -42,6 +48,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Creates a failed result.
+        ///     创建 a failed result。
         /// </summary>
         public static AudioPlayResult Fail(AudioPlayStatus status, string? message = null)
         {

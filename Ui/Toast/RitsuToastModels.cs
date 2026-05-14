@@ -4,93 +4,113 @@ namespace STS2RitsuLib.Ui.Toast
 {
     /// <summary>
     ///     Semantic toast category used for default styling.
+    ///     Semantic toast category used 用于 default styling.
     /// </summary>
     public enum RitsuToastLevel
     {
         /// <summary>
         ///     Informational message.
+        ///     中文说明：Informational message.
+        ///     Informational message.
+        ///     中文说明：Informational message.
         /// </summary>
         Info,
 
         /// <summary>
         ///     Warning message.
+        ///     中文说明：Warning message.
         /// </summary>
         Warning,
 
         /// <summary>
         ///     Error message.
+        ///     中文说明：Error message.
         /// </summary>
         Error,
     }
 
     /// <summary>
     ///     Built-in toast enter/exit animation presets.
+    ///     Built-in toast enter/exit animation pre设置.
     /// </summary>
     public enum RitsuToastAnimationPreset
     {
         /// <summary>
         ///     Fade only.
+        ///     中文说明：Fade only.
         /// </summary>
         Fade,
 
         /// <summary>
         ///     Fade combined with directional slide.
+        ///     Fade combined 带有 directional slide.
         /// </summary>
         FadeSlide,
 
         /// <summary>
         ///     Fade combined with scale.
+        ///     Fade combined 带有 scale.
         /// </summary>
         FadeScale,
     }
 
     /// <summary>
     ///     Toast anchor point on a 3x3 screen grid.
+    ///     中文说明：Toast anchor point on a 3x3 screen grid.
     /// </summary>
     public enum RitsuToastAnchor
     {
         /// <summary>
         ///     Top-left corner.
+        ///     中文说明：Top-left corner.
         /// </summary>
         TopLeft,
 
         /// <summary>
         ///     Top-center anchor.
+        ///     中文说明：Top-center anchor.
         /// </summary>
         TopCenter,
 
         /// <summary>
         ///     Top-right corner.
+        ///     中文说明：Top-right corner.
         /// </summary>
         TopRight,
 
         /// <summary>
         ///     Middle-left anchor.
+        ///     中文说明：Middle-left anchor.
         /// </summary>
         MiddleLeft,
 
         /// <summary>
         ///     Screen center.
+        ///     中文说明：Screen center.
         /// </summary>
         MiddleCenter,
 
         /// <summary>
         ///     Middle-right anchor.
+        ///     中文说明：Middle-right anchor.
         /// </summary>
         MiddleRight,
 
         /// <summary>
         ///     Bottom-left corner.
+        ///     中文说明：Bottom-left corner.
         /// </summary>
         BottomLeft,
 
         /// <summary>
         ///     Bottom-center anchor.
+        ///     中文说明：Bottom-center anchor.
         /// </summary>
         BottomCenter,
 
         /// <summary>
         ///     Bottom-right corner.
+        ///     中文说明：Bottom-right corner.
         /// </summary>
         BottomRight,
     }
@@ -162,11 +182,13 @@ namespace STS2RitsuLib.Ui.Toast
 
     /// <summary>
     ///     Toast payload used by <see cref="RitsuToastService.Show" />.
+    ///     Toast payload used 通过 <c>RitsuToastService.Show</c>.
     /// </summary>
     public sealed record RitsuToastRequest
     {
         /// <summary>
         ///     Creates a toast request.
+        ///     创建 a toast request。
         /// </summary>
         public RitsuToastRequest(string body, string? title = null, Texture2D? image = null,
             RitsuToastLevel level = RitsuToastLevel.Info, double? durationSeconds = null, Action? onClick = null,
@@ -183,36 +205,43 @@ namespace STS2RitsuLib.Ui.Toast
 
         /// <summary>
         ///     Body text rendered in the toast.
+        ///     中文说明：Body text rendered in the toast.
         /// </summary>
         public string Body { get; init; }
 
         /// <summary>
         ///     Optional title shown above the body.
+        ///     可选 title shown above the body.
         /// </summary>
         public string? Title { get; init; }
 
         /// <summary>
         ///     Optional image shown on the leading side.
+        ///     可选 image shown on the leading side.
         /// </summary>
         public Texture2D? Image { get; init; }
 
         /// <summary>
         ///     Semantic level used for default visuals.
+        ///     Semantic level used 用于 default visuals.
         /// </summary>
         public RitsuToastLevel Level { get; init; }
 
         /// <summary>
         ///     Optional per-toast duration override in seconds.
+        ///     可选 per-toast duration override in seconds.
         /// </summary>
         public double? DurationSeconds { get; init; }
 
         /// <summary>
         ///     Optional click callback for the toast body.
+        ///     可选 click callback 用于 the toast body.
         /// </summary>
         public Action? OnClick { get; init; }
 
         /// <summary>
         ///     Optional animation override for this request.
+        ///     可选 animation override 用于 this request.
         /// </summary>
         public RitsuToastAnimationPreset? AnimationOverride { get; init; }
 
@@ -220,6 +249,7 @@ namespace STS2RitsuLib.Ui.Toast
 
         /// <summary>
         ///     Creates an informational toast payload.
+        ///     创建 an informational toast payload。
         /// </summary>
         public static RitsuToastRequest Info(string body, string? title = null)
         {
@@ -228,6 +258,7 @@ namespace STS2RitsuLib.Ui.Toast
 
         /// <summary>
         ///     Creates a warning toast payload.
+        ///     创建 a warning toast payload。
         /// </summary>
         public static RitsuToastRequest Warning(string body, string? title = null)
         {
@@ -236,6 +267,7 @@ namespace STS2RitsuLib.Ui.Toast
 
         /// <summary>
         ///     Creates an error toast payload.
+        ///     创建 an error toast payload。
         /// </summary>
         public static RitsuToastRequest Error(string body, string? title = null)
         {

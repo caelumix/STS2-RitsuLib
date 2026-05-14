@@ -9,6 +9,8 @@ namespace STS2RitsuLib.CardPiles.Patches
     /// <summary>
     ///     Overrides the source/start position for shuffle fly visuals when the source pile is a mod pile and
     ///     that pile registered a <see cref="ModCardPileSpec.FlightStartPositionResolver" />.
+    ///     当 source pile 是 mod pile 且该 pile 注册了
+    ///     <c>ModCardPileSpec.FlightStartPositionResolver</c> 时，覆盖 shuffle fly visual 的 source/start 位置。
     /// </summary>
     public sealed class ModCardPileShuffleVfxStartPositionPatch : IPatchMethod
     {
@@ -35,6 +37,8 @@ namespace STS2RitsuLib.CardPiles.Patches
         /// <summary>
         ///     Rewrites the freshly created shuffle-vfx start position when <paramref name="startPile" /> is a
         ///     mod pile and it provided a custom start resolver.
+        ///     当 <c>startPile</c> 是 mod pile 且提供了自定义 start resolver 时，
+        ///     重写刚创建的 shuffle-vfx start position。
         /// </summary>
         public static void Postfix(CardPile startPile, CardPile targetPile, ref NCardFlyShuffleVfx? __result)
         {

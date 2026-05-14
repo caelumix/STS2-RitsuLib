@@ -11,15 +11,20 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     Routes <see cref="NCreature.SetAnimationTrigger" /> into a <see cref="ModAnimStateMachine" /> when the
+    ///     Routes <c>NCreature.设置AnimationTrigger</c> into a <c>ModAnimStateMachine</c> 当 the
     ///     creature's model opts in via <see cref="IModCreatureCombatAnimationStateMachineFactory" /> (or the legacy
+    ///     creature's 模型 opts in via <c>IModCreatureCombatAnimationStateMachineFactory</c> (or the legacy
     ///     <see cref="IModNonSpineAnimationStateMachineFactory" />), including Spine-backed visuals when the factory
     ///     returns a non-null machine (for example via <see cref="ModAnimStateMachineBuilder.BuildSpine" />). When no
+    ///     返回 a non-null machine (用于 example via <c>ModAnimStateMachineBuilder.BuildSpine</c>). 当 no
     ///     state machine is registered and the creature has no Spine animator, falls back to
+    ///     state machine is 已注册 和 the creature has no Spine animator, falls back to
     ///     <see cref="ModCreatureVisualPlayback.TryPlayFromCreatureAnimatorTrigger" />.
     /// </summary>
     /// <remarks>
     ///     <para>
     ///         State machines are cached per visuals root via a
+    ///         中文说明：State machines are cached per visuals root via a
     ///         <see cref="ConditionalWeakTable{TKey,TValue}" /> so factories run at most once per combat lifetime.
     ///     </para>
     /// </remarks>
@@ -46,7 +51,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Returns the cached combat <see cref="ModAnimStateMachine" /> for <paramref name="creature" /> when the
+        ///     返回 the cached combat <c>ModAnimStateMachine</c> 用于 <c>creature</c> 当 the
         ///     owning model's factory produced one; otherwise <see langword="null" />.
+        ///     owning 模型's factory produced one; otherwise <see langword="null" />.
         /// </summary>
         internal static ModAnimStateMachine? TryGetCombatAnimationStateMachine(NCreature creature)
         {
@@ -66,6 +73,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Returns <see langword="false" /> when the trigger was consumed (skip vanilla
+        ///     返回 <see langword="false" /> 当 the trigger was consumed (skip 原版
         ///     <see cref="NCreature.SetAnimationTrigger" /> body).
         /// </summary>
         public static bool Prefix(NCreature __instance, string trigger)

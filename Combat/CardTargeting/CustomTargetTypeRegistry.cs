@@ -23,7 +23,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Returns whether <paramref name="type" /> belongs to any registered custom target category.
-        ///     返回 <paramref name="type" /> 是否属于任一已注册的自定义目标类别。
+        ///     返回 <c>type</c> 是否属于任一已注册的自定义目标类别。
         /// </summary>
         internal static bool IsRitsuCustom(TargetType type)
         {
@@ -32,7 +32,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Returns whether <paramref name="type" /> is registered as a custom single-target type.
-        ///     返回 <paramref name="type" /> 是否被注册为自定义单体目标类型。
+        ///     返回 <c>type</c> 是否被注册为自定义单体目标类型。
         /// </summary>
         internal static bool IsCustomSingleTargetType(TargetType type)
         {
@@ -41,7 +41,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Returns whether <paramref name="type" /> is registered as a custom multi-target type.
-        ///     返回 <paramref name="type" /> 是否被注册为自定义群体目标类型。
+        ///     返回 <c>type</c> 是否被注册为自定义群体目标类型。
         /// </summary>
         internal static bool IsCustomMultiTargetType(TargetType type)
         {
@@ -148,7 +148,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         /// <summary>
         ///     Checks whether <paramref name="target" /> is at the lowest/highest alive enemy HP.
-        ///     检查 <paramref name="target" /> 是否处于存活敌人的最低/最高生命值档位。
+        ///     检查 <c>target</c> 是否处于存活敌人的最低/最高生命值档位。
         /// </summary>
         private static bool IsEnemyHpExtremum(Creature target, bool lowest)
         {

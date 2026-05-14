@@ -5,6 +5,7 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Single-line string entry backed by a <see cref="LineEdit" />.
+    ///     Single-line string entry backed 通过 a <c>LineEdit</c>.
     /// </summary>
     public sealed partial class ModSettingsStringLineControl : HBoxContainer
     {
@@ -18,11 +19,24 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a single-line string editor.
+        ///     创建 a single-line string editor。
         /// </summary>
-        /// <param name="initialValue">The initial text value.</param>
-        /// <param name="placeholder">Placeholder text shown when the field is empty.</param>
-        /// <param name="maxLength">Optional maximum text length.</param>
-        /// <param name="onChanged">Callback invoked after the committed value changes.</param>
+        /// <param name="initialValue">
+        ///     The initial text value.
+        ///     该 initial text value。
+        /// </param>
+        /// <param name="placeholder">
+        ///     Placeholder text shown when the field is empty.
+        ///     Placeholder text shown 当 the field is empty.
+        /// </param>
+        /// <param name="maxLength">
+        ///     Optional maximum text length.
+        ///     可选 maximum text length.
+        /// </param>
+        /// <param name="onChanged">
+        ///     Callback invoked after the committed value changes.
+        ///     Callback invoked 之后 the committed value changes.
+        /// </param>
         public ModSettingsStringLineControl(string? initialValue, string? placeholder, int? maxLength,
             Action<string> onChanged)
             : this(initialValue, placeholder, maxLength, onChanged, null)
@@ -31,14 +45,29 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a single-line string editor with optional validation chrome (e.g. red border when the predicate
+        ///     创建 a single-line string editor 带有 可选 有效ation chrome (e.g. red border 当 the predicate
         ///     returns <see langword="false" />).
+        ///     返回 <see langword="false" />)。
         /// </summary>
-        /// <param name="initialValue">The initial text value.</param>
-        /// <param name="placeholder">Placeholder text shown when the field is empty.</param>
-        /// <param name="maxLength">Optional maximum text length.</param>
-        /// <param name="onChanged">Callback invoked after the committed value changes.</param>
+        /// <param name="initialValue">
+        ///     The initial text value.
+        ///     该 initial text value。
+        /// </param>
+        /// <param name="placeholder">
+        ///     Placeholder text shown when the field is empty.
+        ///     Placeholder text shown 当 the field is empty.
+        /// </param>
+        /// <param name="maxLength">
+        ///     Optional maximum text length.
+        ///     可选 maximum text length.
+        /// </param>
+        /// <param name="onChanged">
+        ///     Callback invoked after the committed value changes.
+        ///     Callback invoked 之后 the committed value changes.
+        /// </param>
         /// <param name="validationVisual">
         ///     When non-null, invoked for the current text to choose normal vs. error styling; commits are not blocked.
+        ///     当 non-null, invoked 用于 the current text to choose normal vs. error styling; commits are not blocked.
         /// </param>
         public ModSettingsStringLineControl(string? initialValue, string? placeholder, int? maxLength,
             Action<string> onChanged, Func<string, bool>? validationVisual)
@@ -87,6 +116,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates the string editor for Godot scene instantiation.
+        ///     创建 the string editor for Godot scene instantiation。
         /// </summary>
         public ModSettingsStringLineControl()
         {
@@ -94,13 +124,18 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Inner <see cref="LineEdit" />; null when instantiated via parameterless constructor (e.g. Godot tooling).
+        ///     Inner <c>LineEdit</c>; null 当 instantiated via parameterless constructor (e.g. Godot tooling).
         /// </summary>
         public LineEdit? Editor { get; private set; }
 
         /// <summary>
         ///     Updates the displayed value without recreating the control.
+        ///     更新 the displayed value 带有out recreating the control.
         /// </summary>
-        /// <param name="value">The value to display.</param>
+        /// <param name="value">
+        ///     The value to display.
+        ///     该 value to display。
+        /// </param>
         public void SetValue(string? value)
         {
             if (Editor == null)
@@ -209,6 +244,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Multiline string entry backed by a <see cref="TextEdit" />.
+    ///     Multiline string entry backed 通过 a <c>TextEdit</c>.
     /// </summary>
     public sealed partial class ModSettingsStringMultilineControl : HBoxContainer
     {
@@ -219,11 +255,24 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a multiline string editor.
+        ///     创建 a multiline string editor。
         /// </summary>
-        /// <param name="initialValue">The initial text value.</param>
-        /// <param name="placeholder">Placeholder text shown when the field is empty.</param>
-        /// <param name="maxLength">Optional maximum text length.</param>
-        /// <param name="onChanged">Callback invoked after the committed value changes.</param>
+        /// <param name="initialValue">
+        ///     The initial text value.
+        ///     该 initial text value。
+        /// </param>
+        /// <param name="placeholder">
+        ///     Placeholder text shown when the field is empty.
+        ///     Placeholder text shown 当 the field is empty.
+        /// </param>
+        /// <param name="maxLength">
+        ///     Optional maximum text length.
+        ///     可选 maximum text length.
+        /// </param>
+        /// <param name="onChanged">
+        ///     Callback invoked after the committed value changes.
+        ///     Callback invoked 之后 the committed value changes.
+        /// </param>
         public ModSettingsStringMultilineControl(string? initialValue, string? placeholder, int? maxLength,
             Action<string> onChanged)
         {
@@ -264,6 +313,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates the multiline editor for Godot scene instantiation.
+        ///     创建 the multiline editor for Godot scene instantiation。
         /// </summary>
         public ModSettingsStringMultilineControl()
         {
@@ -271,13 +321,18 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Inner <see cref="TextEdit" />; null when instantiated via parameterless constructor (e.g. Godot tooling).
+        ///     Inner <c>TextEdit</c>; null 当 instantiated via parameterless constructor (e.g. Godot tooling).
         /// </summary>
         public TextEdit? Editor { get; private set; }
 
         /// <summary>
         ///     Updates the displayed value without recreating the control.
+        ///     更新 the displayed value 带有out recreating the control.
         /// </summary>
-        /// <param name="value">The value to display.</param>
+        /// <param name="value">
+        ///     The value to display.
+        ///     该 value to display。
+        /// </param>
         public void SetValue(string? value)
         {
             if (Editor == null)

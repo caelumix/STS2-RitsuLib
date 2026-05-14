@@ -5,11 +5,13 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Factory methods for <see cref="IModSettingsValueBinding{TValue}" /> and related wrappers.
+    ///     Factory methods 用于 <c>IModSettingsValueBinding{TValue}</c> 和 related wrappers.
     /// </summary>
     public static class ModSettingsBindings
     {
         /// <summary>
         ///     Creates a binding against <typeparamref name="TModel" /> with an explicit <see cref="SaveScope" />.
+        ///     创建 a binding against <c>TModel</c> with an explicit <c>SaveScope</c>。
         /// </summary>
         public static ModSettingsValueBinding<TModel, TValue> Create<TModel, TValue>(
             string modId,
@@ -24,6 +26,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Shorthand for <see cref="SaveScope.Global" />.
+        ///     Shorthand 用于 <c>保存Scope.Global</c>.
         /// </summary>
         public static ModSettingsValueBinding<TModel, TValue> Global<TModel, TValue>(
             string modId,
@@ -37,6 +40,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Shorthand for <see cref="SaveScope.Profile" />.
+        ///     Shorthand 用于 <c>保存Scope.档案</c>.
         /// </summary>
         public static ModSettingsValueBinding<TModel, TValue> Profile<TModel, TValue>(
             string modId,
@@ -50,8 +54,10 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Binds to per-run JSON under the framework profile tree (<c>run_sidecar/v1/{fingerprintStem}/</c> under
+        ///     Binds to per-跑局 JSON under the framework 档案 tree (<c>跑局_sidecar/v1/{fingerprintStem}/</c> under
         ///     <see cref="Utils.Persistence.ProfileManager" /> for <see cref="Const.ModId" />), one file per consumer
         ///     mod in that folder, keyed by the vanilla run fingerprint. Client-local only; does not modify
+        ///     mod in that folder, keyed 通过 the 原版 跑局 fingerprint. Client-local only; does not modify
         ///     <see cref="MegaCrit.Sts2.Core.Saves.SerializableRun" /> network payloads.
         /// </summary>
         public static ModSettingsRunSidecarValueBinding<TModel, TValue> RunSidecar<TModel, TValue>(
@@ -66,6 +72,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Non-persisted binding for previews and debug UI.
+        ///     Non-persisted binding 用于 previews 和 debug UI.
         /// </summary>
         public static InMemoryModSettingsValueBinding<TValue> InMemory<TValue>(
             string modId,
@@ -77,7 +84,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Value binding backed by caller-supplied read/write/save delegates (external persistence, legacy configs,
+        ///     Value binding backed 通过 caller-supplied read/write/保存 delegates (external persistence, legacy configs,
         ///     etc.). Uses <see cref="SaveScope.Global" /> by default.
+        ///     etc.). 使用 <c>保存Scope.Global</c> 通过 default.
         /// </summary>
         public static ModSettingsCallbackValueBinding<TValue> Callback<TValue>(
             string modId,
@@ -98,6 +107,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Attaches a structured adapter for clipboard / JSON round-trip.
+        ///     Attaches a structured adapter 用于 clipboard / JSON round-trip.
         /// </summary>
         public static StructuredModSettingsValueBinding<TValue> WithAdapter<TValue>(
             IModSettingsValueBinding<TValue> inner,
@@ -108,6 +118,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Supplies a default when the store is empty; optional adapter for structured types.
+        ///     当 the store is empty; optional adapter for structured types 时提供 a default。
         /// </summary>
         public static DefaultModSettingsValueBinding<TValue> WithDefault<TValue>(
             IModSettingsValueBinding<TValue> inner,
@@ -119,6 +130,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Derives a child binding from a parent object graph.
+        ///     Derives a child binding 从 a parent object graph.
         /// </summary>
         public static ProjectedModSettingsValueBinding<TSource, TValue> Project<TSource, TValue>(
             IModSettingsValueBinding<TSource> parent,
@@ -133,11 +145,15 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Built-in <see cref="IStructuredModSettingsValueAdapter{TValue}" /> implementations.
+    ///     中文说明：Built-in <c>IStructuredModSettingsValueAdapter{TValue}</c> implementations.
+    ///     Built-in <c>IStructuredModSettingsValueAdapter{TValue}</c> implementations.
+    ///     中文说明：Built-in <c>IStructuredModSettingsValueAdapter{TValue}</c> implementations.
     /// </summary>
     public static class ModSettingsStructuredData
     {
         /// <summary>
         ///     JSON adapter using optional custom <see cref="JsonSerializerOptions" />.
+        ///     JSON adapter using 可选 自定义 <c>JsonSerializerOptions</c>.
         /// </summary>
         public static IStructuredModSettingsValueAdapter<TValue> Json<TValue>(JsonSerializerOptions? options = null)
         {
@@ -146,6 +162,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     List adapter; items use <paramref name="itemAdapter" /> or default JSON per element.
+        ///     List adapter; items 使用 <c>itemAdapter</c> 或 default JSON per element.
         /// </summary>
         public static IStructuredModSettingsValueAdapter<List<TItem>> List<TItem>(
             IStructuredModSettingsValueAdapter<TItem>? itemAdapter = null,

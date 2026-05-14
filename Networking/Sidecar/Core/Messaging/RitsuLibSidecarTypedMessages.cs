@@ -7,11 +7,13 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     JSON serializer helper used by typed sidecar descriptors.
+    ///     JSON serializer helper used 通过 typed sidecar descriptors.
     /// </summary>
     public sealed class RitsuLibSidecarJsonSerializer<T>
     {
         /// <summary>
         ///     Serializes a message into UTF-8 JSON bytes.
+        ///     中文说明：Serializes a message into UTF-8 JSON bytes.
         /// </summary>
         public byte[] Serialize(T message)
         {
@@ -20,6 +22,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Deserializes a message from UTF-8 JSON bytes.
+        ///     Deserializes a message 从 UTF-8 JSON bytes.
         /// </summary>
         public T Deserialize(ReadOnlySpan<byte> payload)
         {
@@ -30,6 +33,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
     /// <summary>
     ///     Typed sidecar descriptor containing module key, message key, serializer delegates, and delivery semantics.
+    ///     Typed sidecar descriptor containing module key, message key, serializer delegates, 和 delivery semantics.
     /// </summary>
     public sealed record RitsuLibSidecarMessageDescriptor<T>(
         string ModuleId,
@@ -41,6 +45,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
     /// <summary>
     ///     Dispatch context for one typed message delivery.
+    ///     Dispatch context 用于 one typed message delivery.
     /// </summary>
     public readonly record struct RitsuLibSidecarTypedDispatchContext<T>(
         T Message,
@@ -51,6 +56,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
     /// <summary>
     ///     Event payload emitted after typed message dispatch.
+    ///     事件 payload emitted 之后 typed message dispatch.
     /// </summary>
     public readonly record struct SidecarTypedMessageReceivedEvent(
         ulong Opcode,
@@ -60,6 +66,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
     /// <summary>
     ///     Typed sidecar registry for descriptor registration, collision checks, subscriptions, and convenience sends.
+    ///     Typed sidecar 注册表 用于 descriptor 注册, collision checks, subscriptions, 和 convenience sends.
     /// </summary>
     public static class RitsuLibSidecarTypedMessageRegistry
     {
@@ -68,12 +75,15 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Raised after any typed message is successfully deserialized and dispatched.
+        ///     Raised 之后 any typed message is successfully deserialized 和 dispatched.
         /// </summary>
         public static event Action<SidecarTypedMessageReceivedEvent>? TypedMessageReceived;
 
         /// <summary>
         ///     Registers a descriptor and returns its stable opcode. Re-registering the same descriptor returns the same
+        ///     Registers a descriptor 和 返回 its stable opcode. Re-registering the same descriptor 返回 the same
         ///     opcode.
+        ///     中文说明：opcode.
         /// </summary>
         public static ulong Register<T>(RitsuLibSidecarMessageDescriptor<T> descriptor)
         {
@@ -116,6 +126,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Subscribes one handler to a typed descriptor. Disposing the return value unsubscribes it.
+        ///     Subscribes one handler to a typed descriptor. Disposing the 返回 value unsubscribes it.
         /// </summary>
         public static IDisposable Subscribe<T>(
             RitsuLibSidecarMessageDescriptor<T> descriptor,
@@ -143,6 +154,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Sends a typed message from client to host using a direct net service reference.
+        ///     Sends a typed message 从 client to host using a direct net service reference.
         /// </summary>
         public static bool SendToHost<T>(INetGameService? netService, RitsuLibSidecarMessageDescriptor<T> descriptor,
             T message)
@@ -154,6 +166,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Sends a typed message from client to host using <see cref="RunManager" />.
+        ///     Sends a typed message 从 client to host using <c>跑局Manager</c>.
         /// </summary>
         public static bool SendToHost<T>(RunManager? runManager, RitsuLibSidecarMessageDescriptor<T> descriptor,
             T message)
@@ -165,6 +178,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Sends a typed message from host to one peer.
+        ///     Sends a typed message 从 host to one peer.
         /// </summary>
         public static bool SendToPeer<T>(INetGameService? netService, ulong peerNetId,
             RitsuLibSidecarMessageDescriptor<T> descriptor, T message)
@@ -177,6 +191,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Broadcasts a typed message to sidecar-reachable peers using a direct net service reference.
+        ///     中文说明：Broadcasts a typed message to sidecar-reachable peers using a direct net service reference.
         /// </summary>
         public static bool Broadcast<T>(INetGameService? netService, RitsuLibSidecarMessageDescriptor<T> descriptor,
             T message)
@@ -189,6 +204,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Broadcasts a typed message to sidecar-reachable peers using <see cref="RunManager" />.
+        ///     Broadcasts a typed message to sidecar-reachable peers using <c>跑局Manager</c>.
         /// </summary>
         public static bool Broadcast<T>(RunManager? runManager, RitsuLibSidecarMessageDescriptor<T> descriptor,
             T message)

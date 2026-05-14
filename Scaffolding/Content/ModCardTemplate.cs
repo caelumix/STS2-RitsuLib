@@ -15,11 +15,11 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     <c>ModContentRegistry.RegisterCardHandGlow&lt;TCard&gt;()</c> with <see cref="CardModelHandGlowExtensions" />.
     ///     For arbitrary hand-highlight colors use <see cref="ModCardHandOutlineRegistry" /> /
     ///     <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;()</c>.
-    ///     Mod card 的基础 <see cref="CardModel" />：接入额外悬浮提示（关键词）以及可选的资源覆盖。
+    ///     Mod card 的基础 <c>CardModel</c>：接入额外悬浮提示（关键词）以及可选的资源覆盖。
     ///     若需要金色/红色手牌高亮（Evil Eye / Osty 风格），请重写 <c>ShouldGlowGoldInternal</c> /
-    ///     <c>ShouldGlowRedInternal</c>，或通过 <see cref="ModCardHandGlowRegistry" /> /
+    ///     <c>ShouldGlowRedInternal</c>，或通过 <c>ModCardHandGlowRegistry</c> /
     ///     <c>ModContentRegistry.RegisterCardHandGlow&lt;TCard&gt;()</c> 配合
-    ///     <see cref="CardModelHandGlowExtensions" /> 使用。任意颜色的手牌描边请使用
+    ///     <c>CardModelHandGlowExtensions</c> 使用。任意颜色的手牌描边请使用
     ///     <see cref="ModCardHandOutlineRegistry" /> /
     ///     <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;()</c>。
     /// </summary>
@@ -34,7 +34,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     {
         /// <summary>
         ///     Legacy constructor overload; <paramref name="autoAdd" /> is ignored.
-        ///     旧版构造函数重载；<paramref name="autoAdd" /> 会被忽略。
+        ///     旧版构造函数重载；<c>autoAdd</c> 会被忽略。
         /// </summary>
         [Obsolete("The autoAdd parameter is no longer used and will be removed in a future version.")]
         protected ModCardTemplate(
@@ -55,10 +55,10 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     declarations. Each string resolves as a registered mod keyword id first, then as a vanilla
         ///     <see cref="CardKeyword" /> enum name, and is unioned into <c>CardModel.Keywords</c> right after the
         ///     vanilla canonical seed runs, so runtime additions/removals and <c>DeepCloneFields</c> preserve them.
-        ///     首次访问 <see cref="CardModel.Keywords" /> 时种入每个卡牌实例的关键词声明。它刻意与原版
-        ///     <see cref="CardModel.CanonicalKeywords" /> 分离，这样派生 mod 仍可重写 <c>CanonicalKeywords</c>
+        ///     首次访问 <c>CardModel.Keywords</c> 时种入每个卡牌实例的关键词声明。它刻意与原版
+        ///     <c>CardModel.CanonicalKeywords</c> 分离，这样派生 mod 仍可重写 <c>CanonicalKeywords</c>
         ///     来声明原版关键词，而不会意外丢失自己的 mod 关键词声明。每个字符串会先按已注册的 mod
-        ///     关键词 id 解析，再按原版 <see cref="CardKeyword" /> 枚举名解析，并在原版 canonical seed
+        ///     关键词 id 解析，再按原版 <c>CardKeyword</c> 枚举名解析，并在原版 canonical seed
         ///     执行后合并进 <c>CardModel.Keywords</c>，因此运行时增删和 <c>DeepCloneFields</c> 都会保留它们。
         /// </summary>
         protected virtual IEnumerable<string> RegisteredKeywordIds => [];
@@ -68,9 +68,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     materialized. Each string resolves as a registered mod card-tag id first, then as a vanilla
         ///     <see cref="CardTag" /> enum name, and is unioned into the same backing set as
         ///     <see cref="CardModel.CanonicalTags" />.
-        ///     首次实体化 <see cref="CardModel.Tags" /> 时种入每个卡牌实例的卡牌标签声明。每个字符串会先按已注册的
-        ///     mod 卡牌标签 id 解析，再按原版 <see cref="CardTag" /> 枚举名解析，并合并到与
-        ///     <see cref="CardModel.CanonicalTags" /> 相同的后备集合。
+        ///     首次实体化 <c>CardModel.Tags</c> 时种入每个卡牌实例的卡牌标签声明。每个字符串会先按已注册的
+        ///     mod 卡牌标签 id 解析，再按原版 <c>CardTag</c> 枚举名解析，并合并到与
+        ///     <c>CardModel.CanonicalTags</c> 相同的后备集合。
         /// </summary>
         protected virtual IEnumerable<string> RegisteredCardTagIds => [];
 

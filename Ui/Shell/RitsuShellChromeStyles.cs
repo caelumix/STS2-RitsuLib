@@ -5,11 +5,13 @@ namespace STS2RitsuLib.Ui.Shell
 {
     /// <summary>
     ///     StyleBox factories for dense editor/list/toolbar chrome shared across mod settings and modal overlays.
+    ///     StyleBox factories 用于 dense editor/list/toolbar chrome shared across mod 设置 和 modal overlays.
     /// </summary>
     public static class RitsuShellChromeStyles
     {
         /// <summary>
         ///     Builds a rounded flat panel for generic content surfaces (background, border, soft shadow).
+        ///     Builds a rounded flat panel 用于 generic content surfaces (背景, border, soft shadow).
         /// </summary>
         public static StyleBoxFlat CreateSurfaceStyle()
         {
@@ -46,8 +48,12 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a frame around an entry or form field, optionally with a stronger border and shadow.
+        ///     Builds a frame around an entry 或 用于m field, 可选ly 带有 a stronger border 和 shadow.
         /// </summary>
-        /// <param name="emphasized">When <see langword="true" />, uses a thicker border and stronger shadow.</param>
+        /// <param name="emphasized">
+        ///     When <see langword="true" />, uses a thicker border and stronger shadow.
+        ///     当 <see langword="true" />, 使用 a thicker border 和 stronger shadow.
+        /// </param>
         public static StyleBoxFlat CreateEntryFieldFrameStyle(bool emphasized)
         {
             var t = RitsuShellTheme.Current;
@@ -91,6 +97,7 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a tight inset frame around a color swatch preview.
+        ///     Builds a tight in设置 frame around a color swatch preview.
         /// </summary>
         public static StyleBoxFlat CreateColorPickerSwatchFrameStyle()
         {
@@ -122,6 +129,7 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a recessed panel (inset background) for secondary content blocks.
+        ///     Builds a recessed panel (in设置 背景) 用于 secondary content blocks.
         /// </summary>
         public static StyleBoxFlat CreateInsetSurfaceStyle()
         {
@@ -157,8 +165,12 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a compact menu row or popup action item (background and border from chrome tokens).
+        ///     Builds a compact menu row 或 popup action item (背景 和 border 从 chrome tokens).
         /// </summary>
-        /// <param name="highlighted">When <see langword="true" />, uses hover chrome colors.</param>
+        /// <param name="highlighted">
+        ///     When <see langword="true" />, uses hover chrome colors.
+        ///     当 <see langword="true" />, 使用 hover chrome colors.
+        /// </param>
         public static StyleBoxFlat CreateChromeActionsMenuStyle(bool highlighted)
         {
             var t = RitsuShellTheme.Current;
@@ -194,6 +206,9 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds the tray behind per-page toolbar controls (search, actions).
+        ///     中文说明：Builds the tray behind per-page toolbar controls (search, actions).
+        ///     Builds the tray behind per-page toolbar controls (search, actions).
+        ///     中文说明：Builds the tray behind per-page toolbar controls (search, actions).
         /// </summary>
         public static StyleBoxFlat CreatePageToolbarTrayStyle()
         {
@@ -231,6 +246,7 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds the outer container for scrollable list content (list shell with shadow).
+        ///     Builds the outer container 用于 scrollable list content (list shell 带有 shadow).
         /// </summary>
         public static StyleBoxFlat CreateListShellStyle()
         {
@@ -263,8 +279,12 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a card row inside a list (optional accent styling for selection or emphasis).
+        ///     Builds a 卡牌 row inside a list (可选 accent styling 用于 selection 或 emphasis).
         /// </summary>
-        /// <param name="accent">When <see langword="true" />, uses accent background and border tokens.</param>
+        /// <param name="accent">
+        ///     When <see langword="true" />, uses accent background and border tokens.
+        ///     当 <see langword="true" />, 使用 accent 背景 和 border tokens.
+        /// </param>
         public static StyleBoxFlat CreateListItemCardStyle(bool accent = false)
         {
             var t = RitsuShellTheme.Current;
@@ -297,6 +317,7 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds the inner editor surface for inline list editing (e.g. path or text rows).
+        ///     Builds the inner editor surface 用于 inline list editing (e.g. 路径 或 text rows).
         /// </summary>
         public static StyleBoxFlat CreateListEditorSurfaceStyle()
         {
@@ -334,8 +355,12 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Builds a pill-shaped control (tags, compact buttons) with optional hover emphasis.
+        ///     Builds a pill-shaped control (tags, compact buttons) 带有 可选 hover emphasis.
         /// </summary>
-        /// <param name="highlighted">When <see langword="true" />, uses hover background and border colors.</param>
+        /// <param name="highlighted">
+        ///     When <see langword="true" />, uses hover background and border colors.
+        ///     当 <see langword="true" />, 使用 hover 背景 和 border colors.
+        /// </param>
         public static StyleBoxFlat CreatePillStyle(bool highlighted = false)
         {
             var t = RitsuShellTheme.Current;
@@ -370,7 +395,9 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Compact panel backing Godot TooltipPanel (<see cref="Control.TooltipText" /> popups), aligned with entry
+        ///     Comp章节 panel backing Godot TooltipPanel (<c>Control.TooltipText</c> popups), aligned 带有 entry
         ///     chrome tokens.
+        ///     中文说明：chrome tokens.
         /// </summary>
         public static StyleBoxFlat CreateTooltipPanelStyle()
         {

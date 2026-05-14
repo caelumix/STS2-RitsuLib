@@ -44,7 +44,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     Resolves the active <see cref="ModSettingsHostSurface" /> from run/combat managers.
-    ///     根据 run/战斗管理器解析当前激活的 <see cref="ModSettingsHostSurface" />。
+    ///     根据 run/战斗管理器解析当前激活的 <c>ModSettingsHostSurface</c>。
     /// </summary>
     public static class ModSettingsHostSurfaceResolver
     {
@@ -64,7 +64,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     True when <paramref name="mask" /> includes the surface returned by <see cref="ResolveCurrent" />.
-        ///     当 <paramref name="mask" /> 包含 <see cref="ResolveCurrent" /> 返回的 surface 时为 true。
+        ///     当 <c>mask</c> 包含 <c>ResolveCurrent</c> 返回的 surface 时为 true。
         /// </summary>
         public static bool IsVisibleOnCurrentHost(ModSettingsHostSurface mask)
         {
@@ -74,7 +74,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     True when the current host is listed in <paramref name="readOnlyMask" /> (inputs should be read-only).
-        ///     当当前宿主位于 <paramref name="readOnlyMask" /> 中时为 true（输入应只读）。
+        ///     当当前宿主位于 <c>readOnlyMask</c> 中时为 true（输入应只读）。
         /// </summary>
         public static bool IsReadOnlyOnCurrentHost(ModSettingsHostSurface readOnlyMask)
         {

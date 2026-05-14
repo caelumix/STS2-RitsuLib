@@ -11,15 +11,21 @@ namespace STS2RitsuLib.Localization.Patches
 {
     /// <summary>
     ///     When THE_ARCHITECT resolves no <see cref="AncientDialogue" />, vanilla would leave <c>Dialogue</c> null and
+    ///     当 THE_ARCHITECT 解析 no <c>AncientDialogue</c>, 原版 would leave <c>Dialogue</c> null and
     ///     still show PROCEED — but <c>WinRun</c> dereferences <c>Dialogue</c>. A stub with <b>non-empty</b>
+    ///     still show PROCEED — but <c>Win跑局</c> dereferences <c>Dialogue</c>. A stub 带有 <b>non-empty</b>
     ///     <see cref="AncientDialogue.Lines" /> is unsafe: <c>OnRoomEnter</c> calls <c>ClearCurrentOptions</c> and
     ///     <c>PlayCurrentLine</c> then exits early when <c>LineText</c> was never populated, leaving no buttons. This
     ///     patch injects an <see cref="AncientDialogue" /> with <b>empty</b> lines so vanilla follows the same path as
+    ///     patch injects an <c>AncientDialogue</c> 带有 <b>empty</b> lines so 原版 follows the same 路径 as
     ///     <c>Dialogue == null</c> for options/UI while <c>WinRun</c> can read <c>EndAttackers</c>.
     ///     <para />
     ///     Scope: only when debug compatibility <b>master</b> and the <b>Ancient / THE_ARCHITECT</b> sub-setting are
+    ///     Scope: only 当 debug compatibility <b>master</b> 和 the <b>Ancient / THE_ARCHITECT</b> sub-设置ting are
     ///     enabled, and the character type is registered through <see cref="ModContentRegistry" />. Otherwise vanilla
+    ///     启用, 和 the character type is 已注册 through <c>ModContentRegistry</c>. Otherwise 原版
     ///     behavior (possible NRE on PROCEED) applies.
+    ///     中文说明：behavior (possible NRE on PROCEED) applies.
     /// </summary>
     public class TheArchitectLoadDialogueMissingFallbackPatch : IPatchMethod
     {
@@ -45,6 +51,7 @@ namespace STS2RitsuLib.Localization.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     After vanilla <c>LoadDialogue</c>, assign a no-op dialogue when none matched so PROCEED / <c>WinRun</c> is safe.
+        ///     之后 原版 <c>加载Dialogue</c>, assign a no-op dialogue 当 none matched so PROCEED / <c>Win跑局</c> is safe.
         /// </summary>
         public static void Postfix(TheArchitect __instance)
             // ReSharper restore InconsistentNaming
@@ -83,6 +90,7 @@ namespace STS2RitsuLib.Localization.Patches
 
         /// <summary>
         ///     Builds an <see cref="AncientDialogue" /> without running its constructor (which requires ≥1 line), with
+        ///     Builds an <c>AncientDialogue</c> 带有out running its constructor (which requires ≥1 line), 带有
         ///     <see cref="AncientDialogue.Lines" /> empty and attackers set to <see cref="ArchitectAttackers.None" />.
         /// </summary>
         private static AncientDialogue? TryCreateEmptyLinesArchitectDialogueStub()

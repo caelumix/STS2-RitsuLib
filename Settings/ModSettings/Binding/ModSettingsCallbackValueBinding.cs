@@ -4,7 +4,9 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Binds a mod settings control to arbitrary getters/setters and a custom <see cref="Save" /> implementation
+    ///     Binds a mod 设置 control to arbitrary getters/设置ters 和 a 自定义 <c>保存</c> implementation
     ///     (for example BaseLib JSON configs or third-party stores) without using
+    ///     (用于 example BaseLib JSON configs 或 third-party stores) 带有out using
     ///     <see cref="RitsuLibFramework.GetDataStore" />.
     /// </summary>
     public sealed class ModSettingsCallbackValueBinding<T>(

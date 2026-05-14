@@ -9,17 +9,25 @@ namespace STS2RitsuLib.CardPiles.Patches
     ///     Appends <see cref="ModCardPileScope.CombatOnly" /> piles to
     ///     <see cref="PlayerCombatState.AllPiles" /> so that vanilla code paths that iterate combat piles
     ///     (enumeration, <c>AfterCombatEnd</c>, broadcast helpers) transparently include mod piles.
+    ///     将 <c>ModCardPileScope.CombatOnly</c> pile 追加到
+    ///     <c>PlayerCombatState.AllPiles</c>，使枚举 combat pile 的原版代码路径
+    ///     （enumeration、<c>AfterCombatEnd</c>、broadcast helper）透明包含 mod pile。
     /// </summary>
     /// <remarks>
     ///     <para>
     ///         A Postfix is used instead of a Transpiler (unlike baselib's <c>SpecialPileInCombat</c>) so both
     ///         libraries can coexist without IL conflicts. Whatever vanilla or baselib produced is treated as
     ///         the base, and ritsulib's piles are concatenated on top.
+    ///         这里使用 Postfix 而不是 Transpiler（不同于 baselib 的 <c>SpecialPileInCombat</c>），
+    ///         让两个库可以共存而不发生 IL 冲突。原版或 baselib 生成的结果会作为基础，
+    ///         ritsulib 的 pile 再拼接到其后。
     ///     </para>
     ///     <para>
     ///         The underlying <c>_piles</c> field is updated when present (publicized STS2) so subsequent
     ///         getter calls see the combined array without reallocating per access; otherwise the postfix
     ///         still works by replacing <c>__result</c>.
+    ///         当底层 <c>_piles</c> 字段存在时（publicized STS2），会同步更新该字段，使后续 getter 调用能看到
+    ///         合并后的数组，而不必每次访问都重新分配；否则 postfix 仍通过替换 <c>__result</c> 工作。
     ///     </para>
     /// </remarks>
     public sealed class ModCardPileAllPilesPatch : IPatchMethod
@@ -43,6 +51,7 @@ namespace STS2RitsuLib.CardPiles.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Merges mod piles into <see cref="PlayerCombatState.AllPiles" />'s return value.
+        ///     将 mod pile 合并进 <c>PlayerCombatState.AllPiles</c> 的返回值。
         /// </summary>
         public static void Postfix(PlayerCombatState __instance, ref IReadOnlyList<CardPile> __result)
         {

@@ -8,6 +8,10 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeFactories
     ///     Non-Spine combat playback remains handled by <see cref="Characters.Visuals.ModCreatureVisualPlayback" />.
     ///     Named slots match <c>NCreatureVisualsFactory</c>; missing <c>%OrbPos</c> / <c>%TalkPos</c> are not synthesized
     ///     (same as baselib): <see cref="NCreatureVisuals" /> falls back to <c>IntentPos</c> / <c>null</c>.
+    ///     从原版风格场景或 <c>Texture2D</c>（Sprite2D body）构建 <c>NCreatureVisuals</c>。
+    ///     非 Spine 战斗播放仍由 <c>Characters.Visuals.ModCreatureVisualPlayback</c> 处理。
+    ///     命名 slot 与 <c>NCreatureVisualsFactory</c> 匹配；缺失的 <c>%OrbPos</c> / <c>%TalkPos</c> 不会被合成
+    ///     （与 baselib 相同）：<c>NCreatureVisuals</c> 会回退到 <c>IntentPos</c> / <c>null</c>。
     /// </summary>
     internal sealed class RitsuNCreatureVisualsNodeFactory() : RitsuGodotNodeFactory<NCreatureVisuals>([
         new RitsuGodotNodeSlot<Node2D>("%Visuals"),

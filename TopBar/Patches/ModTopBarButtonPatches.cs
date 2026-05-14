@@ -10,12 +10,18 @@ namespace STS2RitsuLib.TopBar.Patches
 {
     /// <summary>
     ///     Mounts every registered <see cref="ModTopBarButtonDefinition" /> onto <see cref="NTopBar" /> after
+    ///     Mounts every 已注册 <c>ModTopBarButtonDefinition</c> onto <c>NTopBar</c> 之后
     ///     its vanilla <c>_Ready</c> has populated <c>%Deck</c>. Buttons are <see cref="NModCardPileButton" />
+    ///     its 原版 <c>_Ready</c> has populated <c>%Deck</c>. Buttons are <c>NModCardPileButton</c>
     ///     instances in "action mode" — that is, they look and animate exactly like <b>pile-backed</b>
+    ///     instances in "action mode" — that is, they look 和 animate exactly like <b>pile-backed</b>
     ///     <see cref="STS2RitsuLib.CardPiles.ModCardPileRegistry" /> top-bar buttons, but dispatch clicks
     ///     through <see cref="ModTopBarButtonSpec.OnClick" /> and draw their count label from
+    ///     through <c>ModTopBarButtonSpec.OnClick</c> 和 draw their count label 从
     ///     <see cref="ModTopBarButtonSpec.CountProvider" />. The two registries share one placement
     ///     algorithm (see <see cref="ModTopBarLayout" />) so the player-side cluster next to <c>%Deck</c>
+    ///     中文说明：algorithm (see <c>ModTopBarLayout</c>) so the player-side cluster next to <c>%Deck</c>
+    ///     never splits into "pile row" vs "action row".
     ///     never splits into "pile row" vs "action row".
     /// </summary>
     public sealed class ModTopBarActionButtonReadyPatch : IPatchMethod
@@ -38,7 +44,9 @@ namespace STS2RitsuLib.TopBar.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Wires generic mod top-bar buttons alongside the vanilla deck/map/pause nodes and any
+        ///     Wires generic mod top-bar buttons alongside the 原版 deck/map/pause nodes 和 any
         ///     pile-backed <see cref="STS2RitsuLib.CardPiles.ModCardPileUiStyle.TopBarDeck" /> buttons.
+        ///     pile-backed <c>STS2RitsuLib.CardPiles.ModCardPileUiStyle.TopBarDeck</c> buttons.
         /// </summary>
         public static void Postfix(NTopBar __instance)
         {
@@ -61,6 +69,9 @@ namespace STS2RitsuLib.TopBar.Patches
 
     /// <summary>
     ///     Binds every injected action-mode <see cref="NModCardPileButton" /> to the local
+    ///     中文说明：Binds every injected action-mode <c>NModCardPileButton</c> to the local
+    ///     Binds every injected action-mode <c>NModCardPileButton</c> to the local
+    ///     中文说明：Binds every injected action-mode <c>NModCardPileButton</c> to the local
     ///     <see cref="Player" /> on <see cref="NTopBar.Initialize" />, mirroring
     ///     <c>ModCardPileTopBarInitializePatch</c>.
     /// </summary>
@@ -88,6 +99,9 @@ namespace STS2RitsuLib.TopBar.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Binds each injected action button to the local <see cref="Player" />.
+        ///     中文说明：Binds each injected action button to the local <c>Player</c>.
+        ///     Binds each injected action button to the local <c>Player</c>.
+        ///     中文说明：Binds each injected action button to the local <c>Player</c>.
         /// </summary>
         public static void Postfix(NTopBar __instance, IRunState runState)
         {

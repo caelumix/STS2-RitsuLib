@@ -15,6 +15,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Merges programmatic per-character relic / potion / card art registrations for
+        ///     Merges programmatic per-character 遗物 / potion / 卡牌 art 注册s 用于
         ///     <paramref name="characterEntry" /> (all mods, ordered by registration time).
         /// </summary>
         internal static bool TryBuildProgrammaticCharacterOwnedVisualProfile(
@@ -57,7 +58,9 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers per–model-id relic icon paths when <paramref name="characterEntry" /> owns the relic.
+        ///     注册 per–model-id relic icon paths when <c>characterEntry</c> owns the relic。
         ///     Priority: <see cref="RegisterCharacterAssetReplacement" /> /
+        ///     Priority: <c>RegisterCharacterAssetReplacement</c> /
         ///     <see cref="RegisterGlobalCharacterAssetReplacement" /> (highest), then this API, then character
         ///     <see>
         ///         <cref>T:STS2RitsuLib.Scaffolding.Characters.ModCharacterTemplate</cref>
@@ -95,7 +98,9 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers per–model-id potion art when <paramref name="characterEntry" /> holds or encounters the potion.
+        ///     注册 per–model-id potion art when <c>characterEntry</c> holds or encounters the potion。
         ///     Priority matches <see cref="RegisterCharacterOwnedRelicVisualOverride(string,string,RelicAssetProfile)" />.
+        ///     Priority matches <c>RegisterCharacterOwned遗物VisualOverride(string,string,RelicAssetProfile)</c>.
         /// </summary>
         public void RegisterCharacterOwnedPotionVisualOverride(
             string characterEntry,
@@ -128,7 +133,9 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers per–model-id card art when <paramref name="characterEntry" /> holds or encounters the card.
+        ///     注册 per–model-id card art when <c>characterEntry</c> holds or encounters the card。
         ///     Priority matches <see cref="RegisterCharacterOwnedRelicVisualOverride(string,string,RelicAssetProfile)" />.
+        ///     Priority matches <c>RegisterCharacterOwned遗物VisualOverride(string,string,RelicAssetProfile)</c>.
         /// </summary>
         public void RegisterCharacterOwnedCardVisualOverride(
             string characterEntry,

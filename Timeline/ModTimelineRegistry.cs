@@ -7,8 +7,11 @@ namespace STS2RitsuLib.Timeline
 {
     /// <summary>
     ///     Per-mod registry for custom <c>EpochModel</c> and <c>StoryModel</c> types wired into the game's static
+    ///     Per-mod 注册表 用于 自定义 <c>Epoch模型</c> 和 <c>Story模型</c> types wired into the game's static
     ///     timeline dictionaries. Epochs are individual unlock slots; a <see cref="StoryModel" /> groups them into one
+    ///     timeline dictionaries. Epochs are individual unlock slots; a <c>Story模型</c> groups them into one
     ///     timeline column (story title + ordered epoch list in the progression UI).
+    ///     中文说明：timeline column (story title + ordered epoch list in the progression UI).
     /// </summary>
     public sealed class ModTimelineRegistry
     {
@@ -33,11 +36,13 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     True after the framework freezes further epoch/story registrations (e.g. at model init).
+        ///     True 之后 the framework freezes further epoch/story 注册s (e.g. at 模型 init).
         /// </summary>
         public static bool IsFrozen { get; private set; }
 
         /// <summary>
         ///     Returns the timeline registry singleton for <paramref name="modId" />.
+        ///     返回 the timeline registry singleton for <c>modId</c>。
         /// </summary>
         public static ModTimelineRegistry For(string modId)
         {
@@ -56,6 +61,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers a concrete epoch type so its id appears in vanilla epoch discovery.
+        ///     注册 a concrete epoch type so its id appears in vanilla epoch discovery。
         /// </summary>
         public void RegisterEpoch<TEpoch>() where TEpoch : EpochModel, new()
         {
@@ -64,6 +70,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers <paramref name="epochType" /> so its id appears in vanilla epoch discovery.
+        ///     注册 <c>epochType</c> so its id appears in vanilla epoch discovery。
         /// </summary>
         public void RegisterEpoch(Type epochType)
         {
@@ -100,6 +107,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers a concrete story type in the game's story type dictionary.
+        ///     注册 a concrete story type in the game's story type dictionary。
         /// </summary>
         public void RegisterStory<TStory>() where TStory : StoryModel, new()
         {
@@ -108,6 +116,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers <paramref name="storyType" /> in the game's story type dictionary.
+        ///     注册 <c>storyType</c> in the game's story type dictionary。
         /// </summary>
         public void RegisterStory(Type storyType)
         {
@@ -139,6 +148,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers <typeparamref name="TEpoch" /> with vanilla epoch discovery and appends it to
+        ///     Registers <c>TEpoch</c> 带有 原版 epoch discovery 和 appends it to
         ///     <typeparamref name="TStory" />'s ordered column via <see cref="ModStoryEpochBindings" /> (manifest / pack order).
         /// </summary>
         public void RegisterStoryEpoch<TStory, TEpoch>()
@@ -150,6 +160,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Registers <paramref name="epochType" /> and binds it to <paramref name="storyType" />'s story column.
+        ///     注册 <c>epochType</c> and binds it to <c>storyType</c>'s story column。
         /// </summary>
         public void RegisterStoryEpoch(Type storyType, Type epochType)
         {
@@ -182,8 +193,10 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Rewrites <see cref="EpochModel.AllEpochIds" /> from the live <c>_epochTypeDictionary</c> so
+        ///     Rewrites <c>Epoch模型.AllEpochIds</c> 从 the live <c>_epochTypeDictionary</c> so
         ///     <see cref="EpochModel.IsValid" /> matches <see cref="EpochModel.Get" /> after third-party dictionary edits or
         ///     early vanilla lazy-init of <c>_allEpochIds</c>.
+        ///     early 原版 lazy-init of <c>_allEpochIds</c>.
         /// </summary>
         internal static void EnsureAllEpochIdsSyncedWithDictionary()
         {

@@ -15,8 +15,11 @@ namespace STS2RitsuLib.Content.Patches
     /// <summary>
     ///     <see cref="ModelIdSerializationCache.Init" /> only walks <see cref="ModelDb.AllAbstractModelSubtypes" />, so
     ///     Reflection.Emit placeholder models (and any other injected types not returned by mod subtype scan) never receive
+    ///     Reflection.Emit placeholder Models (and any other injected types not 返回ed 通过 mod subtype scan) never receive
     ///     net
+    ///     中文说明：net
     ///     IDs. This postfix merges <see cref="ModelDb" /> content and recomputes bit sizes and hash like vanilla
+    ///     IDs. This postfix merges <c>ModelDb</c> content 和 recomputes bit sizes 和 hash like 原版
     ///     <c>Init</c>.
     /// </summary>
     public class ModelIdSerializationCacheDynamicContentPatch : IPatchMethod
@@ -42,7 +45,9 @@ namespace STS2RitsuLib.Content.Patches
 
         /// <summary>
         ///     After vanilla <see cref="ModelIdSerializationCache.Init" />, merges injected <see cref="ModelDb" /> entries
+        ///     之后 原版 <c>ModelIdSerializationCache.Init</c>, merges injected <c>ModelDb</c> entries
         ///     into net ID maps and refreshes bit sizes and hash.
+        ///     into net ID maps 和 refreshes bit sizes 和 hash.
         /// </summary>
         public static void Postfix()
         {

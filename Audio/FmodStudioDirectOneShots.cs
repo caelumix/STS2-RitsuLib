@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Fire-and-forget one-shots on <c>FmodServer</c>. These do <b>not</b> go through
+    ///     Fire-and-用于get one-shots on <c>FmodServer</c>. These do <b>not</b> go through
     ///     <see cref="MegaCrit.Sts2.Core.Nodes.Audio.NAudioManager" /> — volume routing may differ from in-game SFX. Prefer
     ///     <see cref="GameFmod.Studio" /> or <see cref="Sts2SfxAlignedFmod" /> for vanilla-aligned playback.
     /// </summary>
@@ -18,6 +19,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Plays a one-shot by event path via the Godot FMOD addon.
+        ///     Plays a one-shot 通过 事件 路径 via the Godot FMOD addon.
         /// </summary>
         public static bool TryPlay(string eventPath)
         {
@@ -26,6 +28,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Plays a one-shot with initial parameter values.
+        ///     Plays a one-shot 带有 initial parameter values.
         /// </summary>
         public static bool TryPlay(string eventPath, IReadOnlyDictionary<string, float> parameters)
         {
@@ -51,6 +54,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Plays a one-shot using a Studio event GUID string.
+        ///     Plays a one-shot using a Studio 事件 GUID string.
         /// </summary>
         public static bool TryPlayUsingGuid(string eventGuid)
         {
@@ -63,6 +67,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Plays a one-shot with initial parameter values, using a Studio event GUID string.
+        ///     Plays a one-shot 带有 initial parameter values, using a Studio 事件 GUID string.
         /// </summary>
         public static bool TryPlayUsingGuid(string eventGuid, IReadOnlyDictionary<string, float> parameters)
         {
@@ -98,7 +103,9 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Mirrors Godot one-shot semantics for a mapped <c>event:/…</c> path: prefers path-based creation (same as
+        ///     Mirrors Godot one-shot semantics 用于 a mapped <c>事件:/…</c> 路径: prefers 路径-based creation (same as
         ///     vanilla proxy), then GUID when needed.
+        ///     原版 proxy), then GUID 当 needed.
         /// </summary>
         public static bool TryFireOneShotForMappedEventPath(string eventPath, float linearVolume,
             IReadOnlyDictionary<string, float> parameters)

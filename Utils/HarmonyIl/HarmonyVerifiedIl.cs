@@ -5,18 +5,22 @@ namespace STS2RitsuLib.Utils.HarmonyIl
 {
     /// <summary>
     ///     Small, auditable IL helpers for Harmony transpilers. Only patterns that are easy to reason about
+    ///     Small, auditable IL helpers 用于 Harmony transpilers. Only patterns that are easy to reason about
     ///     and match verified game / stub method shapes belong here — not a general instruction matcher.
+    ///     中文说明：and match verified game / stub method shapes belong here — not a general instruction matcher.
     /// </summary>
     public static class HarmonyVerifiedIl
     {
         /// <summary>
         ///     Inserts <paramref name="prefix" /> immediately before the first <see cref="OpCodes.Ret" /> in
+        ///     Inserts <c>prefix</c> immediately 之前 the first <c>OpCodes.Ret</c> in
         ///     <paramref name="body" />. Suitable for empty or single-return stub methods (e.g. ModInterop shims).
         /// </summary>
         /// <remarks>
         ///     <para>
         ///         <b>Not supported:</b> methods with no <c>ret</c>, multiple returns, or filter/try regions
         ///         where the first <c>ret</c> is not the intended injection site.
+        ///         中文说明：where the first <c>ret</c> is not the intended injection site.
         ///     </para>
         ///     <para>Prefer writing a dedicated transpiler when you need label preservation or multi-site edits.</para>
         /// </remarks>
@@ -46,6 +50,7 @@ namespace STS2RitsuLib.Utils.HarmonyIl
 
         /// <summary>
         ///     Same as <see cref="InsertBeforeFirstRet" /> but returns false when no <c>ret</c> exists, instead of throwing.
+        ///     Same as <c>InsertBeforeFirstRet</c> but 返回 false 当 no <c>ret</c> exists, instead of throwing.
         /// </summary>
         public static bool TryInsertBeforeFirstRet(
             IEnumerable<CodeInstruction> body,

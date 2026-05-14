@@ -6,7 +6,9 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Vanilla-style <see cref="NSelectionReticle" />; only visible in controller mode so mouse focus does not show
+    ///     原版-style <c>NSelectionReticle</c>; only visible in controller mode so mo使用 focus does not show
     ///     the reticle.
+    ///     该 reticle。
     /// </summary>
     internal static class ModSettingsFocusChrome
     {

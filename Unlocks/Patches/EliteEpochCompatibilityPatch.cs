@@ -8,6 +8,7 @@ namespace STS2RitsuLib.Unlocks.Patches
     /// <summary>
     ///     Delegates elite epoch handling for mod characters to <c>EliteEpochModHandling</c> when the dedicated
     ///     check method exists.
+    ///     当专用检查方法存在时，将 mod 角色的精英 epoch 处理委托给 <c>EliteEpochModHandling</c>。
     /// </summary>
     public class EliteEpochCompatibilityPatch : IPatchMethod
     {
@@ -34,6 +35,7 @@ namespace STS2RitsuLib.Unlocks.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Runs mod elite epoch logic and prevents the original method from executing for mod characters.
+        ///     运行 mod 精英 epoch 逻辑，并阻止原方法对 mod 角色执行。
         /// </summary>
         public static bool Prefix(ProgressSaveManager __instance, Player localPlayer)
         {

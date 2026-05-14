@@ -13,6 +13,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     Merchant character scenes without Spine use <see cref="ModCreatureVisualPlayback" /> for
+    ///     Merchant character 场景s 带有out Spine 使用 <c>ModCreatureVisualPlayback</c> 用于
     ///     <see cref="NMerchantCharacter.PlayAnimation" /> (textures, AnimationPlayer, AnimatedSprite2D).
     /// </summary>
     public class ModMerchantCharacterVisualPlaybackPatch : IPatchMethod
@@ -38,6 +39,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Returns <see langword="false" /> when playback handled the request (skip vanilla Spine path).
+        ///     返回 <see langword="false" /> when playback handled the request (skip vanilla Spine path)。
         /// </summary>
         public static bool Prefix(NMerchantCharacter __instance, string anim, bool loop)
         {

@@ -4,7 +4,9 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 {
     /// <summary>
     ///     Holds the <see cref="RitsuShellTheme.Current" /> snapshot and the public lifecycle (apply theme,
+    ///     Holds the <c>RitsuShellTheme.Current</c> snapshot 和 the public lifecycle (apply theme,
     ///     reapply on disk change, listen for changes, register mod tokens). All members are thread-safe.
+    ///     reapply on disk change, listen 用于 changes, register mod tokens). All members are thread-safe.
     /// </summary>
     public static class RitsuShellThemeRuntime
     {
@@ -19,12 +21,15 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Last applied theme id (lowercase). Defaults to <c>default</c> until a successful apply.
+        ///     中文说明：Last applied theme id (lowercase). Defaults to <c>default</c> until a successful apply.
         /// </summary>
         public static string ActiveThemeId { get; private set; } = DefaultThemeId;
 
         /// <summary>
         ///     Current theme snapshot. Calling this also lazily builds <c>default</c> if no theme has been
+        ///     Current theme snapshot. Calling this also lazily builds <c>default</c> 如果 no theme has been
         ///     applied yet.
+        ///     中文说明：applied yet.
         /// </summary>
         public static RitsuShellTheme Current
         {
@@ -37,11 +42,13 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Fired after the current snapshot has been replaced.
+        ///     Fired 之后 the current snapshot has been replaced.
         /// </summary>
         public static event Action? ThemeChanged;
 
         /// <summary>
         ///     Builds the baseline snapshot if not yet built (uses <c>default</c>).
+        ///     Builds the baseline snapshot 如果 not yet built (使用 <c>default</c>).
         /// </summary>
         public static void EnsureBaseline()
         {
@@ -56,9 +63,14 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Applies the named theme. <see langword="null" /> / blank picks <c>default</c>; if the lookup
+        ///     Applies the named theme. <see langword="null" /> / blank picks <c>default</c>; 如果 the lookup
         ///     fails the current snapshot is preserved (or rebuilt as default).
+        ///     中文说明：fails the current snapshot is preserved (or rebuilt as default).
         /// </summary>
-        /// <param name="themeId">Target theme id (case-insensitive).</param>
+        /// <param name="themeId">
+        ///     Target theme id (case-insensitive).
+        ///     目标 theme id (case-insensitive)。
+        /// </param>
         public static void ApplyThemeId(string? themeId)
         {
             RitsuShellTheme? snapshot;
@@ -77,9 +89,14 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Re-applies the current <see cref="ActiveThemeId" />, optionally clearing the catalog cache so
+        ///     Re-applies the current <c>activeThemeId</c>, 可选ly clearing the catalog cache so
         ///     disk changes are picked up.
+        ///     中文说明：disk changes are picked up.
         /// </summary>
-        /// <param name="forceReloadCatalog">When <see langword="true" />, the on-disk catalog is reloaded.</param>
+        /// <param name="forceReloadCatalog">
+        ///     When <see langword="true" />, the on-disk catalog is reloaded.
+        ///     当 <see langword="true" />, the on-disk catalog is reloaded.
+        /// </param>
         public static void ReapplyActiveTheme(bool forceReloadCatalog)
         {
             if (forceReloadCatalog)
@@ -89,12 +106,22 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Registers a mod's default DTFM tokens and optional apply callback. Subsequent
+        ///     Registers a mod's default DTFM tokens 和 可选 apply callback. Subsequent
         ///     <see cref="ApplyThemeId" /> calls merge these defaults before chain documents and invoke
         ///     <paramref name="onApply" /> on every rebuild.
         /// </summary>
-        /// <param name="modId">Mod identifier.</param>
-        /// <param name="defaults">DTFM JSON tree (object) merged before chain documents.</param>
-        /// <param name="onApply">Optional callback fired after every rebuild.</param>
+        /// <param name="modId">
+        ///     Mod identifier.
+        ///     中文说明：Mod identifier.
+        /// </param>
+        /// <param name="defaults">
+        ///     DTFM JSON tree (object) merged before chain documents.
+        ///     DTFM JSON tree (object) merged 之前 chain documents.
+        /// </param>
+        /// <param name="onApply">
+        ///     Optional callback fired after every rebuild.
+        ///     可选 callback fired 之后 every rebuild.
+        /// </param>
         public static void RegisterModTokens(string modId, JsonElement? defaults,
             Action<RitsuShellTheme>? onApply = null)
         {
@@ -110,8 +137,12 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Removes a previous <see cref="RegisterModTokens" /> entry.
+        ///     中文说明：Removes a previous <c>RegisterModTokens</c> entry.
         /// </summary>
-        /// <param name="modId">Mod identifier.</param>
+        /// <param name="modId">
+        ///     Mod identifier.
+        ///     中文说明：Mod identifier.
+        /// </param>
         public static void UnregisterModTokens(string modId)
         {
             if (string.IsNullOrWhiteSpace(modId))

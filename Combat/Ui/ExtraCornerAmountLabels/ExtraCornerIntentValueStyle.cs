@@ -5,6 +5,7 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
 {
     /// <summary>
     ///     Visuals for extra badges on <see cref="MegaCrit.Sts2.Core.Nodes.Combat.NIntent" />, matched to intent
+    ///     Visuals 用于 extra badges on <c>MegaCrit.Sts2.Core.Nodes.Combat.NIntent</c>, matched to intent
     ///     <c>%Value</c> (MegaRichTextLabel; see sts-2-source <c>scenes/combat/intent.tscn</c>).
     /// </summary>
     internal static class ExtraCornerIntentValueStyle

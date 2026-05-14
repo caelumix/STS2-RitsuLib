@@ -7,9 +7,13 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Load loose audio files into the FMOD runtime (wav/ogg/mp3 per addon). For <c>res://</c>, only paths that are
+    ///     加载 loose audio files into the FMOD runtime (wav/ogg/mp3 per addon). For <c>res://</c>, only 路径 that are
     ///     still visible as raw files to <see cref="FileAccess" /> are accepted (e.g. Import dock &quot;Keep File (No Import)
+    ///     中文说明：still visible as raw files to <c>FileAccess</c> are accepted (e.g. Import dock &quot;Keep File (No Import)
     ///     &quot;).
+    ///     中文说明：&quot;).
     ///     Resolves <c>user://</c> to an absolute filesystem path. Tracks loaded paths so you can unload deterministically.
+    ///     解析 <c>user://</c> to an absolute filesystem path. Tracks loaded paths so you can unload deterministically。
     /// </summary>
     public static class FmodStudioStreamingFiles
     {
@@ -17,6 +21,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Creates a typed handle for a short loose-file sound.
+        ///     创建 a typed handle for a short loose-file sound。
         /// </summary>
         public static AudioFileHandle? TryCreateSoundHandle(string absolutePath, AudioPlaybackOptions? options = null)
         {
@@ -30,6 +35,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Creates a typed handle for a streaming loose-file music instance.
+        ///     创建 a typed handle for a streaming loose-file music instance。
         /// </summary>
         public static AudioMusicHandle? TryCreateStreamingMusicHandle(string absolutePath,
             AudioPlaybackOptions? options = null)
@@ -44,7 +50,9 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Preloads the loose audio file at <paramref name="absolutePath" /> as a sound; succeeds immediately if already
+        ///     Pre加载 the loose audio file at <c>absolutePath</c> as a sound; succeeds immediately 如果 already
         ///     tracked.
+        ///     中文说明：tracked.
         /// </summary>
         public static bool TryPreloadAsSound(string absolutePath)
         {
@@ -63,7 +71,9 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Preloads the loose audio file at <paramref name="absolutePath" /> as streaming music; succeeds immediately if
+        ///     Pre加载 the loose audio file at <c>absolutePath</c> as streaming music; succeeds immediately if
         ///     already tracked.
+        ///     中文说明：already tracked.
         /// </summary>
         public static bool TryPreloadAsStreamingMusic(string absolutePath)
         {
@@ -82,8 +92,11 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Returns a playable sound instance for the loose audio file at <paramref name="absolutePath" />, preloading as sound
+        ///     返回 a playable sound instance 用于 the loose audio file at <c>absolutePath</c>, preloading as sound
         ///     when needed.
+        ///     当 needed.
         ///     Accepts <c>res://</c> only when the path is a raw file for <see cref="FileAccess" />, absolute paths, and
+        ///     Accepts <c>res://</c> only 当 the 路径 is a raw file 用于 <c>FileAccess</c>, absolute 路径, and
         ///     <c>user://</c> (globalized).
         /// </summary>
         public static GodotObject? TryCreateSoundInstance(string absolutePath)
@@ -106,7 +119,9 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Returns a streaming music instance, preloading as music when needed.
+        ///     返回 a streaming music instance, preloading as music when needed。
         ///     Accepts <c>res://</c> only when the path is a raw file for <see cref="FileAccess" />, absolute paths, and
+        ///     Accepts <c>res://</c> only 当 the 路径 is a raw file 用于 <c>FileAccess</c>, absolute 路径, and
         ///     <c>user://</c> (globalized).
         /// </summary>
         public static GodotObject? TryCreateStreamingMusicInstance(string absolutePath)
@@ -129,6 +144,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Creates a sound instance from an absolute filesystem path and calls <c>play</c> with volume and pitch.
+        ///     创建 a sound instance from an absolute filesystem path and calls <c>play</c> with volume and pitch。
         /// </summary>
         public static bool TryPlaySoundFile(string absolutePath, float volume = 1f, float pitch = 1f)
         {
@@ -152,6 +168,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Unloads a tracked file from FMOD and removes it from the local registry.
+        ///     Un加载 a tracked file 从 FMOD 和 removes it 从 the local 注册表.
         /// </summary>
         public static bool TryUnloadFile(string absolutePath)
         {
@@ -164,6 +181,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Unloads every path currently tracked by this helper.
+        ///     Un加载 every 路径 currently tracked 通过 this helper.
         /// </summary>
         public static void TryUnloadAllTracked()
         {

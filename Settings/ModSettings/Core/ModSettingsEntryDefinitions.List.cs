@@ -5,7 +5,7 @@ namespace STS2RitsuLib.Settings
     /// <summary>
     ///     Reorderable list editor for a bound list of <typeparamref name="TItem" /> with optional structured clipboard per
     ///     item.
-    ///     针对绑定的 <typeparamref name="TItem" /> 列表的可重排序列表编辑器，并可为每个条目提供结构化剪贴板。
+    ///     针对绑定的 <c>TItem</c> 列表的可重排序列表编辑器，并可为每个条目提供结构化剪贴板。
     /// </summary>
     public sealed class ListModSettingsEntryDefinition<TItem>(
         string id,
@@ -76,7 +76,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Initial collapsed state when <see cref="CollapsibleItems" /> is true.
-        ///     当 <see cref="CollapsibleItems" /> 为 true 时的初始折叠状态。
+        ///     当 <c>CollapsibleItems</c> 为 true 时的初始折叠状态。
         /// </summary>
         public bool StartItemsCollapsed { get; } = startItemsCollapsed;
 

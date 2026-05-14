@@ -7,6 +7,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Visuals
 {
     /// <summary>
     ///     Builds a minimal Control tree for <see cref="AncientEventStageProceduralVisualSet" />: optional
+    ///     Builds a minimal Control tree 用于 <c>AncientEventStageProceduralVisual设置</c>: 可选
     ///     <see cref="VideoStreamPlayer" /> and/or cue-driven <see cref="Sprite2D" /> layers.
     /// </summary>
     public static class AncientStageProceduralRootFactory
@@ -15,6 +16,8 @@ namespace STS2RitsuLib.Scaffolding.Content.Visuals
 
         /// <summary>
         ///     Empty control packed once so <c>EventModel.CreateBackgroundScene</c> can succeed when only procedural layers
+        ///     Empty control packed once so <c>EventModel.CreateBackground场景</c> can succeed 当 only procedural layers
+        ///     are used (replaced in layout postfix).
         ///     are used (replaced in layout postfix).
         /// </summary>
         public static PackedScene PlaceholderBackgroundPackedScene
@@ -33,7 +36,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Visuals
 
         /// <summary>
         ///     Creates the layered root, parents it under <paramref name="host" />, and starts background / foreground
+        ///     创建 the layered root, parents it under <c>host</c>, 和 starts 背景 / 用于eground
         ///     playback.
+        ///     中文说明：playback.
         /// </summary>
         public static Control BuildAndMount(NAncientBgContainer host, AncientEventStageProceduralVisualSet stage)
         {

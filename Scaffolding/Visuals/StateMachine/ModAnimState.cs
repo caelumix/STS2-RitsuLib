@@ -4,8 +4,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
     ///     Backend-agnostic animation state, semantically equivalent to
     ///     <see cref="MegaCrit.Sts2.Core.Animation.AnimState" /> but usable from any
     ///     <see cref="IAnimationBackend" /> (Spine, Godot animation player, animated sprite, cue frame sequences).
-    ///     与后端无关的动画状态，语义上等价于 <see cref="MegaCrit.Sts2.Core.Animation.AnimState" />，但可用于任何
-    ///     <see cref="IAnimationBackend" />（Spine、Godot animation player、animated sprite、cue 帧序列）。
+    ///     与后端无关的动画状态，语义上等价于 <c>MegaCrit.Sts2.Core.Animation.AnimState</c>，但可用于任何
+    ///     <c>IAnimationBackend</c>（Spine、Godot animation player、animated sprite、cue 帧序列）。
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -17,7 +17,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
     ///             <description>
     ///                 <see cref="NextState" /> is consumed only when the current animation completes (non-looping) or
     ///                 when the backend signals completion; if <see langword="null" />, the state is preserved.
-    ///                 <see cref="NextState" /> 只会在当前动画完成（非循环）或后端发出完成信号时被消费；
+    ///                 <c>NextState</c> 只会在当前动画完成（非循环）或后端发出完成信号时被消费；
     ///                 若为 <see langword="null" />，状态会保持不变。
     ///             </description>
     ///         </item>
@@ -25,7 +25,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
     ///             <description>
     ///                 <see cref="CallTrigger" /> resolves branches added via <see cref="AddBranch" />; branches may
     ///                 declare an optional guard <see cref="System.Func{TResult}" />.
-    ///                 <see cref="CallTrigger" /> 会解析通过 <see cref="AddBranch" /> 添加的分支；分支可以声明可选 guard
+    ///                 <c>CallTrigger</c> 会解析通过 <c>AddBranch</c> 添加的分支；分支可以声明可选 guard
     ///                 <see cref="System.Func{TResult}" />。
     ///             </description>
     ///         </item>
@@ -37,11 +37,11 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
 
         /// <summary>
         ///     Creates a new state bound to backend animation <paramref name="id" />.
-        ///     创建绑定到后端动画 <paramref name="id" /> 的新状态。
+        ///     创建绑定到后端动画 <c>id</c> 的新状态。
         /// </summary>
         /// <param name="id">
         ///     Animation id resolved by <see cref="IAnimationBackend.HasAnimation" />.
-        ///     由 <see cref="IAnimationBackend.HasAnimation" /> 解析的动画 id。
+        ///     由 <c>IAnimationBackend.HasAnimation</c> 解析的动画 id。
         /// </param>
         /// <param name="isLooping">
         ///     When <see langword="true" />, the backend is asked to loop playback.
@@ -68,7 +68,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
 
         /// <summary>
         ///     Optional follow-up state used by <see cref="ModAnimStateMachine" /> when this state completes.
-        ///     此状态完成时供 <see cref="ModAnimStateMachine" /> 使用的可选后续状态。
+        ///     此状态完成时供 <c>ModAnimStateMachine</c> 使用的可选后续状态。
         /// </summary>
         /// <remarks>
         ///     Keep <see langword="null" /> for terminal states (e.g. <c>die</c>) so completion does not advance.
@@ -79,7 +79,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         /// <summary>
         ///     Optional bounds-container tag forwarded through
         ///     <see cref="ModAnimStateMachine.BoundsUpdated" /> on start and completion.
-        ///     可选 bounds-container 标签，会在开始和完成时通过 <see cref="ModAnimStateMachine.BoundsUpdated" /> 转发。
+        ///     可选 bounds-container 标签，会在开始和完成时通过 <c>ModAnimStateMachine.BoundsUpdated</c> 转发。
         /// </summary>
         public string? BoundsContainer { get; init; }
 
@@ -91,15 +91,15 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
 
         /// <summary>
         ///     Adds a conditional branch to <paramref name="target" /> for trigger <paramref name="trigger" />.
-        ///     为 trigger <paramref name="trigger" /> 添加到 <paramref name="target" /> 的条件分支。
+        ///     为 trigger <c>trigger</c> 添加到 <c>target</c> 的条件分支。
         /// </summary>
         /// <param name="trigger">
         ///     Trigger name compared verbatim during <see cref="CallTrigger" />.
-        ///     在 <see cref="CallTrigger" /> 中逐字比较的 trigger 名称。
+        ///     在 <c>CallTrigger</c> 中逐字比较的 trigger 名称。
         /// </param>
         /// <param name="target">
         ///     State to transition to when the trigger fires and <paramref name="condition" /> passes.
-        ///     trigger 触发且 <paramref name="condition" /> 通过时要转入的状态。
+        ///     trigger 触发且 <c>condition</c> 通过时要转入的状态。
         /// </param>
         /// <param name="condition">
         ///     Optional guard evaluated at trigger time; <see langword="null" /> means always.
@@ -122,7 +122,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         /// <summary>
         ///     Resolves the first matching branch for <paramref name="trigger" /> whose guard passes,
         ///     or <see langword="null" /> when no branch is eligible.
-        ///     解析 <paramref name="trigger" /> 第一个 guard 通过的匹配分支；没有合格分支时返回 <see langword="null" />。
+        ///     解析 <c>trigger</c> 第一个 guard 通过的匹配分支；没有合格分支时返回 <see langword="null" />。
         /// </summary>
         public ModAnimState? CallTrigger(string trigger)
         {
@@ -134,7 +134,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
 
         /// <summary>
         ///     <see langword="true" /> when at least one branch is registered for <paramref name="trigger" />.
-        ///     当至少有一个分支注册到 <paramref name="trigger" /> 时返回 <see langword="true" />。
+        ///     当至少有一个分支注册到 <c>trigger</c> 时返回 <see langword="true" />。
         /// </summary>
         public bool HasTrigger(string trigger)
         {

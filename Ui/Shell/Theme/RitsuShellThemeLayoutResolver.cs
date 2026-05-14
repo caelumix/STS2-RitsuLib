@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
     /// <summary>
     ///     Per-corner radii for <see cref="StyleBoxFlat" />, resolved like <see cref="BoxEdges" /> with
+    ///     Per-corner radii 用于 <c>StyleBoxFlat</c>, resolved like <c>BoxEdges</c> 带有
     ///     <c>all</c> plus optional <c>topLeft</c> / <c>topRight</c> / <c>bottomRight</c> / <c>bottomLeft</c> leaves.
     /// </summary>
     internal readonly record struct BoxCorners(int TopLeft, int TopRight, int BottomRight, int BottomLeft);
@@ -39,6 +40,7 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Resolves corner radii at <paramref name="basePath" /> using the same <c>all</c> + per-side pattern as
+        ///     解析 corner radii at <c>basePath</c> using the same <c>all</c> + per-side pattern as
         ///     <see cref="ResolveEdges" />.
         /// </summary>
         internal static BoxCorners ResolveCornerRadii(string basePath, int fallbackUniform)

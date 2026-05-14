@@ -21,11 +21,11 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
     ///     <see cref="RitsuGodotNodeFactories" /> (explicit <c>CreateFromResource</c> / <c>CreateFromScenePath</c>, e.g.
     ///     <c>Texture2D</c> → <see cref="NCreatureVisuals" />) use the same cue names and trigger mapping as patched
     ///     <see cref="NCreature.SetAnimationTrigger" />.
-    ///     Mod 生物视觉的集中播放入口：优先使用 <see cref="IModCharacterAssetOverrides.VisualCues" /> 中可选的逐 cue 贴图和
-    ///     纯数据帧序列；存在 Spine 时使用 Spine track；否则使用视觉子树下的 Godot <see cref="AnimationPlayer" /> /
-    ///     <see cref="AnimatedSprite2D" />。来自 <see cref="RitsuGodotNodeFactories" /> 的程序化根节点（显式
+    ///     Mod 生物视觉的集中播放入口：优先使用 <c>IModCharacterAssetOverrides.VisualCues</c> 中可选的逐 cue 贴图和
+    ///     纯数据帧序列；存在 Spine 时使用 Spine track；否则使用视觉子树下的 Godot <c>AnimationPlayer</c> /
+    ///     <c>AnimatedSprite2D</c>。来自 <c>RitsuGodotNodeFactories</c> 的程序化根节点（显式
     ///     <c>CreateFromResource</c> / <c>CreateFromScenePath</c>，例如 <c>Texture2D</c> →
-    ///     <see cref="NCreatureVisuals" />）使用与已 patch 的 <see cref="NCreature.SetAnimationTrigger" /> 相同的 cue
+    ///     <c>NCreatureVisuals</c>）使用与已 patch 的 <c>NCreature.SetAnimationTrigger</c> 相同的 cue
     ///     名称和 trigger 映射。
     /// </summary>
     public static class ModCreatureVisualPlayback
@@ -58,7 +58,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
 
         /// <summary>
         ///     Attempts to play a logical cue (idle, die, hurt, …) on combat-style <see cref="NCreatureVisuals" />.
-        ///     尝试在战斗风格 <see cref="NCreatureVisuals" /> 上播放逻辑 cue（idle、die、hurt、…）。
+        ///     尝试在战斗风格 <c>NCreatureVisuals</c> 上播放逻辑 cue（idle、die、hurt、…）。
         /// </summary>
         /// <param name="visuals">
         ///     Creature visuals root.
@@ -127,8 +127,8 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
         /// <param name="cueSetOverride">
         ///     When set (e.g. <see cref="IModCharacterAssetOverrides.WorldProceduralVisuals" /> merchant / rest cues),
         ///     used instead of <see cref="IModCharacterAssetOverrides.VisualCues" /> for texture / frame lookup.
-        ///     设置时（例如 <see cref="IModCharacterAssetOverrides.WorldProceduralVisuals" /> 的商人 / 休息点 cue），
-        ///     用它替代 <see cref="IModCharacterAssetOverrides.VisualCues" /> 进行贴图 / 帧查找。
+        ///     设置时（例如 <c>IModCharacterAssetOverrides.WorldProceduralVisuals</c> 的商人 / 休息点 cue），
+        ///     用它替代 <c>IModCharacterAssetOverrides.VisualCues</c> 进行贴图 / 帧查找。
         /// </param>
         public static bool TryPlayOnVisualRoot(Node root, CharacterModel? character, string animName, bool loop = false,
             VisualCueSet? cueSetOverride = null)
@@ -146,7 +146,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
 
         /// <summary>
         ///     When the creature has no Spine animator, plays the mapped cue on <see cref="NCreature.Visuals" />.
-        ///     当生物没有 Spine animator 时，在 <see cref="NCreature.Visuals" /> 上播放映射后的 cue。
+        ///     当生物没有 Spine animator 时，在 <c>NCreature.Visuals</c> 上播放映射后的 cue。
         /// </summary>
         /// <returns>
         ///     <see langword="false" /> when Spine is active (caller should run vanilla).
@@ -189,8 +189,8 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals
         /// <summary>
         ///     Resolves the owning <see cref="CharacterModel" /> for a merchant-booth <see cref="NMerchantCharacter" />
         ///     in either <see cref="NMerchantRoom" /> or the fake-merchant event screen.
-        ///     为 <see cref="NMerchantRoom" /> 或 fake-merchant 事件界面中的商人摊位 <see cref="NMerchantCharacter" />
-        ///     解析所属 <see cref="CharacterModel" />。
+        ///     为 <c>NMerchantRoom</c> 或 fake-merchant 事件界面中的商人摊位 <c>NMerchantCharacter</c>
+        ///     解析所属 <c>CharacterModel</c>。
         /// </summary>
         internal static bool TryResolveMerchantCharacterModel(NMerchantCharacter visual,
             out CharacterModel? character)

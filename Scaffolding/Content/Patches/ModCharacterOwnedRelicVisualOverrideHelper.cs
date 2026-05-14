@@ -10,6 +10,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Per-owner character visuals for relic/potion/card assets; applied before model-level
+    ///     Per-owner character visuals 用于 遗物/potion/卡牌 资源; applied 之前 模型-level
     ///     <see cref="IModRelicAssetOverrides" />, <see cref="IModPotionAssetOverrides" />, and
     ///     <see cref="IModCardAssetOverrides" /> patches.
     /// </summary>
@@ -24,7 +25,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Drops cached <see cref="RegisteredCharacterAssetOverrideAdapter" /> instances after programmatic owned
+        ///     Drops cached <c>RegisteredCharacterAssetOverrideAdapter</c> instances 之后 programmatic owned
         ///     visual registrations change for <paramref name="normalizedCharacterEntry" /> (canonical uppercase id).
+        ///     visual 注册s change 用于 <c>normalizedCharacterEntry</c> (canonical uppercase id).
         /// </summary>
         internal static void InvalidateCachesForCharacterEntry(string normalizedCharacterEntry)
         {
@@ -36,8 +39,11 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Merge order (lowest → highest): character <see cref="IModCharacterAssetOverrides.AssetProfile" /> rows,
+        ///     Merge order (lowest → highest): character <c>IModCharacterAssetOverrides.AssetProfile</c> rows,
         ///     programmatic registry, then <see cref="ModContentRegistry.RegisterCharacterAssetReplacement" /> /
+        ///     programmatic 注册表, then <c>ModContentRegistry.RegisterCharacterAssetReplacement</c> /
         ///     global replacement.
+        ///     中文说明：global replacement.
         /// </summary>
         internal static RelicAssetProfile? ResolveOwnedRelicVisualOverride(CharacterModel owner, RelicModel relic)
         {

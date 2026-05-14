@@ -8,7 +8,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Runs before <c>EncounterModel.GetBackgroundAssets</c> so <see cref="ModEncounterTemplate" /> can fill the
+    ///     runs 之前 <c>EncounterModel.GetBackgroundAssets</c> so <c>ModEncounterTemplate</c> can fill the
     ///     programmatic slot (needs <see cref="ActModel" /> + <see cref="Rng" />; vanilla
+    ///     programmatic slot (needs <c>ActModel</c> + <c>Rng</c>; 原版
     ///     <c>CreateBackgroundAssetsForCustom</c> only receives <c>Rng</c>).
     /// </summary>
     public class EncounterGetBackgroundAssetsProgrammaticPrepPatch : IPatchMethod
@@ -35,7 +37,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Invokes <see cref="ModEncounterTemplate.PrepareProgrammaticCombatBackground" /> when the encounter has no cached
+        ///     Invokes <c>ModEncounterTemplate.PrepareProgrammaticCombat背景</c> 当 the encounter has no cached
         ///     background yet.
+        ///     背景 yet.
         /// </summary>
         public static void Prefix(EncounterModel __instance, ActModel parentAct, Rng rng)
             // ReSharper restore InconsistentNaming

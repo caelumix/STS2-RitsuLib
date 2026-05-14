@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Combat.HealthBars
 {
     /// <summary>
     ///     When BaseLib is loaded, registers <see cref="HealthBarVisualGraftRegistry.Aggregate" /> with BaseLib's
+    ///     当 BaseLib is loaded, registers <c>HealthBarVisualGraft注册表.Aggregate</c> 带有 BaseLib's
     ///     <c>HealthBarVisualGraftRegistry.RegisterForeign</c> so a single consumer can merge Ritsu graft metrics.
     /// </summary>
     internal static class BaseLibVisualGraftBridge

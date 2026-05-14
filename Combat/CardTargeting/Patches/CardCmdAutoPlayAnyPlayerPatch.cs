@@ -8,8 +8,11 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 {
     /// <summary>
     ///     Fixes <see cref="CardCmd.AutoPlay" /> for <see cref="TargetType.AnyPlayer" />.
+    ///     Fixes <c>卡牌Cmd.AutoPlay</c> 用于 <c>TargetType.AnyPlayer</c>.
     ///     Vanilla only resolves random targets for AnyEnemy and AnyAlly when target is null.
+    ///     原版 only 解析 random targets 用于 AnyEnemy 和 AnyAlly 当 target is null.
     ///     This patch adds the same RNG fallback for AnyPlayer (pick a random living player).
+    ///     This patch adds the same RNG fallback 用于 AnyPlayer (pick a random living player).
     /// </summary>
     internal sealed class CardCmdAutoPlayAnyPlayerPatch : IPatchMethod
     {

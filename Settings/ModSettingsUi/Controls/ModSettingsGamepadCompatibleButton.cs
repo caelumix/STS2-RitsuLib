@@ -5,6 +5,7 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Godot <see cref="Button" /> defaults lean on <c>ui_accept</c>; STS2 maps controller confirm to
+    ///     中文说明：Godot <c>Button</c> defaults lean on <c>ui_accept</c>; STS2 maps controller confirm to
     ///     <see cref="MegaInput.select" /> (<c>ui_select</c>) like
     ///     <see cref="MegaCrit.Sts2.Core.Nodes.GodotExtensions.NClickableControl" />.
     /// </summary>
@@ -12,6 +13,7 @@ namespace STS2RitsuLib.Settings
     {
         /// <summary>
         ///     Creates a button that maps both keyboard and controller confirm actions to press behavior.
+        ///     创建 a button that maps both keyboard and controller confirm actions to press behavior。
         /// </summary>
         public ModSettingsGamepadCompatibleButton()
         {
@@ -27,8 +29,12 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Handles controller confirm input so the button behaves like standard STS2 clickable controls.
+        ///     中文说明：Handles controller confirm input so the button behaves like standard STS2 clickable controls.
         /// </summary>
-        /// <param name="event">The input event to process.</param>
+        /// <param name="event">
+        ///     The input event to process.
+        ///     该 input event to process。
+        /// </param>
         public override void _GuiInput(InputEvent @event)
         {
             if (!Disabled && !@event.IsEcho() &&

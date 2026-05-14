@@ -7,6 +7,7 @@ namespace STS2RitsuLib.Content
     {
         /// <summary>
         ///     Registers an initial-option injection rule for <typeparamref name="TAncient" />.
+        ///     注册 an initial-option injection rule for <c>TAncient</c>。
         /// </summary>
         public void RegisterAncientOption<TAncient>(ModAncientOptionRule rule)
             where TAncient : AncientEventModel
@@ -17,6 +18,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers an initial-option injection rule for <paramref name="ancientType" />.
+        ///     注册 an initial-option injection rule for <c>ancientType</c>。
         /// </summary>
         public void RegisterAncientOption(Type ancientType, ModAncientOptionRule rule)
         {

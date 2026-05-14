@@ -5,12 +5,15 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 {
     /// <summary>
     ///     Builds a <see cref="RitsuShellTheme" /> snapshot from a merged + reference-resolved DTFM token tree.
+    ///     Builds a <c>RitsuShellTheme</c> snapshot 从 a merged + reference-resolved DTFM token tree.
     ///     Reads concrete values at canonical paths to populate typed records.
+    ///     Reads concrete values at canonical 路径 to populate typed records.
     /// </summary>
     internal static class RitsuShellThemeBuilder
     {
         /// <summary>
         ///     Builds a snapshot for <paramref name="resolvedId" /> from the merged tree.
+        ///     Builds a snapshot 用于 <c>resolvedId</c> 从 the merged tree.
         /// </summary>
         public static RitsuShellTheme Build(string resolvedId,
             Dictionary<string, object?> root,

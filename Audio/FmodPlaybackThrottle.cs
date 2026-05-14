@@ -4,6 +4,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Per-key cooldown for rapid triggers (ms, via <see cref="Stopwatch" /> ticks).
+    ///     Per-key cooldown 用于 rapid triggers (ms, via <c>Stopwatch</c> ticks).
     /// </summary>
     public static class FmodPlaybackThrottle
     {
@@ -12,6 +13,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Returns false if <paramref name="key" /> was used within <paramref name="cooldownMs" />.
+        ///     返回 false if <c>key</c> was used within <c>cooldownMs</c>。
         /// </summary>
         public static bool TryEnter(string key, int cooldownMs)
         {
@@ -33,6 +35,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Removes cooldown state for <paramref name="key" /> so the next <see cref="TryEnter" /> may pass.
+        ///     Removes cooldown state 用于 <c>key</c> so the next <c>TryEnter</c> may pass.
         /// </summary>
         public static void Clear(string key)
         {
@@ -44,6 +47,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Clears all throttle keys.
+        ///     中文说明：Clears all throttle keys.
         /// </summary>
         public static void ClearAll()
         {

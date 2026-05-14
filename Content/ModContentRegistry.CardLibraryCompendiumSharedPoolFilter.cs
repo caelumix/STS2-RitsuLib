@@ -13,7 +13,9 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers an extra card-library compendium pool filter for <typeparamref name="TPool" />. Unregistered
+        ///     Registers an extra 卡牌-library compendium pool 过滤 用于 <c>TPool</c>. Un已注册
         ///     shared card pools do not get a filter button; call this only when you want that row, and supply
+        ///     shared 卡牌 pools do not get a filter button; call this only 当 you want that row, 和 supply
         ///     <paramref name="iconTexturePath" /> and a unique <paramref name="stableId" />.
         /// </summary>
         public void RegisterCardLibraryCompendiumSharedPoolFilter<TPool>(string stableId, string iconTexturePath)
@@ -24,6 +26,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers an extra card-library compendium pool filter with optional ordered placement rules.
+        ///     注册 an extra card-library compendium pool filter with optional ordered placement rules。
         /// </summary>
         public void RegisterCardLibraryCompendiumSharedPoolFilter<TPool>(
             string stableId,

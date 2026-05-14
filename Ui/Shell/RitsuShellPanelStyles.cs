@@ -5,16 +5,28 @@ namespace STS2RitsuLib.Ui.Shell
 {
     /// <summary>
     ///     Shared <see cref="StyleBoxFlat" /> factories for framed panels and side cards. Use for mod settings, run-time
+    ///     Shared <c>StyleBoxFlat</c> factories 用于 framed panels 和 side 卡牌s. 使用 用于 mod 设置, 跑局-time
     ///     overlays, and any in-game surface that should match the Ritsu shell look.
+    ///     overlays, 和 any in-game surface that should match the Ritsu shell look.
     /// </summary>
     public static class RitsuShellPanelStyles
     {
         /// <summary>
         ///     Primary framed panel (large panes, content wells).
+        ///     中文说明：Primary framed panel (large panes, content wells).
         /// </summary>
-        /// <param name="background">Background fill color.</param>
-        /// <param name="cornerRadius">Corner radius.</param>
-        /// <returns>A new framed surface stylebox.</returns>
+        /// <param name="background">
+        ///     Background fill color.
+        ///     背景 fill color.
+        /// </param>
+        /// <param name="cornerRadius">
+        ///     Corner radius.
+        ///     中文说明：Corner radius.
+        /// </param>
+        /// <returns>
+        ///     A new framed surface stylebox.
+        ///     一个 new framed surface stylebox。
+        /// </returns>
         public static StyleBoxFlat CreateFramedSurface(Color background, int cornerRadius)
         {
             var t = RitsuShellTheme.Current;
@@ -46,10 +58,20 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Nested card inside a sidebar (mod group chrome).
+        ///     Nested 卡牌 inside a sidebar (mod group chrome).
         /// </summary>
-        /// <param name="cornerRadius">Corner radius.</param>
-        /// <param name="selected">Whether the card is in its selected state.</param>
-        /// <returns>A new sidebar mod card stylebox.</returns>
+        /// <param name="cornerRadius">
+        ///     Corner radius.
+        ///     中文说明：Corner radius.
+        /// </param>
+        /// <param name="selected">
+        ///     Whether the card is in its selected state.
+        ///     表示是否 the card is in its selected state。
+        /// </param>
+        /// <returns>
+        ///     A new sidebar mod card stylebox.
+        ///     一个 new sidebar mod card stylebox。
+        /// </returns>
         public static StyleBoxFlat CreateSidebarModCard(int cornerRadius, bool selected)
         {
             var t = RitsuShellTheme.Current;
@@ -82,11 +104,24 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Same as <see cref="CreateSidebarModCard" /> but with tighter inner padding (compact nav).
+        ///     Same as <c>CreateSidebarMod卡牌</c> but 带有 tighter inner padding (compact nav).
         /// </summary>
-        /// <param name="cornerRadius">Corner radius.</param>
-        /// <param name="selected">Whether the card is in its selected state.</param>
-        /// <param name="innerMargin">Inner padding override applied to all four edges.</param>
-        /// <returns>A new compact sidebar mod card stylebox.</returns>
+        /// <param name="cornerRadius">
+        ///     Corner radius.
+        ///     中文说明：Corner radius.
+        /// </param>
+        /// <param name="selected">
+        ///     Whether the card is in its selected state.
+        ///     表示是否 the card is in its selected state。
+        /// </param>
+        /// <param name="innerMargin">
+        ///     Inner padding override applied to all four edges.
+        ///     中文说明：Inner padding override applied to all four edges.
+        /// </param>
+        /// <returns>
+        ///     A new compact sidebar mod card stylebox.
+        ///     一个 new compact sidebar mod card stylebox。
+        /// </returns>
         public static StyleBoxFlat CreateSidebarModCardCompact(int cornerRadius, bool selected, int innerMargin = 6)
         {
             var b = CreateSidebarModCard(cornerRadius, selected);

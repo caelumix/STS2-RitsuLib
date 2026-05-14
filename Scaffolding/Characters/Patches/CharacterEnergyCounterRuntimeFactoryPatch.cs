@@ -10,7 +10,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     Allows mod characters to convert legacy energy-counter scenes into <see cref="NEnergyCounter" /> before
+    ///     Allows mod characters to convert legacy energy-counter 场景s into <c>NEnergyCounter</c> 之前
     ///     vanilla tries to instantiate the scene as the final type directly.
+    ///     原版 tries to instantiate the 场景 as the final type directly.
     /// </summary>
     public class CharacterEnergyCounterRuntimeFactoryPatch : IPatchMethod
     {
@@ -35,7 +37,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Converts a mod energy-counter scene into <see cref="NEnergyCounter" /> and injects the owning player
+        ///     Converts a mod energy-counter 场景 into <c>NEnergyCounter</c> 和 injects the owning player
         ///     before vanilla performs direct scene instantiation.
+        ///     之前 原版 performs direct 场景 instantiation.
         /// </summary>
         [HarmonyPriority(Priority.First)]
         public static bool Prefix(Player player, ref NEnergyCounter? __result)

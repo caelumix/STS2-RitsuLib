@@ -31,7 +31,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Base <see cref="PotionModel" /> for mods: keyword hover tips and <see cref="IModPotionAssetOverrides" />.
-    ///     Mod 药水的基础 <see cref="PotionModel" />：提供关键词悬浮提示和 <see cref="IModPotionAssetOverrides" />。
+    ///     Mod 药水的基础 <c>PotionModel</c>：提供关键词悬浮提示和 <c>IModPotionAssetOverrides</c>。
     /// </summary>
     public abstract class ModPotionTemplate : PotionModel, IModPotionAssetOverrides
     {
@@ -43,9 +43,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     via <c>ToHoverTips()</c>. Use it for visual documentation; gameplay behaviour must be implemented
         ///     explicitly in the potion's own logic.
         ///     要显示在此药水悬浮提示上的关键词 id。<b>仅用于显示</b>：不同于
-        ///     <see cref="ModCardTemplate.RegisteredKeywordIds" />，它不会参与任何游戏逻辑关键词集合
-        ///     （原版 <see cref="PotionModel" /> 没有 <c>Keywords</c>/<c>CardKeyword</c> 存储）。每个 id
-        ///     只会通过 <see cref="ModKeywordRegistry" /> 查找并用 <c>ToHoverTips()</c> 渲染悬浮提示。请将它用于视觉说明；
+        ///     <c>ModCardTemplate.RegisteredKeywordIds</c>，它不会参与任何游戏逻辑关键词集合
+        ///     （原版 <c>PotionModel</c> 没有 <c>Keywords</c>/<c>CardKeyword</c> 存储）。每个 id
+        ///     只会通过 <c>ModKeywordRegistry</c> 查找并用 <c>ToHoverTips()</c> 渲染悬浮提示。请将它用于视觉说明；
         ///     游戏行为必须在药水自身逻辑中显式实现。
         /// </summary>
         protected virtual IEnumerable<string> RegisteredKeywordIds => [];

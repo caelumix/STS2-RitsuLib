@@ -2,11 +2,11 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 {
     /// <summary>
     ///     One frame in a <see cref="VisualFrameSequence" /> (texture path + hold duration).
-    ///     <see cref="VisualFrameSequence" /> 中的一帧（贴图路径 + 保持时长）。
+    ///     <c>VisualFrameSequence</c> 中的一帧（贴图路径 + 保持时长）。
     /// </summary>
     /// <param name="TexturePath">
     ///     Godot resource path to a <c>Texture2D</c>.
-    ///     指向 <c>Texture2D</c> 的 Godot 资源路径。
+    ///     指向 <c>Texture2D</c> 的 Godot ResourcePath。
     /// </param>
     /// <param name="DurationSeconds">
     ///     Display time before advancing; non-positive values are clamped at runtime.

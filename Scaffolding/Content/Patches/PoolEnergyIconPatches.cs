@@ -8,19 +8,23 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Implement on a pool model to override the large energy icon path resolved from
+    ///     Implement on a pool 模型 to override the large energy 图标 路径 resolved 从
     ///     <see cref="EnergyIconHelper.GetPath(string)" />.
     /// </summary>
     public interface IModBigEnergyIconPool
     {
         /// <summary>
         ///     Custom large energy icon path for this pool’s <see cref="MegaCrit.Sts2.Core.Models.IPoolModel.EnergyColorName" />.
+        ///     自定义 large energy 图标 路径 用于 this pool’s <c>MegaCrit.Sts2.Core.Models.IPool模型.EnergyColorName</c>.
         /// </summary>
         string? BigEnergyIconPath { get; }
     }
 
     /// <summary>
     ///     Prefixes <see cref="EnergyIconHelper.GetPath(string)" /> so pools implementing <see cref="IModBigEnergyIconPool" />
+    ///     Prefixes <c>EnergyIconHelper.Get路径(string)</c> so pools implementing <c>IModBigEnergyIconPool</c>
     ///     can replace the resolved big icon path.
+    ///     can replace the resolved big 图标 路径.
     /// </summary>
     public class EnergyIconHelperPathPatch : IPatchMethod
     {
@@ -46,6 +50,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Delegates to <see cref="ModBigEnergyIconHelper.TryOverridePath" /> to substitute a cached pool override.
+        ///     Delegates to <c>ModBigEnergyIconHelper.TryOverride路径</c> to substitute a cached pool override.
         /// </summary>
         public static bool Prefix(string prefix, ref string __result)
             // ReSharper restore InconsistentNaming

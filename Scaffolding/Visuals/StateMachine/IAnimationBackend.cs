@@ -6,23 +6,23 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
     ///     Uniform driver surface required by <see cref="ModAnimStateMachine" /> so the same state graph can run on
     ///     Spine (<c>MegaSprite</c>), Godot <c>AnimationPlayer</c>, <c>AnimatedSprite2D</c>, or cue-frame-sequence
     ///     playback (see <see cref="STS2RitsuLib.Scaffolding.Visuals.Definition.VisualCueSet" />).
-    ///     <see cref="ModAnimStateMachine" /> 所需的统一驱动接口，使同一状态图可以运行在 Spine（<c>MegaSprite</c>）、
+    ///     <c>ModAnimStateMachine</c> 所需的统一驱动接口，使同一状态图可以运行在 Spine（<c>MegaSprite</c>）、
     ///     Godot <c>AnimationPlayer</c>、<c>AnimatedSprite2D</c> 或 cue 帧序列播放上
-    ///     （见 <see cref="STS2RitsuLib.Scaffolding.Visuals.Definition.VisualCueSet" />）。
+    ///     （见 <c>STS2RitsuLib.Scaffolding.Visuals.Definition.VisualCueSet</c>）。
     /// </summary>
     /// <remarks>
     ///     <para>
     ///         Implementations raise <see cref="Started" />, <see cref="Completed" />, and <see cref="Interrupted" />
     ///         whenever the underlying system reports the corresponding events so the state machine can advance
     ///         <see cref="ModAnimState.NextState" />.
-    ///         当底层系统报告对应事件时，实现应触发 <see cref="Started" />、<see cref="Completed" /> 和
-    ///         <see cref="Interrupted" />，以便状态机推进 <see cref="ModAnimState.NextState" />。
+    ///         当底层系统报告对应事件时，实现应触发 <c>Started</c>、<c>Completed</c> 和
+    ///         <c>Interrupted</c>，以便状态机推进 <c>ModAnimState.NextState</c>。
     ///     </para>
     ///     <para>
     ///         <see cref="Queue" /> is only meaningful for backends with true queue semantics (Spine); other backends
     ///         may forward it to <see cref="Play" /> or defer until <see cref="Completed" /> fires.
-    ///         <see cref="Queue" /> 只对真正有队列语义的后端（Spine）有完整意义；其它后端可以转发到
-    ///         <see cref="Play" />，或延迟到 <see cref="Completed" /> 触发后执行。
+    ///         <c>Queue</c> 只对真正有队列语义的后端（Spine）有完整意义；其它后端可以转发到
+    ///         <c>Play</c>，或延迟到 <c>Completed</c> 触发后执行。
     ///     </para>
     /// </remarks>
     public interface IAnimationBackend
@@ -53,17 +53,17 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
 
         /// <summary>
         ///     Returns <see langword="true" /> when the backend can play <paramref name="id" />.
-        ///     当后端可以播放 <paramref name="id" /> 时返回 <see langword="true" />。
+        ///     当后端可以播放 <c>id</c> 时返回 <see langword="true" />。
         /// </summary>
         bool HasAnimation(string id);
 
         /// <summary>
         ///     Plays <paramref name="id" /> immediately (replaces any active animation).
-        ///     立即播放 <paramref name="id" />（替换任何当前动画）。
+        ///     立即播放 <c>id</c>（替换任何当前动画）。
         /// </summary>
         /// <param name="id">
         ///     Animation id; must satisfy <see cref="HasAnimation" />.
-        ///     动画 id；必须满足 <see cref="HasAnimation" />。
+        ///     动画 id；必须满足 <c>HasAnimation</c>。
         /// </param>
         /// <param name="loop">
         ///     Loop hint; backends without looping support should treat this as a best-effort flag.
@@ -74,8 +74,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         /// <summary>
         ///     Queues <paramref name="id" /> after the currently active animation. Non-queue backends may treat this
         ///     as a deferred <see cref="Play" /> triggered on the next <see cref="Completed" />.
-        ///     将 <paramref name="id" /> 排在当前激活动画之后。不支持队列的后端可以把它视为下一次
-        ///     <see cref="Completed" /> 后触发的延迟 <see cref="Play" />。
+        ///     将 <c>id</c> 排在当前激活动画之后。不支持队列的后端可以把它视为下一次
+        ///     <c>Completed</c> 后触发的延迟 <c>Play</c>。
         /// </summary>
         void Queue(string id, bool loop);
 
@@ -85,9 +85,9 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine
         ///     typically <see cref="STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends.CompositeAnimationBackend" />
         ///     during cross-backend transitions, so the previously active backend does not continue visibly playing
         ///     alongside the newly activated one.
-        ///     静默停止任何当前播放（不触发 <see cref="Interrupted" /> / <see cref="Completed" />），并清除待队列动画。
+        ///     静默停止任何当前播放（不触发 <c>Interrupted</c> / <c>Completed</c>），并清除待队列动画。
         ///     供需要释放后端的调用方使用，典型场景是
-        ///     <see cref="STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends.CompositeAnimationBackend" /> 进行跨后端切换时，
+        ///     <c>STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends.CompositeAnimationBackend</c> 进行跨后端切换时，
         ///     避免之前激活的后端继续与新激活后端同时可见播放。
         /// </summary>
         /// <remarks>

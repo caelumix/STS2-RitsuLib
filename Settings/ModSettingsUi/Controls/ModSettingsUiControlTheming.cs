@@ -5,13 +5,18 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Central place for repeated Godot theme overrides on LineEdit, TextEdit, buttons, and popup menus.
+    ///     Central place 用于 repeated Godot theme overrides on LineEdit, TextEdit, buttons, 和 popup menus.
     /// </summary>
     public static class ModSettingsUiControlTheming
     {
         /// <summary>
         ///     Applies the shared surface-button chrome to all standard button states.
+        ///     中文说明：Applies the shared surface-button chrome to all standard button states.
         /// </summary>
-        /// <param name="control">The button to style.</param>
+        /// <param name="control">
+        ///     The button to style.
+        ///     该 button to style。
+        /// </param>
         public static void ApplyUniformSurfaceButtonStates(BaseButton control)
         {
             var box = ModSettingsUiFactory.CreateSurfaceStyle();
@@ -23,8 +28,12 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Applies the shared frame chrome used by color picker swatch buttons.
+        ///     Applies the shared frame chrome used 通过 color picker swatch buttons.
         /// </summary>
-        /// <param name="picker">The color picker button to style.</param>
+        /// <param name="picker">
+        ///     The color picker button to style.
+        ///     该 color picker button to style。
+        /// </param>
         public static void ApplyColorPickerSwatchButtonChrome(ColorPickerButton picker)
         {
             var box = ModSettingsUiFactory.CreateColorPickerSwatchFrameStyle();
@@ -36,10 +45,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Applies the standard value-field theme to a single-line text entry.
+        ///     中文说明：Applies the standard value-field theme to a single-line text entry.
         /// </summary>
-        /// <param name="edit">The line edit to style.</param>
-        /// <param name="font">The font to use for the value text.</param>
-        /// <param name="fontSize">The font size to apply.</param>
+        /// <param name="edit">
+        ///     The line edit to style.
+        ///     该 line edit to style。
+        /// </param>
+        /// <param name="font">
+        ///     The font to use for the value text.
+        ///     该 font to use for the value text。
+        /// </param>
+        /// <param name="fontSize">
+        ///     The font size to apply.
+        ///     该 font size to apply。
+        /// </param>
         public static void ApplyEntryLineEditValueFieldTheme(LineEdit edit, Font font, int fontSize = 17)
         {
             edit.AddThemeFontOverride("font", font);
@@ -55,10 +74,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Applies the standard value-field theme to a multi-line text entry.
+        ///     中文说明：Applies the standard value-field theme to a multi-line text entry.
         /// </summary>
-        /// <param name="edit">The text edit to style.</param>
-        /// <param name="font">The font to use for the value text.</param>
-        /// <param name="fontSize">The font size to apply.</param>
+        /// <param name="edit">
+        ///     The text edit to style.
+        ///     该 text edit to style。
+        /// </param>
+        /// <param name="font">
+        ///     The font to use for the value text.
+        ///     该 font to use for the value text。
+        /// </param>
+        /// <param name="fontSize">
+        ///     The font size to apply.
+        ///     该 font size to apply。
+        /// </param>
         public static void ApplyEntryTextEditValueFieldTheme(TextEdit edit, Font font, int fontSize = 17)
         {
             edit.AddThemeFontOverride("font", font);
@@ -74,9 +103,16 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Applies the standard popup-menu list styling used by settings pickers.
+        ///     Applies the standard popup-menu list styling used 通过 设置 pickers.
         /// </summary>
-        /// <param name="popup">The popup menu to style.</param>
-        /// <param name="fontSize">The font size to apply to menu rows.</param>
+        /// <param name="popup">
+        ///     The popup menu to style.
+        ///     该 popup menu to style。
+        /// </param>
+        /// <param name="fontSize">
+        ///     The font size to apply to menu rows.
+        ///     该 font size to apply to menu rows。
+        /// </param>
         public static void ApplyPopupMenuListTheme(PopupMenu popup, int fontSize)
         {
             popup.AddThemeFontOverride("font", RitsuShellTheme.Current.Font.Body);
@@ -94,9 +130,16 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a segmented row container for compact mode-selection buttons.
+        ///     创建 a segmented row container for compact mode-selection buttons。
         /// </summary>
-        /// <param name="buttons">The buttons to place in the row.</param>
-        /// <returns>A horizontal container with standard spacing for segmented controls.</returns>
+        /// <param name="buttons">
+        ///     The buttons to place in the row.
+        ///     该 buttons to place in the row。
+        /// </param>
+        /// <returns>
+        ///     A horizontal container with standard spacing for segmented controls.
+        ///     一个 horizontal container with standard spacing for segmented controls。
+        /// </returns>
         public static HBoxContainer CreateSegmentedButtonRow(params Button[] buttons)
         {
             var row = new HBoxContainer();
@@ -109,11 +152,24 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a segmented toggle button using standard settings sizing.
+        ///     创建 a segmented toggle button using standard settings sizing。
         /// </summary>
-        /// <param name="text">The button label.</param>
-        /// <param name="pressed">Whether the button starts pressed.</param>
-        /// <param name="group">Optional exclusive toggle group.</param>
-        /// <returns>A configured segmented toggle button.</returns>
+        /// <param name="text">
+        ///     The button label.
+        ///     该 button label。
+        /// </param>
+        /// <param name="pressed">
+        ///     Whether the button starts pressed.
+        ///     表示是否 the button starts pressed。
+        /// </param>
+        /// <param name="group">
+        ///     Optional exclusive toggle group.
+        ///     可选 exclusive toggle group.
+        /// </param>
+        /// <returns>
+        ///     A configured segmented toggle button.
+        ///     一个 configured segmented toggle button。
+        /// </returns>
         public static Button CreateSegmentedToggleButton(string text, bool pressed, ButtonGroup? group = null)
         {
             return new()
@@ -131,10 +187,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a button-style settings toggle that matches the standard on/off visual language.
+        ///     创建 a button-style settings toggle that matches the standard on/off visual language。
         /// </summary>
-        /// <param name="text">The button label.</param>
-        /// <param name="pressed">Whether the toggle starts enabled.</param>
-        /// <returns>A configured toggle button with standard interactive styling.</returns>
+        /// <param name="text">
+        ///     The button label.
+        ///     该 button label。
+        /// </param>
+        /// <param name="pressed">
+        ///     Whether the toggle starts enabled.
+        ///     表示是否 the toggle starts enabled。
+        /// </param>
+        /// <returns>
+        ///     A configured toggle button with standard interactive styling.
+        ///     一个 configured toggle button with standard interactive styling。
+        /// </returns>
         public static Button CreateSettingsToggleButton(string text, bool pressed)
         {
             var button = new Button
@@ -158,10 +224,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a compact button-style settings toggle for list headers and other dense layouts.
+        ///     创建 a compact button-style settings toggle for list headers and other dense layouts。
         /// </summary>
-        /// <param name="text">The button label.</param>
-        /// <param name="pressed">Whether the toggle starts enabled.</param>
-        /// <returns>A compact toggle button with standard interactive styling.</returns>
+        /// <param name="text">
+        ///     The button label.
+        ///     该 button label。
+        /// </param>
+        /// <param name="pressed">
+        ///     Whether the toggle starts enabled.
+        ///     表示是否 the toggle starts enabled。
+        /// </param>
+        /// <returns>
+        ///     A compact toggle button with standard interactive styling.
+        ///     一个 compact toggle button with standard interactive styling。
+        /// </returns>
         public static Button CreateCompactSettingsToggleButton(string text, bool pressed)
         {
             var button = new Button
@@ -186,10 +262,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a compact On/Off toggle using the standard settings toggle control chrome.
+        ///     创建 a compact On/Off toggle using the standard settings toggle control chrome。
         /// </summary>
-        /// <param name="initialValue">Whether the toggle starts enabled.</param>
-        /// <param name="onChanged">Callback invoked after the value changes.</param>
-        /// <returns>A compact toggle control sized for dense editor layouts.</returns>
+        /// <param name="initialValue">
+        ///     Whether the toggle starts enabled.
+        ///     表示是否 the toggle starts enabled。
+        /// </param>
+        /// <param name="onChanged">
+        ///     Callback invoked after the value changes.
+        ///     Callback invoked 之后 the value changes.
+        /// </param>
+        /// <returns>
+        ///     A compact toggle control sized for dense editor layouts.
+        ///     一个 compact toggle control sized for dense editor layouts。
+        /// </returns>
         public static ModSettingsToggleControl CreateCompactStateToggle(bool initialValue, Action<bool> onChanged)
         {
             return new(initialValue, onChanged)
@@ -203,10 +289,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a labeled compact editor field for dense multi-column layouts.
+        ///     创建 a labeled compact editor field for dense multi-column layouts。
         /// </summary>
-        /// <param name="labelText">The descriptive label shown above the editor.</param>
-        /// <param name="editor">The editor control to place below the label.</param>
-        /// <returns>A vertically stacked label-and-editor field.</returns>
+        /// <param name="labelText">
+        ///     The descriptive label shown above the editor.
+        ///     该 descriptive label shown above the editor。
+        /// </param>
+        /// <param name="editor">
+        ///     The editor control to place below the label.
+        ///     该 editor control to place below the label。
+        /// </param>
+        /// <returns>
+        ///     A vertically stacked label-and-editor field.
+        ///     一个 vertically stacked label-and-editor field。
+        /// </returns>
         public static Control CreateCompactEditorField(string labelText, Control editor)
         {
             var wrapper = new VBoxContainer
@@ -222,10 +318,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a compact multi-column row for dense settings editors.
+        ///     创建 a compact multi-column row for dense settings editors。
         /// </summary>
-        /// <param name="columns">The number of columns to use.</param>
-        /// <param name="controls">The fields to place in the row.</param>
-        /// <returns>A compact grid container for grouped editors.</returns>
+        /// <param name="columns">
+        ///     The number of columns to use.
+        ///     该 number of columns to use。
+        /// </param>
+        /// <param name="controls">
+        ///     The fields to place in the row.
+        ///     该 fields to place in the row。
+        /// </param>
+        /// <returns>
+        ///     A compact grid container for grouped editors.
+        ///     一个 compact grid container for grouped editors。
+        /// </returns>
         public static Control CreateCompactEditorRow(int columns, params Control[] controls)
         {
             var grid = new GridContainer
@@ -244,10 +350,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a labeled compact toggle field for dense multi-column editor rows.
+        ///     创建 a labeled compact toggle field for dense multi-column editor rows。
         /// </summary>
-        /// <param name="labelText">The descriptive label shown above the toggle.</param>
-        /// <param name="toggle">The toggle control to place below the label.</param>
-        /// <returns>A vertically stacked label-and-toggle field.</returns>
+        /// <param name="labelText">
+        ///     The descriptive label shown above the toggle.
+        ///     该 descriptive label shown above the toggle。
+        /// </param>
+        /// <param name="toggle">
+        ///     The toggle control to place below the label.
+        ///     该 toggle control to place below the label。
+        /// </param>
+        /// <returns>
+        ///     A vertically stacked label-and-toggle field.
+        ///     一个 vertically stacked label-and-toggle field。
+        /// </returns>
         public static Control CreateCompactToggleField(string labelText, Control toggle)
         {
             return CreateCompactEditorField(labelText, toggle);
@@ -255,9 +371,16 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a compact multi-column row for labeled toggle fields.
+        ///     创建 a compact multi-column row for labeled toggle fields。
         /// </summary>
-        /// <param name="controls">The fields to place in the row.</param>
-        /// <returns>A three-column grid sized for dense settings editors.</returns>
+        /// <param name="controls">
+        ///     The fields to place in the row.
+        ///     该 fields to place in the row。
+        /// </param>
+        /// <returns>
+        ///     A three-column grid sized for dense settings editors.
+        ///     一个 three-column grid sized for dense settings editors。
+        /// </returns>
         public static Control CreateCompactToggleRow(params Control[] controls)
         {
             return CreateCompactEditorRow(3, controls);
@@ -265,13 +388,32 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates a styled single-line text entry with an initial value.
+        ///     创建 a styled single-line text entry with an initial value。
         /// </summary>
-        /// <param name="text">The initial text value.</param>
-        /// <param name="placeholder">Placeholder text to display when the field is empty.</param>
-        /// <param name="width">The minimum width to reserve for the field.</param>
-        /// <param name="height">The minimum height to reserve for the field.</param>
-        /// <param name="fontSize">The font size to apply.</param>
-        /// <returns>The configured line edit instance.</returns>
+        /// <param name="text">
+        ///     The initial text value.
+        ///     该 initial text value。
+        /// </param>
+        /// <param name="placeholder">
+        ///     Placeholder text to display when the field is empty.
+        ///     Placeholder text to display 当 the field is empty.
+        /// </param>
+        /// <param name="width">
+        ///     The minimum width to reserve for the field.
+        ///     该 minimum width to reserve for the field。
+        /// </param>
+        /// <param name="height">
+        ///     The minimum height to reserve for the field.
+        ///     该 minimum height to reserve for the field。
+        /// </param>
+        /// <param name="fontSize">
+        ///     The font size to apply.
+        ///     该 font size to apply。
+        /// </param>
+        /// <returns>
+        ///     The configured line edit instance.
+        ///     该 configured line edit instance。
+        /// </returns>
         public static LineEdit CreateStyledLineEdit(string text, string placeholder, float width = 220f,
             float height = 44f,
             int fontSize = 17)
@@ -283,10 +425,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Applies the shared button-style toggle chrome for the current state.
+        ///     Applies the shared button-style toggle chrome 用于 the current state.
         /// </summary>
-        /// <param name="button">The button to style.</param>
-        /// <param name="on">Whether the toggle is enabled.</param>
-        /// <param name="hovered">Whether the button should use its emphasized hover/focus state.</param>
+        /// <param name="button">
+        ///     The button to style.
+        ///     该 button to style。
+        /// </param>
+        /// <param name="on">
+        ///     Whether the toggle is enabled.
+        ///     表示是否 the toggle is enabled。
+        /// </param>
+        /// <param name="hovered">
+        ///     Whether the button should use its emphasized hover/focus state.
+        ///     表示是否 the button should use its emphasized hover/focus state。
+        /// </param>
         public static void ApplySettingsToggleButtonStyle(Button button, bool on, bool hovered)
         {
             button.AddThemeFontOverride("font", RitsuShellTheme.Current.Font.BodyBold);
@@ -303,10 +455,20 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Creates the stylebox used by button-style settings toggles.
+        ///     创建 the stylebox used by button-style settings toggles。
         /// </summary>
-        /// <param name="on">Whether the toggle is enabled.</param>
-        /// <param name="hovered">Whether the button should use its emphasized hover/focus state.</param>
-        /// <returns>A stylebox representing the requested visual state.</returns>
+        /// <param name="on">
+        ///     Whether the toggle is enabled.
+        ///     表示是否 the toggle is enabled。
+        /// </param>
+        /// <param name="hovered">
+        ///     Whether the button should use its emphasized hover/focus state.
+        ///     表示是否 the button should use its emphasized hover/focus state。
+        /// </param>
+        /// <returns>
+        ///     A stylebox representing the requested visual state.
+        ///     一个 stylebox representing the requested visual state。
+        /// </returns>
         public static StyleBoxFlat CreateSettingsToggleButtonStyle(bool on, bool hovered)
         {
             var borderColor =
@@ -357,12 +519,28 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Applies the standard framed input styling used by single-line text fields.
+        ///     Applies the standard framed input styling used 通过 single-line text fields.
         /// </summary>
-        /// <param name="placeholder">Placeholder text to display when the field is empty.</param>
-        /// <param name="width">The minimum width to reserve for the field.</param>
-        /// <param name="height">The minimum height to reserve for the field.</param>
-        /// <param name="fontSize">The font size to apply.</param>
-        /// <returns>The configured line edit instance.</returns>
+        /// <param name="placeholder">
+        ///     Placeholder text to display when the field is empty.
+        ///     Placeholder text to display 当 the field is empty.
+        /// </param>
+        /// <param name="width">
+        ///     The minimum width to reserve for the field.
+        ///     该 minimum width to reserve for the field。
+        /// </param>
+        /// <param name="height">
+        ///     The minimum height to reserve for the field.
+        ///     该 minimum height to reserve for the field。
+        /// </param>
+        /// <param name="fontSize">
+        ///     The font size to apply.
+        ///     该 font size to apply。
+        /// </param>
+        /// <returns>
+        ///     The configured line edit instance.
+        ///     该 configured line edit instance。
+        /// </returns>
         public static LineEdit CreateStyledLineEdit(string placeholder, float width = 220f, float height = 44f,
             int fontSize = 17)
         {
@@ -380,6 +558,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Applies themed scrollbar track and grabber colors to a settings
+        ///     Applies themed scrollbar track 和 grabber colors to a 设置
         ///     <see cref="ScrollContainer" />, sets vertical bar width from
         ///     <c>components.scrollbar.layout.size</c>, and applies
         ///     <c>components.scrollbar.layout.scrollbarVSeparation</c> when supported.
@@ -396,6 +575,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Applies the same scrollbar chrome as <see cref="ApplySettingsScrollContainerTheme" />, using
+        ///     中文说明：Applies the same scrollbar chrome as <c>ApplySettingsScrollContainerTheme</c>, using
+        ///     Applies the same scrollbar chrome as <c>ApplySettingsScrollContainerTheme</c>, using
+        ///     中文说明：Applies the same scrollbar chrome as <c>ApplySettingsScrollContainerTheme</c>, using
         ///     <c>components.dropdown.layout.scroll.barWidth</c> (fallback: global scrollbar width) and
         ///     <c>components.dropdown.layout.scroll.scrollbarVSeparation</c> (fallback: global separation).
         /// </summary>

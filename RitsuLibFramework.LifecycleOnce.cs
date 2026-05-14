@@ -17,7 +17,7 @@ namespace STS2RitsuLib
         /// </param>
         /// <param name="replayCurrentState">
         ///     When true, invokes <paramref name="handler" /> once if a replayable last event exists, then disposes.
-        ///     为 true 时，如果存在最后一次可回放事件，则调用一次 <paramref name="handler" />，随后释放订阅。
+        ///     为 true 时，如果存在最后一次可回放事件，则调用一次 <c>handler</c>，随后释放订阅。
         /// </param>
         /// <returns>
         ///     Disposing unsubscribes without invoking the handler.
@@ -26,8 +26,8 @@ namespace STS2RitsuLib
         /// <exception cref="NotSupportedException">
         ///     Thrown when <typeparamref name="TEvent" /> is not eligible for typed dispatch (same rule as
         ///     <see cref="SubscribeLifecycle{TEvent}(Action{TEvent}, bool)" />).
-        ///     当 <typeparamref name="TEvent" /> 不符合强类型派发条件时抛出（规则与
-        ///     <see cref="SubscribeLifecycle{TEvent}(Action{TEvent}, bool)" /> 相同）。
+        ///     当 <c>TEvent</c> 不符合强类型派发条件时抛出（规则与
+        ///     <c>SubscribeLifecycle{TEvent}(Action{TEvent}, bool)</c> 相同）。
         /// </exception>
         public static IDisposable SubscribeLifecycleOnce<TEvent>(
             Action<TEvent> handler,

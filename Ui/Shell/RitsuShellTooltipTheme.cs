@@ -5,6 +5,7 @@ namespace STS2RitsuLib.Ui.Shell
 {
     /// <summary>
     ///     Maps shell tokens onto Godot native tooltip theme types (<c>TooltipPanel</c>, <c>TooltipLabel</c>) via a
+    ///     中文说明：Maps shell tokens onto Godot native tooltip theme types (<c>TooltipPanel</c>, <c>TooltipLabel</c>) via a
     ///     <see cref="Control.Theme" /> attached to an ancestor of hovered controls.
     /// </summary>
     public static class RitsuShellTooltipTheme
@@ -23,9 +24,13 @@ namespace STS2RitsuLib.Ui.Shell
 
         /// <summary>
         ///     Applies tooltip panel styling and typography from <see cref="RitsuShellTheme.Current" /> to
+        ///     Applies tooltip panel styling 和 typography 从 <c>RitsuShellTheme.Current</c> to
         ///     <paramref name="root" /> so descendant controls resolve tooltip theme items consistently.
         /// </summary>
-        /// <param name="root">Sub-tree root (typically the mod settings submenu control).</param>
+        /// <param name="root">
+        ///     Sub-tree root (typically the mod settings submenu control).
+        ///     Sub-tree root (typically the mod 设置 submenu control).
+        /// </param>
         public static void ApplyToTreeRoot(Control root)
         {
             ArgumentNullException.ThrowIfNull(root);

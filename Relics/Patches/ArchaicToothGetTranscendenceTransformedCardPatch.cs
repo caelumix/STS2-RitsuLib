@@ -7,6 +7,7 @@ namespace STS2RitsuLib.Relics.Patches
 {
     /// <summary>
     ///     Applies mod transcendence templates with the same upgrade / enchantment carry-over as vanilla.
+    ///     Applies mod transcendence templates 带有 the same upgrade / enchantment carry-over as 原版.
     /// </summary>
     internal sealed class ArchaicToothGetTranscendenceTransformedCardPatch : IPatchMethod
     {

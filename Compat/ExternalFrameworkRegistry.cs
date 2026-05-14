@@ -2,6 +2,7 @@ namespace STS2RitsuLib.Compat
 {
     /// <summary>
     ///     Stable framework ids used by runtime interop checks.
+    ///     稳定的 framework ids used by runtime interop checks。
     /// </summary>
     internal static class ExternalFrameworkIds
     {
@@ -12,7 +13,9 @@ namespace STS2RitsuLib.Compat
 
     /// <summary>
     ///     Central registry for external framework presence checks.
+    ///     Central 注册表 用于 external framework presence checks.
     ///     Known frameworks are probe-based and can be extended with custom detectors.
+    ///     Known frameworks are probe-based 和 can be extended 带有 自定义 detectors.
     /// </summary>
     internal static class ExternalFrameworkRegistry
     {
@@ -36,6 +39,7 @@ namespace STS2RitsuLib.Compat
 
         /// <summary>
         ///     Registers a custom framework detector. The latest detector with the same id wins.
+        ///     注册 a custom framework detector. The latest detector with the same id wins。
         /// </summary>
         public static void RegisterFrameworkDetector(string frameworkId, Func<bool> detector)
         {
@@ -51,6 +55,7 @@ namespace STS2RitsuLib.Compat
 
         /// <summary>
         ///     Returns whether the specified framework appears to be present.
+        ///     返回 whether the specified framework appears to be present。
         /// </summary>
         public static bool IsFrameworkPresent(string frameworkId)
         {
@@ -69,6 +74,7 @@ namespace STS2RitsuLib.Compat
 
         /// <summary>
         ///     Refreshes all known framework presence states.
+        ///     中文说明：Refreshes all known framework presence states.
         /// </summary>
         public static void RefreshKnownFrameworkPresence(string reason)
         {
@@ -86,6 +92,7 @@ namespace STS2RitsuLib.Compat
 
         /// <summary>
         ///     Resolves <paramref name="fullTypeName" /> from loaded assemblies.
+        ///     解析 <c>fullTypeName</c> from loaded assemblies。
         /// </summary>
         public static Type? ResolveType(string fullTypeName)
         {

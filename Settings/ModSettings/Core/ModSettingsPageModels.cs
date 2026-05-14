@@ -107,8 +107,8 @@ namespace STS2RitsuLib.Settings
         ///     Lower values appear earlier among sibling pages (same <see cref="ModId" /> and
         ///     <see cref="ParentPageId" />). Use <see cref="ModSettingsRegistry.RegisterPageSortOrder" /> to adjust without
         ///     rebuilding the page.
-        ///     同级页面（相同 <see cref="ModId" /> 和 <see cref="ParentPageId" />）中，数值越小越靠前。
-        ///     可使用 <see cref="ModSettingsRegistry.RegisterPageSortOrder" /> 在不重建页面的情况下调整。
+        ///     同级页面（相同 <c>ModId</c> 和 <c>ParentPageId</c>）中，数值越小越靠前。
+        ///     可使用 <c>ModSettingsRegistry.RegisterPageSortOrder</c> 在不重建页面的情况下调整。
         /// </summary>
         public int SortOrder { get; }
 
@@ -140,7 +140,7 @@ namespace STS2RitsuLib.Settings
         /// <summary>
         ///     Host surfaces where this page appears in the sidebar and content. Defaults to
         ///     <see cref="ModSettingsHostSurface.All" />.
-        ///     此页面会出现在侧边栏和内容区中的宿主 surface。默认为 <see cref="ModSettingsHostSurface.All" />。
+        ///     此页面会出现在侧边栏和内容区中的宿主 surface。默认为 <c>ModSettingsHostSurface.All</c>。
         /// </summary>
         public ModSettingsHostSurface VisibleOnHostSurfaces { get; }
 
@@ -210,7 +210,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Initial collapsed state when <see cref="IsCollapsible" /> is true.
-        ///     当 <see cref="IsCollapsible" /> 为 true 时的初始折叠状态。
+        ///     当 <c>IsCollapsible</c> 为 true 时的初始折叠状态。
         /// </summary>
         public bool StartCollapsed { get; }
 
@@ -240,7 +240,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Host surfaces where this section is shown. Defaults to <see cref="ModSettingsHostSurface.All" />.
-        ///     此 section 显示的宿主 surface。默认为 <see cref="ModSettingsHostSurface.All" />。
+        ///     此 section 显示的宿主 surface。默认为 <c>ModSettingsHostSurface.All</c>。
         /// </summary>
         public ModSettingsHostSurface VisibleOnHostSurfaces { get; }
 

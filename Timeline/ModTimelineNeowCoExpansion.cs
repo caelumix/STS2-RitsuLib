@@ -31,6 +31,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     True once vanilla Neow&apos;s primary expansion has written at least one of its slots into progress (first slot is
+        ///     True once 原版 Neow&apos;s primary expansion has written at least one of its slots into progress (first slot is
         ///     <see cref="Colorless1Epoch" />). Avoids painting every mod story column on cold open before that event.
         /// </summary>
         internal static bool HasVanillaNeowTimelineExpansionStarted(ProgressState? progress)
@@ -91,8 +92,10 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Called from <see cref="EpochModel.QueueTimelineExpansion" /> postfix only; runs mod
+        ///     Called 从 <c>Epoch模型.QueueTimelineExpansion</c> postfix only; runs mod
         ///     <see cref="SaveManager.UnlockSlot" />
         ///     when the expansion was triggered from <see cref="NeowEpoch.QueueUnlocks" />.
+        ///     当 the expansion was triggered 从 <c>NeowEpoch.QueueUnlocks</c>.
         /// </summary>
         internal static void OnQueueTimelineExpansionPostfix(EpochModel[] vanillaEpochs)
         {

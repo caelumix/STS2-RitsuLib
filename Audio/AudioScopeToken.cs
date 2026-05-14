@@ -2,6 +2,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Caller-owned token that groups handles for later stop and cleanup.
+    ///     Caller-owned token that groups handles 用于 later stop 和 cleanup.
     /// </summary>
     public sealed class AudioScopeToken : IDisposable
     {
@@ -13,21 +14,25 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Human-readable scope name.
+        ///     人类可读的 scope name。
         /// </summary>
         public string Name { get; }
 
         /// <summary>
         ///     Scope category associated with the token.
+        ///     Scope category associated 带有 the token.
         /// </summary>
         public AudioLifecycleScope Scope { get; }
 
         /// <summary>
         ///     True after this token has been disposed.
+        ///     True 之后 this token has been disposed.
         /// </summary>
         public bool IsDisposed { get; private set; }
 
         /// <summary>
         ///     Stops and releases any handles still attached to this token.
+        ///     Stops 和 releases any handles still attached to this token.
         /// </summary>
         public void Dispose()
         {
@@ -40,6 +45,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Stops all handles currently attached to this token.
+        ///     中文说明：Stops all handles currently attached to this token.
         /// </summary>
         public bool StopAll(bool allowFadeOut = true)
         {

@@ -7,6 +7,7 @@ namespace STS2RitsuLib.Relics.Patches
 {
     /// <summary>
     ///     When vanilla finds no transcendence starter, include deck cards that match mod-registered starter ids.
+    ///     当 原版 finds no transcendence starter, include deck 卡牌s that match mod-已注册 starter ids.
     /// </summary>
     internal sealed class ArchaicToothGetTranscendenceStarterCardPatch : IPatchMethod
     {

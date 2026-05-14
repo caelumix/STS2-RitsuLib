@@ -8,8 +8,10 @@ namespace STS2RitsuLib.Combat.Rewards.Patches
 {
     /// <summary>
     ///     After <see cref="CombatRoom.ToSerializable" />, flushes any
+    ///     之后 <c>CombatRoom.ToSerializable</c>, flushes any
     ///     <see cref="RewardExtData" /> attached to <see cref="SerializableReward" /> instances
     ///     into <see cref="SerializableRoom.EncounterState" /> as JSON strings.
+    ///     中文说明：into <c>SerializableRoom.EncounterState</c> as JSON strings.
     /// </summary>
     internal sealed class CombatRoomToSerializableRewardExtPatch : IPatchMethod
     {
@@ -47,8 +49,11 @@ namespace STS2RitsuLib.Combat.Rewards.Patches
 
     /// <summary>
     ///     Before <see cref="CombatRoom.FromSerializable" /> processes rewards, extracts
+    ///     之前 <c>CombatRoom.FromSerializable</c> processes rewards, extracts
     ///     sideband data from <see cref="SerializableRoom.EncounterState" /> and attaches it
+    ///     sideband data 从 <c>SerializableRoom.EncounterState</c> 和 attaches it
     ///     to the corresponding <see cref="SerializableReward" /> instances so that
+    ///     中文说明：to the corresponding <c>SerializableReward</c> instances so that
     ///     <see cref="RewardFromSerializableExtPatch" /> can consume them.
     /// </summary>
     internal sealed class CombatRoomFromSerializableRewardExtPatch : IPatchMethod

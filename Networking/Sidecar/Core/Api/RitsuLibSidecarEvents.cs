@@ -2,11 +2,13 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Event facade for sub-mod consumers that prefer stable subscribe/unsubscribe helpers.
+    ///     事件 facade 用于 sub-mod consumers that prefer stable subscribe/unsubscribe helpers.
     /// </summary>
     public static class RitsuLibSidecarEvents
     {
         /// <summary>
         ///     Subscribes session-bound events.
+        ///     Subscribes session-bound 事件s.
         /// </summary>
         public static IDisposable OnSessionBound(Action<SidecarSessionBoundEvent> handler)
         {
@@ -16,6 +18,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Subscribes session-unbound events.
+        ///     Subscribes session-unbound 事件s.
         /// </summary>
         public static IDisposable OnSessionUnbound(Action<SidecarSessionUnboundEvent> handler)
         {
@@ -25,6 +28,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Subscribes peer reachability transition events.
+        ///     Subscribes peer reachability transition 事件s.
         /// </summary>
         public static IDisposable OnPeerReachabilityChanged(Action<SidecarPeerReachabilityChangedEvent> handler)
         {
@@ -34,6 +38,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Subscribes handshake-completed events.
+        ///     Subscribes handshake-completed 事件s.
         /// </summary>
         public static IDisposable OnHandshakeCompleted(Action<SidecarHandshakeCompletedEvent> handler)
         {
@@ -43,6 +48,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Subscribes typed-message receive events.
+        ///     Subscribes typed-message receive 事件s.
         /// </summary>
         public static IDisposable OnTypedMessageReceived(Action<SidecarTypedMessageReceivedEvent> handler)
         {
@@ -52,6 +58,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Subscribes config topic-change events.
+        ///     Subscribes config topic-change 事件s.
         /// </summary>
         public static IDisposable OnConfigTopicChanged(Action<SidecarConfigTopicChangedEvent> handler)
         {
@@ -61,6 +68,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Subscribes required-capability validation completion events.
+        ///     Subscribes required-capability 有效ation completion 事件s.
         /// </summary>
         public static IDisposable OnRequiredCapabilityCheck(
             Action<SidecarRequiredCapabilityCheckCompletedEvent> handler)

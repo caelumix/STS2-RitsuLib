@@ -4,7 +4,9 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 {
     /// <summary>
     ///     Loads built-in (embedded) and disk-side <c>.theme.json</c> documents into a per-id cache, then
+    ///     加载 built-in (embedded) 和 disk-side <c>.theme.json</c> documents into a per-id cache, then
     ///     resolves inheritance, scope overlays, and references when asked to build a snapshot.
+    ///     解析 inheritance, scope overlays, and references when asked to build a snapshot。
     /// </summary>
     public static class RitsuShellThemeCatalog
     {
@@ -16,6 +18,7 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Sorted list of theme ids currently in the catalog (lowercase).
+        ///     中文说明：Sorted list of theme ids currently in the catalog (lowercase).
         /// </summary>
         public static IReadOnlyList<string> RegisteredThemeIds
         {
@@ -30,6 +33,7 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Drops the in-memory cache so the next call to <see cref="EnsureLoaded" /> reloads all themes.
+        ///     Drops the in-memory cache so the next call to <c>Ensureloaded</c> re加载 all themes.
         /// </summary>
         public static void InvalidateCache()
         {
@@ -41,7 +45,9 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Loads themes from the assembly manifest and the on-disk themes directory; extracts missing
+        ///     加载 themes 从 the assembly manifest 和 the on-disk themes directory; extracts missing
         ///     embedded themes to disk so they show up next to user-authored themes.
+        ///     embedded themes to disk so they show up next to 使用r-authored themes.
         /// </summary>
         public static void EnsureLoaded()
         {
@@ -129,13 +135,29 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Builds a fully-merged, reference-resolved <see cref="RitsuShellTheme" /> snapshot for
+        ///     Builds a fully-merged, reference-resolved <c>RitsuShellTheme</c> snapshot 用于
         ///     <paramref name="themeId" />, merging mod-registered defaults along the way.
         /// </summary>
-        /// <param name="themeId">Target theme id (case-insensitive). Empty falls back to <c>default</c>.</param>
-        /// <param name="modRegistrations">Registered mod token contributions (default trees and extension blobs).</param>
-        /// <param name="resolvedId">Resolved id used for <see cref="RitsuShellTheme.Id" />.</param>
-        /// <param name="theme">Built snapshot when successful.</param>
-        /// <returns><see langword="true" /> if both target and <c>default</c> chain are loadable.</returns>
+        /// <param name="themeId">
+        ///     Target theme id (case-insensitive). Empty falls back to <c>default</c>.
+        ///     目标 theme id (case-insensitive). Empty falls back to <c>default</c>。
+        /// </param>
+        /// <param name="modRegistrations">
+        ///     Registered mod token contributions (default trees and extension blobs).
+        ///     Registered mod token contributions (default trees 和 extension blobs).
+        /// </param>
+        /// <param name="resolvedId">
+        ///     Resolved id used for <see cref="RitsuShellTheme.Id" />.
+        ///     resolved id used 用于 <c>RitsuShellTheme.Id</c>.
+        /// </param>
+        /// <param name="theme">
+        ///     Built snapshot when successful.
+        ///     Built snapshot 当 successful.
+        /// </param>
+        /// <returns>
+        ///     <see langword="true" /> if both target and <c>default</c> chain are loadable.
+        ///     <see langword="true" /> 如果 both target 和 <c>default</c> chain are 加载able.
+        /// </returns>
         public static bool TryBuildSnapshot(string themeId,
             IReadOnlyList<RitsuShellThemeModRegistration> modRegistrations,
             out string resolvedId, out RitsuShellTheme? theme)
@@ -191,10 +213,20 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Overwrites one disk theme file with its embedded built-in counterpart.
+        ///     Overwrites one disk theme file 带有 its embedded built-in counterpart.
         /// </summary>
-        /// <param name="themeId">Theme id to restore (case-insensitive, empty falls back to default).</param>
-        /// <param name="restoredPath">Absolute path of the restored file when successful.</param>
-        /// <returns><see langword="true" /> when the embedded source exists and was written to disk.</returns>
+        /// <param name="themeId">
+        ///     Theme id to restore (case-insensitive, empty falls back to default).
+        ///     中文说明：Theme id to restore (case-insensitive, empty falls back to default).
+        /// </param>
+        /// <param name="restoredPath">
+        ///     Absolute path of the restored file when successful.
+        ///     Absolute 路径 of the restored file 当 successful.
+        /// </param>
+        /// <returns>
+        ///     <see langword="true" /> when the embedded source exists and was written to disk.
+        ///     <see langword="true" /> 当 the embedded source exists 和 was written to disk.
+        /// </returns>
         public static bool TryRestoreDiskThemeFromEmbedded(string themeId, out string restoredPath)
         {
             restoredPath = "";
@@ -221,9 +253,16 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Resets all existing disk theme files that have embedded counterparts.
+        ///     Re设置 all existing disk theme files that have embedded counterparts.
         /// </summary>
-        /// <param name="restoredCount">How many disk theme files were overwritten.</param>
-        /// <returns><see langword="true" /> if the operation completed without fatal setup failures.</returns>
+        /// <param name="restoredCount">
+        ///     How many disk theme files were overwritten.
+        ///     中文说明：How many disk theme files were overwritten.
+        /// </param>
+        /// <returns>
+        ///     <see langword="true" /> if the operation completed without fatal setup failures.
+        ///     <see langword="true" /> 如果 the operation completed 带有out fatal 设置up failures.
+        /// </returns>
         public static bool TryRestoreAllExistingDiskThemesFromEmbedded(out int restoredCount)
         {
             restoredCount = 0;

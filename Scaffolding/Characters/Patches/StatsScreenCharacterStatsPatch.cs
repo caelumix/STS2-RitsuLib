@@ -8,8 +8,11 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     Appends mod character history sections to the general stats screen.
+    ///     Appends mod character history sections to the general stats screen.
     ///     Base game NGeneralStatsGrid.LoadStats hard-codes five vanilla characters,
+    ///     Base game NGeneralStatsGrid.加载Stats hard-codes five 原版 characters,
     ///     so mod character records never render without this patch.
+    ///     so mod character records never render 带有out this patch.
     /// </summary>
     public class StatsScreenCharacterStatsPatch : IPatchMethod
     {
@@ -32,6 +35,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Invokes private <c>CreateCharacterSection</c> for each entry from
+        ///     Invokes private <c>创建CharacterSection</c> 用于 each entry 从
         ///     <see cref="ModContentRegistry.GetModCharacters" />.
         /// </summary>
         public static void Postfix(NGeneralStatsGrid __instance)

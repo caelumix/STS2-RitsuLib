@@ -44,6 +44,8 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers global asset overrides applied to all characters for the current <see cref="ModId" />.
+        ///     注册 global asset overrides applied to all characters for the current <c>ModId</c>。
+        ///     Character-specific overrides still win.
         ///     Character-specific overrides still win.
         /// </summary>
         public void RegisterGlobalCharacterAssetReplacement(CharacterAssetProfile assetProfile)
@@ -63,7 +65,9 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Registers asset overrides for any character id (vanilla or mod), merged field-by-field with existing
+        ///     Registers 资源 overrides 用于 any character id (原版 或 mod), merged field-by-field 带有 existing
         ///     registrations. Later calls win for non-null fields.
+        ///     注册s. Later calls win 用于 non-null fields.
         /// </summary>
         public void RegisterCharacterAssetReplacement(string characterEntry, CharacterAssetProfile assetProfile)
         {
@@ -88,8 +92,12 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Removes global character asset overrides registered by the current <see cref="ModId" />.
+        ///     Removes global character 资源 overrides 已注册 通过 the current <c>ModId</c>.
         /// </summary>
-        /// <returns><c>true</c> when this mod had a global override and it was removed.</returns>
+        /// <returns>
+        ///     <c>true</c> when this mod had a global override and it was removed.
+        ///     <c>true</c> 当 this mod had a global override 和 it was removed.
+        /// </returns>
         public bool ClearGlobalCharacterAssetReplacement()
         {
             bool removed;
@@ -108,8 +116,12 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Removes this mod's registered asset overrides for the specified character id.
+        ///     Removes this mod's 已注册 资源 overrides 用于 the specified character id.
         /// </summary>
-        /// <returns><c>true</c> when this mod had an override and it was removed.</returns>
+        /// <returns>
+        ///     <c>true</c> when this mod had an override and it was removed.
+        ///     <c>true</c> 当 this mod had an override 和 it was removed.
+        /// </returns>
         public bool RemoveCharacterAssetReplacement(string characterEntry)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(characterEntry);
@@ -130,6 +142,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Returns merged registered asset overrides for <paramref name="characterEntry" />, if any.
+        ///     返回 merged registered asset overrides for <c>characterEntry</c>, if any。
         /// </summary>
         internal static bool TryGetRegisteredCharacterAssetReplacement(
             string characterEntry,
@@ -150,6 +163,7 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Returns global asset overrides, if any.
+        ///     返回 global asset overrides, if any。
         /// </summary>
         internal static bool TryGetGlobalCharacterAssetReplacement(out CharacterAssetProfile assetProfile)
         {
@@ -163,7 +177,9 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Returns registry-only overrides (global + per-character <see cref="RegisterCharacterAssetReplacement" />),
+        ///     返回 注册表-only overrides (global + per-character <c>RegisterCharacterAssetReplacement</c>),
         ///     without programmatic owned-visual registrations.
+        ///     带有out programmatic owned-visual 注册s.
         /// </summary>
         internal static bool TryGetRegistryOnlyEffectiveCharacterAssetReplacement(
             string characterEntry,
@@ -190,7 +206,9 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Returns effective overrides for a character: programmatic owned relic / potion / card art merged
+        ///     返回 effective overrides 用于 a character: programmatic owned 遗物 / potion / 卡牌 art merged
         ///     underneath registry overrides from <see cref="RegisterGlobalCharacterAssetReplacement" /> and
+        ///     underneath 注册表 overrides 从 <c>RegisterGlobalCharacterAssetReplacement</c> and
         ///     <see cref="RegisterCharacterAssetReplacement" /> (registry wins on conflicts). Character
         ///     <see>
         ///         <cref>T:STS2RitsuLib.Scaffolding.Characters.ModCharacterTemplate</cref>
@@ -198,6 +216,7 @@ namespace STS2RitsuLib.Content
         ///     <c>AssetProfile</c> rows are merged in
         ///     <c>TryGetVanilla*</c> below
         ///     both registry and programmatic tiers.
+        ///     both 注册表 和 programmatic tiers.
         /// </summary>
         internal static bool TryGetEffectiveCharacterAssetReplacement(
             string characterEntry,
@@ -376,32 +395,38 @@ namespace STS2RitsuLib.Content
 
         /// <summary>
         ///     Well-known base-game character ids for
+        ///     Well-known base-game character ids 用于
         ///     <see cref="RegisterCharacterAssetReplacement(string,CharacterAssetProfile)" />.
         /// </summary>
         public static class VanillaCharacterIds
         {
             /// <summary>
             ///     Vanilla Ironclad character id.
+            ///     原版 Ironclad character id.
             /// </summary>
             public const string Ironclad = "IRONCLAD";
 
             /// <summary>
             ///     Vanilla Silent character id.
+            ///     原版 Silent character id.
             /// </summary>
             public const string Silent = "SILENT";
 
             /// <summary>
             ///     Vanilla Defect character id.
+            ///     原版 Defect character id.
             /// </summary>
             public const string Defect = "DEFECT";
 
             /// <summary>
             ///     Vanilla Regent character id.
+            ///     原版 Regent character id.
             /// </summary>
             public const string Regent = "REGENT";
 
             /// <summary>
             ///     Vanilla Necrobinder character id.
+            ///     原版 Necrobinder character id.
             /// </summary>
             public const string Necrobinder = "NECROBINDER";
         }

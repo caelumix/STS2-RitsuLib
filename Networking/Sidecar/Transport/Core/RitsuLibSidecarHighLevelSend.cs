@@ -5,23 +5,45 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Higher-level send helpers: builds envelopes with a delivery tag and picks channel / transfer mode. Control
+    ///     Higher-level send helpers: builds envelopes 带有 a delivery tag 和 picks channel / transfer mode. Control
     ///     opcodes and chunked streams should use <see cref="RitsuLibSidecarDeliverySemantics.StableSync" />.
+    ///     opcodes 和 chunked streams should 使用 <c>RitsuLibSidecarDeliverySemantics.StableSync</c>.
     /// </summary>
     public static class RitsuLibSidecarHighLevelSend
     {
         /// <summary>
         ///     Client → host (single connection).
+        ///     中文说明：Client → host (single connection).
         /// </summary>
-        /// <param name="runManager">Current run; must expose a connected <c>NetClientGameService</c> when sending.</param>
-        /// <param name="opcode">Sidecar opcode (user or control).</param>
-        /// <param name="payload">Logical payload bytes placed after the envelope header.</param>
+        /// <param name="runManager">
+        ///     Current run; must expose a connected <c>NetClientGameService</c> when sending.
+        ///     当前 run; must expose a connected <c>NetClientGameService</c> when sending。
+        /// </param>
+        /// <param name="opcode">
+        ///     Sidecar opcode (user or control).
+        ///     Sidecar opcode (使用r 或 control).
+        /// </param>
+        /// <param name="payload">
+        ///     Logical payload bytes placed after the envelope header.
+        ///     Logical payload bytes placed 之后 the envelope header.
+        /// </param>
         /// <param name="deliverySemantics">
         ///     Maps to transfer mode and channel;
+        ///     Maps to transfer mode 和 channel;
         ///     <see cref="RitsuLibSidecarDeliverySemantics.Unspecified" /> is treated as stable sync.
         /// </param>
-        /// <param name="extraFlags">Additional wire flags OR’d into the envelope.</param>
-        /// <param name="gzip">When <c>true</c>, gzip-compresses the logical payload and sets the gzip flag.</param>
-        /// <param name="additionalHeaderExtension">Bytes appended after the delivery tag in the header extension.</param>
+        /// <param name="extraFlags">
+        ///     Additional wire flags OR’d into the envelope.
+        ///     中文说明：Additional wire flags OR’d into the envelope.
+        /// </param>
+        /// <param name="gzip">
+        ///     When <c>true</c>, gzip-compresses the logical payload and sets the gzip flag.
+        ///     当 <c>true</c>, gzip-compresses the logical payload 和 设置 the gzip flag.
+        /// </param>
+        /// <param name="additionalHeaderExtension">
+        ///     Bytes appended after the delivery tag in the header extension.
+        ///     Bytes appended 之后 the delivery tag in the header extension.
+        /// </param>
         public static bool TrySendAsClient(
             RunManager? runManager,
             ulong opcode,
@@ -68,18 +90,41 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host → one peer.
+        ///     中文说明：Host → one peer.
         /// </summary>
-        /// <param name="runManager">Current run; must expose a connected <c>NetHostGameService</c> when sending.</param>
-        /// <param name="peerNetId">Vanilla peer id for <c>SendMessageToClient</c>.</param>
-        /// <param name="opcode">Sidecar opcode (user or control).</param>
-        /// <param name="payload">Logical payload bytes placed after the envelope header.</param>
+        /// <param name="runManager">
+        ///     Current run; must expose a connected <c>NetHostGameService</c> when sending.
+        ///     当前 run; must expose a connected <c>NetHostGameService</c> when sending。
+        /// </param>
+        /// <param name="peerNetId">
+        ///     Vanilla peer id for <c>SendMessageToClient</c>.
+        ///     原版 peer id 用于 <c>SendMessageToClient</c>.
+        /// </param>
+        /// <param name="opcode">
+        ///     Sidecar opcode (user or control).
+        ///     Sidecar opcode (使用r 或 control).
+        /// </param>
+        /// <param name="payload">
+        ///     Logical payload bytes placed after the envelope header.
+        ///     Logical payload bytes placed 之后 the envelope header.
+        /// </param>
         /// <param name="deliverySemantics">
         ///     Maps to transfer mode and channel;
+        ///     Maps to transfer mode 和 channel;
         ///     <see cref="RitsuLibSidecarDeliverySemantics.Unspecified" /> is treated as stable sync.
         /// </param>
-        /// <param name="extraFlags">Additional wire flags OR’d into the envelope.</param>
-        /// <param name="gzip">When <c>true</c>, gzip-compresses the logical payload and sets the gzip flag.</param>
-        /// <param name="additionalHeaderExtension">Bytes appended after the delivery tag in the header extension.</param>
+        /// <param name="extraFlags">
+        ///     Additional wire flags OR’d into the envelope.
+        ///     中文说明：Additional wire flags OR’d into the envelope.
+        /// </param>
+        /// <param name="gzip">
+        ///     When <c>true</c>, gzip-compresses the logical payload and sets the gzip flag.
+        ///     当 <c>true</c>, gzip-compresses the logical payload 和 设置 the gzip flag.
+        /// </param>
+        /// <param name="additionalHeaderExtension">
+        ///     Bytes appended after the delivery tag in the header extension.
+        ///     Bytes appended 之后 the delivery tag in the header extension.
+        /// </param>
         public static bool TrySendAsHostToPeer(
             RunManager? runManager,
             ulong peerNetId,
@@ -128,17 +173,37 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host → all ready-to-broadcast peers.
+        ///     中文说明：Host → all ready-to-broadcast peers.
         /// </summary>
-        /// <param name="runManager">Current run; must expose a connected <c>NetHostGameService</c> when sending.</param>
-        /// <param name="opcode">Sidecar opcode (user or control).</param>
-        /// <param name="payload">Logical payload bytes placed after the envelope header.</param>
+        /// <param name="runManager">
+        ///     Current run; must expose a connected <c>NetHostGameService</c> when sending.
+        ///     当前 run; must expose a connected <c>NetHostGameService</c> when sending。
+        /// </param>
+        /// <param name="opcode">
+        ///     Sidecar opcode (user or control).
+        ///     Sidecar opcode (使用r 或 control).
+        /// </param>
+        /// <param name="payload">
+        ///     Logical payload bytes placed after the envelope header.
+        ///     Logical payload bytes placed 之后 the envelope header.
+        /// </param>
         /// <param name="deliverySemantics">
         ///     Maps to transfer mode and channel;
+        ///     Maps to transfer mode 和 channel;
         ///     <see cref="RitsuLibSidecarDeliverySemantics.Unspecified" /> is treated as stable sync.
         /// </param>
-        /// <param name="extraFlags">Additional wire flags OR’d into the envelope.</param>
-        /// <param name="gzip">When <c>true</c>, gzip-compresses the logical payload and sets the gzip flag.</param>
-        /// <param name="additionalHeaderExtension">Bytes appended after the delivery tag in the header extension.</param>
+        /// <param name="extraFlags">
+        ///     Additional wire flags OR’d into the envelope.
+        ///     中文说明：Additional wire flags OR’d into the envelope.
+        /// </param>
+        /// <param name="gzip">
+        ///     When <c>true</c>, gzip-compresses the logical payload and sets the gzip flag.
+        ///     当 <c>true</c>, gzip-compresses the logical payload 和 设置 the gzip flag.
+        /// </param>
+        /// <param name="additionalHeaderExtension">
+        ///     Bytes appended after the delivery tag in the header extension.
+        ///     Bytes appended 之后 the delivery tag in the header extension.
+        /// </param>
         public static bool TrySendAsHostBroadcast(
             RunManager? runManager,
             ulong opcode,
@@ -185,6 +250,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Host → every connected client, including before vanilla marks peers ready to broadcast (e.g. lobby handshake).
+        ///     Host → every connected client, including 之前 原版 marks peers ready to broadcast (e.g. lobby handshake).
         /// </summary>
         public static bool TrySendAsHostBroadcastToAllConnected(
             INetGameService? netService,

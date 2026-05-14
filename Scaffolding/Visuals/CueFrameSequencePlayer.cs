@@ -5,12 +5,16 @@ namespace STS2RitsuLib.Scaffolding.Visuals
 {
     /// <summary>
     ///     Internal driver that swaps a <see cref="Sprite2D.Texture" /> through a <see cref="VisualFrameSequence" />.
+    ///     Internal driver that swaps a <c>Sprite2D.纹理</c> through a <c>VisualFrameSequence</c>.
     /// </summary>
     /// <remarks>
     ///     <para>
     ///         Emits <see cref="SignalName.Finished" /> when a non-looping sequence reaches the last frame,
+    ///         Emits <c>SignalName.Finished</c> 当 a non-looping sequence reaches the last frame,
     ///         and when <see cref="TryStart" /> short-circuits into a one-frame-non-loop state (i.e. the sequence
+    ///         and 当 <c>TryStart</c> short-circuits into a one-frame-non-loop state (i.e. the sequence
     ///         has already reached its terminal frame during start). The signal is consumed by
+    ///         has already reached its terminal frame 期间 start). The signal is consumed by
     ///         <c>CueAnimationBackend</c> so <see cref="StateMachine.ModAnimStateMachine" /> can advance
     ///         <see cref="StateMachine.ModAnimState.NextState" />.
     ///     </para>
@@ -19,7 +23,9 @@ namespace STS2RitsuLib.Scaffolding.Visuals
     {
         /// <summary>
         ///     Raised when the sequence completes (non-loop) or is an already-terminal single frame.
+        ///     Raised 当 the sequence completes (non-loop) 或 is an already-terminal single frame.
         ///     Not raised for looping sequences.
+        ///     Not raised 用于 looping sequences.
         /// </summary>
         [Signal]
         public delegate void FinishedEventHandler();

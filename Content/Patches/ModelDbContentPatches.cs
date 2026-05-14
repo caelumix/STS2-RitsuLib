@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Content.Patches
 {
     /// <summary>
     ///     Appends RitsuLib-registered characters to <see cref="ModelDb.AllCharacters" />.
+    ///     Appends RitsuLib-已注册 characters to <c>ModelDb.AllCharacters</c>.
     /// </summary>
     public class AllCharactersPatch : IPatchMethod
     {
@@ -27,6 +28,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod-registered characters onto the vanilla sequence.
+        ///     Concatenates mod-已注册 characters onto the 原版 sequence.
         /// </summary>
         [HarmonyAfter(Const.BaseLibHarmonyId)]
         [HarmonyPriority(Priority.Last)]
@@ -38,6 +40,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Merges RitsuLib-registered monster types into <see cref="ModelDb.Monsters" /> by <see cref="AbstractModel.Id" />.
+    ///     Merges RitsuLib-已注册 monster types into <c>ModelDb.Monsters</c> 通过 <c>AbstrActModel.Id</c>.
     /// </summary>
     public class AllMonstersPatch : IPatchMethod
     {
@@ -59,6 +62,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Ensures standalone-registered monsters appear in global monster enumeration even before every act lists them.
+        ///     Ensures standalone-已注册 monsters appear in global monster enumeration even 之前 every 章节 lists them.
         /// </summary>
         public static void Postfix(ref IEnumerable<MonsterModel> __result)
             // ReSharper restore InconsistentNaming
@@ -69,6 +73,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered acts to <see cref="ModelDb.Acts" />.
+    ///     Appends RitsuLib-已注册 章节s to <c>ModelDb.章节s</c>.
     /// </summary>
     public class ActsPatch : IPatchMethod
     {
@@ -90,6 +95,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod-registered acts onto the vanilla sequence.
+        ///     Concatenates mod-已注册 章节s onto the 原版 sequence.
         /// </summary>
         [HarmonyAfter(Const.BaseLibHarmonyId)]
         [HarmonyPriority(Priority.Last)]
@@ -101,6 +107,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered shared events to <see cref="ModelDb.AllSharedEvents" />.
+    ///     Appends RitsuLib-已注册 shared 事件s to <c>ModelDb.AllSharedEvents</c>.
     /// </summary>
     public class AllSharedEventsPatch : IPatchMethod
     {
@@ -122,6 +129,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod shared events onto the vanilla sequence.
+        ///     Concatenates mod shared 事件s onto the 原版 sequence.
         /// </summary>
         [HarmonyAfter(Const.BaseLibHarmonyId)]
         [HarmonyPriority(Priority.Last)]
@@ -133,6 +141,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered powers to <see cref="ModelDb.AllPowers" />.
+    ///     Appends RitsuLib-已注册 能力s to <c>ModelDb.AllPowers</c>.
     /// </summary>
     public class AllPowersPatch : IPatchMethod
     {
@@ -154,6 +163,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod powers onto the vanilla sequence.
+        ///     Concatenates mod 能力s onto the 原版 sequence.
         /// </summary>
         public static void Postfix(ref IEnumerable<PowerModel> __result)
         {
@@ -163,6 +173,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered orbs to <see cref="ModelDb.Orbs" />.
+    ///     Appends RitsuLib-已注册 充能球s to <c>ModelDb.充能球s</c>.
     /// </summary>
     public class AllOrbsPatch : IPatchMethod
     {
@@ -184,6 +195,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod orbs onto the vanilla sequence.
+        ///     Concatenates mod 充能球s onto the 原版 sequence.
         /// </summary>
         public static void Postfix(ref IEnumerable<OrbModel> __result)
         {
@@ -193,6 +205,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered shared card pools to <see cref="ModelDb.AllSharedCardPools" />.
+    ///     Appends RitsuLib-已注册 shared 卡牌 pools to <c>ModelDb.AllSharedCardPools</c>.
     /// </summary>
     public class AllSharedCardPoolsPatch : IPatchMethod
     {
@@ -214,6 +227,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod shared card pools onto the vanilla sequence.
+        ///     Concatenates mod shared 卡牌 pools onto the 原版 sequence.
         /// </summary>
         [HarmonyAfter(Const.BaseLibHarmonyId)]
         [HarmonyPriority(Priority.Last)]
@@ -225,6 +239,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered shared events to <see cref="ModelDb.AllEvents" />.
+    ///     Appends RitsuLib-已注册 shared 事件s to <c>ModelDb.AllEvents</c>.
     /// </summary>
     public class AllEventsPatch : IPatchMethod
     {
@@ -246,6 +261,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod shared events onto the <see cref="ModelDb.AllEvents" /> sequence.
+        ///     Concatenates mod shared 事件s onto the <c>ModelDb.AllEvents</c> sequence.
         /// </summary>
         public static void Postfix(ref IEnumerable<EventModel> __result)
         {
@@ -255,6 +271,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered shared ancients to <see cref="ModelDb.AllSharedAncients" />.
+    ///     Appends RitsuLib-已注册 shared ancients to <c>ModelDb.AllSharedAncients</c>.
     /// </summary>
     public class AllSharedAncientsPatch : IPatchMethod
     {
@@ -276,6 +293,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod shared ancients onto the vanilla sequence.
+        ///     Concatenates mod shared ancients onto the 原版 sequence.
         /// </summary>
         [HarmonyAfter(Const.BaseLibHarmonyId)]
         [HarmonyPriority(Priority.Last)]
@@ -287,6 +305,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered shared ancients to <see cref="ModelDb.AllAncients" />.
+    ///     Appends RitsuLib-已注册 shared ancients to <c>ModelDb.AllAncients</c>.
     /// </summary>
     public class AllAncientsPatch : IPatchMethod
     {
@@ -308,6 +327,9 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod shared ancients onto the <see cref="ModelDb.AllAncients" /> sequence.
+        ///     中文说明：Concatenates mod shared ancients onto the <c>ModelDb.AllAncients</c> sequence.
+        ///     Concatenates mod shared ancients onto the <c>ModelDb.AllAncients</c> sequence.
+        ///     中文说明：Concatenates mod shared ancients onto the <c>ModelDb.AllAncients</c> sequence.
         /// </summary>
         public static void Postfix(ref IEnumerable<AncientEventModel> __result)
         {
@@ -317,7 +339,9 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered enchantments to <see cref="ModelDb.DebugEnchantments" /> (covers dynamic types not in
+    ///     Appends RitsuLib-已注册 enchantments to <c>ModelDb.DebugEnchantments</c> (covers dynamic types not in
     ///     subtype scan).
+    ///     中文说明：subtype scan).
     /// </summary>
     public class DebugEnchantmentsPatch : IPatchMethod
     {
@@ -339,6 +363,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod enchantments onto the vanilla sequence.
+        ///     Concatenates mod enchantments onto the 原版 sequence.
         /// </summary>
         public static void Postfix(ref IEnumerable<EnchantmentModel> __result)
         {
@@ -348,6 +373,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered afflictions to <see cref="ModelDb.DebugAfflictions" />.
+    ///     Appends RitsuLib-已注册 afflictions to <c>ModelDb.DebugAfflictions</c>.
     /// </summary>
     public class DebugAfflictionsPatch : IPatchMethod
     {
@@ -369,6 +395,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod afflictions onto the vanilla sequence.
+        ///     Concatenates mod afflictions onto the 原版 sequence.
         /// </summary>
         public static void Postfix(ref IEnumerable<AfflictionModel> __result)
         {
@@ -378,6 +405,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered achievements to <see cref="ModelDb.Achievements" />.
+    ///     Appends RitsuLib-已注册 achievements to <c>ModelDb.Achievements</c>.
     /// </summary>
     public class AchievementsPatch : IPatchMethod
     {
@@ -399,6 +427,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Merges mod achievements into the vanilla list by <see cref="AbstractModel.Id" />.
+        ///     Merges mod achievements into the 原版 list 通过 <c>AbstrActModel.Id</c>.
         /// </summary>
         public static void Postfix(ref IReadOnlyList<AchievementModel> __result)
         {
@@ -408,6 +437,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered modifiers to <see cref="ModelDb.GoodModifiers" />.
+    ///     Appends RitsuLib-已注册 modifiers to <c>ModelDb.GoodModifiers</c>.
     /// </summary>
     public class GoodModifiersPatch : IPatchMethod
     {
@@ -429,6 +459,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Merges mod good modifiers into the vanilla list by <see cref="AbstractModel.Id" />.
+        ///     Merges mod good modifiers into the 原版 list 通过 <c>AbstrActModel.Id</c>.
         /// </summary>
         public static void Postfix(ref IReadOnlyList<ModifierModel> __result)
         {
@@ -438,6 +469,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered modifiers to <see cref="ModelDb.BadModifiers" />.
+    ///     Appends RitsuLib-已注册 modifiers to <c>ModelDb.BadModifiers</c>.
     /// </summary>
     public class BadModifiersPatch : IPatchMethod
     {
@@ -459,6 +491,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Merges mod bad modifiers into the vanilla list by <see cref="AbstractModel.Id" />.
+        ///     Merges mod bad modifiers into the 原版 list 通过 <c>AbstrActModel.Id</c>.
         /// </summary>
         public static void Postfix(ref IReadOnlyList<ModifierModel> __result)
         {
@@ -468,6 +501,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered shared relic pools to <see cref="ModelDb.AllRelicPools" />.
+    ///     Appends RitsuLib-已注册 shared 遗物 pools to <c>ModelDb.AllRelicPools</c>.
     /// </summary>
     public class AllRelicPoolsPatch : IPatchMethod
     {
@@ -489,6 +523,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod shared relic pools onto the vanilla sequence.
+        ///     Concatenates mod shared 遗物 pools onto the 原版 sequence.
         /// </summary>
         public static void Postfix(ref IEnumerable<RelicPoolModel> __result)
         {
@@ -498,6 +533,7 @@ namespace STS2RitsuLib.Content.Patches
 
     /// <summary>
     ///     Appends RitsuLib-registered shared potion pools to <see cref="ModelDb.AllPotionPools" />.
+    ///     Appends RitsuLib-已注册 shared potion pools to <c>ModelDb.AllPotionPools</c>.
     /// </summary>
     public class AllPotionPoolsPatch : IPatchMethod
     {
@@ -519,6 +555,7 @@ namespace STS2RitsuLib.Content.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Concatenates mod shared potion pools onto the vanilla sequence.
+        ///     Concatenates mod shared potion pools onto the 原版 sequence.
         /// </summary>
         public static void Postfix(ref IEnumerable<PotionPoolModel> __result)
         {

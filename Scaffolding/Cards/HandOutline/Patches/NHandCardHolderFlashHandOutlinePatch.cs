@@ -5,6 +5,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline.Patches
 {
     /// <summary>
     ///     Tints the brief hand flash VFX to match <see cref="ModCardHandOutlineRegistry" /> when a rule matches.
+    ///     Tints the brief hand flash VFX to match <c>ModCardHandOutline注册表</c> 当 a rule matches.
     /// </summary>
     internal sealed class NHandCardHolderFlashHandOutlinePatch : IPatchMethod
     {

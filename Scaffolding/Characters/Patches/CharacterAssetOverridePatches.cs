@@ -100,7 +100,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.IconOutlineTexturePath" /> so <see cref="IModCharacterAssetOverrides" />
+    ///     Patches <c>Character模型.图标Outline纹理路径</c> so <c>IModCharacterAssetOverrides</c>
     ///     can supply a custom outline texture path.
+    ///     can supply a 自定义 outline 纹理 路径.
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -124,6 +126,8 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     When the instance implements <see cref="IModCharacterAssetOverrides" /> and a valid override path exists,
+        ///     当 the instance implements <c>IModCharacterAssetOverrides</c> 和 a 有效 override 路径 exists,
+        ///     replaces the getter result; otherwise runs the original method.
         ///     replaces the getter result; otherwise runs the original method.
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
@@ -139,6 +143,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.VisualsPath" /> for custom mod character scene paths.
+    ///     为 custom mod character scene paths 补丁 <c>CharacterModel.VisualsPath</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -162,6 +167,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomVisualsPath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomVisualsPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -176,6 +182,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.EnergyCounterPath" /> for mod character UI assets.
+    ///     为 mod character UI assets 补丁 <c>CharacterModel.EnergyCounterPath</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -199,6 +206,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomEnergyCounterPath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomEnergyCounterPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -211,6 +219,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.MerchantAnimPath" /> for merchant-room animations.
+    ///     为 merchant-room animations 补丁 <c>CharacterModel.MerchantAnimPath</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -234,6 +243,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomMerchantAnimPath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomMerchantAnimPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -246,6 +256,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.RestSiteAnimPath" /> for rest-site animations.
+    ///     为 rest-site animations 补丁 <c>CharacterModel.RestSiteAnimPath</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -269,6 +280,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomRestSiteAnimPath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomRestSiteAnimPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -281,6 +293,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.IconTexturePath" /> for mod character UI icon textures.
+    ///     为 mod character UI icon textures 补丁 <c>CharacterModel.IconTexturePath</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -304,6 +317,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomIconTexturePath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomIconTexturePath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -316,6 +330,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.IconPath" /> for compact mod character icons.
+    ///     为 compact mod character icons 补丁 <c>CharacterModel.IconPath</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -339,6 +354,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomIconPath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomIconPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -353,6 +369,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches character-select background path so mods can replace <c>CharacterSelectBg</c>.
+    ///     补丁 character-select background path so mods can replace <c>CharacterSelectBg</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -376,6 +393,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomCharacterSelectBgPath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomCharacterSelectBgPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -388,6 +406,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches non-public <see cref="CharacterModel.CharacterSelectIcon" /> path getter.
+    ///     补丁 non-public <c>CharacterModel.CharacterSelectIcon</c> path getter。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -411,6 +430,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomCharacterSelectIconPath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomCharacterSelectIconPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -425,6 +445,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches non-public <see cref="CharacterModel.CharacterSelectLockedIcon" /> path getter.
+    ///     补丁 non-public <c>CharacterModel.CharacterSelectLockedIcon</c> path getter。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -449,6 +470,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomCharacterSelectLockedIconPath" /> when valid.
+        ///     当 valid 时提供 <c>IModCharacterAssetOverrides.CustomCharacterSelectLockedIconPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -463,6 +485,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches non-public <see cref="CharacterModel.MapMarker" /> path getter.
+    ///     补丁 non-public <c>CharacterModel.MapMarker</c> path getter。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -486,6 +509,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomMapMarkerPath" /> when valid.
+        ///     当 valid 时提供 <c>IModCharacterAssetOverrides.CustomMapMarkerPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -500,6 +524,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.CharacterSelectTransitionPath" /> for custom select-screen transitions.
+    ///     为 custom select-screen transitions 补丁 <c>CharacterModel.CharacterSelectTransitionPath</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -527,6 +552,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomCharacterSelectTransitionPath" /> when valid.
+        ///     当 valid 时提供 <c>IModCharacterAssetOverrides.CustomCharacterSelectTransitionPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -541,6 +567,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.TrailPath" /> for card-trail VFX scenes.
+    ///     为 card-trail VFX scenes 补丁 <c>CharacterModel.TrailPath</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -564,6 +591,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomTrailPath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomTrailPath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -578,6 +606,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.AttackSfx" />; does not require the FMOD path to exist as a Godot resource.
+    ///     补丁 <c>CharacterModel.AttackSfx</c>; does not require the FMOD path to exist as a Godot resource。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -601,6 +630,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomAttackSfx" /> when non-empty.
+        ///     当 non-empty 时提供 <c>IModCharacterAssetOverrides.CustomAttackSfx</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -616,6 +646,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.CastSfx" /> for custom cast audio.
+    ///     为 custom cast audio 补丁 <c>CharacterModel.CastSfx</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -639,6 +670,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomCastSfx" /> when non-empty.
+        ///     当 non-empty 时提供 <c>IModCharacterAssetOverrides.CustomCastSfx</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -654,6 +686,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches <see cref="CharacterModel.DeathSfx" /> for custom death audio.
+    ///     为 custom death audio 补丁 <c>CharacterModel.DeathSfx</c>。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -677,6 +710,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomDeathSfx" /> when non-empty.
+        ///     当 non-empty 时提供 <c>IModCharacterAssetOverrides.CustomDeathSfx</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -692,6 +726,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches multiplayer arm texture path for the pointing pose.
+    ///     为 the pointing pose 补丁 multiplayer arm texture path。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -715,6 +750,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomArmPointingTexturePath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomArmPointingTexturePath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -727,6 +763,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches multiplayer RPS “rock” arm texture path.
+    ///     补丁 multiplayer RPS “rock” arm texture path。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -750,6 +787,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomArmRockTexturePath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomArmRockTexturePath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -762,6 +800,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches multiplayer RPS “paper” arm texture path.
+    ///     补丁 multiplayer RPS “paper” arm texture path。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -785,6 +824,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomArmPaperTexturePath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomArmPaperTexturePath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming
@@ -797,6 +837,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
     /// <summary>
     ///     Patches multiplayer RPS “scissors” arm texture path.
+    ///     补丁 multiplayer RPS “scissors” arm texture path。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -820,6 +861,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Supplies <see cref="IModCharacterAssetOverrides.CustomArmScissorsTexturePath" /> when the resource exists.
+        ///     当 the resource exists 时提供 <c>IModCharacterAssetOverrides.CustomArmScissorsTexturePath</c>。
         /// </summary>
         public static bool Prefix(CharacterModel __instance, ref string __result)
             // ReSharper restore InconsistentNaming

@@ -10,9 +10,9 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     Declarative registration for one <see cref="StoryModel" /> column: epoch order, per-epoch unlock bindings, and
     ///     <see cref="ModTimelineRegistry.RegisterStory{TStory}" /> — in a single fluent block instead of many separate
     ///     <see cref="IModContentPackEntry" /> rows.
-    ///     单个 <see cref="StoryModel" /> 列的声明式注册：epoch 顺序、逐 epoch 解锁绑定，以及
-    ///     <see cref="ModTimelineRegistry.RegisterStory{TStory}" />。它们可以写在一个 fluent 块中，而不是拆成许多
-    ///     <see cref="IModContentPackEntry" /> 行。
+    ///     单个 <c>StoryModel</c> 列的声明式注册：epoch 顺序、逐 epoch 解锁绑定，以及
+    ///     <c>ModTimelineRegistry.RegisterStory{TStory}</c>。它们可以写在一个 fluent 块中，而不是拆成许多
+    ///     <c>IModContentPackEntry</c> 行。
     /// </summary>
     public sealed class TimelineColumnPackEntry<TStory> : IModContentPackEntry
         where TStory : StoryModel, new()
@@ -21,7 +21,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Creates an entry that runs <paramref name="configure" /> when the content pack is applied.
-        ///     创建一个在应用 content pack 时运行 <paramref name="configure" /> 的条目。
+        ///     创建一个在应用 content pack 时运行 <c>configure</c> 的条目。
         /// </summary>
         public TimelineColumnPackEntry(Action<TimelineColumnBuilder<TStory>> configure)
         {
@@ -40,7 +40,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Fluent builder for <see cref="TimelineColumnPackEntry{TStory}" />.
-    ///     <see cref="TimelineColumnPackEntry{TStory}" /> 的流式 builder。
+    ///     <c>TimelineColumnPackEntry{TStory}</c> 的流式 builder。
     /// </summary>
     public sealed class TimelineColumnBuilder<TStory>
         where TStory : StoryModel, new()
@@ -67,10 +67,10 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     inside <paramref name="slot" /> (or register elsewhere before freeze, e.g. ModContentPackBuilder ModEpoch*
         ///     helpers), so apply-time validation can run (conflicts with vanilla throw at apply time).
         ///     Execution order matches call order; later <c>RequireEpoch</c> for the same model overrides earlier ones.
-        ///     在 story 列上注册 <typeparamref name="TEpoch" />，然后执行可选 slot 配置（池默认值、受限列表等）。
-        ///     对于 <see cref="ModEpochTemplate" /> epoch，时间线布局必须在 freeze 前注册；使用此 builder 时，典型做法是在
-        ///     <paramref name="slot" /> 中调用 <see cref="EpochSlotBuilder{TEpoch}.TimelineSlot" /> 或
-        ///     <see cref="EpochSlotBuilder{TEpoch}.AutoTimelineSlot" />（也可以在 freeze 前通过其它位置注册，例如
+        ///     在 story 列上注册 <c>TEpoch</c>，然后执行可选 slot 配置（池默认值、受限列表等）。
+        ///     对于 <c>ModEpochTemplate</c> epoch，时间线布局必须在 freeze 前注册；使用此 builder 时，典型做法是在
+        ///     <c>slot</c> 中调用 <c>EpochSlotBuilder{TEpoch}.TimelineSlot</c> 或
+        ///     <c>EpochSlotBuilder{TEpoch}.AutoTimelineSlot</c>（也可以在 freeze 前通过其它位置注册，例如
         ///     ModContentPackBuilder 的 ModEpoch* helper），这样应用阶段校验可以运行（与原版冲突会在应用时抛出）。
         ///     执行顺序与调用顺序一致；同一模型后续的 <c>RequireEpoch</c> 会覆盖之前的绑定。
         /// </summary>
@@ -91,7 +91,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Registers <typeparamref name="TStory" /> for vanilla story discovery (call once at the end of the column).
-        ///     将 <typeparamref name="TStory" /> 注册到原版 story 发现流程（通常在列的末尾调用一次）。
+        ///     将 <c>TStory</c> 注册到原版 story 发现流程（通常在列的末尾调用一次）。
         /// </summary>
         public TimelineColumnBuilder<TStory> RegisterStory()
         {
@@ -103,7 +103,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// <summary>
     ///     Per-epoch unlock hooks for the callback passed to
     ///     <see cref="TimelineColumnBuilder{TStory}" /><c>.Epoch&lt;TEpoch&gt;(...)</c>.
-    ///     传给 <see cref="TimelineColumnBuilder{TStory}" /><c>.Epoch&lt;TEpoch&gt;(...)</c> 回调的逐 epoch 解锁钩子。
+    ///     传给 <c>TimelineColumnBuilder{TStory}</c><c>.Epoch&lt;TEpoch&gt;(...)</c> 回调的逐 epoch 解锁钩子。
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -120,12 +120,12 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///         <see cref="CardUnlockFilterPatch" />, <see cref="RelicUnlockFilterPatch" />,
     ///         <see cref="PotionUnlockFilterPatch" />,
     ///         and <see cref="GeneratedRoomEventUnlockFilterPatch" />.
-    ///         任何通过 <see cref="Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)" /> 注册的内容，都会受到
+    ///         任何通过 <c>Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)</c> 注册的内容，都会受到
     ///         <see cref="Unlocks.ModUnlockRegistry.FilterUnlocked{TModel}" /> /
-    ///         <see cref="Unlocks.ModUnlockRegistry.IsUnlocked" /> 限制。集成点包括
+    ///         <c>Unlocks.ModUnlockRegistry.IsUnlocked</c> 限制。集成点包括
     ///         <see cref="CharacterUnlockFilterPatch" />、<see cref="SharedAncientUnlockFilterPatch" />、
     ///         <see cref="CardUnlockFilterPatch" />、<see cref="RelicUnlockFilterPatch" />、
-    ///         <see cref="PotionUnlockFilterPatch" /> 和 <see cref="GeneratedRoomEventUnlockFilterPatch" />。
+    ///         <c>PotionUnlockFilterPatch</c> 和 <c>GeneratedRoomEventUnlockFilterPatch</c>。
     ///     </para>
     ///     <list type="bullet">
     ///         <item>
@@ -133,7 +133,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///             <see cref="Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)" />; does not register
     ///             <see cref="ModEpochGatedContentRegistry" />).
     ///             卡牌 · 将整个池限制在此 epoch 之后：<c>RequireAllCardsInPool&lt;TCardPool&gt;()</c>（仅注册
-    ///             <see cref="Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)" />；不会注册
+    ///             <c>Unlocks.ModUnlockRegistry.RequireEpoch(Type,string)</c>；不会注册
     ///             <see cref="ModEpochGatedContentRegistry" />）。
     ///         </item>
     ///         <item>
@@ -162,8 +162,8 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///             <c>PotionTypes</c>;
     ///             keep those CLR types aligned with <c>Potions</c> / <c>RequireEpoch</c> (this method already applies
     ///             <c>RequireEpoch</c>).
-    ///             药水 · 显式类型：<c>Potions(types)</c>。若需要时间线药水展示，请让你的 <see cref="EpochModel" />
-    ///             继承 <see cref="PotionUnlockEpochTemplate" /> 并实现 <c>PotionTypes</c>；保持这些 CLR 类型与
+    ///             药水 · 显式类型：<c>Potions(types)</c>。若需要时间线药水展示，请让你的 <c>EpochModel</c>
+    ///             继承 <c>PotionUnlockEpochTemplate</c> 并实现 <c>PotionTypes</c>；保持这些 CLR 类型与
     ///             <c>Potions</c> / <c>RequireEpoch</c> 对齐（此方法已经应用 <c>RequireEpoch</c>）。
     ///         </item>
     ///     </list>
@@ -186,7 +186,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Reserves a fixed <see cref="EpochEra" /> column and <c>EraPosition</c> for this epoch. Conflicts with vanilla
         ///     or other mods throw at registration time.
-        ///     为此 epoch 保留固定的 <see cref="EpochEra" /> 列和 <c>EraPosition</c>。与原版或其它 mod 冲突时会在注册时抛出。
+        ///     为此 epoch 保留固定的 <c>EpochEra</c> 列和 <c>EraPosition</c>。与原版或其它 mod 冲突时会在注册时抛出。
         /// </summary>
         public EpochSlotBuilder<TEpoch> TimelineSlot(EpochEra era, int eraPosition)
         {
@@ -198,7 +198,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Reserves the lowest free <c>EraPosition</c> in <paramref name="era" /> after seeding vanilla occupancy.
-        ///     在填入原版占位后，在 <paramref name="era" /> 中保留最低的空闲 <c>EraPosition</c>。
+        ///     在填入原版占位后，在 <c>era</c> 中保留最低的空闲 <c>EraPosition</c>。
         /// </summary>
         public EpochSlotBuilder<TEpoch> AutoTimelineSlot(EpochEra era)
         {
@@ -211,7 +211,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Reserves a column strictly to the left of <paramref name="anchorEra" /> (smaller era int), preferring a new
         ///     root cell at position 0 — use for a mod story “root” before the rest of your column content.
-        ///     保留一个严格位于 <paramref name="anchorEra" /> 左侧的列（更小的 era int），优先使用 position 0 的新 root cell。
+        ///     保留一个严格位于 <c>anchorEra</c> 左侧的列（更小的 era int），优先使用 position 0 的新 root cell。
         ///     可用于在列的其它内容之前放置 mod story 的“根”。
         /// </summary>
         public EpochSlotBuilder<TEpoch> AutoTimelineSlotBeforeColumn(EpochEra anchorEra)
@@ -235,7 +235,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Reserves a column strictly to the right of <paramref name="anchorEra" /> (larger era int).
-        ///     保留一个严格位于 <paramref name="anchorEra" /> 右侧的列（更大的 era int）。
+        ///     保留一个严格位于 <c>anchorEra</c> 右侧的列（更大的 era int）。
         /// </summary>
         public EpochSlotBuilder<TEpoch> AutoTimelineSlotAfterColumn(EpochEra anchorEra)
         {
@@ -259,7 +259,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Reserves a slot in the same era column as <paramref name="anchorEra" />, using the first free position in
         ///     that column.
-        ///     在与 <paramref name="anchorEra" /> 相同的 era 列中保留一个 slot，使用该列中第一个空闲位置。
+        ///     在与 <c>anchorEra</c> 相同的 era 列中保留一个 slot，使用该列中第一个空闲位置。
         /// </summary>
         public EpochSlotBuilder<TEpoch> AutoTimelineSlotInColumn(EpochEra anchorEra)
         {
@@ -272,7 +272,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Reserves a slot in the same era column as <typeparamref name="TReferenceEpoch" />, using the first free
         ///     position in that column.
-        ///     在与 <typeparamref name="TReferenceEpoch" /> 相同的 era 列中保留一个 slot，使用该列中第一个空闲位置。
+        ///     在与 <c>TReferenceEpoch</c> 相同的 era 列中保留一个 slot，使用该列中第一个空闲位置。
         /// </summary>
         public EpochSlotBuilder<TEpoch> AutoTimelineSlotInEpochColumn<TReferenceEpoch>()
             where TReferenceEpoch : EpochModel, new()
@@ -345,8 +345,8 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     Every <see cref="CardModel" /> in <typeparamref name="TPool" /> for this mod requires
         ///     <typeparamref name="TEpoch" />
         ///     (no <see cref="ModEpochGatedContentRegistry" /> row — for default “whole pool until character” style gates).
-        ///     此 mod 中 <typeparamref name="TPool" /> 内的每个 <see cref="CardModel" /> 都需要
-        ///     <typeparamref name="TEpoch" />（不写入 <see cref="ModEpochGatedContentRegistry" /> 行，适用于默认的
+        ///     此 mod 中 <c>TPool</c> 内的每个 <c>CardModel</c> 都需要
+        ///     <c>TEpoch</c>（不写入 <c>ModEpochGatedContentRegistry</c> 行，适用于默认的
         ///     “整个池直到角色解锁” 风格 gate）。
         /// </summary>
         public EpochSlotBuilder<TEpoch> RequireAllCardsInPool<TPool>()
@@ -358,7 +358,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Every <see cref="RelicModel" /> in <typeparamref name="TPool" /> requires <typeparamref name="TEpoch" />.
-        ///     <typeparamref name="TPool" /> 内的每个 <see cref="RelicModel" /> 都需要 <typeparamref name="TEpoch" />。
+        ///     <c>TPool</c> 内的每个 <c>RelicModel</c> 都需要 <c>TEpoch</c>。
         /// </summary>
         public EpochSlotBuilder<TEpoch> RequireAllRelicsInPool<TPool>()
             where TPool : RelicPoolModel
@@ -369,7 +369,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Every <see cref="PotionModel" /> in <typeparamref name="TPool" /> requires <typeparamref name="TEpoch" />.
-        ///     <typeparamref name="TPool" /> 内的每个 <see cref="PotionModel" /> 都需要 <typeparamref name="TEpoch" />。
+        ///     <c>TPool</c> 内的每个 <c>PotionModel</c> 都需要 <c>TEpoch</c>。
         /// </summary>
         public EpochSlotBuilder<TEpoch> RequireAllPotionsInPool<TPool>()
             where TPool : PotionPoolModel
@@ -380,7 +380,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Explicit card types for unlock UI + <c>RequireEpoch</c> (see <see cref="PackDeclaredCardUnlockEpochTemplate" />).
-        ///     用于解锁 UI + <c>RequireEpoch</c> 的显式卡牌类型列表（见 <see cref="PackDeclaredCardUnlockEpochTemplate" />）。
+        ///     用于解锁 UI + <c>RequireEpoch</c> 的显式卡牌类型列表（见 <c>PackDeclaredCardUnlockEpochTemplate</c>）。
         /// </summary>
         public EpochSlotBuilder<TEpoch> Cards(IReadOnlyList<Type> types)
         {
@@ -405,8 +405,8 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Explicit potion types — <c>RequireEpoch</c> only (no <see cref="ModEpochGatedContentRegistry" /> row).
         ///     Pair with <see cref="PotionUnlockEpochTemplate" /> on the epoch if you need timeline potion unlock presentation.
-        ///     显式药水类型列表，仅应用 <c>RequireEpoch</c>（不写入 <see cref="ModEpochGatedContentRegistry" /> 行）。
-        ///     如果需要时间线药水解锁展示，请在 epoch 上配合 <see cref="PotionUnlockEpochTemplate" />。
+        ///     显式药水类型列表，仅应用 <c>RequireEpoch</c>（不写入 <c>ModEpochGatedContentRegistry</c> 行）。
+        ///     如果需要时间线药水解锁展示，请在 epoch 上配合 <c>PotionUnlockEpochTemplate</c>。
         /// </summary>
         public EpochSlotBuilder<TEpoch> Potions(IReadOnlyList<Type> types)
         {
@@ -417,7 +417,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     All relics registered in <typeparamref name="TRelicPool" /> for this mod — registry + <c>RequireEpoch</c>.
-        ///     此 mod 中注册在 <typeparamref name="TRelicPool" /> 内的所有遗物：写入 registry + <c>RequireEpoch</c>。
+        ///     此 mod 中注册在 <c>TRelicPool</c> 内的所有遗物：写入 registry + <c>RequireEpoch</c>。
         /// </summary>
         public EpochSlotBuilder<TEpoch> RelicsFromPool<TRelicPool>()
             where TRelicPool : RelicPoolModel
@@ -428,7 +428,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     All cards registered in <typeparamref name="TCardPool" /> for this mod — registry + <c>RequireEpoch</c>.
-        ///     此 mod 中注册在 <typeparamref name="TCardPool" /> 内的所有卡牌：写入 registry + <c>RequireEpoch</c>。
+        ///     此 mod 中注册在 <c>TCardPool</c> 内的所有卡牌：写入 registry + <c>RequireEpoch</c>。
         /// </summary>
         public EpochSlotBuilder<TEpoch> CardsFromPool<TCardPool>()
             where TCardPool : CardPoolModel

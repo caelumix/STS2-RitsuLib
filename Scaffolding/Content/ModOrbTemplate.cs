@@ -9,8 +9,8 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// <summary>
     ///     Base <see cref="OrbModel" /> for mods: keyword hover tips, dimmed UI color default, and
     ///     <see cref="IModOrbAssetOverrides" /> paths and optional <see cref="TryCreateOrbSprite" />.
-    ///     Mod 充能球的基础 <see cref="OrbModel" />：提供关键词悬浮提示、变暗 UI 颜色默认值、
-    ///     <see cref="IModOrbAssetOverrides" /> 路径，以及可选的 <see cref="TryCreateOrbSprite" />。
+    ///     Mod 充能球的基础 <c>OrbModel</c>：提供关键词悬浮提示、变暗 UI 颜色默认值、
+    ///     <c>IModOrbAssetOverrides</c> 路径，以及可选的 <c>TryCreateOrbSprite</c>。
     /// </summary>
     public abstract class ModOrbTemplate : OrbModel, IModOrbAssetOverrides, IModOrbSpriteFactory
     {
@@ -22,9 +22,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     via <c>ToHoverTips()</c>. Use it for visual documentation; gameplay behaviour must be implemented
         ///     explicitly in the orb's own logic.
         ///     要显示在此充能球悬浮提示上的关键词 id。<b>仅用于显示</b>：不同于
-        ///     <see cref="ModCardTemplate.RegisteredKeywordIds" />，它不会参与任何游戏逻辑关键词集合
-        ///     （原版 <see cref="OrbModel" /> 没有 <c>Keywords</c>/<c>CardKeyword</c> 存储）。每个 id
-        ///     只会通过 <see cref="ModKeywordRegistry" /> 查找并用 <c>ToHoverTips()</c> 渲染悬浮提示。请将它用于视觉说明；
+        ///     <c>ModCardTemplate.RegisteredKeywordIds</c>，它不会参与任何游戏逻辑关键词集合
+        ///     （原版 <c>OrbModel</c> 没有 <c>Keywords</c>/<c>CardKeyword</c> 存储）。每个 id
+        ///     只会通过 <c>ModKeywordRegistry</c> 查找并用 <c>ToHoverTips()</c> 渲染悬浮提示。请将它用于视觉说明；
         ///     游戏行为必须在充能球自身逻辑中显式实现。
         /// </summary>
         protected virtual IEnumerable<string> RegisteredKeywordIds => [];
@@ -62,7 +62,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Non-null node replaces the scene from <see cref="CustomVisualsScenePath" />; provide Spine and animations
         ///     compatible with <c>CreateSprite</c> callers if required.
-        ///     返回非 null 节点时，会替代来自 <see cref="CustomVisualsScenePath" /> 的场景；如有需要，请提供与
+        ///     返回非 null 节点时，会替代来自 <c>CustomVisualsScenePath</c> 的场景；如有需要，请提供与
         ///     <c>CreateSprite</c> 调用方兼容的 Spine 和动画。
         /// </summary>
         protected virtual Node2D? TryCreateOrbSprite()

@@ -86,10 +86,15 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Resolves logical insertion indices in <paramref name="strip" />'s coordinate space, applies mod–mod
+        ///     解析 logical insertion indices in <c>strip</c>'s coordinate space, applies mod–mod
         ///     constraints, classifies “append to strip end” for shared rows, then <b>stable-sorts</b> mod rows
+        ///     constraints, classifies “append to strip end” 用于 shared rows, then <b>stable-sorts</b> mod rows
         ///     (append-end last, else by <see cref="PlannedRow.EffectiveTarget" />, then registration order).
+        ///     (append-end last, else 通过 <c>PlannedRow.EffectiveTarget</c>, then 注册 order).
         ///     Physical <see cref="InsertRowsInOrder" /> reuses the same <paramref name="strip" /> to seed the
+        ///     Physical <c>InsertRowsInOrder</c> re使用 the same <c>strip</c> to seed the
         ///     working sibling list.
+        ///     中文说明：working sibling list.
         /// </summary>
         internal static void AssignTargetsAndSort(
             NCardLibrary library,
@@ -309,8 +314,10 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         /// <summary>
         ///     Inserts built mod pool-filter nodes using the working list seeded from
+        ///     Inserts built mod pool-过滤 nodes using the working list seeded 从
         ///     <paramref name="strip" />.<see cref="CardLibraryCompendiumStripSnapshot.OriginalSiblingsInOrder" />,
         ///     in the order established by <see cref="SortPlannedRowsForStableInsertion" />.
+        ///     in the order established 通过 <c>SortPlannedRowsForStableInsertion</c>.
         /// </summary>
         internal static void InsertRowsInOrder(
             Node filterParent,

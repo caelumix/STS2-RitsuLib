@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 {
     /// <summary>
     ///     Fluent builder for <see cref="VisualCueSet" /> (single textures and frame sequences per cue).
-    ///     <see cref="VisualCueSet" /> 的流式 builder（每个 cue 可绑定单贴图或帧序列）。
+    ///     <c>VisualCueSet</c> 的流式 builder（每个 cue 可绑定单贴图或帧序列）。
     /// </summary>
     public sealed class VisualCueSetBuilder
     {
@@ -58,7 +58,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.Definition
 
         /// <summary>
         ///     Binds a frame sequence configured via <paramref name="configure" />.
-        ///     绑定一个通过 <paramref name="configure" /> 配置的帧序列。
+        ///     绑定一个通过 <c>configure</c> 配置的帧序列。
         /// </summary>
         public VisualCueSetBuilder Sequence(string cueKey, Action<VisualFrameSequenceBuilder> configure)
         {

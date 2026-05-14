@@ -2,36 +2,45 @@ namespace STS2RitsuLib.Patching.Models
 {
     /// <summary>
     ///     Interface for patch classes that can generate their own ModPatchInfo
+    ///     Interface 用于 patch classes that can generate their own ModPatchInfo
     ///     Supports patching multiple targets with the same logic
+    ///     Supports patching multiple targets 带有 the same logic
     /// </summary>
     public interface IPatchMethod
     {
         /// <summary>
         ///     The unique identifier prefix for this patch
+        ///     The unique identifier prefix 用于 this patch
         /// </summary>
         static abstract string PatchId { get; }
 
         /// <summary>
         ///     Whether this patch is critical (default: true)
+        ///     中文说明：Whether this patch is critical (default: true)
         /// </summary>
         static virtual bool IsCritical => true;
 
         /// <summary>
         ///     Description of what this patch does
+        ///     中文说明：Description of what this patch does
         /// </summary>
         static virtual string Description => "Patch";
 
         /// <summary>
         ///     Get all patch targets (Type + MethodName combinations)
+        ///     中文说明：Get all patch targets (Type + MethodName combinations)
         /// </summary>
         static abstract ModPatchTarget[] GetTargets();
 
         /// <summary>
         ///     Create ModPatchInfo array for all targets.
+        ///     创建 ModPatchInfo array for all targets。
         /// </summary>
         /// <remarks>
         ///     When <see cref="GetTargets" /> lists more than one entry with the same <see cref="ModPatchTarget.TargetType" />
+        ///     当 <c>GetTargets</c> lists more than one entry 带有 the same <c>ModPatchTarget.TargetType</c>
         ///     and <see cref="ModPatchTarget.MethodName" /> (e.g. multiple <c>.ctor</c> overloads), the generated
+        ///     and <c>ModPatchTarget.MethodName</c> (e.g. multiple <c>.ctor</c> over加载), the generated
         ///     <see cref="ModPatchInfo.Id" /> appends <c>__1</c>, <c>__2</c>, … in source order so
         ///     <see cref="Patching.Core.ModPatcher.RegisterPatch(ModPatchInfo)" /> does not treat later rows as duplicates.
         /// </remarks>

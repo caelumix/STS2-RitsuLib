@@ -11,48 +11,59 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Runtime refresh categories for safe node-level visual reloads.
+    ///     runtime refresh categories 用于 safe node-level visual re加载.
     /// </summary>
     [Flags]
     public enum RuntimeAssetRefreshScope
     {
         /// <summary>
         ///     No refresh requested.
+        ///     中文说明：No refresh requested.
         /// </summary>
         None = 0,
 
         /// <summary>
         ///     Reload card visuals.
+        ///     Re加载 卡牌 visuals.
         /// </summary>
         Cards = 1 << 0,
 
         /// <summary>
         ///     Reload relic visuals.
+        ///     Re加载 遗物 visuals.
         /// </summary>
         Relics = 1 << 1,
 
         /// <summary>
         ///     Reload potion visuals.
+        ///     Re加载 potion visuals.
         /// </summary>
         Potions = 1 << 2,
 
         /// <summary>
         ///     Reload power visuals.
+        ///     Re加载 能力 visuals.
         /// </summary>
         Powers = 1 << 3,
 
         /// <summary>
         ///     Reload orb visuals.
+        ///     Re加载 充能球 visuals.
         /// </summary>
         Orbs = 1 << 4,
 
         /// <summary>
         ///     Refresh all currently supported safe runtime categories.
+        ///     中文说明：Refresh all currently supported safe runtime categories.
+        ///     Refresh all currently supported safe runtime categories.
+        ///     中文说明：Refresh all currently supported safe runtime categories.
         /// </summary>
         AllSafe = Cards | Relics | Potions | Powers | Orbs,
     }
 
     /// <summary>
     ///     Coalesces runtime visual refresh requests for commonly safe node types.
+    ///     Coalesces runtime visual refresh requests 用于 commonly safe node types.
     /// </summary>
     public static class RuntimeAssetRefreshCoordinator
     {
@@ -71,6 +82,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Requests a deferred refresh pass for the supplied <paramref name="scope" />.
+        ///     Requests a deferred refresh pass 用于 the supplied <c>scope</c>.
         /// </summary>
         public static void Request(RuntimeAssetRefreshScope scope = RuntimeAssetRefreshScope.AllSafe)
         {
@@ -95,6 +107,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Requests card-node reloads for cards matched by <paramref name="rule" />.
+        ///     Requests 卡牌-node re加载 用于 卡牌s matched 通过 <c>rule</c>.
         /// </summary>
         public static void RequestCardsWhere(Predicate<CardModel> rule)
         {
@@ -104,6 +117,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Requests relic-node reloads for relics matched by <paramref name="rule" />.
+        ///     Requests 遗物-node re加载 用于 Relics matched 通过 <c>rule</c>.
         /// </summary>
         public static void RequestRelicsWhere(Predicate<RelicModel> rule)
         {
@@ -113,6 +127,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Requests potion-node reloads for potions matched by <paramref name="rule" />.
+        ///     Requests potion-node re加载 用于 potions matched 通过 <c>rule</c>.
         /// </summary>
         public static void RequestPotionsWhere(Predicate<PotionModel> rule)
         {
@@ -122,6 +137,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Requests power-node reloads for powers matched by <paramref name="rule" />.
+        ///     Requests 能力-node re加载 用于 能力s matched 通过 <c>rule</c>.
         /// </summary>
         public static void RequestPowersWhere(Predicate<PowerModel> rule)
         {
@@ -131,6 +147,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         /// <summary>
         ///     Requests orb-node visual updates for orbs matched by <paramref name="rule" />.
+        ///     Requests 充能球-node visual 更新 用于 充能球s matched 通过 <c>rule</c>.
         /// </summary>
         public static void RequestOrbsWhere(Predicate<OrbModel> rule)
         {

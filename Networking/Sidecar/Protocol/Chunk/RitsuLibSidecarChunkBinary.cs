@@ -5,22 +5,26 @@ namespace STS2RitsuLib.Networking.Sidecar
 {
     /// <summary>
     ///     Layout for <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" /> user payload.
+    ///     Layout 用于 <c>RitsuLibSidecarControlOpcodes.ChunkedFrame</c> 使用r payload.
     /// </summary>
     public static class RitsuLibSidecarChunkBinary
     {
         /// <summary>
         ///     Size in bytes of the fixed prefix (all big-endian): <c>userOpcode</c>, <c>streamId</c>, <c>index</c>,
+        ///     Size in bytes of the fixed prefix (all big-endian): <c>使用rOpcode</c>, <c>streamId</c>, <c>index</c>,
         ///     <c>count</c>, <c>totalSize</c>, <c>segment length</c>, <c>segmentCrc32</c>.
         /// </summary>
         public const int FixedHeaderSize = RitsuLibSidecarChunkFrameLayout.FixedHeaderSize;
 
         /// <summary>
         ///     Default max bytes per segment (excluding the fixed header).
+        ///     默认 max bytes per segment (excluding the fixed header)。
         /// </summary>
         public const int DefaultMaxSegmentDataBytes = 16 * RitsuLibSidecarBinaryLayout.KiB;
 
         /// <summary>
         ///     Serializes one chunk frame and returns total bytes written.
+        ///     Serializes one chunk frame 和 返回 total bytes written.
         /// </summary>
         public static int WriteFrame(
             Span<byte> destination,
@@ -69,6 +73,7 @@ namespace STS2RitsuLib.Networking.Sidecar
 
         /// <summary>
         ///     Parses one chunk frame from a full <see cref="RitsuLibSidecarControlOpcodes.ChunkedFrame" /> message body.
+        ///     Parses one chunk frame 从 a full <c>RitsuLibSidecarControlOpcodes.ChunkedFrame</c> message body.
         /// </summary>
         public static void ReadFrame(
             ReadOnlySpan<byte> source,

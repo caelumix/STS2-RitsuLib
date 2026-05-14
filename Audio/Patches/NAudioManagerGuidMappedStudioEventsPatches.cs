@@ -10,11 +10,15 @@ namespace STS2RitsuLib.Audio.Patches
     ///     Container for Harmony prefixes on <see cref="NAudioManager" />: guids.txt-only <c>event:/…</c> paths (mod banks
     ///     without strings.bank). Mirrors <c>audio_manager_proxy.gd</c> loop/music queues and routing through the same
     ///     <see cref="NAudioManager" /> entry points as vanilla.
+    ///     <c>NAudioManager</c> Harmony prefix 容器：处理仅存在于 guids.txt 的 <c>event:/…</c> 路径
+    ///     （没有 strings.bank 的 mod bank）。镜像 <c>audio_manager_proxy.gd</c> 的循环/音乐队列，
+    ///     并通过与原版相同的 <c>NAudioManager</c> 入口点路由。
     /// </summary>
     public static class NAudioManagerGuidMappedStudioEventsPatches
     {
         /// <summary>
         ///     Intercepts mapped <see cref="NAudioManager.PlayOneShot(string, Dictionary{string, float}, float)" /> calls.
+        ///     拦截已映射的 <c>NAudioManager.PlayOneShot(string, Dictionary{string, float}, float)</c> 调用。
         /// </summary>
         public sealed class PlayOneShot : IPatchMethod
         {
@@ -41,6 +45,7 @@ namespace STS2RitsuLib.Audio.Patches
             // ReSharper disable once InconsistentNaming
             /// <summary>
             ///     Harmony prefix; returns false to skip vanilla after handling mapped paths (or skip with failure diagnostics).
+            ///     Harmony prefix；处理已映射路径后返回 false 跳过原版逻辑（或在失败诊断后跳过）。
             /// </summary>
             public static bool Prefix(NAudioManager __instance, string path, Dictionary<string, float> parameters,
                 float volume)
@@ -67,6 +72,7 @@ namespace STS2RitsuLib.Audio.Patches
 
         /// <summary>
         ///     Intercepts mapped <see cref="NAudioManager.PlayLoop(string, bool)" /> calls.
+        ///     拦截已映射的 <c>NAudioManager.PlayLoop(string, bool)</c> 调用。
         /// </summary>
         public sealed class PlayLoop : IPatchMethod
         {
@@ -89,6 +95,7 @@ namespace STS2RitsuLib.Audio.Patches
             // ReSharper disable once InconsistentNaming
             /// <summary>
             ///     Harmony prefix; skips vanilla when a mapped loop queue entry was created.
+            ///     Harmony prefix；创建已映射循环队列条目时跳过原版逻辑。
             /// </summary>
             public static bool Prefix(NAudioManager __instance, string path, bool usesLoopParam)
             {
@@ -114,6 +121,7 @@ namespace STS2RitsuLib.Audio.Patches
 
         /// <summary>
         ///     Intercepts <see cref="NAudioManager.StopLoop(string)" /> for paths owned by the mapped loop queue.
+        ///     针对由已映射循环队列拥有的路径拦截 <c>NAudioManager.StopLoop(string)</c>。
         /// </summary>
         public sealed class StopLoop : IPatchMethod
         {
@@ -136,6 +144,7 @@ namespace STS2RitsuLib.Audio.Patches
             // ReSharper disable once InconsistentNaming
             /// <summary>
             ///     Harmony prefix; returns false when the mapped queue handled the stop (vanilla proxy had no entry).
+            ///     Harmony prefix；当已映射队列处理了停止（原版代理没有条目）时返回 false。
             /// </summary>
             public static bool Prefix(NAudioManager __instance, string path)
             {
@@ -153,6 +162,7 @@ namespace STS2RitsuLib.Audio.Patches
 
         /// <summary>
         ///     Intercepts <see cref="NAudioManager.SetParam(string, string, float)" /> for mapped loop paths.
+        ///     针对已映射循环路径拦截 <c>NAudioManager.SetParam(string, string, float)</c>。
         /// </summary>
         public sealed class SetParam : IPatchMethod
         {
@@ -179,6 +189,7 @@ namespace STS2RitsuLib.Audio.Patches
             // ReSharper disable once InconsistentNaming
             /// <summary>
             ///     Harmony prefix; returns false when the mapped first loop instance received the parameter.
+            ///     Harmony prefix；当第一个已映射循环实例接收了参数时返回 false。
             /// </summary>
             public static bool Prefix(NAudioManager __instance, string path, string param, float value)
             {
@@ -196,6 +207,7 @@ namespace STS2RitsuLib.Audio.Patches
 
         /// <summary>
         ///     Clears mapped loop state when <see cref="NAudioManager.StopAllLoops" /> runs.
+        ///     当 <c>NAudioManager.StopAllLoops</c> 运行时清理已映射循环状态。
         /// </summary>
         public sealed class StopAllLoops : IPatchMethod
         {
@@ -218,6 +230,7 @@ namespace STS2RitsuLib.Audio.Patches
             // ReSharper disable once InconsistentNaming
             /// <summary>
             ///     Harmony prefix; runs before vanilla and clears parallel mapped queues.
+            ///     Harmony prefix；在原版逻辑前运行并清理并行的已映射队列。
             /// </summary>
             public static void Prefix(NAudioManager __instance)
             {
@@ -232,6 +245,7 @@ namespace STS2RitsuLib.Audio.Patches
 
         /// <summary>
         ///     Intercepts mapped <see cref="NAudioManager.PlayMusic(string)" /> calls.
+        ///     拦截已映射的 <c>NAudioManager.PlayMusic(string)</c> 调用。
         /// </summary>
         public sealed class PlayMusic : IPatchMethod
         {
@@ -254,6 +268,7 @@ namespace STS2RitsuLib.Audio.Patches
             // ReSharper disable once InconsistentNaming
             /// <summary>
             ///     Harmony prefix; stops previous music then starts a mapped Studio instance (mirrors proxy ordering).
+            ///     Harmony prefix；先停止之前的音乐，再启动已映射 Studio 实例（镜像代理顺序）。
             /// </summary>
             public static bool Prefix(NAudioManager __instance, string music)
             {
@@ -277,6 +292,7 @@ namespace STS2RitsuLib.Audio.Patches
 
         /// <summary>
         ///     Releases the mapped music instance in parallel with vanilla <see cref="NAudioManager.StopMusic" />.
+        ///     与原版 <c>NAudioManager.StopMusic</c> 并行释放已映射音乐实例。
         /// </summary>
         public sealed class StopMusic : IPatchMethod
         {
@@ -299,6 +315,7 @@ namespace STS2RitsuLib.Audio.Patches
             // ReSharper disable once InconsistentNaming
             /// <summary>
             ///     Harmony prefix; tears down mapped music before the proxy stops vanilla music.
+            ///     Harmony prefix；在代理停止原版音乐前拆除已映射音乐。
             /// </summary>
             public static void Prefix(NAudioManager __instance)
             {
@@ -313,6 +330,7 @@ namespace STS2RitsuLib.Audio.Patches
 
         /// <summary>
         ///     Routes <see cref="NAudioManager.UpdateMusicParameter(string, string)" /> to the active mapped music instance.
+        ///     将 <c>NAudioManager.UpdateMusicParameter(string, string)</c> 路由到活动的已映射音乐实例。
         /// </summary>
         public sealed class UpdateMusicParameter : IPatchMethod
         {
@@ -339,6 +357,7 @@ namespace STS2RitsuLib.Audio.Patches
             // ReSharper disable once InconsistentNaming
             /// <summary>
             ///     Harmony prefix; returns false when parameters were applied to mapped music (skip vanilla proxy call).
+            ///     Harmony prefix；当参数已应用到已映射音乐时返回 false（跳过原版代理调用）。
             /// </summary>
             public static bool Prefix(NAudioManager __instance, string parameter, string value)
             {

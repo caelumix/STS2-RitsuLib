@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Combat.HandSize
 {
     /// <summary>
     ///     Calculator for effective max-hand-size values.
+    ///     Calculator 用于 effective max-hand-size values.
     /// </summary>
     public static class MaxHandSizeCalculator
     {
@@ -16,7 +17,10 @@ namespace STS2RitsuLib.Combat.HandSize
 
         /// <summary>
         ///     Calculates the effective max hand size for <paramref name="player" />.
+        ///     Calculates the effective max hand size 用于 <c>player</c>.
         ///     Uses BaseLib value as the base amount when available, then applies
+        ///     使用 BaseLib value as the base amount 当 可用, then applies
+        ///     RitsuLib hook-listener modifiers exactly once.
         ///     RitsuLib hook-listener modifiers exactly once.
         /// </summary>
         public static int Calculate(Player player)
@@ -29,6 +33,7 @@ namespace STS2RitsuLib.Combat.HandSize
 
         /// <summary>
         ///     Applies combat hook-listener modifiers on top of an existing base amount.
+        ///     中文说明：Applies combat hook-listener modifiers on top of an existing base amount.
         /// </summary>
         public static int ApplyHookListenerModifiers(Player player, int currentMaxHandSize)
         {

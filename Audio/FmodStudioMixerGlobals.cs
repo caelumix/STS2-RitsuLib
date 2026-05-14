@@ -5,11 +5,13 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     Studio global parameters, system-wide mute/pause, DSP buffer, and performance snapshot.
+    ///     Studio global parameters, system-wide mute/pause, DSP buffer, 和 performance snapshot.
     /// </summary>
     public static class FmodStudioMixerGlobals
     {
         /// <summary>
         ///     Sets a global parameter by name to a numeric value.
+        ///     设置 a global parameter 通过 name to a numeric value.
         /// </summary>
         public static bool TrySetGlobalParameter(string name, float value)
         {
@@ -18,6 +20,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Reads a global parameter; 0 when missing or not convertible.
+        ///     Reads a global parameter; 0 当 missing 或 not convertible.
         /// </summary>
         public static float TryGetGlobalParameter(string name)
         {
@@ -37,6 +40,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Sets a global parameter using a labeled discrete value.
+        ///     设置 a global parameter using a labeled discrete value.
         /// </summary>
         public static bool TrySetGlobalParameterByLabel(string name, string label)
         {
@@ -45,6 +49,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Mutes all playing events at the Studio system level.
+        ///     Mutes all playing 事件s at the Studio system level.
         /// </summary>
         public static bool TryMuteAllEvents()
         {
@@ -53,6 +58,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Clears system-wide mute.
+        ///     中文说明：Clears system-wide mute.
         /// </summary>
         public static bool TryUnmuteAllEvents()
         {
@@ -61,6 +67,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Pauses all events.
+        ///     Pa使用 all 事件s.
         /// </summary>
         public static bool TryPauseAllEvents()
         {
@@ -69,6 +76,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Resumes paused events.
+        ///     Resumes paused 事件s.
         /// </summary>
         public static bool TryUnpauseAllEvents()
         {
@@ -77,6 +85,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Adjusts DSP buffer sizing (advanced; may affect latency).
+        ///     中文说明：Adjusts DSP buffer sizing (advanced; may affect latency).
         /// </summary>
         public static bool TrySetDspBufferSize(int bufferLength, int bufferCount)
         {
@@ -85,6 +94,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Addon-specific performance payload; inspect in debugger or forward to your telemetry.
+        ///     Addon-specific performance payload; inspect in debugger 或 用于ward to your telemetry.
         /// </summary>
         public static Variant TryGetPerformanceData()
         {

@@ -481,7 +481,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Wraps <paramref name="inner" /> so Godot <c>Control.Visible</c> tracks <paramref name="predicate" /> on
+        ///     中文说明：Wraps <c>inner</c> so Godot <c>Control.Visible</c> tracks <c>predicate</c> on
         ///     each settings UI refresh.
+        ///     each 设置 UI refresh.
         /// </summary>
         internal static Control MaybeWrapDynamicVisibility(ModSettingsUiContext context, Control inner,
             Func<bool>? predicate)
@@ -1015,7 +1017,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Frame for <see cref="ColorPickerButton" />: same border/bg language as <see cref="CreateSurfaceStyle" />,
+        ///     Frame 用于 <c>ColorPickerButton</c>: same border/bg language as <c>创建SurfaceStyle</c>,
         ///     but <b>equal</b> content margins so the inner color swatch stays square inside a square button.
+        ///     中文说明：but <b>equal</b> content margins so the inner color swatch stays square inside a square button.
         /// </summary>
         internal static StyleBoxFlat CreateColorPickerSwatchFrameStyle()
         {

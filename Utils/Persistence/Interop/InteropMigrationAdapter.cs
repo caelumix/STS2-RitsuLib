@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
 {
     /// <summary>
     ///     Adapts a duck-typed migration instance (FromVersion/ToVersion + Migrate(JsonObject)) into
+    ///     中文说明：Adapts a duck-typed migration instance (FromVersion/ToVersion + Migrate(JsonObject)) into
     ///     <see cref="IMigration" /> without requiring the migration type to reference RitsuLib types.
     /// </summary>
     public sealed class InteropMigrationAdapter : IMigration
@@ -14,6 +15,7 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
 
         /// <summary>
         ///     Creates an adapter from an existing migration instance (must expose FromVersion, ToVersion, Migrate).
+        ///     创建 an adapter from an existing migration instance (must expose FromVersion, ToVersion, Migrate)。
         /// </summary>
         public InteropMigrationAdapter(object instance)
         {
@@ -50,6 +52,7 @@ namespace STS2RitsuLib.Utils.Persistence.Interop
 
         /// <summary>
         ///     Attempts to create a migration instance via parameterless ctor and wrap it.
+        ///     Attempts to 创建 a migration instance via parameterless ctor 和 wrap it.
         /// </summary>
         public static bool TryCreateFromType(Type migrationType, out InteropMigrationAdapter? adapter)
         {

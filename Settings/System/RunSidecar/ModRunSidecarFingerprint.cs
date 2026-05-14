@@ -9,14 +9,33 @@ namespace STS2RitsuLib.Settings.RunSidecar
 {
     /// <summary>
     ///     Stable client-local identity for binding mod-owned JSON to exactly one run instance. Never written into
+    ///     Stable client-local identity 用于 binding mod-owned JSON to exactly one 跑局 instance. Never written into
     ///     <see cref="SerializableRun" /> packets — does not participate in vanilla multiplayer state sync.
     /// </summary>
-    /// <param name="ProfileId">Save profile slot from the active profile manager.</param>
-    /// <param name="RunStartTimeUnix">Run start instant in Unix seconds (from live run reflection or save payload).</param>
-    /// <param name="GameModeOrdinal">Serialized ordinal of the run game mode.</param>
-    /// <param name="Ascension">Ascension level for the run.</param>
-    /// <param name="LocalNetId">Local player net id for this client (0 when unavailable).</param>
-    /// <param name="RngStringSeed">RNG string seed identifying the run's random stream.</param>
+    /// <param name="ProfileId">
+    ///     Save profile slot from the active profile manager.
+    ///     保存 档案 slot 从 the active 档案 manager.
+    /// </param>
+    /// <param name="RunStartTimeUnix">
+    ///     Run start instant in Unix seconds (from live run reflection or save payload).
+    ///     跑局 start instant in Unix seconds (从 live 跑局 reflection 或 保存 payload).
+    /// </param>
+    /// <param name="GameModeOrdinal">
+    ///     Serialized ordinal of the run game mode.
+    ///     Serialized ordinal of the 跑局 game mode.
+    /// </param>
+    /// <param name="Ascension">
+    ///     Ascension level for the run.
+    ///     Ascension level 用于 the 跑局.
+    /// </param>
+    /// <param name="LocalNetId">
+    ///     Local player net id for this client (0 when unavailable).
+    ///     Local player net id 用于 this client (0 当 un可用).
+    /// </param>
+    /// <param name="RngStringSeed">
+    ///     RNG string seed identifying the run's random stream.
+    ///     RNG string seed identifying the 跑局's random stream.
+    /// </param>
     public readonly record struct ModRunSidecarFingerprint(
         int ProfileId,
         long RunStartTimeUnix,
@@ -27,6 +46,7 @@ namespace STS2RitsuLib.Settings.RunSidecar
     {
         /// <summary>
         ///     Builds a fingerprint from the currently active run, or returns false when no run is in progress.
+        ///     Builds a fingerprint 从 the currently active 跑局, 或 返回 false 当 no 跑局 is in progress.
         /// </summary>
         public static bool TryGetLive(out ModRunSidecarFingerprint fingerprint)
         {
@@ -56,6 +76,7 @@ namespace STS2RitsuLib.Settings.RunSidecar
 
         /// <summary>
         ///     Builds a fingerprint from a serialized run payload (e.g. immediately after load) plus the local net id.
+        ///     Builds a fingerprint 从 a serialized 跑局 payload (e.g. immediately 之后 加载) plus the local net id.
         /// </summary>
         public static ModRunSidecarFingerprint FromSerializableRun(SerializableRun save, ulong localNetId)
         {
@@ -74,6 +95,7 @@ namespace STS2RitsuLib.Settings.RunSidecar
 
         /// <summary>
         ///     Returns true when every binding field matches (used to validate on-disk envelopes).
+        ///     返回 true when every binding field matches (used to validate on-disk envelopes)。
         /// </summary>
         public bool EqualsIgnoringProfile(ModRunSidecarFingerprint other)
         {
@@ -86,6 +108,7 @@ namespace STS2RitsuLib.Settings.RunSidecar
 
         /// <summary>
         ///     Full equality including profile id.
+        ///     Full equality including 档案 id.
         /// </summary>
         public bool EqualsFully(ModRunSidecarFingerprint other)
         {
@@ -127,41 +150,48 @@ namespace STS2RitsuLib.Settings.RunSidecar
 
     /// <summary>
     ///     JSON DTO for <see cref="ModRunSidecarFingerprint" /> stored inside sidecar files.
+    ///     JSON DTO 用于 <c>ModRunSidecarFingerprint</c> stored inside sidecar files.
     /// </summary>
     public sealed class ModRunSidecarFingerprintDto
     {
         /// <summary>
         ///     Save profile slot id; must match the live fingerprint when reading a sidecar file.
+        ///     保存 档案 slot id; must match the live fingerprint 当 reading a sidecar file.
         /// </summary>
         [JsonPropertyName("profile_id")]
         public int ProfileId { get; set; }
 
         /// <summary>
         ///     Run start instant in Unix seconds.
+        ///     跑局 start instant in Unix seconds.
         /// </summary>
         [JsonPropertyName("run_start_time_unix")]
         public long RunStartTimeUnix { get; set; }
 
         /// <summary>
         ///     Ordinal of the run game mode at the time the sidecar was written.
+        ///     Ordinal of the 跑局 game mode at the time the sidecar was written.
         /// </summary>
         [JsonPropertyName("game_mode_ordinal")]
         public int GameModeOrdinal { get; set; }
 
         /// <summary>
         ///     Ascension level for the run.
+        ///     Ascension level 用于 the 跑局.
         /// </summary>
         [JsonPropertyName("ascension")]
         public int Ascension { get; set; }
 
         /// <summary>
         ///     Local player net id for this client when the sidecar was written.
+        ///     Local player net id 用于 this client 当 the sidecar was written.
         /// </summary>
         [JsonPropertyName("local_net_id")]
         public ulong LocalNetId { get; set; }
 
         /// <summary>
         ///     RNG string seed for the run; null in JSON is treated as empty when deserialized.
+        ///     RNG string seed 用于 the 跑局; null in JSON is treated as empty 当 deserialized.
         /// </summary>
         [JsonPropertyName("rng_string_seed")]
         public string? RngStringSeed { get; set; }

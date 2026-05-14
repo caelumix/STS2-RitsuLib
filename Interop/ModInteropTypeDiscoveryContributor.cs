@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Interop
 {
     /// <summary>
     ///     Built-in contributor: processes <see cref="ModInteropAttribute" /> stubs.
+    ///     内置 contributor：处理 <c>ModInteropAttribute</c> stub。
     /// </summary>
     public sealed class ModInteropTypeDiscoveryContributor : IModTypeDiscoveryContributor
     {

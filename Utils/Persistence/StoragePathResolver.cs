@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Utils.Persistence
 {
     /// <summary>
     ///     Resolves local storage targets for different <see cref="SaveScope" /> domains.
-    ///     为不同 <see cref="SaveScope" /> 域解析本地存储目标。
+    ///     为不同 <c>SaveScope</c> 域解析本地存储目标。
     /// </summary>
     internal static class StoragePathResolver
     {

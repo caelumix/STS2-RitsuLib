@@ -11,14 +11,20 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 {
     /// <summary>
     ///     Run history and top bar call <see cref="ImageHelper.GetRoomIconPath" /> with a <see cref="ModelId" /> that may be
+    ///     跑局 history 和 top bar call <c>ImageHelper.GetRoom图标路径</c> 带有 a <c>ModelId</c> that may be
     ///     an
+    ///     中文说明：an
     ///     encounter, ancient, event, etc. Only when the id resolves to an <see cref="EncounterModel" /> with mod overrides do
+    ///     encounter, ancient, 事件, etc. Only 当 the id 解析 to an <c>EncounterModel</c> 带有 mod overrides do
     ///     we
+    ///     中文说明：we
     ///     remap paths (otherwise vanilla resolution runs). Mod encounters without this would hit missing
+    ///     remap 路径 (otherwise 原版 resolution runs). Mod encounters 带有out this would hit missing
     ///     <c>ui/run_history/&lt;mod_entry&gt;.png</c>. This prefix returns
     ///     <see cref="IModEncounterAssetOverrides.CustomRunHistoryIconPath" /> /
     ///     <see cref="IModEncounterAssetOverrides.CustomRunHistoryIconOutlinePath" />
     ///     when those paths exist (same pattern as <see cref="ImageHelperAncientModRunHistoryIconPathPatch" /> for ancients).
+    ///     当 those 路径 exist (same pattern as <c>ImageHelperAncientModRunHistoryIcon路径Patch</c> 用于 ancients).
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
@@ -47,6 +53,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         // ReSharper disable InconsistentNaming
         /// <summary>
         ///     Harmony prefix: return the configured <c>res://images/…</c> path when present on disk / in the resource loader.
+        ///     Harmony 前置补丁: 返回 the configured <c>res://images/…</c> 路径 当 present on disk / in the 资源 加载er.
         /// </summary>
         public static bool Prefix(
                 MethodBase __originalMethod,

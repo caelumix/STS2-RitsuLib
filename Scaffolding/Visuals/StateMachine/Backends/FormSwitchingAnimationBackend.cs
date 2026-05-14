@@ -6,8 +6,8 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     ///     <see cref="IAnimationBackend" /> multiplexer that keeps one backend active at a time and allows runtime
     ///     form switching (for example, swapping between multiple child visuals under one persistent
     ///     <see cref="MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals" /> root).
-    ///     <see cref="IAnimationBackend" /> 多路复用器：同一时间保持一个后端激活，并允许运行时切换形态
-    ///     （例如在一个持久 <see cref="MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals" /> 根节点下切换多个子视觉）。
+    ///     <c>IAnimationBackend</c> 多路复用器：同一时间保持一个后端激活，并允许运行时切换形态
+    ///     （例如在一个持久 <c>MegaCrit.Sts2.Core.Nodes.Combat.NCreatureVisuals</c> 根节点下切换多个子视觉）。
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -15,7 +15,7 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
     ///         own child backend (Spine, animated sprite, animation player, ...), and
     ///         <see cref="SwitchForm" /> swaps the active backend without rebuilding the creature node.
     ///         此后端用于“单一视觉根节点，切换子形态”模式：每个形态都有自己的子后端（Spine、animated sprite、
-    ///         animation player 等），<see cref="SwitchForm" /> 会在不重建生物节点的情况下切换激活后端。
+    ///         animation player 等），<c>SwitchForm</c> 会在不重建生物节点的情况下切换激活后端。
     ///     </para>
     ///     <para>
     ///         If <c>replayCurrent</c> is <see langword="true" />, switching replays the current logical

@@ -10,6 +10,7 @@ namespace STS2RitsuLib.Combat.Rewards.Patches
 {
     /// <summary>
     ///     Extends <see cref="Reward.FromSerializable" /> to reconstruct
+    ///     中文说明：Extends <c>Reward.FromSerializable</c> to reconstruct
     ///     <see cref="CardCreationOptions" /> with Flags and CustomCardPool from sideband data.
     /// </summary>
     internal sealed class RewardFromSerializableExtPatch : IPatchMethod

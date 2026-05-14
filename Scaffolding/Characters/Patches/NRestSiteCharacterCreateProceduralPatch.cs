@@ -11,7 +11,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     When <see cref="IModCharacterAssetOverrides.WorldProceduralVisuals" /><c>.RestSite</c> is set, builds the
+    ///     当 <c>IModCharacterAssetOverrides.WorldProceduralVisuals</c><c>.RestSite</c> is 设置, builds the
     ///     rest-site character node in memory instead of loading <c>RestSiteAnimPath</c>.
+    ///     rest-site character node in memory instead of 加载ing <c>RestSiteAnim路径</c>.
     /// </summary>
     public class NRestSiteCharacterCreateProceduralPatch : IPatchMethod
     {
@@ -37,6 +39,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Supplies a procedural instance when applicable; otherwise builds from
+        ///     Supplies a procedural instance 当 applicable; otherwise builds 从
         ///     <see cref="MegaCrit.Sts2.Core.Models.CharacterModel.RestSiteAnimPath" /> via
         ///     <see cref="RitsuGodotNodeFactories" /> so baselib-style Godot scenes convert like combat visuals.
         /// </summary>

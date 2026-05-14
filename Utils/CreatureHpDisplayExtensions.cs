@@ -4,11 +4,13 @@ namespace STS2RitsuLib.Utils
 {
     /// <summary>
     ///     Host-version-stable helpers for checking whether a creature should be rendered with an infinite HP display.
+    ///     Host-version-stable helpers 用于 checking whether a creature should be rendered 带有 an infinite HP display.
     /// </summary>
     public static class CreatureHpDisplayExtensions
     {
         /// <summary>
         ///     Returns <c>true</c> when the creature is currently rendered with an infinite HP indicator.
+        ///     返回 <c>true</c> when the creature is currently rendered with an infinite HP indicator。
         /// </summary>
         public static bool IsInfiniteHpDisplayed(this Creature creature)
         {

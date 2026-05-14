@@ -6,7 +6,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     After the rest-site room finishes layout, drives procedural rest visuals (per-act loop cues) for characters
+    ///     之后 the rest-site room finishes layout, drives procedural rest visuals (per-章节 loop cues) 用于 characters
     ///     that use <see cref="IModCharacterAssetOverrides.WorldProceduralVisuals" /><c>.RestSite</c>.
+    ///     that 使用 <c>IModCharacterAssetOverrides.WorldProceduralVisuals</c><c>.RestSite</c>.
     /// </summary>
     public class NRestSiteRoomProceduralVisualPlaybackPatch : IPatchMethod
     {
@@ -29,6 +31,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Runs after vanilla <c>_Ready</c> so all rest-site character nodes exist.
+        ///     runs 之后 原版 <c>_Ready</c> so all rest-site character nodes exist.
         /// </summary>
         public static void Postfix(NRestSiteRoom __instance)
         {

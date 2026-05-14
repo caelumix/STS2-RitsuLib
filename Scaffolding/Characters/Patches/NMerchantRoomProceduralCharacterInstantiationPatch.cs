@@ -12,8 +12,10 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
     /// <summary>
     ///     Reimplements <c>NMerchantRoom.AfterRoomIsLoaded</c> so characters with
+    ///     Reimplements <c>NMerchantRoom.之后RoomIsloaded</c> so characters 带有
     ///     <see cref="IModCharacterAssetOverrides.WorldProceduralVisuals" /><c>.Merchant</c> can use in-memory shells
     ///     (mirrors vanilla layout; otherwise loads <c>MerchantAnimPath</c> through
+    ///     (mirrors 原版 layout; otherwise 加载 <c>MerchantAnim路径</c> through
     ///     <see cref="RitsuGodotNodeFactories" /> for baselib-style scenes).
     /// </summary>
     public class NMerchantRoomProceduralCharacterInstantiationPatch : IPatchMethod
@@ -46,6 +48,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         // ReSharper disable once InconsistentNaming
         /// <summary>
         ///     Replaces vanilla layout; returns <see langword="false" /> so the original <c>AfterRoomIsLoaded</c> is skipped.
+        ///     Replaces 原版 layout; 返回 <see langword="false" /> so the original <c>之后RoomIsloaded</c> is skipped.
         /// </summary>
         public static bool Prefix(NMerchantRoom __instance)
         {

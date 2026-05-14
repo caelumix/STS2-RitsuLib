@@ -80,7 +80,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
         /// <summary>
         ///     Targets <see cref="ActionTargetExtensions.IsSingleTarget" />.
-        ///     目标方法为 <see cref="ActionTargetExtensions.IsSingleTarget" />。
+        ///     目标方法为 <c>ActionTargetExtensions.IsSingleTarget</c>。
         /// </summary>
         public static ModPatchTarget[] GetTargets()
         {
@@ -114,7 +114,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
         /// <summary>
         ///     Targets <see cref="NTargetManager.AllowedToTargetCreature" />.
-        ///     目标方法为 <see cref="NTargetManager.AllowedToTargetCreature" />。
+        ///     目标方法为 <c>NTargetManager.AllowedToTargetCreature</c>。
         /// </summary>
         public static ModPatchTarget[] GetTargets()
         {
@@ -140,7 +140,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
     /// <summary>
     ///     Delegates <see cref="CardModel.CanPlayTargeting" /> to custom single-target predicates.
-    ///     将 <see cref="CardModel.CanPlayTargeting" /> 的判定委托给自定义单体目标谓词。
+    ///     将 <c>CardModel.CanPlayTargeting</c> 的判定委托给自定义单体目标谓词。
     /// </summary>
     internal sealed class CardModelCanPlayTargetingCustomTargetTypePatch : IPatchMethod
     {
@@ -150,7 +150,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
         /// <summary>
         ///     Targets <see cref="CardModel.CanPlayTargeting" />.
-        ///     目标方法为 <see cref="CardModel.CanPlayTargeting" />。
+        ///     目标方法为 <c>CardModel.CanPlayTargeting</c>。
         /// </summary>
         public static ModPatchTarget[] GetTargets()
         {
@@ -178,7 +178,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
     /// <summary>
     ///     Delegates <see cref="CardModel.IsValidTarget" /> to custom single-target predicates.
-    ///     将 <see cref="CardModel.IsValidTarget" /> 的判定委托给自定义单体目标谓词。
+    ///     将 <c>CardModel.IsValidTarget</c> 的判定委托给自定义单体目标谓词。
     /// </summary>
     internal sealed class CardModelIsValidTargetCustomTargetTypePatch : IPatchMethod
     {
@@ -188,7 +188,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
         /// <summary>
         ///     Targets <see cref="CardModel.IsValidTarget" />.
-        ///     目标方法为 <see cref="CardModel.IsValidTarget" />。
+        ///     目标方法为 <c>CardModel.IsValidTarget</c>。
         /// </summary>
         public static ModPatchTarget[] GetTargets()
         {
@@ -321,7 +321,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
         /// <summary>
         ///     Targets <see cref="NControllerCardPlay.Start" />.
-        ///     目标方法为 <see cref="NControllerCardPlay.Start" />。
+        ///     目标方法为 <c>NControllerCardPlay.Start</c>。
         /// </summary>
         public static ModPatchTarget[] GetTargets()
         {

@@ -6,7 +6,9 @@ namespace STS2RitsuLib.Utils
 {
     /// <summary>
     ///     Unified file operations wrapper for Godot's FileAccess with consistent error handling and logging.
+    ///     Unified file operations wrapper 用于 Godot's FileAccess 带有 consistent error handling 和 logging.
     ///     Supports atomic writes with backup rotation (mirrors STS2's GodotFileIo pattern).
+    ///     Supports atomic writes 带有 backup rotation (mirrors STS2's GodotFileIo pattern).
     /// </summary>
     public static class FileOperations
     {
@@ -15,6 +17,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Reads text content from a file with detailed error handling.
+        ///     Reads text content 从 a file 带有 detailed error handling.
         /// </summary>
         public static ReadResult ReadText(string filePath, string? logContext = null)
         {
@@ -79,9 +82,13 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Writes text content to a file with atomic write pattern:
+        ///     Writes text content to a file 带有 atomic write pattern:
         ///     1. Rotate existing file to .backup
+        ///     中文说明：1. Rotate existing file to .backup
         ///     2. Write to .tmp file
+        ///     中文说明：2. Write to .tmp file
         ///     3. Rename .tmp to target path
+        ///     3. Rename .tmp to target 路径
         /// </summary>
         public static WriteResult WriteText(string filePath, string content, string? logContext = null,
             bool atomic = true)
@@ -136,6 +143,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Direct write without atomic pattern (internal use)
+        ///     Direct write 带有out atomic pattern (internal 使用)
         /// </summary>
         private static WriteResult WriteTextDirect(string filePath, string content, string context)
         {
@@ -176,6 +184,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Rotate backup: delete old .backup, rename current file to .backup
+        ///     中文说明：Rotate backup: delete old .backup, rename current file to .backup
         /// </summary>
         private static void RotateBackup(string filePath, string backupPath, string context)
         {
@@ -197,6 +206,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Restore file from backup
+        ///     Restore file 从 backup
         /// </summary>
         private static void RestoreFromBackup(string filePath, string backupPath, string context)
         {
@@ -216,6 +226,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Rename a file
+        ///     中文说明：Rename a file
         /// </summary>
         public static WriteResult RenameFile(string fromPath, string toPath, string? logContext = null)
         {
@@ -254,6 +265,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Try to load from backup file if main file fails
+        ///     Try to 加载 从 backup file 如果 main file fails
         /// </summary>
         public static ReadResult ReadTextWithBackupFallback(string filePath, string? logContext = null)
         {
@@ -300,6 +312,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Ensures the directory for a file path exists.
+        ///     Ensures the directory 用于 a file 路径 exists.
         /// </summary>
         private static void EnsureDirectoryExists(string filePath)
         {
@@ -317,6 +330,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Reads and deserializes JSON content from a file.
+        ///     Reads 和 deserializes JSON content 从 a file.
         /// </summary>
         public static JsonResult<T> ReadJson<T>(string filePath, JsonSerializerOptions? options = null,
             string? logContext = null)
@@ -376,6 +390,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Serializes and writes JSON content to a file.
+        ///     Serializes 和 writes JSON content to a file.
         /// </summary>
         public static WriteResult WriteJson<T>(string filePath, T data, JsonSerializerOptions? options = null,
             string? logContext = null)
@@ -409,6 +424,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Checks if a file exists.
+        ///     Checks 如果 a file exists.
         /// </summary>
         public static bool FileExists(string filePath)
         {
@@ -417,6 +433,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Deletes a file with detailed error handling.
+        ///     Deletes a file 带有 detailed error handling.
         /// </summary>
         public static WriteResult DeleteFile(string filePath, string? logContext = null)
         {
@@ -474,6 +491,7 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Recursively deletes a directory and all its contents.
+        ///     Recursively deletes a directory 和 all its contents.
         /// </summary>
         public static WriteResult DeleteDirectoryRecursive(string directoryPath, string? logContext = null)
         {
@@ -549,73 +567,87 @@ namespace STS2RitsuLib.Utils
 
         /// <summary>
         ///     Result of a file read operation.
+        ///     中文说明：Result of a file read operation.
         /// </summary>
         public record ReadResult
         {
             /// <summary>
             ///     True when the file was read successfully with non-empty content.
+            ///     当 the file was read successfully with non-empty content 时为 true。
             /// </summary>
             public bool Success { get; init; }
 
             /// <summary>
             ///     File text when <see cref="Success" /> is true.
+            ///     File text 当 <c>Success</c> is true.
             /// </summary>
             public string? Content { get; init; }
 
             /// <summary>
             ///     Godot error code when a low-level open/read failure occurred.
+            ///     Godot error code 当 a low-level open/read failure occurred.
             /// </summary>
             public Error? ErrorCode { get; init; }
 
             /// <summary>
             ///     Human-readable failure reason when <see cref="Success" /> is false.
+            ///     人类可读的 failure reason when <c>Success</c> is false。
             /// </summary>
             public string? ErrorMessage { get; init; }
 
             /// <summary>
             ///     True when content was recovered from the <c>.backup</c> sibling file.
+            ///     当 content was recovered from the <c>.backup</c> sibling file 时为 true。
             /// </summary>
             public bool LoadedFromBackup { get; init; }
         }
 
         /// <summary>
         ///     Result of a file write operation.
+        ///     中文说明：Result of a file write operation.
         /// </summary>
         public class WriteResult
         {
             /// <summary>
             ///     True when the write (or no-op delete) completed successfully.
+            ///     当 the write (or no-op delete) completed successfully 时为 true。
             /// </summary>
             public bool Success { get; init; }
 
             /// <summary>
             ///     Godot error code when a low-level operation failed.
+            ///     Godot error code 当 a low-level operation failed.
             /// </summary>
             public Error? ErrorCode { get; init; }
 
             /// <summary>
             ///     Human-readable failure reason when <see cref="Success" /> is false.
+            ///     人类可读的 failure reason when <c>Success</c> is false。
             /// </summary>
             public string? ErrorMessage { get; init; }
         }
 
         /// <summary>
         ///     Result of a JSON deserialization operation.
+        ///     中文说明：Result of a JSON deserialization operation.
         /// </summary>
         public class JsonResult<T>
         {
             /// <summary>
             ///     True when JSON was parsed into a non-null instance.
+            ///     当 JSON was parsed into a non-null instance 时为 true。
             /// </summary>
             public bool Success { get; init; }
 
             /// <summary>
             ///     Deserialized object when <see cref="Success" /> is true.
+            ///     Deserialized object 当 <c>Success</c> is true.
             /// </summary>
             public T? Data { get; init; }
 
             /// <summary>
             ///     Human-readable failure reason when <see cref="Success" /> is false.
+            ///     人类可读的 failure reason when <c>Success</c> is false。
             /// </summary>
             public string? ErrorMessage { get; init; }
         }

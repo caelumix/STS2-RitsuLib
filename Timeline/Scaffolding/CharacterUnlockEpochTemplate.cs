@@ -8,7 +8,10 @@ namespace STS2RitsuLib.Timeline.Scaffolding
     /// <summary>
     ///     <see cref="EpochModel" /> base that unlocks <typeparamref name="TCharacter" /> and optional follow-on epochs.
     /// </summary>
-    /// <typeparam name="TCharacter">Character model type being unlocked.</typeparam>
+    /// <typeparam name="TCharacter">
+    ///     Character model type being unlocked.
+    ///     Character 模型 type being unlocked.
+    /// </typeparam>
     public abstract class CharacterUnlockEpochTemplate<TCharacter> : ModEpochTemplate
         where TCharacter : CharacterModel
     {
@@ -17,6 +20,7 @@ namespace STS2RitsuLib.Timeline.Scaffolding
 
         /// <summary>
         ///     Additional epoch types to append when this unlock fires; default none.
+        ///     Additional epoch types to append 当 this unlock fires; default none.
         /// </summary>
         protected virtual IEnumerable<Type> ExpansionEpochTypes => [];
 

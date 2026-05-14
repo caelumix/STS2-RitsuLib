@@ -6,7 +6,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 {
     /// <summary>
     ///     Bundle of optional resource paths for mod card portraits, frames, energy icon, overlay scene, and banner.
-    ///     Mod 卡牌肖像、边框、能量图标、覆盖场景和横幅的可选资源路径集合。
+    ///     Mod 卡牌肖像、边框、能量图标、覆盖场景和横幅的可选ResourcePath集合。
     /// </summary>
     /// <param name="PortraitPath">
     ///     Main card portrait image path.
@@ -30,7 +30,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </param>
     /// <param name="FrameMaterialPath">
     ///     Material resource path for the card frame.
-    ///     卡牌边框的材质资源路径。
+    ///     卡牌边框的材质ResourcePath。
     /// </param>
     /// <param name="OverlayScenePath">
     ///     Packed scene path for built-in card overlay UI.
@@ -235,7 +235,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
     /// <summary>
     ///     Optional act-level background, map layer, rest site, and treasure chest Spine resource paths.
-    ///     可选 act 级背景、地图图层、休息点和宝箱 Spine 资源路径。
+    ///     可选 act 级背景、地图图层、休息点和宝箱 Spine ResourcePath。
     /// </summary>
     /// <param name="BackgroundScenePath">
     ///     Main act background scene.
@@ -259,7 +259,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </param>
     /// <param name="ChestSpineResourcePath">
     ///     Treasure room chest Spine data resource path.
-    ///     宝藏房宝箱 Spine 数据资源路径。
+    ///     宝藏房宝箱 Spine 数据ResourcePath。
     /// </param>
     /// <param name="BackgroundLayersDirectoryPath">
     ///     Optional <c>res://</c> directory scanned like vanilla <c>scenes/backgrounds/&lt;act&gt;/layers</c> (files must
@@ -287,7 +287,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// <summary>
     ///     Optional creature visuals scene path for <see cref="MegaCrit.Sts2.Core.Models.MonsterModel" /> (<c>VisualsPath</c>
     ///     ).
-    ///     <see cref="MegaCrit.Sts2.Core.Models.MonsterModel" /> 的可选生物视觉场景路径（<c>VisualsPath</c>）。
+    ///     <c>MegaCrit.Sts2.Core.Models.MonsterModel</c> 的可选生物视觉场景路径（<c>VisualsPath</c>）。
     /// </summary>
     /// <param name="VisualsScenePath">
     ///     Packed scene root under <c>creature_visuals/</c> convention.
@@ -311,7 +311,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// <param name="EncounterScenePath">
     ///     Packed scene for <c>EncounterModel.CreateScene</c> when
     ///     <see cref="EncounterModel.HasScene" /> is used.
-    ///     使用 <see cref="EncounterModel.HasScene" /> 时供 <c>EncounterModel.CreateScene</c> 使用的 PackedScene。
+    ///     使用 <c>EncounterModel.HasScene</c> 时供 <c>EncounterModel.CreateScene</c> 使用的 PackedScene。
     /// </param>
     /// <param name="BackgroundScenePath">
     ///     Main combat background scene when using encounter-specific backgrounds.
@@ -337,12 +337,12 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// <param name="RunHistoryIconPath">
     ///     Full <c>res://images/…</c> path for run-history / top-bar main icon (see
     ///     <see cref="ImageHelper.GetImagePath" />).
-    ///     运行历史 / 顶栏主图标的完整 <c>res://images/…</c> 路径（见 <see cref="ImageHelper.GetImagePath" />）。
+    ///     运行历史 / 顶栏主图标的完整 <c>res://images/…</c> 路径（见 <c>ImageHelper.GetImagePath</c>）。
     /// </param>
     /// <param name="RunHistoryIconOutlinePath">
     ///     Outline texture path, same conventions as
     ///     <paramref name="RunHistoryIconPath" />.
-    ///     轮廓贴图路径，约定与 <paramref name="RunHistoryIconPath" /> 相同。
+    ///     轮廓贴图路径，约定与 <c>RunHistoryIconPath</c> 相同。
     /// </param>
     public sealed record EncounterAssetProfile(
         string? EncounterScenePath = null,
@@ -420,7 +420,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     When set, replaces the packed background scene in <c>NAncientEventLayout</c> with in-memory layered sprites and
     ///     cue playback (see <see cref="AncientEventStageProceduralVisualSet" />).
     ///     设置后，用内存中的分层 sprite 和 cue 播放替换 <c>NAncientEventLayout</c> 里的 packed 背景场景
-    ///     （见 <see cref="AncientEventStageProceduralVisualSet" />）。
+    ///     （见 <c>AncientEventStageProceduralVisualSet</c>）。
     /// </param>
     public sealed record AncientEventPresentationAssetProfile(
         string? MapIconPath = null,
@@ -460,7 +460,7 @@ namespace STS2RitsuLib.Scaffolding.Content
     /// </summary>
     /// <param name="PackedPortraitPath">
     ///     Atlas sprite resource path for the small timeline portrait.
-    ///     小型时间线肖像的 atlas sprite 资源路径。
+    ///     小型时间线肖像的 atlas sprite ResourcePath。
     /// </param>
     /// <param name="BigPortraitPath">
     ///     Large epoch portrait texture path.
@@ -482,9 +482,9 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     entry names. They do not infer paths from mod model ids — mod-only art uses explicit profile fields or your PCK
     ///     layout. Act borrowing mirrors <see cref="Characters.CharacterAssetProfiles.FromCharacterId" /> (vanilla id in,
     ///     vanilla paths out).
-    ///     根据原版文件夹名和 atlas 条目名构建 <strong>基础游戏</strong>（<c>res://</c>）资源路径的工厂方法。
+    ///     根据原版文件夹名和 atlas 条目名构建 <strong>基础游戏</strong>（<c>res://</c>）ResourcePath的工厂方法。
     ///     它们不会从 mod 模型 id 推断路径；mod 专属美术应使用显式 profile 字段或你的 PCK 布局。
-    ///     借用 act 美术的行为与 <see cref="Characters.CharacterAssetProfiles.FromCharacterId" /> 一致
+    ///     借用 act 美术的行为与 <c>Characters.CharacterAssetProfiles.FromCharacterId</c> 一致
     ///     （输入原版 id，输出原版路径）。
     /// </summary>
     public static class ContentAssetProfiles
@@ -492,7 +492,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Builds default portrait and overlay paths for a card in <paramref name="poolEntry" /> /
         ///     <paramref name="cardEntry" />.
-        ///     为 <paramref name="poolEntry" /> / <paramref name="cardEntry" /> 中的卡牌构建默认肖像和覆盖层路径。
+        ///     为 <c>poolEntry</c> / <c>cardEntry</c> 中的卡牌构建默认肖像和覆盖层路径。
         /// </summary>
         public static CardAssetProfile Card(string poolEntry, string cardEntry)
         {
@@ -509,7 +509,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default relic icon paths for <paramref name="relicEntry" />.
-        ///     为 <paramref name="relicEntry" /> 构建默认遗物图标路径。
+        ///     为 <c>relicEntry</c> 构建默认遗物图标路径。
         /// </summary>
         public static RelicAssetProfile Relic(string relicEntry)
         {
@@ -524,7 +524,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default power icon paths for <paramref name="powerEntry" />.
-        ///     为 <paramref name="powerEntry" /> 构建默认能力图标路径。
+        ///     为 <c>powerEntry</c> 构建默认能力图标路径。
         /// </summary>
         public static PowerAssetProfile Power(string powerEntry)
         {
@@ -538,7 +538,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default orb icon and visuals scene paths for <paramref name="orbEntry" />.
-        ///     为 <paramref name="orbEntry" /> 构建默认充能球图标和视觉场景路径。
+        ///     为 <c>orbEntry</c> 构建默认充能球图标和视觉场景路径。
         /// </summary>
         public static OrbAssetProfile Orb(string orbEntry)
         {
@@ -552,7 +552,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default potion image paths for <paramref name="potionEntry" />.
-        ///     为 <paramref name="potionEntry" /> 构建默认药水图片路径。
+        ///     为 <c>potionEntry</c> 构建默认药水图片路径。
         /// </summary>
         public static PotionAssetProfile Potion(string potionEntry)
         {
@@ -566,7 +566,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default affliction overlay scene path for <paramref name="afflictionEntry" />.
-        ///     为 <paramref name="afflictionEntry" /> 构建默认苦痛覆盖场景路径。
+        ///     为 <c>afflictionEntry</c> 构建默认苦痛覆盖场景路径。
         /// </summary>
         public static AfflictionAssetProfile Affliction(string afflictionEntry)
         {
@@ -579,7 +579,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default enchantment icon path for <paramref name="enchantmentEntry" />.
-        ///     为 <paramref name="enchantmentEntry" /> 构建默认附魔图标路径。
+        ///     为 <c>enchantmentEntry</c> 构建默认附魔图标路径。
         /// </summary>
         public static EnchantmentAssetProfile Enchantment(string enchantmentEntry)
         {
@@ -595,8 +595,8 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     <c>ship</c>): main background scene, <c>scenes/backgrounds/&lt;id&gt;/layers</c>, map parallax images, rest
         ///     site, chest Spine. Pass the base-game directory name, not a mod <see cref="ActModel" /> <c>Id.Entry</c>.
         ///     为 <strong>原版</strong> act 文件夹名（例如 <c>hive</c>、<c>ship</c>）构建完整
-        ///     <see cref="ActAssetProfile" />：主背景场景、<c>scenes/backgrounds/&lt;id&gt;/layers</c>、地图视差图片、
-        ///     休息点和宝箱 Spine。请传入基础游戏目录名，而不是 mod <see cref="ActModel" /> 的 <c>Id.Entry</c>。
+        ///     <c>ActAssetProfile</c>：主背景场景、<c>scenes/backgrounds/&lt;id&gt;/layers</c>、地图视差图片、
+        ///     休息点和宝箱 Spine。请传入基础游戏目录名，而不是 mod <c>ActModel</c> 的 <c>Id.Entry</c>。
         /// </summary>
         public static ActAssetProfile FromVanillaActId(string vanillaActId)
         {
@@ -615,7 +615,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Short alias for <see cref="FromVanillaActId" />.
-        ///     <see cref="FromVanillaActId" /> 的短别名。
+        ///     <c>FromVanillaActId</c> 的短别名。
         /// </summary>
         public static ActAssetProfile Act(string actEntry)
         {
@@ -639,7 +639,7 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// <summary>
         ///     Builds default encounter asset paths for <paramref name="encounterEntry" /> (vanilla <c>EncounterModel</c> layout),
         ///     including concrete run-history texture paths under <c>ui/run_history/</c> (same files vanilla uses for that slug).
-        ///     为 <paramref name="encounterEntry" /> 构建默认遭遇资源路径（原版 <c>EncounterModel</c> 布局），包括
+        ///     为 <c>encounterEntry</c> 构建默认遭遇ResourcePath（原版 <c>EncounterModel</c> 布局），包括
         ///     <c>ui/run_history/</c> 下的具体运行历史贴图路径（与原版该 slug 使用的文件相同）。
         /// </summary>
         /// <param name="encounterEntry">
@@ -689,7 +689,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default creature visuals scene path for <paramref name="monsterEntry" />.
-        ///     为 <paramref name="monsterEntry" /> 构建默认生物视觉场景路径。
+        ///     为 <c>monsterEntry</c> 构建默认生物视觉场景路径。
         /// </summary>
         public static MonsterAssetProfile Monster(string monsterEntry)
         {
@@ -699,7 +699,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default event asset paths for <paramref name="eventEntry" /> (default / combat style events).
-        ///     为 <paramref name="eventEntry" /> 构建默认事件资源路径（默认 / 战斗风格事件）。
+        ///     为 <c>eventEntry</c> 构建默认事件ResourcePath（默认 / 战斗风格事件）。
         /// </summary>
         public static EventAssetProfile Event(string eventEntry)
         {
@@ -714,7 +714,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds the vanilla custom-layout scene path for <paramref name="eventEntry" /> (custom event layout type).
-        ///     为 <paramref name="eventEntry" /> 构建原版自定义布局场景路径（自定义事件布局类型）。
+        ///     为 <c>eventEntry</c> 构建原版自定义布局场景路径（自定义事件布局类型）。
         /// </summary>
         public static string EventCustomLayoutScenePath(string eventEntry)
         {
@@ -724,7 +724,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default ancient presentation paths for <paramref name="ancientEntry" />.
-        ///     为 <paramref name="ancientEntry" /> 构建默认 ancient 表现路径。
+        ///     为 <c>ancientEntry</c> 构建默认 ancient 表现路径。
         /// </summary>
         public static AncientEventPresentationAssetProfile AncientPresentation(string ancientEntry)
         {
@@ -740,7 +740,7 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <summary>
         ///     Builds default epoch portrait paths for <paramref name="epochId" /> (matches <c>EpochModel</c> conventions).
-        ///     为 <paramref name="epochId" /> 构建默认纪元肖像路径（匹配 <c>EpochModel</c> 约定）。
+        ///     为 <c>epochId</c> 构建默认纪元肖像路径（匹配 <c>EpochModel</c> 约定）。
         /// </summary>
         public static EpochAssetProfile Epoch(string epochId)
         {

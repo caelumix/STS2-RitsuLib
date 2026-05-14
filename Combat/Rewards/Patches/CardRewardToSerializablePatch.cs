@@ -8,9 +8,13 @@ namespace STS2RitsuLib.Combat.Rewards.Patches
 {
     /// <summary>
     ///     Replaces <see cref="CardReward.ToSerializable" /> to handle Flags, CustomCardPool,
+    ///     Replaces <c>卡牌Reward.ToSerializable</c> to handle Flags, 自定义CardPool,
     ///     and CardPoolFilter without throwing <see cref="NotImplementedException" />.
+    ///     and CardPool过滤 带有out throwing <c>NotImplementedException</c>.
     ///     Extended data is stored via <see cref="RewardSerializationExt" /> sideband and later
+    ///     Extended data is stored via <c>RewardSerializationExt</c> sideband 和 later
     ///     written to <c>EncounterState</c> by the room serialization postfix.
+    ///     written to <c>EncounterState</c> 通过 the room serialization postfix.
     /// </summary>
     internal sealed class CardRewardToSerializablePatch : IPatchMethod
     {

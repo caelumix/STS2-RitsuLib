@@ -13,6 +13,8 @@ namespace STS2RitsuLib.Interop.Patches
     /// <summary>
     ///     Injects all loaded mod model types that declare <see cref="SavedPropertyAttribute" /> at a deterministic
     ///     initialization point so multiplayer peers build the same <see cref="SavedPropertiesTypeCache" /> net-id table.
+    ///     在确定性的初始化点注入所有声明 <c>SavedPropertyAttribute</c> 的已加载 mod model 类型，
+    ///     使多人联机 peer 构建相同的 <c>SavedPropertiesTypeCache</c> net-id table。
     /// </summary>
     public sealed class SavedPropertiesTypeCacheInjectionPatch : IPatchMethod
     {
@@ -37,6 +39,7 @@ namespace STS2RitsuLib.Interop.Patches
 
         /// <summary>
         ///     Injects cache entries after mod type-discovery contributors have had a chance to register content.
+        ///     在 mod type-discovery contributor 有机会注册内容后注入 cache entry。
         /// </summary>
         [HarmonyAfter(Const.BaseLibHarmonyId)]
         [HarmonyPriority(Priority.Last)]

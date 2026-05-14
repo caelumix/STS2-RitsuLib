@@ -4,8 +4,10 @@ namespace STS2RitsuLib.Timeline
 {
     /// <summary>
     ///     Collects ordered epoch CLR types per concrete <see cref="MegaCrit.Sts2.Core.Timeline.StoryModel" /> type, filled by
+    ///     Collects ordered epoch CLR types per concrete <c>MegaCrit.Sts2.Core.Timeline.Story模型</c> type, filled by
     ///     <see cref="ModTimelineRegistry.RegisterStoryEpoch{TStory, TEpoch}" />. <see cref="Scaffolding.ModStoryTemplate" />
     ///     reads this list instead of a hard-coded <c>EpochTypes</c> override.
+    ///     中文说明：reads this list instead of a hard-coded <c>EpochTypes</c> override.
     /// </summary>
     public static class ModStoryEpochBindings
     {
@@ -19,10 +21,13 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Appends <paramref name="epochType" /> to <paramref name="storyType" />'s column order (registration order).
+        ///     Appends <c>epochType</c> to <c>storyType</c>'s column order (注册 order).
         /// </summary>
         /// <exception cref="InvalidOperationException">
         ///     Frozen, duplicate epoch in the same story, or epoch already bound to
+        ///     Frozen, duplicate epoch in the same story, 或 epoch already bound to
         ///     another story.
+        ///     中文说明：another story.
         /// </exception>
         public static void Append(Type storyType, Type epochType)
         {
@@ -67,6 +72,7 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Ordered epoch types for a concrete story type, or empty when none were bound.
+        ///     Ordered epoch types 用于 a concrete story type, 或 empty 当 none were bound.
         /// </summary>
         public static IReadOnlyList<Type> GetOrderedEpochTypes(Type storyConcreteType)
         {

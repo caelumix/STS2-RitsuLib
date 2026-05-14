@@ -10,7 +10,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Visuals.Definition
     {
         /// <summary>
         ///     Begins a <see cref="CharacterWorldProceduralVisualSet" /> builder.
-        ///     开始一个 <see cref="CharacterWorldProceduralVisualSet" /> builder。
+        ///     开始一个 <c>CharacterWorldProceduralVisualSet</c> builder。
         /// </summary>
         public static CharacterWorldProceduralVisualSetBuilder Procedural()
         {

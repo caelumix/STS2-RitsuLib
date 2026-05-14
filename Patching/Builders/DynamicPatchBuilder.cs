@@ -7,8 +7,12 @@ namespace STS2RitsuLib.Patching.Builders
 {
     /// <summary>
     ///     Fluent builder for runtime-discovered Harmony patches.
+    ///     Fluent builder 用于 runtime-discovered Harmony patches.
     /// </summary>
-    /// <param name="idPrefix">Prefix for auto-generated patch ids unless <c>patchId</c> is passed to an overload.</param>
+    /// <param name="idPrefix">
+    ///     Prefix for auto-generated patch ids unless <c>patchId</c> is passed to an overload.
+    ///     Prefix 用于 auto-generated patch ids unless <c>patchId</c> is passed to an over加载.
+    /// </param>
     public sealed class DynamicPatchBuilder(string idPrefix)
     {
         private readonly List<DynamicPatchInfo> _patches = [];
@@ -16,17 +20,20 @@ namespace STS2RitsuLib.Patching.Builders
 
         /// <summary>
         ///     Id prefix used when synthesizing patch identifiers.
+        ///     Id prefix used 当 synthesizing patch identifiers.
         /// </summary>
         public string IdPrefix { get; } = idPrefix;
 
         /// <summary>
         ///     Patches accumulated so far (not applied until registered with a
+        ///     Patches accumulated so far (not applied until 已注册 带有 a
         ///     <see cref="STS2RitsuLib.Patching.Core.ModPatcher" />).
         /// </summary>
         public IReadOnlyList<DynamicPatchInfo> Patches => _patches;
 
         /// <summary>
         ///     Appends a <see cref="DynamicPatchInfo" /> for <paramref name="originalMethod" />.
+        ///     Appends a <c>DynamicPatchInfo</c> 用于 <c>originalMethod</c>.
         /// </summary>
         public DynamicPatchBuilder Add(
             MethodBase originalMethod,
@@ -57,6 +64,7 @@ namespace STS2RitsuLib.Patching.Builders
 
         /// <summary>
         ///     Resolves <paramref name="target" /> via <see cref="PatchTargetMethodResolver" /> and appends the result to
+        ///     解析 <c>target</c> via <c>PatchTargetMethodResolver</c> 和 appends the result to
         ///     <see cref="Patches" />.
         /// </summary>
         public DynamicPatchBuilder Add(
@@ -89,6 +97,7 @@ namespace STS2RitsuLib.Patching.Builders
 
         /// <summary>
         ///     Resolves a property getter on <paramref name="targetType" /> and appends it to <see cref="Patches" />.
+        ///     解析 a property getter on <c>targetType</c> and appends it to <c>Patches</c>。
         /// </summary>
         public DynamicPatchBuilder AddPropertyGetter(
             Type targetType,
@@ -126,6 +135,7 @@ namespace STS2RitsuLib.Patching.Builders
 
         /// <summary>
         ///     Legacy overload: resolves with <see cref="MethodType.Normal" /> (same behavior as before
+        ///     Legacy over加载: 解析 带有 <c>MethodType.Normal</c> (same behavior as 之前
         ///     <see cref="HarmonyLib.MethodType" /> was exposed on this API).
         /// </summary>
         public DynamicPatchBuilder AddMethod(
@@ -156,8 +166,11 @@ namespace STS2RitsuLib.Patching.Builders
 
         /// <summary>
         ///     Resolves a method on <paramref name="targetType" /> (optionally by <paramref name="parameterTypes" />)
+        ///     解析 a method on <c>targetType</c> (可选ly 通过 <c>parameterTypes</c>)
         ///     using <paramref name="harmonyMethodType" /> (same semantics as <see cref="ModPatchTarget.HarmonyMethodType" />),
+        ///     中文说明：using <c>harmonyMethodType</c> (same semantics as <c>ModPatchTarget.HarmonyMethodType</c>),
         ///     then appends it to <see cref="Patches" />.
+        ///     中文说明：then appends it to <c>Patches</c>.
         /// </summary>
         public DynamicPatchBuilder AddMethod(
             Type targetType,
@@ -192,6 +205,7 @@ namespace STS2RitsuLib.Patching.Builders
 
         /// <summary>
         ///     Wraps a static patch method on <paramref name="patchType" /> as a <see cref="HarmonyMethod" />.
+        ///     中文说明：Wraps a static patch method on <c>patchType</c> as a <c>HarmonyMethod</c>.
         /// </summary>
         public static HarmonyMethod FromMethod(Type patchType, string methodName)
         {

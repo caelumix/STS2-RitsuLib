@@ -63,8 +63,10 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Registers a callback invoked on the next UI refresh. Same as calling
+        ///     中文说明：Registers a callback invoked on the next UI refresh. Same as calling
         ///     <see cref="RegisterRefresh(Action, ModSettingsUiRefreshSpec)" /> with a full-pass spec (legacy behavior for
         ///     extensions compiled against older RitsuLib).
+        ///     中文说明：extensions compiled against older RitsuLib).
         /// </summary>
         public void RegisterRefresh(Action action)
         {
@@ -73,7 +75,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Registers a callback invoked on the next UI refresh when its <paramref name="spec" /> matches the
+        ///     Registers a callback invoked on the next UI refresh 当 its <c>spec</c> matches the
         ///     bindings that were marked dirty since the last flush.
+        ///     中文说明：bindings that were marked dirty since the last flush.
         /// </summary>
         public void RegisterRefresh(Action action, ModSettingsUiRefreshSpec spec)
         {
@@ -99,7 +103,9 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Re-evaluates Godot <c>Control.Visible</c> on each debounced refresh (sidebar targets that are not part of
+        ///     中文说明：Re-evaluates Godot <c>Control.Visible</c> on each debounced refresh (sidebar targets that are not part of
         ///     the main content refresh graph).
+        ///     该 main content refresh graph)。
         /// </summary>
         public void RegisterDynamicVisibility(Control control, Func<bool> predicate)
         {

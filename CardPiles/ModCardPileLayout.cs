@@ -13,6 +13,8 @@ namespace STS2RitsuLib.CardPiles
     ///     Resolves fly-in target positions for mod card piles. Called from the
     ///     <c>PileTypeExtensions.GetTargetPosition</c> prefix patch so vanilla's switch never sees mod-minted
     ///     values.
+    ///     解析 mod card pile 的 fly-in target 位置。由 <c>PileTypeExtensions.GetTargetPosition</c> prefix patch
+    ///     调用，因此原版 switch 永远不会看到 mod-minted 值。
     /// </summary>
     internal static class ModCardPileLayout
     {
@@ -20,9 +22,17 @@ namespace STS2RitsuLib.CardPiles
         ///     Computes the screen-space target position cards should animate to when moved into
         ///     <paramref name="definition" />. Falls back to a centered screen coordinate if the expected UI
         ///     host node is not yet available (e.g. before combat starts or between scene transitions).
+        ///     计算 card 移入 <c>definition</c> 时应动画飞向的屏幕空间 target 位置。如果预期 UI host
+        ///     node 尚不可用（例如战斗开始前或 scene transition 之间），则回退到屏幕中心坐标。
         /// </summary>
-        /// <param name="definition">Pile definition describing style / anchor.</param>
-        /// <param name="node">The flying card's node, used to offset the target by the card's half-size.</param>
+        /// <param name="definition">
+        ///     Pile definition describing style / anchor.
+        ///     描述 style / anchor 的 pile definition。
+        /// </param>
+        /// <param name="node">
+        ///     The flying card's node, used to offset the target by the card's half-size.
+        ///     正在飞行的 card node，用于按 card 半尺寸偏移 target。
+        /// </param>
         public static Vector2 GetTargetPosition(ModCardPileDefinition definition, NCard? node)
         {
             var defaultPosition = GetDefaultTargetPosition(definition, node);
@@ -101,6 +111,9 @@ namespace STS2RitsuLib.CardPiles
         /// <summary>
         ///     Landing centre (global coords) aligned with <see cref="ModCardPileInjector" /> after resolving
         ///     authored <see cref="ModCardPileAnchorKind.Custom" /> points through <see cref="ModCardPileCustomMountGeometry" />.
+        ///     通过 <c>ModCardPileCustomMountGeometry</c> 解析 authored
+        ///     <c>ModCardPileAnchorKind.Custom</c> 点后，与 <c>ModCardPileInjector</c> 对齐的
+        ///     landing centre（global coords）。
         /// </summary>
         private static Vector2 ResolveCustomAnchorFallbackCenter(ModCardPileDefinition definition)
         {

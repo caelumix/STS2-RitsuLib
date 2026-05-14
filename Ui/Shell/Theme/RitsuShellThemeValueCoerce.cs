@@ -5,12 +5,15 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 {
     /// <summary>
     ///     Coerces resolved <see cref="LeafToken" /> values to typed CLR values used by the snapshot
+    ///     Coerces resolved <c>LeafToken</c> values to typed CLR values used 通过 the snapshot
     ///     (<see cref="Color" />, <see cref="float" />, <see cref="int" />, <see cref="bool" />, <see cref="Font" />).
+    ///     中文说明：(<c>Color</c>, <c>float</c>, <c>int</c>, <c>bool</c>, <c>Font</c>).
     /// </summary>
     internal static class RitsuShellThemeValueCoerce
     {
         /// <summary>
         ///     Default font fallback path used when a font token cannot be loaded.
+        ///     默认 font fallback path used when a font token cannot be loaded。
         /// </summary>
         public const string DefaultFontFallbackPath = "res://themes/kreon_regular_shared.tres";
 
@@ -20,6 +23,7 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Coerces a leaf token to <see cref="Color" />.
+        ///     中文说明：Coerces a leaf token to <c>Color</c>.
         /// </summary>
         public static bool TryAsColor(LeafToken? leaf, out Color color)
         {
@@ -29,6 +33,7 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Coerces a leaf token to a <see cref="double" /> dimension.
+        ///     中文说明：Coerces a leaf token to a <c>double</c> dimension.
         /// </summary>
         public static bool TryAsDouble(LeafToken? leaf, out double value)
         {
@@ -58,6 +63,7 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Coerces a leaf token to <see cref="bool" />.
+        ///     中文说明：Coerces a leaf token to <c>bool</c>.
         /// </summary>
         public static bool TryAsBool(LeafToken? leaf, out bool value)
         {
@@ -83,7 +89,9 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Loads a font from a leaf token (Godot resource path or theme-relative file). Falls back to the shared
+        ///     加载 a font 从 a leaf token (Godot 资源 路径 或 theme-relative file). Falls back to the shared
         ///     Kreon Regular font when the path cannot be resolved.
+        ///     Kreon Regular font 当 the 路径 cannot be resolved.
         /// </summary>
         public static Font AsFont(LeafToken? leaf)
         {
@@ -93,6 +101,7 @@ namespace STS2RitsuLib.Ui.Shell.Theme
 
         /// <summary>
         ///     Parses <c>#RRGGBB</c> or <c>#RRGGBBAA</c>.
+        ///     Parses <c>#RRGGBB</c> 或 <c>#RRGGBBAA</c>.
         /// </summary>
         public static bool TryParseHexColor(string raw, out Color color)
         {

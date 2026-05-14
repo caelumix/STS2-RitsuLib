@@ -6,11 +6,13 @@ namespace STS2RitsuLib.Combat.HealthBars
 {
     /// <summary>
     ///     When BaseLib is loaded, registers <see cref="HealthBarForecastRegistry.GetSegments" /> with BaseLib's
+    ///     当 BaseLib is loaded, registers <c>HealthBarForecast注册表.GetSegments</c> 带有 BaseLib's
     ///     <c>HealthBarForecastRegistry.RegisterForeign</c> so a single renderer can consume Ritsu-typed segments.
     /// </summary>
     /// <remarks>
     ///     <see cref="ShouldRitsuRendererStandDown" /> becomes true after a successful bridge so duplicate overlays are
     ///     not drawn.
+    ///     中文说明：not drawn.
     /// </remarks>
     internal static class BaseLibHealthBarForecastBridge
     {
@@ -23,7 +25,9 @@ namespace STS2RitsuLib.Combat.HealthBars
 
         /// <summary>
         ///     When <see langword="true" />, Ritsu's <c>NHealthBar</c> forecast postfixes should skip drawing because BaseLib
+        ///     当 <see langword="true" />, Ritsu's <c>NHealthBar</c> 用于ecast postfixes should skip drawing beca使用 BaseLib
         ///     already merged this mod's segments.
+        ///     中文说明：already merged this mod's segments.
         /// </summary>
         public static bool ShouldRitsuRendererStandDown()
         {
@@ -32,6 +36,7 @@ namespace STS2RitsuLib.Combat.HealthBars
 
         /// <summary>
         ///     Attempts foreign registration from <c>NHealthBar._Ready</c> (early load path).
+        ///     Attempts 用于eign 注册 从 <c>NHealthBar._Ready</c> (early 加载 路径).
         /// </summary>
         public static void TryRegisterPrimary()
         {
@@ -42,6 +47,7 @@ namespace STS2RitsuLib.Combat.HealthBars
 
         /// <summary>
         ///     Attempts foreign registration from forecast render path if <see cref="TryRegisterPrimary" /> did not run yet.
+        ///     Attempts 用于eign 注册 从 用于ecast render 路径 如果 <c>TryRegisterPrimary</c> did not 跑局 yet.
         /// </summary>
         public static void TryRegisterSecondary()
         {
@@ -52,6 +58,7 @@ namespace STS2RitsuLib.Combat.HealthBars
 
         /// <summary>
         ///     Alias for <see cref="TryRegisterPrimary" />.
+        ///     Alias 用于 <c>TryRegisterPrimary</c>.
         /// </summary>
         public static void TryRegister()
         {

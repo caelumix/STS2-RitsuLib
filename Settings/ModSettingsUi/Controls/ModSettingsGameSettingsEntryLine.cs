@@ -8,13 +8,17 @@ namespace STS2RitsuLib.Settings
 {
     /// <summary>
     ///     Row injected into the vanilla <see cref="MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsScreen" />
+    ///     Row injected into the 原版 <c>MegaCrit.Sts2.Core.Nodes.Screens.设置.NSettingsScreen</c>
     ///     General tab. Intentionally separate from <see cref="ModSettingsUiFactory" />, which builds only the
+    ///     General tab. Intentionally separate 从 <c>ModSettingsUiFactory</c>, which builds only the
     ///     RitsuLib mod settings submenu UI.
+    ///     RitsuLib mod 设置 submenu UI.
     /// </summary>
     public static class ModSettingsGameSettingsEntryLine
     {
         /// <summary>
         ///     Builds the General-tab row; <paramref name="openAction" /> opens the RitsuLib mod settings submenu.
+        ///     Builds the General-tab row; <c>openAction</c> opens the RitsuLib mod 设置 submenu.
         /// </summary>
         public static MarginContainer Create(Action openAction)
         {
@@ -75,6 +79,7 @@ namespace STS2RitsuLib.Settings
 
         /// <summary>
         ///     Same RichText setup as vanilla <c>settings_screen.tscn</c> SendFeedback row (not mod submenu styling).
+        ///     Same RichText 设置up as 原版 <c>设置_screen.tscn</c> SendFeedback row (not mod submenu styling).
         /// </summary>
         private static MegaRichTextLabel CreateVanillaGeneralSettingsRowLabel(string text)
         {
@@ -111,6 +116,7 @@ namespace STS2RitsuLib.Settings
 
     /// <summary>
     ///     NSettingsButton-styled control used only on the vanilla settings screen entry (not submenu rows).
+    ///     NSettingsButton-styled control used only on the 原版 设置 screen entry (not submenu rows).
     /// </summary>
     internal sealed partial class ModSettingsGameSettingsEntryButton : NSettingsButton
     {

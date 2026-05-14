@@ -8,7 +8,9 @@ namespace STS2RitsuLib.Utils.Json
 {
     /// <summary>
     ///     JSON Canonicalization Scheme (JCS, RFC 8785) for <see cref="JsonNode" /> DOM.
+    ///     JSON Canonicalization Scheme (JCS, RFC 8785) 用于 <c>JsonNode</c> DOM.
     ///     https://www.rfc-editor.org/rfc/rfc8785
+    ///     中文说明：https://www.rfc-editor.org/rfc/rfc8785
     /// </summary>
     public static class JsonCanonicalizer
     {
@@ -21,6 +23,7 @@ namespace STS2RitsuLib.Utils.Json
 
         /// <summary>
         ///     Canonicalizes a JSON DOM node into a deterministic UTF-16 string representation.
+        ///     中文说明：Canonicalizes a JSON DOM node into a deterministic UTF-16 string representation.
         /// </summary>
         public static string Canonicalize(JsonNode? node)
         {

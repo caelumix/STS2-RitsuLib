@@ -19,6 +19,8 @@ namespace STS2RitsuLib.Lifecycle.Patches
     /// <summary>
     ///     Compatibility: replaces multiplayer load-screen <c>BeginRun</c> so starting a run is blocked when any player
     ///     references an unregistered character, without deleting saves; otherwise mirrors vanilla load flow.
+    ///     兼容性：替换多人加载界面的 <c>BeginRun</c>，当任意玩家引用未注册角色时阻止开始跑局且不删除存档；
+    ///     其他情况下镜像原版加载流程。
     /// </summary>
     public class NMultiplayerLoadGameScreenBeginRunMissingCharacterPatch : IPatchMethod
     {
@@ -49,6 +51,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
         /// <summary>
         ///     Harmony prefix: skips vanilla <c>BeginRun</c>, disables confirm/back, and runs async validation and load.
+        ///     Harmony prefix：跳过原版 <c>BeginRun</c>，禁用确认/返回按钮，并运行异步验证和加载。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static bool Prefix(NMultiplayerLoadGameScreen __instance)
@@ -112,6 +115,8 @@ namespace STS2RitsuLib.Lifecycle.Patches
     /// <summary>
     ///     Compatibility: replaces custom-run load-screen <c>BeginRun</c> so starting a run is blocked when any player
     ///     references an unregistered character, without deleting saves; otherwise mirrors vanilla load flow.
+    ///     兼容性：替换自定义跑局加载界面的 <c>BeginRun</c>，当任意玩家引用未注册角色时阻止开始跑局且不删除存档；
+    ///     其他情况下镜像原版加载流程。
     /// </summary>
     public class NCustomRunLoadScreenBeginRunMissingCharacterPatch : IPatchMethod
     {
@@ -142,6 +147,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
         /// <summary>
         ///     Harmony prefix: skips vanilla <c>BeginRun</c>, disables confirm/back, and runs async validation and load.
+        ///     Harmony prefix：跳过原版 <c>BeginRun</c>，禁用确认/返回按钮，并运行异步验证和加载。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static bool Prefix(NCustomRunLoadScreen __instance)
@@ -205,6 +211,8 @@ namespace STS2RitsuLib.Lifecycle.Patches
     /// <summary>
     ///     Compatibility: replaces daily-run load-screen <c>BeginRun</c> so starting a run is blocked when any player
     ///     references an unregistered character, without deleting saves; otherwise mirrors vanilla load flow.
+    ///     兼容性：替换每日跑局加载界面的 <c>BeginRun</c>，当任意玩家引用未注册角色时阻止开始跑局且不删除存档；
+    ///     其他情况下镜像原版加载流程。
     /// </summary>
     public class NDailyRunLoadScreenBeginRunMissingCharacterPatch : IPatchMethod
     {
@@ -235,6 +243,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
         /// <summary>
         ///     Harmony prefix: skips vanilla <c>BeginRun</c>, disables embark/back, and runs async validation and load.
+        ///     Harmony prefix：跳过原版 <c>BeginRun</c>，禁用出发/返回按钮，并运行异步验证和加载。
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static bool Prefix(NDailyRunLoadScreen __instance)

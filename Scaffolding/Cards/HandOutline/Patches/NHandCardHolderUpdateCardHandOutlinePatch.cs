@@ -5,7 +5,9 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline.Patches
 {
     /// <summary>
     ///     After vanilla hand highlight color (playable / gold / red), applies <see cref="ModCardHandOutlineRegistry" /> when
+    ///     之后 原版 hand highlight color (playable / gold / red), applies <c>ModCardHandOutline注册表</c> 当
     ///     a matching rule exists.
+    ///     一个 matching rule exists。
     /// </summary>
     internal sealed class NHandCardHolderUpdateCardHandOutlinePatch : IPatchMethod
     {

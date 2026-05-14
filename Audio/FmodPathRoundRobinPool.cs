@@ -2,6 +2,7 @@ namespace STS2RitsuLib.Audio
 {
     /// <summary>
     ///     In-memory pool of event or file paths with simple no-repeat random selection.
+    ///     In-memory pool of 事件 或 file 路径 带有 simple no-repeat random selection.
     /// </summary>
     public sealed class FmodPathRoundRobinPool
     {
@@ -11,6 +12,7 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Copies <paramref name="paths" /> into an internal list (may be empty).
+        ///     Copies <c>路径</c> into an internal list (may be empty).
         /// </summary>
         public FmodPathRoundRobinPool(IEnumerable<string> paths)
         {
@@ -20,11 +22,13 @@ namespace STS2RitsuLib.Audio
 
         /// <summary>
         ///     Snapshot of configured paths.
+        ///     Snapshot of configured 路径.
         /// </summary>
         public IReadOnlyList<string> Entries => _entries;
 
         /// <summary>
         ///     Picks a random path, avoiding the same index as the previous pick when more than one entry exists.
+        ///     Picks a random 路径, avoiding the same index as the previous pick 当 more than one entry exists.
         /// </summary>
         public bool TryPickNext(out string path)
         {

@@ -23,6 +23,7 @@ using STS2RitsuLib.Localization;
 using STS2RitsuLib.Localization.SmartFormat;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.Platform;
+using STS2RitsuLib.RunData;
 using STS2RitsuLib.RuntimeInput;
 using STS2RitsuLib.Scaffolding.Ancients.Options;
 using STS2RitsuLib.Scaffolding.Content;
@@ -466,6 +467,15 @@ namespace STS2RitsuLib
         public static ModDataStore GetDataStore(string modId)
         {
             return ModDataStore.For(modId);
+        }
+
+        /// <summary>
+        ///     Returns the run-saved data store facade for <paramref name="modId" />.
+        ///     返回 <paramref name="modId" /> 的跑局保存数据存储 facade。
+        /// </summary>
+        public static RunSavedDataStore GetRunSavedDataStore(string modId)
+        {
+            return RunSavedDataStore.For(modId);
         }
 
         /// <summary>

@@ -54,13 +54,13 @@ namespace STS2RitsuLib.Combat.HandSize
 
                 var builder = new DynamicPatchBuilder("max_hand_size");
                 var transpilerPlayerArg0 =
-                    DynamicPatchBuilder.FromMethod(typeof(MaxHandSizePatchInstaller), nameof(PlayerArg0Transpiler));
+                    FromMethodAfterBaseLib(nameof(PlayerArg0Transpiler));
                 var transpilerPlayerArg1 =
-                    DynamicPatchBuilder.FromMethod(typeof(MaxHandSizePatchInstaller), nameof(PlayerArg1Transpiler));
+                    FromMethodAfterBaseLib(nameof(PlayerArg1Transpiler));
                 var transpilerStateMachine =
-                    DynamicPatchBuilder.FromMethod(typeof(MaxHandSizePatchInstaller), nameof(StateMachineTranspiler));
+                    FromMethodAfterBaseLib(nameof(StateMachineTranspiler));
                 var cardOnPlayTranspiler =
-                    DynamicPatchBuilder.FromMethod(typeof(MaxHandSizePatchInstaller), nameof(CardOnPlayTranspiler));
+                    FromMethodAfterBaseLib(nameof(CardOnPlayTranspiler));
 
                 TryAddMethodPatch(builder, typeof(CardPileCmd),
                     nameof(CardPileCmd.CheckIfDrawIsPossibleAndShowThoughtBubbleIfNot),
@@ -128,6 +128,13 @@ namespace STS2RitsuLib.Combat.HandSize
                     "[MaxHandSize] RitsuLib hand-size patch set installed (0.105.1 profile).");
 #endif
             }
+        }
+
+        private static HarmonyMethod FromMethodAfterBaseLib(string methodName)
+        {
+            var method = DynamicPatchBuilder.FromMethod(typeof(MaxHandSizePatchInstaller), methodName);
+            method.after = [Const.BaseLibHarmonyId];
+            return method;
         }
 
         private static void TryAddMethodPatch(
@@ -213,33 +220,54 @@ namespace STS2RitsuLib.Combat.HandSize
 #endif
         }
 
+        private static bool IsBaseLibBaseAmountToken(IReadOnlyList<CodeInstruction> code, int index)
+        {
+            return index + 1 < code.Count
+                   && IsMaxHandSizeToken(code[index])
+                   && BaseLibMaxHandSizeBridge.IsBaseLibBaseAmountConsumer(code[index + 1]);
+        }
+
         private static IEnumerable<CodeInstruction> PlayerArg0Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            foreach (var ins in instructions)
+            var code = instructions.ToList();
+            for (var i = 0; i < code.Count; i++)
             {
-                if (IsMaxHandSizeToken(ins))
+                if (IsBaseLibBaseAmountToken(code, i))
+                {
+                    yield return code[i];
+                    continue;
+                }
+
+                if (IsMaxHandSizeToken(code[i]))
                 {
                     yield return new(OpCodes.Ldarg_0);
                     yield return new(OpCodes.Call, GetMaxHandSizeMethod);
                     continue;
                 }
 
-                yield return ins;
+                yield return code[i];
             }
         }
 
         private static IEnumerable<CodeInstruction> PlayerArg1Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            foreach (var ins in instructions)
+            var code = instructions.ToList();
+            for (var i = 0; i < code.Count; i++)
             {
-                if (IsMaxHandSizeToken(ins))
+                if (IsBaseLibBaseAmountToken(code, i))
+                {
+                    yield return code[i];
+                    continue;
+                }
+
+                if (IsMaxHandSizeToken(code[i]))
                 {
                     yield return new(OpCodes.Ldarg_1);
                     yield return new(OpCodes.Call, GetMaxHandSizeMethod);
                     continue;
                 }
 
-                yield return ins;
+                yield return code[i];
             }
         }
 
@@ -257,6 +285,8 @@ namespace STS2RitsuLib.Combat.HandSize
             for (var i = 0; i < code.Count; i++)
             {
                 if (!IsMaxHandSizeToken(code[i]))
+                    continue;
+                if (IsBaseLibBaseAmountToken(code, i))
                     continue;
 
                 code[i] = new(OpCodes.Call, GetMaxHandSizeMethod);
@@ -281,6 +311,8 @@ namespace STS2RitsuLib.Combat.HandSize
             for (var i = 0; i < code.Count; i++)
             {
                 if (!IsMaxHandSizeToken(code[i]))
+                    continue;
+                if (IsBaseLibBaseAmountToken(code, i))
                     continue;
 
                 code[i] = new(OpCodes.Call, GetMaxHandSizeFromCardMethod);
@@ -392,7 +424,7 @@ namespace STS2RitsuLib.Combat.HandSize
 
             var halfSpread = GetInferredHalfSpread(handSize);
             var edgeLift = Math.Max(72f, 88f - (handSize - 10) * 1.5f);
-            var u = handSize <= 1 ? 0f : 2f * cardIndex / (handSize - 1f) - 1f;
+            var u = 2f * cardIndex / (handSize - 1f) - 1f;
             var x = halfSpread * u;
             var y = Math.Min(18f, -64f + edgeLift * u * u);
             __result = new(x, y);
@@ -413,7 +445,7 @@ namespace STS2RitsuLib.Combat.HandSize
 
             var halfSpread = GetInferredHalfSpread(handSize);
             var edgeLift = Math.Max(72f, 88f - (handSize - 10) * 1.5f);
-            var u = handSize <= 1 ? 0f : 2f * cardIndex / (handSize - 1f) - 1f;
+            var u = 2f * cardIndex / (handSize - 1f) - 1f;
             var dyDu = 2f * edgeLift * u;
             var dxDu = Math.Max(1f, halfSpread);
             var angle = Mathf.RadToDeg(Mathf.Atan2(dyDu, dxDu));

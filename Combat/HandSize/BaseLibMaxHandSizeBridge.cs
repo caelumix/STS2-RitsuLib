@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.DevConsole.ConsoleCommands;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Compat;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.Patching.Models;
@@ -28,6 +29,8 @@ namespace STS2RitsuLib.Combat.HandSize
         [ThreadStatic] private static int _suppressPostfixDepth;
 
         private static MethodInfo? _baseLibGetMaxHandSizeMethod;
+        private static MethodInfo? _baseLibGetMaxHandSizeWithBaseMethod;
+        private static MethodInfo? _baseLibGetMaxHandSizeFromCardMethod;
         private static Func<Player, int>? _baseLibGetMaxHandSize;
         private static bool _postfixPatched;
         private static bool _loggedResolveFailure;
@@ -48,6 +51,13 @@ namespace STS2RitsuLib.Combat.HandSize
                        [typeof(Player), typeof(HookPlayerChoiceContext)]))
                    || IsPatchedByBaseLib(new(typeof(CardConsoleCmd), nameof(CardConsoleCmd.Process),
                        [typeof(Player), typeof(string[])]));
+        }
+
+        internal static bool IsBaseLibBaseAmountConsumer(CodeInstruction instruction)
+        {
+            return instruction.operand is MethodInfo method
+                   && (IsSameMethod(method, TryResolveBaseLibGetMaxHandSizeWithBaseMethod())
+                       || IsSameMethod(method, TryResolveBaseLibGetMaxHandSizeFromCardMethod()));
         }
 
         internal static bool TryGetMaxHandSizeFromBaseLib(Player player, out int amount)
@@ -98,7 +108,8 @@ namespace STS2RitsuLib.Combat.HandSize
             {
                 if (_postfixPatched)
                     return;
-                if (!TryResolveBaseLibGetMaxHandSizeMethod(out var getMaxMethod))
+                var getMaxMethod = TryResolveBaseLibGetMaxHandSizeWithBaseMethod();
+                if (getMaxMethod == null)
                     return;
 
                 var postfix = AccessTools.Method(typeof(BaseLibMaxHandSizeBridge),
@@ -176,6 +187,53 @@ namespace STS2RitsuLib.Combat.HandSize
                 method = resolved;
                 return true;
             }
+        }
+
+        private static MethodInfo? TryResolveBaseLibGetMaxHandSizeWithBaseMethod()
+        {
+            lock (Gate)
+            {
+                if (_baseLibGetMaxHandSizeWithBaseMethod != null)
+                    return _baseLibGetMaxHandSizeWithBaseMethod;
+
+                var type = ResolveBaseLibMaxHandSizePatchType();
+                var resolved = type?.GetMethod(
+                    "GetMaxHandSize",
+                    BindingFlags.Public | BindingFlags.Static,
+                    null,
+                    [typeof(Player), typeof(int)],
+                    null);
+
+                _baseLibGetMaxHandSizeWithBaseMethod = resolved;
+                return resolved;
+            }
+        }
+
+        private static MethodInfo? TryResolveBaseLibGetMaxHandSizeFromCardMethod()
+        {
+            lock (Gate)
+            {
+                if (_baseLibGetMaxHandSizeFromCardMethod != null)
+                    return _baseLibGetMaxHandSizeFromCardMethod;
+
+                var type = ResolveBaseLibMaxHandSizePatchType();
+                var resolved = type?.GetMethod(
+                    "GetMaxHandSizeFromCard",
+                    BindingFlags.NonPublic | BindingFlags.Static,
+                    null,
+                    [typeof(CardModel), typeof(int)],
+                    null);
+
+                _baseLibGetMaxHandSizeFromCardMethod = resolved;
+                return resolved;
+            }
+        }
+
+        private static bool IsSameMethod(MethodInfo method, MethodInfo? candidate)
+        {
+            return candidate != null
+                   && method.Module == candidate.Module
+                   && method.MetadataToken == candidate.MetadataToken;
         }
 
         private static Type? ResolveBaseLibMaxHandSizePatchType()

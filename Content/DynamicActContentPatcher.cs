@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Unlocks;
 using STS2RitsuLib.Patching.Builders;
 using STS2RitsuLib.Patching.Core;
+using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Unlocks;
 
 namespace STS2RitsuLib.Content
@@ -143,9 +144,11 @@ namespace STS2RitsuLib.Content
                 ref IEnumerable<AncientEventModel> __result)
             // ReSharper restore InconsistentNaming
         {
-            __result = ModUnlockRegistry.FilterUnlocked(
-                ModContentRegistry.AppendActAncients(__instance, __result),
-                unlockState);
+            __result = ModAncientActValidityFilter.FilterForAct(
+                __instance,
+                ModUnlockRegistry.FilterUnlocked(
+                    ModContentRegistry.AppendActAncients(__instance, __result),
+                    unlockState));
         }
     }
 }

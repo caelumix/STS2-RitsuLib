@@ -16,8 +16,15 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     表现路径，以及从 <c>ancients</c> 本地化表加载的对话（<see cref="AncientDialogueLocalization.BuildDialogueSetForModAncient" />）。
     ///     （<see cref="AncientDialogueLocalization.BuildDialogueSetForModAncient" />）
     /// </summary>
-    public abstract class ModAncientEventTemplate : AncientEventModel, IModAncientEventAssetOverrides
+    public abstract class ModAncientEventTemplate : AncientEventModel, IModAncientEventAssetOverrides,
+        IModAncientActValidity
     {
+        /// <inheritdoc />
+        public virtual bool IsValidForAct(ActModel act)
+        {
+            return true;
+        }
+
         /// <inheritdoc />
         public virtual EventAssetProfile AssetProfile => EventAssetProfile.Empty;
 

@@ -18,6 +18,7 @@ using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.Platform;
 using STS2RitsuLib.Platform.Patches;
 using STS2RitsuLib.Relics.Patches;
+using STS2RitsuLib.RunData.Patches;
 using STS2RitsuLib.Scaffolding.Cards.HandGlow.Patches;
 using STS2RitsuLib.Scaffolding.Cards.HandOutline.Patches;
 using STS2RitsuLib.Scaffolding.Characters.Patches;
@@ -79,8 +80,35 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<SavedPropertiesTypeCacheInjectionPatch>();
             patcher.RegisterPatch<SavedAttachedStatePatches.SavedPropertiesFromInternalPatch>();
             patcher.RegisterPatch<SavedAttachedStatePatches.SavedPropertiesFillInternalPatch>();
+            patcher.RegisterPatch<RunSavedDataLoadRunSavePatch>();
+            patcher.RegisterPatch<RunSavedDataLoadMultiplayerRunSavePatch>();
+            patcher.RegisterPatch<RunSavedDataCanonicalizeSavePatch>();
+            patcher.RegisterPatch<RunSavedDataFromSerializablePatch>();
+            patcher.RegisterPatch<RunSavedDataToSavePatch>();
+            patcher.RegisterPatch<RunSavedDataSaveRunPatch>();
+            patcher.RegisterPatch<RunSavedDataStartRunLobbyCtorPatch>();
+            patcher.RegisterPatch<RunSavedDataStartRunLobbyCleanUpPatch>();
+            patcher.RegisterPatch<RunSavedDataLobbyPlayerSetReadySerializePatch>();
+            patcher.RegisterPatch<RunSavedDataLobbyPlayerSetReadyDeserializePatch>();
+            patcher.RegisterPatch<RunSavedDataLobbyPlayerSetReadyHandlerPatch>();
+            patcher.RegisterPatch<RunSavedDataLobbyPlayerChangedCharacterSerializePatch>();
+            patcher.RegisterPatch<RunSavedDataLobbyPlayerChangedCharacterDeserializePatch>();
+            patcher.RegisterPatch<RunSavedDataLobbyPlayerChangedCharacterHandlerPatch>();
+            patcher.RegisterPatch<RunSavedDataLobbyPlayerJoinedPatch>();
+            patcher.RegisterPatch<RunSavedDataPrepareNewRunPayloadPatch>();
+            patcher.RegisterPatch<RunSavedDataLobbyBeginRunMessageSerializePatch>();
+            patcher.RegisterPatch<RunSavedDataLobbyBeginRunMessageDeserializePatch>();
+            patcher.RegisterPatch<RunSavedDataInitializeNewRunPatch>();
+            patcher.RegisterPatch<RunSavedDataClientLoadJoinResponseMessageSerializePatch>();
+            patcher.RegisterPatch<RunSavedDataClientLoadJoinResponseMessageDeserializePatch>();
+            patcher.RegisterPatch<RunSavedDataClientRejoinResponseMessageSerializePatch>();
+            patcher.RegisterPatch<RunSavedDataClientRejoinResponseMessageDeserializePatch>();
+            patcher.RegisterPatch<RunSavedDataCombatReplaySerializePatch>();
+            patcher.RegisterPatch<RunSavedDataCombatReplayDeserializePatch>();
             patcher.RegisterPatch<CoreInitializationLifecyclePatch>();
-            patcher.RegisterPatch<DevConsoleAutocompleteQualifiedIdPatch>();
+            patcher.RegisterPatch<DevConsoleAutocompleteEnhancementPatch>();
+            patcher.RegisterPatch<DevConsoleAutocompleteUnlockArgumentPatch>();
+            patcher.RegisterPatch<DevConsoleAutocompleteApplyCandidatePatch>();
             patcher.RegisterPatch<NMainMenuContinueRunMissingCharacterPatch>();
             patcher.RegisterPatch<NMainMenuHarmonyPatchDumpPatch>();
             patcher.RegisterPatch<NContinueRunInfoShowInfoModelNotFoundPatch>();
@@ -101,6 +129,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<LocManagerLoadLocFormattersPostfixPatch>();
             patcher.RegisterPatch<AncientDialoguePopulateLocKeysPatch>();
             patcher.RegisterPatch<AncientEventInitialOptionsRegistryPatch>();
+            patcher.RegisterPatch<ModAncientActValidityPatch>();
             patcher.RegisterPatch<TheArchitectLoadDialogueMissingFallbackPatch>();
             patcher.RegisterPatch<ModelRegistryLifecyclePatch>();
             patcher.RegisterPatch<GameNodeLifecyclePatch>();
@@ -241,6 +270,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<AfflictionCreateOverlayPatch>();
 
             patcher.RegisterPatch<EnchantmentIntendedIconPathPatch>();
+            patcher.RegisterPatch<ModifierIconPathPatch>();
 
             patcher.RegisterPatch<ActBackgroundScenePathPatch>();
             patcher.RegisterPatch<ActRestSiteBackgroundPathPatch>();
@@ -363,6 +393,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<AchievementsPatch>();
             patcher.RegisterPatch<GoodModifiersPatch>();
             patcher.RegisterPatch<BadModifiersPatch>();
+            patcher.RegisterPatch<MutuallyExclusiveModifiersPatch>();
             patcher.RegisterPatch<AllRelicPoolsPatch>();
             patcher.RegisterPatch<AllPotionPoolsPatch>();
             patcher.RegisterPatch<ModelDbModdedEntryPatch>();

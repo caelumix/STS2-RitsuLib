@@ -109,13 +109,19 @@ namespace STS2RitsuLib.Settings.Patches
 
     /// <summary>
     ///     Injects the “Mod Settings (RitsuLib)” row into the vanilla settings screen and keeps general panel height in sync.
+    ///     The entry is always shown regardless of registered page count; in-run access stays enabled.
     ///     将 “Mod Settings (RitsuLib)” 行注入原版设置屏幕，并保持 General 面板高度同步。
+    ///     入口固定显示，与是否注册设置页无关；对局中保持可打开。
     /// </summary>
     [HarmonyAfter(Const.BaseLibHarmonyId)]
     [HarmonyPriority(Priority.Last)]
     public class SettingsScreenModSettingsButtonPatch : IPatchMethod
     {
         private const string GeneralSettingsResizeHookMeta = "ritsulib_general_settings_content_resize_hook";
+
+        private const string EntryLineNodeName = "RitsuLibModSettings";
+
+        private const string EntryDividerNodeName = "RitsuLibModSettingsDivider";
 
         /// <inheritdoc />
         public static string PatchId => "ritsulib_mod_settings_button";
@@ -133,19 +139,18 @@ namespace STS2RitsuLib.Settings.Patches
             [
                 new(typeof(NSettingsScreen), nameof(NSettingsScreen._Ready)),
                 new(typeof(NSettingsScreen), nameof(NSettingsScreen.OnSubmenuOpened)),
+                new(typeof(NSettingsScreen), "OnSubmenuShown"),
             ];
         }
 
         // ReSharper disable once InconsistentNaming
         /// <summary>
-        ///     Ensures the entry line exists, refreshes copy, and schedules panel height refresh when mod pages exist.
-        ///     确保条目行存在，刷新文案，并在存在 mod 页面时安排面板高度刷新。
+        ///     Ensures the entry line exists and refreshes chrome on ready, open, and show.
+        ///     在 ready、open、show 时确保入口行存在并刷新外观。
         /// </summary>
         public static void Postfix(NSettingsScreen __instance)
         {
             RitsuLibModSettingsBootstrap.EnsureFrameworkPagesRegistered();
-            if (!ModSettingsRegistry.HasPages)
-                return;
 
             try
             {
@@ -168,11 +173,13 @@ namespace STS2RitsuLib.Settings.Patches
             var content = panel.Content;
             EnsureGeneralSettingsContentTracksChildAdds(content);
 
-            if (content.GetNodeOrNull<MarginContainer>("RitsuLibModSettings") is { } existing)
+            if (TryGetEntryLine(content) is { } existing)
                 return existing;
 
+            RemoveStaleEntryNodes(content);
+
             var divider = ModSettingsUiFactory.CreateDivider();
-            divider.Name = "RitsuLibModSettingsDivider";
+            divider.Name = EntryDividerNodeName;
 
             var line = ModSettingsGameSettingsEntryLine.Create(OpenSubmenu);
 
@@ -193,6 +200,25 @@ namespace STS2RitsuLib.Settings.Patches
             }
         }
 
+        internal static MarginContainer? TryGetEntryLine(VBoxContainer content)
+        {
+            var line = content.GetNodeOrNull<MarginContainer>(EntryLineNodeName);
+            if (line is null || !GodotObject.IsInstanceValid(line) || line.GetParent() != content)
+                return null;
+
+            return line;
+        }
+
+        private static void RemoveStaleEntryNodes(VBoxContainer content)
+        {
+            var divider = content.GetNodeOrNull<Control>(EntryDividerNodeName);
+            if (divider != null && GodotObject.IsInstanceValid(divider))
+                divider.QueueFree();
+
+            var line = content.GetNodeOrNull<Control>(EntryLineNodeName);
+            if (line != null && GodotObject.IsInstanceValid(line))
+                line.QueueFree();
+        }
 
         private static void EnsureGeneralSettingsContentTracksChildAdds(VBoxContainer content)
         {
@@ -215,7 +241,7 @@ namespace STS2RitsuLib.Settings.Patches
                 return;
 
             ScheduleRefreshGeneralSettingsPanelSize(panel);
-            if (content.GetNodeOrNull("RitsuLibModSettings") != null)
+            if (TryGetEntryLine(content) != null)
                 GeneralSettingsModEntryFocusWire.ScheduleTryWire(content);
         }
 
@@ -313,7 +339,7 @@ namespace STS2RitsuLib.Settings.Patches
 
         internal static void TryRebuildEntireGeneralFocusChain(VBoxContainer content)
         {
-            if (content.GetNodeOrNull("RitsuLibModSettings") == null)
+            if (SettingsScreenModSettingsButtonPatch.TryGetEntryLine(content) == null)
                 return;
 
             var list = new List<Control>();

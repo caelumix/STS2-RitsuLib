@@ -1,0 +1,48 @@
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Random;
+using MegaCrit.Sts2.Core.Unlocks;
+using STS2RitsuLib.Patching.Models;
+
+namespace STS2RitsuLib.Scaffolding.Content.Patches
+{
+    /// <summary>
+    ///     Removes mod shared ancients from an act's <c>_sharedAncientSubset</c> when
+    ///     <see cref="IModAncientActValidity.IsValidForAct" /> returns false for that act.
+    /// </summary>
+    public class ModAncientActValidityPatch : IPatchMethod
+    {
+        /// <inheritdoc />
+        public static string PatchId => "mod_ancient_act_validity";
+
+        /// <inheritdoc />
+        public static string Description =>
+            "Filter mod shared ancients by IModAncientActValidity before act room generation";
+
+        /// <inheritdoc />
+        public static bool IsCritical => false;
+
+        /// <inheritdoc />
+        public static ModPatchTarget[] GetTargets()
+        {
+            return
+            [
+                new(typeof(ActModel), nameof(ActModel.GenerateRooms),
+                    [typeof(Rng), typeof(UnlockState), typeof(bool)]),
+            ];
+        }
+
+        // ReSharper disable InconsistentNaming
+        /// <summary>
+        ///     Drops invalid entries from the shared-ancient subset assigned to this act.
+        /// </summary>
+        public static void Prefix(ActModel __instance, List<AncientEventModel>? ____sharedAncientSubset)
+            // ReSharper restore InconsistentNaming
+        {
+            if (____sharedAncientSubset is not { Count: > 0 })
+                return;
+
+            ____sharedAncientSubset.RemoveAll(ancient =>
+                !ModAncientActValidityFilter.IsValidForAct(__instance, ancient));
+        }
+    }
+}

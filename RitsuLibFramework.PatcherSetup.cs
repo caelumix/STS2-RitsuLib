@@ -110,9 +110,10 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<DevConsoleAutocompleteUnlockArgumentPatch>();
             patcher.RegisterPatch<DevConsoleAutocompleteApplyCandidatePatch>();
             patcher.RegisterPatch<NMainMenuContinueRunMissingCharacterPatch>();
-            patcher.RegisterPatch<NMainMenuHarmonyPatchDumpPatch>();
+            patcher.RegisterPatch<NMainMenuReadyLifecyclePatch>();
             patcher.RegisterPatch<NContinueRunInfoShowInfoModelNotFoundPatch>();
             patcher.RegisterPatch<NRunHistoryRefreshAndSelectRunSuppressRethrowPatch>();
+            patcher.RegisterPatch<SentryDiagnosticsTelemetryPatch>();
             patcher.RegisterPatch<RunHistoryMissingModelDbGetByIdTranspilerPatch>();
             patcher.RegisterPatch<NMultiplayerLoadGameScreenBeginRunMissingCharacterPatch>();
             patcher.RegisterPatch<NMultiplayerTestCharacterPaginatorAllCharactersPatch>();

@@ -181,6 +181,35 @@ namespace STS2RitsuLib
     ) : IReplayableFrameworkLifecycleEvent;
 
     /// <summary>
+    ///     Main menu node finished its ready callback; replayed to new subscribers.
+    ///     主菜单节点已完成 ready 回调；会向新订阅者重放。
+    /// </summary>
+    /// <param name="OccurredAtUtc">
+    ///     When the event was raised.
+    ///     事件触发的时间。
+    /// </param>
+    public readonly record struct MainMenuReadyEvent(
+        DateTimeOffset OccurredAtUtc
+    ) : IReplayableFrameworkLifecycleEvent;
+
+    /// <summary>
+    ///     Startup telemetry facts have been sampled once and are ready to replay after consent.
+    ///     启动 telemetry 事实已完成一次性采样，可在授权后回放。
+    /// </summary>
+    /// <param name="SnapshotAtUtc">
+    ///     When the persistent startup snapshot was captured.
+    ///     常驻启动快照的采样时间。
+    /// </param>
+    /// <param name="OccurredAtUtc">
+    ///     When the event was raised.
+    ///     事件触发的时间。
+    /// </param>
+    public readonly record struct TelemetryStartupSnapshotReadyEvent(
+        DateTimeOffset SnapshotAtUtc,
+        DateTimeOffset OccurredAtUtc
+    ) : IReplayableFrameworkLifecycleEvent;
+
+    /// <summary>
     ///     A new run has started.
     ///     新跑局已开始。
     /// </summary>

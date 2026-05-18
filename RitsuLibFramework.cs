@@ -29,6 +29,8 @@ using STS2RitsuLib.Scaffolding.Ancients.Options;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Settings;
 using STS2RitsuLib.Settings.RunSidecar;
+using STS2RitsuLib.Telemetry;
+using STS2RitsuLib.Telemetry.Diagnostics;
 using STS2RitsuLib.Timeline;
 using STS2RitsuLib.TopBar;
 using STS2RitsuLib.Ui.Toast;
@@ -285,6 +287,9 @@ namespace STS2RitsuLib
                     Logger.Warn(
                         $"[Lifecycle] Observer callback failed in {LifecycleEventTypeCache<TEvent>.EventName}: {ex.Message}"
                     );
+                    DiagnosticsTelemetryCollector.CaptureExceptionForAuthorizedApplicants(
+                        ex,
+                        "ritsulib_lifecycle_subscription");
                 }
             }
         }
@@ -313,6 +318,7 @@ namespace STS2RitsuLib
                 ModTypeDiscoveryHub.EnsureBuiltInContributorsRegistered();
                 RitsuLibSettingsStore.Initialize();
                 RitsuLibModSettingsBootstrap.Initialize();
+                RitsuLibTelemetryBootstrap.Initialize();
                 PublishLifecycleEvent(
                     new FrameworkInitializingEvent(Const.ModId, Const.Version, DateTimeOffset.UtcNow),
                     nameof(FrameworkInitializingEvent)
@@ -346,6 +352,11 @@ namespace STS2RitsuLib
                     EnsureFrameworkInteropBootstrapRegistered();
                     RuntimeHotkeyService.Initialize();
                     RitsuToastService.Initialize();
+                    SubscribeLifecycleOnce<MainMenuReadyEvent>(_ =>
+                    {
+                        HarmonyPatchDumpCoordinator.TryAutoDumpOnFirstMainMenu();
+                        SelfCheckBundleCoordinator.TryAutoRunOnFirstMainMenu();
+                    });
 
                     var frameworkInitializedEvent = new FrameworkInitializedEvent(
                         Const.ModId,
@@ -361,6 +372,9 @@ namespace STS2RitsuLib
                 {
                     Logger.Error($"Framework initialization failed: {ex.Message}");
                     Logger.Error($"Stack trace: {ex.StackTrace}");
+                    DiagnosticsTelemetryCollector.CaptureExceptionForAuthorizedApplicants(
+                        ex,
+                        "ritsulib_framework_initialize");
                     IsActive = false;
                 }
             }
@@ -817,6 +831,80 @@ namespace STS2RitsuLib
         }
 
         /// <summary>
+        ///     Registers a telemetry applicant with its own fixed adapter/endpoint and data requests.
+        ///     注册一个 telemetry 申请方；该申请方拥有自己的固定 adapter/endpoint 和数据申请。
+        /// </summary>
+        public static void RegisterTelemetryApplicant(TelemetryApplicant applicant)
+        {
+            TelemetryRegistry.RegisterApplicant(applicant);
+        }
+
+        /// <summary>
+        ///     Registers a shared telemetry contribution provider.
+        ///     注册一个共享 telemetry contribution provider。
+        /// </summary>
+        public static void RegisterTelemetryContributionProvider(ITelemetryContributionProvider provider)
+        {
+            TelemetryRegistry.RegisterContributionProvider(provider);
+        }
+
+        /// <summary>
+        ///     Returns the telemetry client for <paramref name="applicantId" />.
+        ///     返回 <paramref name="applicantId" /> 的 telemetry client。
+        /// </summary>
+        public static ITelemetryClient GetTelemetryClient(string applicantId)
+        {
+            return TelemetryApi.GetClient(applicantId);
+        }
+
+        /// <summary>
+        ///     Sets consent for a telemetry applicant. Intended for settings UI integrations and explicit user actions.
+        ///     设置 telemetry 申请方授权。用于设置 UI 集成和显式用户操作。
+        /// </summary>
+        public static void SetTelemetryApplicantConsent(
+            string applicantId,
+            TelemetryConsentState state,
+            IEnumerable<string>? grantedRequests = null)
+        {
+            TelemetryConsentStore.SetApplicantConsent(applicantId, state, grantedRequests);
+        }
+
+        /// <summary>
+        ///     Sets whether one applicant may receive a shared contribution from another mod.
+        ///     设置某申请方是否可接收另一个 mod 的共享 contribution。
+        /// </summary>
+        public static void SetTelemetrySharedContributionConsent(
+            string applicantId,
+            string contributorModId,
+            string contributionId,
+            bool granted)
+        {
+            TelemetryConsentStore.SetSharedContributionConsent(
+                applicantId,
+                contributorModId,
+                contributionId,
+                granted);
+        }
+
+        /// <summary>
+        ///     Returns registered telemetry applicants.
+        ///     返回已注册 telemetry 申请方。
+        /// </summary>
+        public static IReadOnlyList<TelemetryApplicant> GetTelemetryApplicants()
+        {
+            return TelemetryRegistry.GetApplicants();
+        }
+
+        /// <summary>
+        ///     Attempts to flush queued telemetry for every registered applicant.
+        ///     尝试发送所有已注册申请方的排队 telemetry。
+        /// </summary>
+        public static Task FlushTelemetryAsync(CancellationToken cancellationToken = default)
+        {
+            return TelemetryQueue.FlushAllAsync(cancellationToken);
+        }
+
+        /// <summary>
         ///     Creates a <c>MegaCrit.Sts2.Core.Logging.Logger</c> for <paramref name="modId" />.
         ///     为 <paramref name="modId" /> 创建 <c>MegaCrit.Sts2.Core.Logging.Logger</c>。
         /// </summary>
@@ -969,6 +1057,9 @@ namespace STS2RitsuLib
             {
                 logger?.Error($"Failed to register Godot C# scripts for assembly {assemblyName}: {ex.Message}");
                 logger?.Error($"Stack trace: {ex.StackTrace}");
+                DiagnosticsTelemetryCollector.CaptureExceptionForAuthorizedApplicants(
+                    ex,
+                    "ritsulib_godot_script_registration");
             }
         }
 
@@ -1057,6 +1148,9 @@ namespace STS2RitsuLib
             catch (Exception ex)
             {
                 Logger.Warn($"[Lifecycle] Observer callback failed in {phase}: {ex.Message}");
+                DiagnosticsTelemetryCollector.CaptureExceptionForAuthorizedApplicants(
+                    ex,
+                    "ritsulib_lifecycle_handler");
             }
         }
 
@@ -1070,6 +1164,9 @@ namespace STS2RitsuLib
             catch (Exception ex)
             {
                 Logger.Warn($"[Lifecycle] Observer callback failed in {phase}: {ex.Message}");
+                DiagnosticsTelemetryCollector.CaptureExceptionForAuthorizedApplicants(
+                    ex,
+                    "ritsulib_lifecycle_observer");
             }
         }
 

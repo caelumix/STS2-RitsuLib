@@ -20,7 +20,9 @@ namespace STS2RitsuLib.Settings
             string confirmText,
             bool confirmIsDanger,
             Action onConfirm,
-            bool showCancel = true)
+            bool showCancel = true,
+            Action? onCancel = null,
+            Action? onDismiss = null)
         {
             ArgumentNullException.ThrowIfNull(attachParent);
             ArgumentException.ThrowIfNullOrWhiteSpace(title);
@@ -43,7 +45,7 @@ namespace STS2RitsuLib.Settings
 
             ModSettingsModalShield rootShield = null!;
 
-            rootShield = new(CloseDialog)
+            rootShield = new(() => CloseDialog(false, true))
             {
                 Name = "ModalShieldRoot",
             };
@@ -99,7 +101,7 @@ namespace STS2RitsuLib.Settings
                 MouseFilter = Control.MouseFilterEnum.Ignore,
                 CustomMinimumSize = RitsuShellThemeLayoutResolver.ResolveMinSize(
                     "components.modal.layout.panel.contentMinSize",
-                    new(400f, 0f)),
+                    new(560f, 0f)),
             };
             vbox.AddThemeConstantOverride("separation",
                 RitsuShellThemeLayoutResolver.ResolveInt("components.modal.layout.panel.separation", 14));
@@ -136,7 +138,7 @@ namespace STS2RitsuLib.Settings
                 () =>
                 {
                     onConfirm();
-                    CloseDialog();
+                    CloseDialog(false, false);
                 })
             {
                 CustomMinimumSize = RitsuShellThemeLayoutResolver.ResolveMinSize(
@@ -147,7 +149,7 @@ namespace STS2RitsuLib.Settings
             ModSettingsTextButton? cancelBtn = null;
             if (showCancel)
             {
-                cancelBtn = new(cancelText, ModSettingsButtonTone.Normal, CloseDialog)
+                cancelBtn = new(cancelText, ModSettingsButtonTone.Normal, () => CloseDialog(true, false))
                 {
                     CustomMinimumSize = RitsuShellThemeLayoutResolver.ResolveMinSize(
                         "components.modal.layout.buttonRow.cancelMinSize",
@@ -199,12 +201,16 @@ namespace STS2RitsuLib.Settings
 
             return;
 
-            void CloseDialog()
+            void CloseDialog(bool cancelled, bool dismissed)
             {
                 if (GodotObject.IsInstanceValid(viewport))
                     viewport.SizeChanged -= OnViewportSized;
                 if (GodotObject.IsInstanceValid(canvasLayer))
                     canvasLayer.QueueFree();
+                if (cancelled)
+                    onCancel?.Invoke();
+                else if (dismissed)
+                    onDismiss?.Invoke();
             }
 
             void OnViewportSized()
@@ -224,7 +230,7 @@ namespace STS2RitsuLib.Settings
                     return;
 
                 var min = rootPanel.GetCombinedMinimumSize();
-                var minW = RitsuShellThemeLayoutResolver.ResolveFloat("components.modal.layout.panel.minWidth", 400f);
+                var minW = RitsuShellThemeLayoutResolver.ResolveFloat("components.modal.layout.panel.minWidth", 560f);
                 var minH = RitsuShellThemeLayoutResolver.ResolveFloat("components.modal.layout.panel.minHeight", 120f);
                 var w = Mathf.CeilToInt(Mathf.Max(min.X, minW));
                 var h = Mathf.CeilToInt(Mathf.Max(min.Y, minH));
@@ -238,7 +244,7 @@ namespace STS2RitsuLib.Settings
                     return;
 
                 var min = rootPanel.GetCombinedMinimumSize();
-                var minW = RitsuShellThemeLayoutResolver.ResolveFloat("components.modal.layout.panel.minWidth", 400f);
+                var minW = RitsuShellThemeLayoutResolver.ResolveFloat("components.modal.layout.panel.minWidth", 560f);
                 var minH = RitsuShellThemeLayoutResolver.ResolveFloat("components.modal.layout.panel.minHeight", 120f);
                 var w = Mathf.CeilToInt(Mathf.Max(min.X, minW));
                 var h = Mathf.CeilToInt(Mathf.Max(min.Y, minH));

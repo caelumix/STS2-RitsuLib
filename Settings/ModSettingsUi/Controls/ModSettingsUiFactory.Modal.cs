@@ -22,7 +22,9 @@ namespace STS2RitsuLib.Settings
             Action onConfirm,
             bool showCancel = true,
             Action? onCancel = null,
-            Action? onDismiss = null)
+            Action? onDismiss = null,
+            bool escapeTriggersCancel = true,
+            bool cancelIsDanger = false)
         {
             ArgumentNullException.ThrowIfNull(attachParent);
             ArgumentException.ThrowIfNullOrWhiteSpace(title);
@@ -132,6 +134,10 @@ namespace STS2RitsuLib.Settings
                 RitsuShellThemeLayoutResolver.ResolveInt("components.modal.layout.buttonRow.separation", 12));
             vbox.AddChild(btnRow);
 
+            var actionButtonMinSize = RitsuShellThemeLayoutResolver.ResolveMinSize(
+                "components.modal.layout.buttonRow.actionMinSize",
+                new(184f, RitsuShellTheme.Current.Metric.Entry.ValueMinHeight));
+
             var confirmBtn = new ModSettingsTextButton(
                 confirmText,
                 confirmIsDanger ? ModSettingsButtonTone.Danger : ModSettingsButtonTone.Accent,
@@ -141,19 +147,20 @@ namespace STS2RitsuLib.Settings
                     CloseDialog(false, false);
                 })
             {
-                CustomMinimumSize = RitsuShellThemeLayoutResolver.ResolveMinSize(
-                    "components.modal.layout.buttonRow.confirmMinSize",
-                    new(168f, RitsuShellTheme.Current.Metric.Entry.ValueMinHeight)),
+                CustomMinimumSize = actionButtonMinSize,
+                SizeFlagsHorizontal = Control.SizeFlags.ShrinkEnd,
             };
 
             ModSettingsTextButton? cancelBtn = null;
             if (showCancel)
             {
-                cancelBtn = new(cancelText, ModSettingsButtonTone.Normal, () => CloseDialog(true, false))
+                cancelBtn = new(
+                    cancelText,
+                    cancelIsDanger ? ModSettingsButtonTone.Danger : ModSettingsButtonTone.Normal,
+                    () => CloseDialog(true, false))
                 {
-                    CustomMinimumSize = RitsuShellThemeLayoutResolver.ResolveMinSize(
-                        "components.modal.layout.buttonRow.cancelMinSize",
-                        new(132f, RitsuShellTheme.Current.Metric.Entry.ValueMinHeight)),
+                    CustomMinimumSize = actionButtonMinSize,
+                    SizeFlagsHorizontal = Control.SizeFlags.ShrinkEnd,
                 };
                 btnRow.AddChild(cancelBtn);
             }
@@ -181,12 +188,12 @@ namespace STS2RitsuLib.Settings
 
             var escShortcut = new Shortcut();
             escShortcut.Events = [new InputEventKey { Keycode = Key.Escape, Pressed = true }];
-            if (cancelBtn != null)
+            if (escapeTriggersCancel && cancelBtn != null)
             {
                 cancelBtn.Shortcut = escShortcut;
                 cancelBtn.ShortcutInTooltip = false;
             }
-            else
+            else if (escapeTriggersCancel)
             {
                 confirmBtn.Shortcut = escShortcut;
                 confirmBtn.ShortcutInTooltip = false;

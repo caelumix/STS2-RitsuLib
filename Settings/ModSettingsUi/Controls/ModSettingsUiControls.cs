@@ -5739,6 +5739,7 @@ namespace STS2RitsuLib.Settings
             _tone = tone;
 
             Text = text;
+            Alignment = HorizontalAlignment.Center;
             CustomMinimumSize = RitsuShellThemeLayoutResolver.ResolveMinSize(
                 "components.textButton.layout.minSize",
                 new(ModSettingsUiFactory.EntryControlWidth,
@@ -5785,6 +5786,7 @@ namespace STS2RitsuLib.Settings
         public override void _Ready()
         {
             Text = _text ?? string.Empty;
+            Alignment = HorizontalAlignment.Center;
             ApplyVisualState();
         }
 

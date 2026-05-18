@@ -99,7 +99,9 @@ namespace STS2RitsuLib.Telemetry.Integration
                 () => GrantApplicant(applicant),
                 true,
                 () => DenyApplicant(applicant),
-                ShowPendingConsentToast);
+                ShowPendingConsentToast,
+                false,
+                true);
         }
 
         private static TelemetryApplicant[] ResolvePendingApplicants()

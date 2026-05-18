@@ -19,7 +19,7 @@ namespace STS2RitsuLib.Telemetry.RunHistory
                 {
                     ["id"] = mod.manifest?.id ?? assemblyName?.Name ?? "<unknown>",
                     ["name"] = mod.manifest?.name ?? assemblyName?.Name ?? "<unknown>",
-                    ["version"] = mod.version?.ToString(),
+                    ["version"] = mod.manifest?.version,
                     ["state"] = mod.state.ToString(),
                     ["source"] = mod.modSource.ToString(),
                     ["assembly"] = assemblyName?.Name,

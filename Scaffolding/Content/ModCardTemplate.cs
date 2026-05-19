@@ -47,30 +47,30 @@ namespace STS2RitsuLib.Scaffolding.Content
         }
 
         /// <summary>
-        ///     Keyword declarations seeded onto every instance of this card on first <see cref="CardModel.Keywords" />
-        ///     access. Intentionally kept as a separate channel from vanilla
-        ///     <see cref="CardModel.CanonicalKeywords" /> so derived mods can still override
-        ///     <c>CanonicalKeywords</c> for vanilla keywords without accidentally dropping their mod keyword
-        ///     declarations. Each string resolves as a registered mod keyword id first, then as a vanilla
-        ///     <see cref="CardKeyword" /> enum name, and is unioned into <c>CardModel.Keywords</c> right after the
-        ///     vanilla canonical seed runs, so runtime additions/removals and <c>DeepCloneFields</c> preserve them.
-        ///     首次访问 <see cref="CardModel.Keywords" /> 时种入每个卡牌实例的关键词声明。它刻意与原版
-        ///     <see cref="CardModel.CanonicalKeywords" /> 分离，这样派生 mod 仍可重写
-        ///     <c>CanonicalKeywords</c> 来声明原版关键词，而不会意外丢失自己的 mod 关键词
-        ///     声明。每个字符串会先按已注册的 mod 关键词 id 解析，再按原版
-        ///     <see cref="CardKeyword" /> 枚举名解析，并在原版规范种入执行后合并进 <c>CardModel.Keywords</c>，因此运行时增删和 <c>DeepCloneFields</c> 都会保留它们。
+        ///     Legacy string keyword declarations seeded onto every instance of this card on first
+        ///     <see cref="CardModel.Keywords" /> access. Prefer overriding <see cref="CardModel.CanonicalKeywords" />
+        ///     and returning <see cref="CardKeyword" /> values directly, using
+        ///     <c>ModKeywordRegistry.GetCardKeyword(id)</c> or <c>id.GetModCardKeyword()</c> for registered mod
+        ///     keywords.
+        ///     旧版字符串关键词声明，会在首次访问 <see cref="CardModel.Keywords" /> 时种入每个卡牌实例。请优先重写
+        ///     <see cref="CardModel.CanonicalKeywords" /> 并直接返回 <see cref="CardKeyword" /> 值；注册过的 mod
+        ///     关键词可使用 <c>ModKeywordRegistry.GetCardKeyword(id)</c> 或 <c>id.GetModCardKeyword()</c> 转换。
         /// </summary>
+        [Obsolete(
+            "Use CardModel.CanonicalKeywords with CardKeyword values instead. Registered mod keyword ids can be converted with ModKeywordRegistry.GetCardKeyword(id) or id.GetModCardKeyword().")]
         protected virtual IEnumerable<string> RegisteredKeywordIds => [];
 
         /// <summary>
-        ///     Card tag declarations seeded onto every instance when <see cref="CardModel.Tags" /> is first
-        ///     materialized. Each string resolves as a registered mod card-tag id first, then as a vanilla
-        ///     <see cref="CardTag" /> enum name, and is unioned into the same backing set as
-        ///     <see cref="CardModel.CanonicalTags" />.
-        ///     首次实体化 <see cref="CardModel.Tags" /> 时种入每个卡牌实例的卡牌标签声明。每个字符串会先按已注册的
-        ///     mod 卡牌标签 id 解析，再按原版 <see cref="CardTag" /> 枚举名解析，并合并到与
-        ///     <see cref="CardModel.CanonicalTags" /> 相同的后备集合。
+        ///     Legacy string card-tag declarations seeded onto every instance when <see cref="CardModel.Tags" />
+        ///     is first materialized. Prefer overriding <see cref="CardModel.CanonicalTags" /> and returning
+        ///     <see cref="CardTag" /> values directly, using <c>ModCardTagRegistry.GetCardTag(id)</c> or
+        ///     <c>id.GetModCardTag()</c> for registered mod card tags.
+        ///     旧版字符串卡牌标签声明，会在首次实体化 <see cref="CardModel.Tags" /> 时种入每个卡牌实例。请优先重写
+        ///     <see cref="CardModel.CanonicalTags" /> 并直接返回 <see cref="CardTag" /> 值；注册过的 mod
+        ///     卡牌标签可使用 <c>ModCardTagRegistry.GetCardTag(id)</c> 或 <c>id.GetModCardTag()</c> 转换。
         /// </summary>
+        [Obsolete(
+            "Use CardModel.CanonicalTags with CardTag values instead. Registered mod card tag ids can be converted with ModCardTagRegistry.GetCardTag(id) or id.GetModCardTag().")]
         protected virtual IEnumerable<string> RegisteredCardTagIds => [];
 
         /// <summary>
@@ -124,7 +124,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// </summary>
         internal IEnumerable<string> EnumerateRegisteredKeywordIds()
         {
+#pragma warning disable CS0618
             return RegisteredKeywordIds;
+#pragma warning restore CS0618
         }
 
         /// <summary>
@@ -133,7 +135,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         /// </summary>
         internal IEnumerable<string> EnumerateRegisteredCardTagIds()
         {
+#pragma warning disable CS0618
             return RegisteredCardTagIds;
+#pragma warning restore CS0618
         }
     }
 }

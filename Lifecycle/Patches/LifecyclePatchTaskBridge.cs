@@ -1,3 +1,5 @@
+using STS2RitsuLib.Telemetry.Diagnostics;
+
 namespace STS2RitsuLib.Lifecycle.Patches
 {
     internal static class LifecyclePatchTaskBridge
@@ -8,7 +10,17 @@ namespace STS2RitsuLib.Lifecycle.Patches
             ArgumentNullException.ThrowIfNull(continuation);
 
             await originalTask;
-            continuation();
+            try
+            {
+                continuation();
+            }
+            catch (Exception ex)
+            {
+                DiagnosticsTelemetryCollector.CaptureExceptionForAuthorizedApplicants(
+                    ex,
+                    "ritsulib_lifecycle_patch_task_bridge");
+                throw;
+            }
         }
 
         public static async Task<T> After<T>(Task<T> originalTask, Action<T> continuation)
@@ -17,7 +29,18 @@ namespace STS2RitsuLib.Lifecycle.Patches
             ArgumentNullException.ThrowIfNull(continuation);
 
             var result = await originalTask;
-            continuation(result);
+            try
+            {
+                continuation(result);
+            }
+            catch (Exception ex)
+            {
+                DiagnosticsTelemetryCollector.CaptureExceptionForAuthorizedApplicants(
+                    ex,
+                    "ritsulib_lifecycle_patch_task_bridge");
+                throw;
+            }
+
             return result;
         }
     }

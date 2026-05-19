@@ -1,0 +1,220 @@
+using STS2RitsuLib.Settings;
+
+namespace STS2RitsuLib.Telemetry
+{
+    /// <summary>
+    ///     One user-visible telemetry request made by an applicant.
+    ///     申请方向用户展示的一项 telemetry 数据申请。
+    /// </summary>
+    public sealed class TelemetryRequest
+    {
+        /// <summary>
+        ///     Stable request id within the applicant.
+        ///     申请方内部稳定的申请 ID。
+        /// </summary>
+        public required string RequestId { get; init; }
+
+        /// <summary>
+        ///     Data category covered by this request.
+        ///     此申请覆盖的数据类别。
+        /// </summary>
+        public required TelemetryDataCategory Category { get; init; }
+
+        /// <summary>
+        ///     Human-readable explanation shown to users before consent.
+        ///     授权前向用户展示的可读说明。
+        /// </summary>
+        public required string Description { get; init; }
+
+        /// <summary>
+        ///     Optional localized explanation shown to users before consent.
+        ///     可选本地化说明，用于授权前展示给用户。
+        /// </summary>
+        public ModSettingsText? DescriptionText { get; init; }
+
+        /// <summary>
+        ///     Shared contribution ids this request wants to receive from other mods.
+        ///     此申请希望从其他 mod 接收的共享 contribution ID。
+        /// </summary>
+        public IReadOnlyList<string> SharedContributionSubscriptions { get; init; } = [];
+
+        /// <summary>
+        ///     Optional predicate for automatic run-history capture; when unset, every ended run is eligible.
+        ///     自动采集 run-history 时使用的可选谓词；未设置时，每个已结束跑局都符合条件。
+        /// </summary>
+        public Func<RunEndedEvent, bool>? RunHistoryCaptureFilter { get; init; }
+
+        /// <summary>
+        ///     Creates the built-in basic-usage request.
+        ///     创建内置基础使用信息申请。
+        /// </summary>
+        public static TelemetryRequest BasicUsage(string description)
+        {
+            return new()
+            {
+                RequestId = "basic_usage",
+                Category = TelemetryDataCategory.BasicUsage,
+                Description = description,
+            };
+        }
+
+        /// <summary>
+        ///     Creates the built-in basic-usage request.
+        ///     创建内置基础使用信息申请。
+        /// </summary>
+        public static TelemetryRequest BasicUsage(ModSettingsText description)
+        {
+            ArgumentNullException.ThrowIfNull(description);
+            return new()
+            {
+                RequestId = "basic_usage",
+                Category = TelemetryDataCategory.BasicUsage,
+                Description = description.Resolve(),
+                DescriptionText = description,
+            };
+        }
+
+        /// <summary>
+        ///     Creates the built-in loaded-mod inventory request.
+        ///     创建内置已加载 mod 清单申请。
+        /// </summary>
+        public static TelemetryRequest ModInventory(string description)
+        {
+            return new()
+            {
+                RequestId = "mod_inventory",
+                Category = TelemetryDataCategory.ModInventory,
+                Description = description,
+            };
+        }
+
+        /// <summary>
+        ///     Creates the built-in loaded-mod inventory request.
+        ///     创建内置已加载 mod 清单申请。
+        /// </summary>
+        public static TelemetryRequest ModInventory(ModSettingsText description)
+        {
+            ArgumentNullException.ThrowIfNull(description);
+            return new()
+            {
+                RequestId = "mod_inventory",
+                Category = TelemetryDataCategory.ModInventory,
+                Description = description.Resolve(),
+                DescriptionText = description,
+            };
+        }
+
+        /// <summary>
+        ///     Creates the built-in run-history request.
+        ///     创建内置 run-history 申请。
+        /// </summary>
+        public static TelemetryRequest RunHistory(
+            string description,
+            IReadOnlyList<string>? sharedContributionSubscriptions = null,
+            Func<RunEndedEvent, bool>? captureFilter = null)
+        {
+            return new()
+            {
+                RequestId = "run_history",
+                Category = TelemetryDataCategory.RunHistory,
+                Description = description,
+                SharedContributionSubscriptions = sharedContributionSubscriptions ?? [],
+                RunHistoryCaptureFilter = captureFilter,
+            };
+        }
+
+        /// <summary>
+        ///     Creates the built-in run-history request.
+        ///     创建内置 run-history 申请。
+        /// </summary>
+        public static TelemetryRequest RunHistory(
+            ModSettingsText description,
+            IReadOnlyList<string>? sharedContributionSubscriptions = null,
+            Func<RunEndedEvent, bool>? captureFilter = null)
+        {
+            ArgumentNullException.ThrowIfNull(description);
+            return new()
+            {
+                RequestId = "run_history",
+                Category = TelemetryDataCategory.RunHistory,
+                Description = description.Resolve(),
+                DescriptionText = description,
+                SharedContributionSubscriptions = sharedContributionSubscriptions ?? [],
+                RunHistoryCaptureFilter = captureFilter,
+            };
+        }
+
+        /// <summary>
+        ///     Creates the built-in diagnostics request.
+        ///     创建内置诊断信息申请。
+        /// </summary>
+        public static TelemetryRequest Diagnostics(
+            string description,
+            IReadOnlyList<string>? sharedContributionSubscriptions = null)
+        {
+            return new()
+            {
+                RequestId = "diagnostics",
+                Category = TelemetryDataCategory.Diagnostics,
+                Description = description,
+                SharedContributionSubscriptions = sharedContributionSubscriptions ?? [],
+            };
+        }
+
+        /// <summary>
+        ///     Creates the built-in diagnostics request.
+        ///     创建内置诊断信息申请。
+        /// </summary>
+        public static TelemetryRequest Diagnostics(
+            ModSettingsText description,
+            IReadOnlyList<string>? sharedContributionSubscriptions = null)
+        {
+            ArgumentNullException.ThrowIfNull(description);
+            return new()
+            {
+                RequestId = "diagnostics",
+                Category = TelemetryDataCategory.Diagnostics,
+                Description = description.Resolve(),
+                DescriptionText = description,
+                SharedContributionSubscriptions = sharedContributionSubscriptions ?? [],
+            };
+        }
+
+        /// <summary>
+        ///     Creates an applicant-defined custom request.
+        ///     创建申请方定义的自定义申请。
+        /// </summary>
+        public static TelemetryRequest Custom(string requestId, string description)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(requestId);
+            return new()
+            {
+                RequestId = requestId,
+                Category = TelemetryDataCategory.Custom,
+                Description = description,
+            };
+        }
+
+        /// <summary>
+        ///     Creates an applicant-defined custom request.
+        ///     创建申请方定义的自定义申请。
+        /// </summary>
+        public static TelemetryRequest Custom(string requestId, ModSettingsText description)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(requestId);
+            ArgumentNullException.ThrowIfNull(description);
+            return new()
+            {
+                RequestId = requestId,
+                Category = TelemetryDataCategory.Custom,
+                Description = description.Resolve(),
+                DescriptionText = description,
+            };
+        }
+
+        internal string ResolveDescription()
+        {
+            return DescriptionText?.Resolve() ?? Description;
+        }
+    }
+}

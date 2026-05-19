@@ -245,6 +245,12 @@ namespace STS2RitsuLib.Ui.Toast
         /// </summary>
         public RitsuToastAnimationPreset? AnimationOverride { get; init; }
 
+        /// <summary>
+        ///     Keeps the toast visible until the user clicks it or toast settings are disabled.
+        ///     让 toast 保持显示，直到用户点击或 toast 设置被禁用。
+        /// </summary>
+        public bool IsPersistent { get; init; }
+
         internal RitsuToastVisualStyle? StyleOverride { get; init; }
 
         /// <summary>

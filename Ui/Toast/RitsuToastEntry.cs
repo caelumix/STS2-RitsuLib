@@ -34,6 +34,7 @@ namespace STS2RitsuLib.Ui.Toast
         public void Configure(RitsuToastRequest request, RitsuToastVisualStyle style)
         {
             _request = request;
+            MouseDefaultCursorShape = CursorShape.PointingHand;
             ApplyContent();
             ApplyStyle(style);
             _isExiting = false;
@@ -57,8 +58,8 @@ namespace STS2RitsuLib.Ui.Toast
         public void ApplyStyle(RitsuToastVisualStyle style)
         {
             _style = style;
-            _panelNormal = BuildPanel(style, style.Border);
-            _panelHover = BuildPanel(style, style.AccentColor);
+            _panelNormal = BuildPanel(style, style.Border, false);
+            _panelHover = BuildPanel(style, style.AccentColor, true);
             ApplyHoverVisual(false);
             _titleLabel?.AddThemeColorOverride("font_color", style.TitleColor);
             _titleLabel?.AddThemeFontSizeOverride("font_size", style.TitleFontSize);
@@ -234,11 +235,11 @@ namespace STS2RitsuLib.Ui.Toast
             _image.Visible = _request.Image != null;
         }
 
-        private static StyleBoxFlat BuildPanel(RitsuToastVisualStyle style, Color borderColor)
+        private static StyleBoxFlat BuildPanel(RitsuToastVisualStyle style, Color borderColor, bool hovering)
         {
             return new()
             {
-                BgColor = style.Background,
+                BgColor = hovering ? style.Background.Lerp(style.AccentColor, 0.045f) : style.Background,
                 BorderColor = borderColor,
                 BorderWidthLeft = style.BorderWidth,
                 BorderWidthTop = style.BorderWidth,
@@ -248,8 +249,9 @@ namespace STS2RitsuLib.Ui.Toast
                 CornerRadiusTopRight = style.CornerRadius,
                 CornerRadiusBottomRight = style.CornerRadius,
                 CornerRadiusBottomLeft = style.CornerRadius,
-                ShadowColor = style.ShadowColor,
-                ShadowSize = (int)Math.Round(style.ShadowSize, MidpointRounding.AwayFromZero),
+                ShadowColor = hovering ? new(borderColor.R, borderColor.G, borderColor.B, 0.28f) : style.ShadowColor,
+                ShadowSize = (int)Math.Round(hovering ? style.ShadowSize + 5f : style.ShadowSize,
+                    MidpointRounding.AwayFromZero),
                 ContentMarginLeft = style.PaddingHorizontal,
                 ContentMarginTop = style.PaddingVertical,
                 ContentMarginRight = style.PaddingHorizontal,

@@ -270,13 +270,68 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     Registers <see cref="ModCardHandOutlineRegistry" /> tint rules for a card type (arbitrary hand-highlight colors).
     ///     为卡牌类型注册 <see cref="ModCardHandOutlineRegistry" /> 染色规则（任意手牌高亮颜色）。
     /// </summary>
-    public sealed class CardHandOutlineRegistrationEntry<TCard>(ModCardHandOutlineRule rule) : IContentRegistrationEntry
-        where TCard : CardModel
+    public sealed class CardHandOutlineRegistrationEntry<TCard> : IContentRegistrationEntry where TCard : CardModel
     {
+        private readonly ModCardHandOutlineRules _rules;
+
+        /// <summary>
+        ///     Registers one or more custom hand-outline rules.
+        ///     注册一条或多条自定义手牌描边规则。
+        /// </summary>
+        public CardHandOutlineRegistrationEntry(ModCardHandOutlineRules<TCard> rules)
+            : this(rules.ToUntyped(), true)
+        {
+        }
+
+        /// <summary>
+        ///     Registers one custom hand-outline rule.
+        ///     注册一条自定义手牌描边规则。
+        /// </summary>
+        public CardHandOutlineRegistrationEntry(ModCardHandOutlineSwitchRule<TCard> rule)
+            : this(ModCardHandOutlineRules<TCard>.Of(rule))
+        {
+        }
+
+        /// <summary>
+        ///     Registers one or more type-erased custom hand-outline rules.
+        ///     注册一条或多条类型擦除自定义手牌描边规则。
+        /// </summary>
+        [Obsolete("Use CardHandOutlineRegistrationEntry<TCard>(ModCardHandOutlineRules<TCard>).")]
+        public CardHandOutlineRegistrationEntry(ModCardHandOutlineRules rules)
+        {
+            _rules = rules;
+        }
+
+        /// <summary>
+        ///     Registers one type-erased custom hand-outline rule.
+        ///     注册一条类型擦除自定义手牌描边规则。
+        /// </summary>
+        [Obsolete("Use CardHandOutlineRegistrationEntry<TCard>(ModCardHandOutlineSwitchRule<TCard>).")]
+        public CardHandOutlineRegistrationEntry(ModCardHandOutlineSwitchRule rule)
+            : this(ModCardHandOutlineRules.Of(rule), true)
+        {
+        }
+
+        /// <summary>
+        ///     Registers one legacy custom hand-outline rule.
+        ///     注册一条旧版自定义手牌描边规则。
+        /// </summary>
+        [Obsolete(
+            "Use CardHandOutlineRegistrationEntry<TCard>(ModCardHandOutlineRules<TCard>) or CardHandOutlineRegistrationEntry<TCard>(ModCardHandOutlineSwitchRule<TCard>).")]
+        public CardHandOutlineRegistrationEntry(ModCardHandOutlineRule rule)
+        {
+            _rules = ModCardHandOutlineRules.Of(rule.ToSwitchRule());
+        }
+
+        private CardHandOutlineRegistrationEntry(ModCardHandOutlineRules rules, bool _)
+        {
+            _rules = rules;
+        }
+
         /// <inheritdoc />
         public void Register(ModContentRegistry registry)
         {
-            registry.RegisterCardHandOutline<TCard>(rule);
+            ModCardHandOutlineRegistry.Register(typeof(TCard), _rules);
         }
     }
 

@@ -66,7 +66,7 @@ namespace STS2RitsuLib.Ui.Toast
             for (var i = _visible.Count - 1; i >= 0; i--)
             {
                 var item = _visible[i];
-                if (item.IsClosing || item.Entering || item.RemainingSeconds <= 0d)
+                if (item.IsClosing || item.Entering || item.Request.IsPersistent || item.RemainingSeconds <= 0d)
                     continue;
                 item.RemainingSeconds -= delta;
                 if (item.RemainingSeconds > 0d)

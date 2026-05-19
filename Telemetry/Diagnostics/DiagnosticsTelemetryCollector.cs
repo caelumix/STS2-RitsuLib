@@ -1,0 +1,142 @@
+using System.Text.Json.Nodes;
+
+namespace STS2RitsuLib.Telemetry.Diagnostics
+{
+    internal static class DiagnosticsTelemetryCollector
+    {
+        private const int MaxRecentFingerprints = 128;
+        private static readonly Lock Sync = new();
+        private static readonly Queue<string> RecentFingerprintOrder = new();
+        private static readonly HashSet<string> RecentFingerprints = new(StringComparer.Ordinal);
+        private static bool _globalHandlersInitialized;
+
+        internal static JsonObject BuildExceptionPayload(Exception exception)
+        {
+            return new()
+            {
+                ["exception"] = BuildExceptionNode(exception),
+                ["framework_runtime"] = BuildFrameworkRuntimeNode(),
+            };
+        }
+
+        private static JsonObject BuildExceptionNode(Exception exception)
+        {
+            var node = new JsonObject
+            {
+                ["type"] = exception.GetType().FullName ?? exception.GetType().Name,
+                ["message"] = exception.Message,
+                ["stack_trace"] = exception.StackTrace,
+            };
+
+            if (exception.InnerException != null)
+                node["inner"] = BuildExceptionNode(exception.InnerException);
+
+            return node;
+        }
+
+        private static JsonObject BuildFrameworkRuntimeNode()
+        {
+            var snapshot = RitsuLibFramework.CaptureRuntimeSnapshot();
+            return new()
+            {
+                ["is_initialized"] = snapshot.IsInitialized,
+                ["is_active"] = snapshot.IsActive,
+                ["profile_services_initialized"] = snapshot.ProfileServicesInitialized,
+                ["has_registered_mod_settings"] = snapshot.HasRegisteredModSettings,
+                ["lifecycle_observer_count"] = snapshot.LifecycleObserverCount,
+                ["registered_script_assembly_count"] = snapshot.RegisteredScriptAssemblyCount,
+                ["patcher_areas"] = new JsonArray(snapshot.PatcherAreas.Select(area => new JsonObject
+                {
+                    ["area_name"] = area.AreaName,
+                    ["is_registered"] = area.IsRegistered,
+                    ["is_applied"] = area.IsApplied,
+                    ["registered_patch_count"] = area.RegisteredPatchCount,
+                    ["registered_dynamic_patch_count"] = area.RegisteredDynamicPatchCount,
+                    ["applied_patch_count"] = area.AppliedPatchCount,
+                }).ToArray<JsonNode?>()),
+            };
+        }
+
+        internal static void CaptureExceptionForAuthorizedApplicants(Exception exception, string source)
+        {
+            ArgumentNullException.ThrowIfNull(exception);
+            ArgumentException.ThrowIfNullOrWhiteSpace(source);
+
+            try
+            {
+                if (!TryMarkRecent(exception, source))
+                    return;
+
+                var properties = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["payload_kind"] = "exception",
+                    ["capture_source"] = source,
+                    ["exception_type"] = exception.GetType().FullName ?? exception.GetType().Name,
+                };
+
+                var captured = 0;
+                foreach (var applicant in TelemetryRegistry.GetApplicants())
+                {
+                    if (!TelemetryRegistry.TryGetRequest(applicant, "diagnostics", out var request) ||
+                        !TelemetryConsentStore.IsRequestGranted(applicant, request))
+                        continue;
+
+                    new TelemetryClient(applicant.ApplicantId).CaptureException(exception, properties);
+                    captured++;
+                }
+
+                RitsuLibFramework.Logger.Info(
+                    $"[Telemetry] Captured exception diagnostics from '{source}' for {captured} authorized applicant(s): {exception.GetType().Name}.");
+                if (captured > 0)
+                    _ = TelemetryQueue.FlushAllAsync();
+            }
+            catch (Exception captureException)
+            {
+                RitsuLibFramework.Logger.Warn(
+                    $"[Telemetry] Exception diagnostics capture failed: {captureException.Message}");
+            }
+        }
+
+        internal static void InitializeGlobalExceptionHandlers()
+        {
+            lock (Sync)
+            {
+                if (_globalHandlersInitialized)
+                    return;
+                _globalHandlersInitialized = true;
+            }
+
+            AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+            {
+                if (args.ExceptionObject is Exception exception)
+                    CaptureExceptionForAuthorizedApplicants(exception, "dotnet_unhandled_exception");
+            };
+            TaskScheduler.UnobservedTaskException += (_, args) =>
+            {
+                CaptureExceptionForAuthorizedApplicants(args.Exception, "dotnet_unobserved_task_exception");
+            };
+        }
+
+        private static bool TryMarkRecent(Exception exception, string source)
+        {
+            var stackHead = exception.StackTrace?.Split('\n').FirstOrDefault()?.Trim() ?? "";
+            var fingerprint = string.Join(
+                "\n",
+                source,
+                exception.GetType().FullName ?? exception.GetType().Name,
+                exception.Message,
+                stackHead);
+
+            lock (Sync)
+            {
+                if (!RecentFingerprints.Add(fingerprint))
+                    return false;
+
+                RecentFingerprintOrder.Enqueue(fingerprint);
+                while (RecentFingerprintOrder.Count > MaxRecentFingerprints)
+                    RecentFingerprints.Remove(RecentFingerprintOrder.Dequeue());
+                return true;
+            }
+        }
+    }
+}

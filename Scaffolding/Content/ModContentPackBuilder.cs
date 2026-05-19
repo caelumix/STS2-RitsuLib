@@ -1,3 +1,4 @@
+using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
@@ -409,9 +410,90 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     Queues <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;(...)</c> for custom hand-highlight colors.
         ///     将 <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;(...)</c> 加入队列，用于自定义手牌高亮颜色。
         /// </summary>
+        public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineRules<TCard> rules)
+            where TCard : CardModel
+        {
+            return AddStep(ctx => ctx.Content.RegisterCardHandOutline(rules));
+        }
+
+        /// <summary>
+        ///     Queues one custom hand-outline rule.
+        ///     将一条自定义手牌描边规则加入队列。
+        /// </summary>
+        public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineSwitchRule<TCard> rule)
+            where TCard : CardModel
+        {
+            return AddStep(ctx => ctx.Content.RegisterCardHandOutline(rule));
+        }
+
+        /// <summary>
+        ///     Queues several custom hand-outline rules.
+        ///     将多条自定义手牌描边规则加入队列。
+        /// </summary>
+        public ModContentPackBuilder CardHandOutline<TCard>(params ModCardHandOutlineSwitchRule<TCard>[] rules)
+            where TCard : CardModel
+        {
+            return CardHandOutline(ModCardHandOutlineRules<TCard>.Of(rules));
+        }
+
+        /// <summary>
+        ///     Queues type-erased custom hand-outline rules.
+        ///     将类型擦除的自定义手牌描边规则加入队列。
+        /// </summary>
+        [Obsolete("Use CardHandOutline<TCard>(ModCardHandOutlineRules<TCard>).")]
+        public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineRules rules) where TCard : CardModel
+        {
+            return AddStep(_ => ModCardHandOutlineRegistry.Register<TCard>(rules));
+        }
+
+        /// <summary>
+        ///     Queues one type-erased custom hand-outline rule.
+        ///     将一条类型擦除的自定义手牌描边规则加入队列。
+        /// </summary>
+        [Obsolete("Use CardHandOutline<TCard>(ModCardHandOutlineSwitchRule<TCard>).")]
+        public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineSwitchRule rule) where TCard : CardModel
+        {
+            return AddStep(_ => ModCardHandOutlineRegistry.Register<TCard>(rule));
+        }
+
+        /// <summary>
+        ///     Queues several type-erased custom hand-outline rules.
+        ///     将多条类型擦除的自定义手牌描边规则加入队列。
+        /// </summary>
+        [Obsolete("Use CardHandOutline<TCard>(params ModCardHandOutlineSwitchRule<TCard>[]).")]
+        public ModContentPackBuilder CardHandOutline<TCard>(params ModCardHandOutlineSwitchRule[] rules)
+            where TCard : CardModel
+        {
+            return AddStep(_ => ModCardHandOutlineRegistry.Register<TCard>(ModCardHandOutlineRules.Of(rules)));
+        }
+
+        /// <summary>
+        ///     Queues a switch-style custom hand-outline resolver.
+        ///     将 switch 风格的自定义手牌描边解析器加入队列。
+        /// </summary>
+        public ModContentPackBuilder CardHandOutline<TCard>(
+            Func<TCard, Color?> colorWhen,
+            int priority = 0,
+            bool visibleWhenUnplayable = false,
+            bool refreshEveryFrame = true)
+            where TCard : CardModel
+        {
+            return AddStep(ctx => ctx.Content.RegisterCardHandOutline(
+                colorWhen,
+                priority,
+                visibleWhenUnplayable,
+                refreshEveryFrame));
+        }
+
+        /// <summary>
+        ///     Queues a legacy custom hand-outline rule.
+        ///     将旧版自定义手牌描边规则加入队列。
+        /// </summary>
+        [Obsolete(
+            "Use CardHandOutline<TCard>(ModCardHandOutlineRules<TCard>), CardHandOutline<TCard>(ModCardHandOutlineSwitchRule<TCard>), or CardHandOutline<TCard>(Func<TCard, Color?>).")]
         public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineRule rule) where TCard : CardModel
         {
-            return AddStep(ctx => ctx.Content.RegisterCardHandOutline<TCard>(rule));
+            return AddStep(_ => ModCardHandOutlineRegistry.Register(typeof(TCard), rule.ToSwitchRule()));
         }
 
         /// <summary>

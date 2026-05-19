@@ -33,8 +33,10 @@ namespace STS2RitsuLib.Telemetry
         TelemetryContributionVisibility Visibility { get; }
 
         /// <summary>
-        ///     Builds the contribution payload for the current telemetry event.
-        ///     为当前 telemetry 事件构建 contribution 数据。
+        ///     Builds the contribution payload for the current telemetry event. Private contributions are only attached
+        ///     to the owning applicant; shared contributions require explicit source consent.
+        ///     为当前 telemetry 事件构建 contribution 数据。私有 contribution 仅附加到拥有者自己的申请；
+        ///     共享 contribution 需要额外的来源授权。
         /// </summary>
         JsonNode? Build(TelemetryContributionContext context);
     }

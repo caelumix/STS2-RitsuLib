@@ -51,8 +51,8 @@ namespace STS2RitsuLib.Telemetry
         public Dictionary<string, object?> Properties { get; init; } = [];
 
         /// <summary>
-        ///     Structured payload, usually split into base payload, shared contributions, and applicant payload.
-        ///     结构化数据，通常分为基础数据、共享 contributions 和申请方数据。
+        ///     Structured payload, usually split into base payload, private/shared contributions, and applicant payload.
+        ///     结构化数据，通常分为基础数据、私有/共享 contributions 和申请方数据。
         /// </summary>
         public JsonNode? Payload { get; init; }
     }

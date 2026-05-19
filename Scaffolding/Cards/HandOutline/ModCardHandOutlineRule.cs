@@ -31,6 +31,8 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
     ///     如果为 true，即使卡牌不可打出且原版不会
     ///     显示金色/红色，也会强制以此颜色显示高亮（仍仅在战斗进行中）。
     /// </param>
+    [Obsolete(
+        "Use ModCardHandOutlineSwitchRule or ModCardHandOutlineRules. This legacy rule is kept as a forwarding adapter.")]
     public readonly record struct ModCardHandOutlineRule(
         Func<CardModel, bool> When,
         Color Color,
@@ -66,6 +68,13 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
         internal Color ResolveColor(CardModel card)
         {
             return DynamicColor?.Invoke(card) ?? Color;
+        }
+
+        internal ModCardHandOutlineSwitchRule ToSwitchRule()
+        {
+            return DynamicColor != null
+                ? ModCardHandOutlineSwitchRule.Dynamic(When, DynamicColor, Priority, VisibleWhenUnplayable)
+                : ModCardHandOutlineSwitchRule.Fixed(When, Color, Priority, VisibleWhenUnplayable);
         }
     }
 }

@@ -270,13 +270,43 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     Registers <see cref="ModCardHandOutlineRegistry" /> tint rules for a card type (arbitrary hand-highlight colors).
     ///     为卡牌类型注册 <see cref="ModCardHandOutlineRegistry" /> 染色规则（任意手牌高亮颜色）。
     /// </summary>
-    public sealed class CardHandOutlineRegistrationEntry<TCard>(ModCardHandOutlineRule rule) : IContentRegistrationEntry
-        where TCard : CardModel
+    public sealed class CardHandOutlineRegistrationEntry<TCard> : IContentRegistrationEntry where TCard : CardModel
     {
+        private readonly ModCardHandOutlineRules _rules;
+
+        /// <summary>
+        ///     Registers one or more custom hand-outline rules.
+        ///     注册一条或多条自定义手牌描边规则。
+        /// </summary>
+        public CardHandOutlineRegistrationEntry(ModCardHandOutlineRules rules)
+        {
+            _rules = rules;
+        }
+
+        /// <summary>
+        ///     Registers one custom hand-outline rule.
+        ///     注册一条自定义手牌描边规则。
+        /// </summary>
+        public CardHandOutlineRegistrationEntry(ModCardHandOutlineSwitchRule rule)
+            : this(ModCardHandOutlineRules.Of(rule))
+        {
+        }
+
+        /// <summary>
+        ///     Registers one legacy custom hand-outline rule.
+        ///     注册一条旧版自定义手牌描边规则。
+        /// </summary>
+        [Obsolete(
+            "Use CardHandOutlineRegistrationEntry<TCard>(ModCardHandOutlineRules) or CardHandOutlineRegistrationEntry<TCard>(ModCardHandOutlineSwitchRule).")]
+        public CardHandOutlineRegistrationEntry(ModCardHandOutlineRule rule)
+            : this(rule.ToSwitchRule())
+        {
+        }
+
         /// <inheritdoc />
         public void Register(ModContentRegistry registry)
         {
-            registry.RegisterCardHandOutline<TCard>(rule);
+            registry.RegisterCardHandOutline<TCard>(_rules);
         }
     }
 

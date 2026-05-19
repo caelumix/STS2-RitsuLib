@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Godot;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using STS2RitsuLib.Content;
@@ -22,19 +23,49 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
         ///     Registers a rule for <typeparamref name="TCard" />. Throws if <see cref="ModContentRegistry.IsFrozen" />.
         ///     为 <typeparamref name="TCard" /> 注册规则。如果 <see cref="ModContentRegistry.IsFrozen" /> 则抛出。
         /// </summary>
-        public static void Register<TCard>(ModCardHandOutlineRule rule) where TCard : CardModel
+        public static void Register<TCard>(ModCardHandOutlineRules rules) where TCard : CardModel
+        {
+            Register(typeof(TCard), rules);
+        }
+
+        /// <summary>
+        ///     Registers rules for <typeparamref name="TCard" />. Throws if <see cref="ModContentRegistry.IsFrozen" />.
+        ///     为 <typeparamref name="TCard" /> 注册规则。如果 <see cref="ModContentRegistry.IsFrozen" /> 则抛出。
+        /// </summary>
+        public static void Register<TCard>(ModCardHandOutlineSwitchRule rule) where TCard : CardModel
         {
             Register(typeof(TCard), rule);
+        }
+
+        /// <summary>
+        ///     Registers several rules for <typeparamref name="TCard" />.
+        ///     为 <typeparamref name="TCard" /> 注册多条规则。
+        /// </summary>
+        public static void Register<TCard>(params ModCardHandOutlineSwitchRule[] rules) where TCard : CardModel
+        {
+            Register<TCard>(ModCardHandOutlineRules.Of(rules));
+        }
+
+        /// <summary>
+        ///     Registers rules for <paramref name="cardType" /> (<see cref="CardModel" /> subtype).
+        ///     为 <paramref name="cardType" />（<see cref="CardModel" /> 子类型）注册规则。
+        /// </summary>
+        public static void Register(Type cardType, ModCardHandOutlineRules rules)
+        {
+            ArgumentNullException.ThrowIfNull(cardType);
+
+            foreach (var rule in rules.Enumerate())
+                Register(cardType, rule);
         }
 
         /// <summary>
         ///     Registers a rule for <paramref name="cardType" /> (<see cref="CardModel" /> subtype).
         ///     为 <paramref name="cardType" />（<see cref="CardModel" /> 子类型）注册规则。
         /// </summary>
-        public static void Register(Type cardType, ModCardHandOutlineRule rule)
+        public static void Register(Type cardType, ModCardHandOutlineSwitchRule rule)
         {
             ArgumentNullException.ThrowIfNull(cardType);
-            ArgumentNullException.ThrowIfNull(rule.When);
+            ArgumentNullException.ThrowIfNull(rule.ColorWhen);
 
             if (ModContentRegistry.IsFrozen)
                 throw new InvalidOperationException(
@@ -60,6 +91,35 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
         }
 
         /// <summary>
+        ///     Registers several rules for <paramref name="cardType" /> (<see cref="CardModel" /> subtype).
+        ///     为 <paramref name="cardType" />（<see cref="CardModel" /> 子类型）注册多条规则。
+        /// </summary>
+        public static void Register(Type cardType, params ModCardHandOutlineSwitchRule[] rules)
+        {
+            Register(cardType, ModCardHandOutlineRules.Of(rules));
+        }
+
+        /// <summary>
+        ///     Registers a legacy rule for <typeparamref name="TCard" />. Throws if <see cref="ModContentRegistry.IsFrozen" />.
+        ///     为 <typeparamref name="TCard" /> 注册旧版规则。如果 <see cref="ModContentRegistry.IsFrozen" /> 则抛出。
+        /// </summary>
+        [Obsolete("Use Register<TCard>(ModCardHandOutlineRules) or Register<TCard>(ModCardHandOutlineSwitchRule).")]
+        public static void Register<TCard>(ModCardHandOutlineRule rule) where TCard : CardModel
+        {
+            Register<TCard>(rule.ToSwitchRule());
+        }
+
+        /// <summary>
+        ///     Registers a legacy rule for <paramref name="cardType" /> (<see cref="CardModel" /> subtype).
+        ///     为 <paramref name="cardType" />（<see cref="CardModel" /> 子类型）注册旧版规则。
+        /// </summary>
+        [Obsolete("Use Register(Type, ModCardHandOutlineRules) or Register(Type, ModCardHandOutlineSwitchRule).")]
+        public static void Register(Type cardType, ModCardHandOutlineRule rule)
+        {
+            Register(cardType, rule.ToSwitchRule());
+        }
+
+        /// <summary>
         ///     Clears all rules (tests / tooling).
         ///     清除所有规则（测试 / 工具使用）。
         /// </summary>
@@ -81,34 +141,35 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
             if (holder == null || !holder.IsNodeReady() || holder.CardNode?.Model is not { } model)
                 return false;
 
-            var rule = EvaluateBest(model);
-            if (!rule.HasValue)
+            var evaluation = EvaluateBest(model);
+            if (!evaluation.HasValue)
                 return false;
 
-            ModCardHandOutlinePatchHelper.ApplyHighlight(holder, model, rule.Value);
+            ModCardHandOutlinePatchHelper.ApplyHighlight(holder, model, evaluation.Value);
             return true;
         }
 
         /// <summary>
-        ///     Applies outline only when the matching rule uses <see cref="ModCardHandOutlineRule.DynamicColor" />.
-        ///     仅当匹配规则使用 <see cref="ModCardHandOutlineRule.DynamicColor" /> 时应用描边。
+        ///     Applies outline only when the matching rule requests per-frame refresh.
+        ///     仅当匹配规则请求逐帧刷新时应用描边。
         /// </summary>
         public static bool TryRefreshDynamicOutlineForHolder(NHandCardHolder? holder)
         {
             if (holder == null || !holder.IsNodeReady() || holder.CardNode?.Model is not { } model)
                 return false;
 
-            var rule = EvaluateBest(model);
-            if (rule?.DynamicColor == null)
+            var evaluation = EvaluateBest(model);
+            if (evaluation is not { Rule.RefreshEveryFrame: true })
                 return false;
 
-            ModCardHandOutlinePatchHelper.ApplyHighlight(holder, model, rule.Value);
+            ModCardHandOutlinePatchHelper.ApplyHighlight(holder, model, evaluation.Value);
             return true;
         }
 
-        internal static ModCardHandOutlineRule? EvaluateBest(CardModel model)
+        internal static ModCardHandOutlineEvaluation? EvaluateBest(CardModel model)
         {
             RegisteredRule? best = null;
+            Color bestColor = default;
 
             for (var t = model.GetType();
                  t != null && typeof(CardModel).IsAssignableFrom(t);
@@ -117,16 +178,29 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
                 if (!RulesByCardType.TryGetValue(t, out var list))
                     continue;
 
-                foreach (var entry in list.Where(entry => entry.Rule.When(model)).Where(entry => best is null
-                             || entry.Rule.Priority > best.Value.Rule.Priority
-                             || (entry.Rule.Priority == best.Value.Rule.Priority &&
-                                 entry.Sequence > best.Value.Sequence)))
+                foreach (var entry in list)
+                {
+                    var color = entry.Rule.ResolveColor(model);
+                    if (!color.HasValue)
+                        continue;
+
+                    if (best is not null && IsLowerPriority(entry, best.Value))
+                        continue;
+
                     best = entry;
+                    bestColor = color.Value;
+                }
             }
 
-            return best?.Rule;
+            return best.HasValue ? new(best.Value.Rule, bestColor) : null;
         }
 
-        private readonly record struct RegisteredRule(ModCardHandOutlineRule Rule, int Sequence);
+        private static bool IsLowerPriority(RegisteredRule candidate, RegisteredRule best)
+        {
+            return candidate.Rule.Priority < best.Rule.Priority
+                   || (candidate.Rule.Priority == best.Rule.Priority && candidate.Sequence <= best.Sequence);
+        }
+
+        private readonly record struct RegisteredRule(ModCardHandOutlineSwitchRule Rule, int Sequence);
     }
 }

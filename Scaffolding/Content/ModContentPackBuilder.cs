@@ -1,3 +1,4 @@
+using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
@@ -409,9 +410,57 @@ namespace STS2RitsuLib.Scaffolding.Content
         ///     Queues <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;(...)</c> for custom hand-highlight colors.
         ///     将 <c>ModContentRegistry.RegisterCardHandOutline&lt;TCard&gt;(...)</c> 加入队列，用于自定义手牌高亮颜色。
         /// </summary>
-        public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineRule rule) where TCard : CardModel
+        public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineRules rules) where TCard : CardModel
+        {
+            return AddStep(ctx => ctx.Content.RegisterCardHandOutline<TCard>(rules));
+        }
+
+        /// <summary>
+        ///     Queues one custom hand-outline rule.
+        ///     将一条自定义手牌描边规则加入队列。
+        /// </summary>
+        public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineSwitchRule rule) where TCard : CardModel
         {
             return AddStep(ctx => ctx.Content.RegisterCardHandOutline<TCard>(rule));
+        }
+
+        /// <summary>
+        ///     Queues several custom hand-outline rules.
+        ///     将多条自定义手牌描边规则加入队列。
+        /// </summary>
+        public ModContentPackBuilder CardHandOutline<TCard>(params ModCardHandOutlineSwitchRule[] rules)
+            where TCard : CardModel
+        {
+            return CardHandOutline<TCard>(ModCardHandOutlineRules.Of(rules));
+        }
+
+        /// <summary>
+        ///     Queues a switch-style custom hand-outline resolver.
+        ///     将 switch 风格的自定义手牌描边解析器加入队列。
+        /// </summary>
+        public ModContentPackBuilder CardHandOutline<TCard>(
+            Func<TCard, Color?> colorWhen,
+            int priority = 0,
+            bool visibleWhenUnplayable = false,
+            bool refreshEveryFrame = true)
+            where TCard : CardModel
+        {
+            return AddStep(ctx => ctx.Content.RegisterCardHandOutline<TCard>(
+                colorWhen,
+                priority,
+                visibleWhenUnplayable,
+                refreshEveryFrame));
+        }
+
+        /// <summary>
+        ///     Queues a legacy custom hand-outline rule.
+        ///     将旧版自定义手牌描边规则加入队列。
+        /// </summary>
+        [Obsolete(
+            "Use CardHandOutline<TCard>(ModCardHandOutlineRules), CardHandOutline<TCard>(ModCardHandOutlineSwitchRule), or CardHandOutline<TCard>(Func<TCard, Color?>).")]
+        public ModContentPackBuilder CardHandOutline<TCard>(ModCardHandOutlineRule rule) where TCard : CardModel
+        {
+            return CardHandOutline<TCard>(rule.ToSwitchRule());
         }
 
         /// <summary>

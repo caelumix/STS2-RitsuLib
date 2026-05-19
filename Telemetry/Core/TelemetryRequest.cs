@@ -33,10 +33,24 @@ namespace STS2RitsuLib.Telemetry
         public ModSettingsText? DescriptionText { get; init; }
 
         /// <summary>
-        ///     Shared contribution ids this request wants to receive from other mods.
-        ///     此申请希望从其他 mod 接收的共享 contribution ID。
+        ///     Contribution ids this request wants to attach. Private contributions only attach to their owning
+        ///     applicant; shared contributions additionally require explicit source consent and should use
+        ///     "contributorModId/contributionId" subscriptions.
+        ///     此申请希望附加的 contribution ID。私有 contribution 仅附加到拥有者自己的申请；
+        ///     共享 contribution 还需要额外的来源授权，并应使用 "contributorModId/contributionId" 订阅。
         /// </summary>
-        public IReadOnlyList<string> SharedContributionSubscriptions { get; init; } = [];
+        public IReadOnlyList<string> ContributionSubscriptions { get; init; } = [];
+
+        /// <summary>
+        ///     Obsolete alias for <see cref="ContributionSubscriptions" /> kept for source compatibility.
+        ///     为源码兼容保留的 <see cref="ContributionSubscriptions" /> 旧别名。
+        /// </summary>
+        [Obsolete("Use ContributionSubscriptions.")]
+        public IReadOnlyList<string> SharedContributionSubscriptions
+        {
+            get => ContributionSubscriptions;
+            init => ContributionSubscriptions = value;
+        }
 
         /// <summary>
         ///     Optional predicate for automatic run-history capture; when unset, every ended run is eligible.
@@ -118,7 +132,7 @@ namespace STS2RitsuLib.Telemetry
                 RequestId = "run_history",
                 Category = TelemetryDataCategory.RunHistory,
                 Description = description,
-                SharedContributionSubscriptions = sharedContributionSubscriptions ?? [],
+                ContributionSubscriptions = sharedContributionSubscriptions ?? [],
                 RunHistoryCaptureFilter = captureFilter,
             };
         }
@@ -139,7 +153,7 @@ namespace STS2RitsuLib.Telemetry
                 Category = TelemetryDataCategory.RunHistory,
                 Description = description.Resolve(),
                 DescriptionText = description,
-                SharedContributionSubscriptions = sharedContributionSubscriptions ?? [],
+                ContributionSubscriptions = sharedContributionSubscriptions ?? [],
                 RunHistoryCaptureFilter = captureFilter,
             };
         }
@@ -157,7 +171,7 @@ namespace STS2RitsuLib.Telemetry
                 RequestId = "diagnostics",
                 Category = TelemetryDataCategory.Diagnostics,
                 Description = description,
-                SharedContributionSubscriptions = sharedContributionSubscriptions ?? [],
+                ContributionSubscriptions = sharedContributionSubscriptions ?? [],
             };
         }
 
@@ -176,7 +190,7 @@ namespace STS2RitsuLib.Telemetry
                 Category = TelemetryDataCategory.Diagnostics,
                 Description = description.Resolve(),
                 DescriptionText = description,
-                SharedContributionSubscriptions = sharedContributionSubscriptions ?? [],
+                ContributionSubscriptions = sharedContributionSubscriptions ?? [],
             };
         }
 

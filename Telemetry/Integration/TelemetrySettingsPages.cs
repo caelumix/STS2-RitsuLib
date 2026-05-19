@@ -184,11 +184,13 @@ namespace STS2RitsuLib.Telemetry.Integration
             var granted = consent.GrantedRequests.Count == 0
                 ? L("empty.none", "None")
                 : string.Join(", ", consent.GrantedRequests.OrderBy(x => x, StringComparer.OrdinalIgnoreCase));
+            var grantedShared = CountGrantedSharedContributions(consent).ToString();
             return string.Join(
                 "\n",
                 FormatLine("ritsulib.telemetry.field.consent", "Consent", ResolveConsent(consent.Consent)),
                 FormatLine("ritsulib.telemetry.field.endpoint", "Endpoint", applicant.Adapter.EndpointDescription),
                 FormatLine("ritsulib.telemetry.field.grantedRequests", "Granted requests", granted),
+                FormatLine("ritsulib.telemetry.field.grantedSharedContributions", "Shared sources", grantedShared),
                 FormatLine(
                     "ritsulib.telemetry.field.queuedEvents",
                     "Queued events",
@@ -209,9 +211,14 @@ namespace STS2RitsuLib.Telemetry.Integration
                         request.RequestId,
                         request.ResolveDescription())));
 
-            return string.IsNullOrWhiteSpace(requests)
+            var shared = BuildSharedContributionRequests(applicantId, applicant);
+            var combined = string.Join(
+                "\n\n",
+                new[] { requests, shared }.Where(text => !string.IsNullOrWhiteSpace(text)));
+
+            return string.IsNullOrWhiteSpace(combined)
                 ? L("ritsulib.telemetry.requests.empty", "This applicant has no data requests.")
-                : requests;
+                : combined;
         }
 
         private static void GrantAll(string applicantId)
@@ -219,6 +226,7 @@ namespace STS2RitsuLib.Telemetry.Integration
             if (!TelemetryRegistry.TryGetApplicant(applicantId, out var applicant))
                 return;
 
+            GrantRequestedSharedContributions(applicant);
             TelemetryConsentStore.SetApplicantConsent(
                 applicantId,
                 TelemetryConsentState.Granted,
@@ -257,6 +265,53 @@ namespace STS2RitsuLib.Telemetry.Integration
         private static string ResolveCategory(TelemetryDataCategory category)
         {
             return L($"ritsulib.telemetry.category.{category}", category.ToString());
+        }
+
+        private static string BuildSharedContributionRequests(string applicantId, TelemetryApplicant applicant)
+        {
+            var providers = TelemetryRegistry.GetRequestedSharedContributions(applicant);
+            if (providers.Count == 0)
+                return "";
+
+            var consent = TelemetryConsentStore.GetApplicantConsent(applicantId);
+            var lines = new List<string>
+            {
+                L("ritsulib.telemetry.shared.heading", "Additional shared data sources:"),
+            };
+            lines.AddRange(providers.Select(provider =>
+                string.Format(
+                    L("ritsulib.telemetry.shared.line", "- {0}/{1} ({2}): {3}"),
+                    provider.ContributorModId,
+                    provider.ContributionId,
+                    ResolveCategory(provider.Category),
+                    ResolveSharedContributionState(consent, provider))));
+            return string.Join("\n", lines);
+        }
+
+        private static string ResolveSharedContributionState(
+            TelemetryApplicantConsent consent,
+            ITelemetryContributionProvider provider)
+        {
+            return consent.Consent == TelemetryConsentState.Granted &&
+                   consent.SharedContributionSources.TryGetValue(provider.ContributorModId, out var ids) &&
+                   ids.Contains(provider.ContributionId)
+                ? L("ritsulib.telemetry.shared.granted", "Granted")
+                : L("ritsulib.telemetry.shared.notGranted", "Not granted");
+        }
+
+        private static int CountGrantedSharedContributions(TelemetryApplicantConsent consent)
+        {
+            return consent.SharedContributionSources.Values.Sum(ids => ids.Count);
+        }
+
+        private static void GrantRequestedSharedContributions(TelemetryApplicant applicant)
+        {
+            foreach (var provider in TelemetryRegistry.GetRequestedSharedContributions(applicant))
+                TelemetryConsentStore.SetSharedContributionConsent(
+                    applicant.ApplicantId,
+                    provider.ContributorModId,
+                    provider.ContributionId,
+                    true);
         }
 
         private static ModSettingsText T(string key, string fallback)

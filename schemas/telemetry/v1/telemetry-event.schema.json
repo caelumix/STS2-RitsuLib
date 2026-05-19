@@ -63,7 +63,7 @@
       "description": "Flat event metadata. Backends should index these fields first."
     },
     "payload": {
-      "description": "Structured event data. Keep full payloads here and promote query-critical fields into properties.",
+      "description": "Structured event data. Common object members include base_payload, private_contributions, shared_contributions, and applicant_payload. Keep full payloads here and promote query-critical fields into properties.",
       "oneOf": [
         {
           "type": "object",

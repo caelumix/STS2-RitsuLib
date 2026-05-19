@@ -6,6 +6,7 @@ namespace STS2RitsuLib.Telemetry
     {
         private const int MaxEventsPerApplicant = 2000;
         private static readonly Lock Sync = new();
+        private static readonly HashSet<string> FlushingApplicants = new(StringComparer.OrdinalIgnoreCase);
 
         internal static void Enqueue(TelemetryEnvelope envelope)
         {
@@ -41,44 +42,73 @@ namespace STS2RitsuLib.Telemetry
                     return;
                 }
 
+                if (!FlushingApplicants.Add(applicantId))
+                {
+                    RitsuLibFramework.Logger.Info(
+                        $"[Telemetry] Flush skipped for '{applicantId}': another send is already in progress.");
+                    return;
+                }
+
                 batch = [.. doc.Events];
             }
 
-            RitsuLibFramework.Logger.Info(
-                $"[Telemetry] Sending {batch.Length} queued event(s) for applicant '{applicantId}' via {applicant.Adapter.AdapterId}.");
-
-            TelemetrySendResult result;
             try
             {
-                result = await applicant.Adapter.SendAsync(applicant, batch, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                result = TelemetrySendResult.Fail(ex.Message);
-            }
+                RitsuLibFramework.Logger.Info(
+                    $"[Telemetry] Sending {batch.Length} queued event(s) for applicant '{applicantId}' via {applicant.Adapter.AdapterId}.");
 
-            lock (Sync)
-            {
-                var state = ReadState(applicantId);
-                state.LastSendUtc = DateTimeOffset.UtcNow;
-
-                if (result.Success)
+                TelemetrySendResult result;
+                try
                 {
-                    WriteQueue(applicantId, new());
-                    state.LastError = null;
-                    state.FailureCount = 0;
-                    RitsuLibFramework.Logger.Info(
-                        $"[Telemetry] Sent {batch.Length} event(s) for applicant '{applicantId}'.");
+                    result = await applicant.Adapter.SendAsync(applicant, batch, cancellationToken);
                 }
-                else
+                catch (Exception ex)
                 {
-                    state.LastError = result.ErrorMessage;
-                    state.FailureCount++;
-                    RitsuLibFramework.Logger.Warn(
-                        $"[Telemetry] Send failed for applicant '{applicantId}': {result.ErrorMessage}");
+                    result = TelemetrySendResult.Fail(ex.Message);
                 }
 
-                WriteState(applicantId, state);
+                lock (Sync)
+                {
+                    var state = ReadState(applicantId);
+                    state.LastSendUtc = DateTimeOffset.UtcNow;
+
+                    if (result.Success)
+                    {
+                        var queue = ReadQueue(applicantId);
+                        var remainingCount = queue.Events.Count;
+                        if (TryRemoveSentPrefix(queue, batch))
+                        {
+                            WriteQueue(applicantId, queue);
+                            remainingCount = queue.Events.Count;
+                        }
+                        else
+                        {
+                            RitsuLibFramework.Logger.Warn(
+                                $"[Telemetry] Sent {batch.Length} event(s) for applicant '{applicantId}', but queue changed unexpectedly. Keeping queued events to avoid data loss.");
+                        }
+
+                        state.LastError = null;
+                        state.FailureCount = 0;
+                        RitsuLibFramework.Logger.Info(
+                            $"[Telemetry] Sent {batch.Length} event(s) for applicant '{applicantId}'. Remaining queue size: {remainingCount}.");
+                    }
+                    else
+                    {
+                        state.LastError = result.ErrorMessage;
+                        state.FailureCount++;
+                        RitsuLibFramework.Logger.Warn(
+                            $"[Telemetry] Send failed for applicant '{applicantId}': {result.ErrorMessage}");
+                    }
+
+                    WriteState(applicantId, state);
+                }
+            }
+            finally
+            {
+                lock (Sync)
+                {
+                    FlushingApplicants.Remove(applicantId);
+                }
             }
         }
 
@@ -133,6 +163,27 @@ namespace STS2RitsuLib.Telemetry
         {
             FileOperations.WriteJson(TelemetryPaths.StatePath(applicantId), state, TelemetryJson.Options,
                 "TelemetryQueueState");
+        }
+
+        private static bool TryRemoveSentPrefix(TelemetryQueueDocument queue, IReadOnlyList<TelemetryEnvelope> sent)
+        {
+            if (sent.Count > queue.Events.Count)
+                return false;
+
+            if (sent.Where((t, i) => !IsSameQueuedEvent(queue.Events[i], t)).Any()) return false;
+
+            queue.Events.RemoveRange(0, sent.Count);
+            return true;
+        }
+
+        private static bool IsSameQueuedEvent(TelemetryEnvelope left, TelemetryEnvelope right)
+        {
+            return left.Schema == right.Schema &&
+                   left.ApplicantId == right.ApplicantId &&
+                   left.EventName == right.EventName &&
+                   left.RequestId == right.RequestId &&
+                   left.Category == right.Category &&
+                   left.TimestampUtc == right.TimestampUtc;
         }
     }
 }

@@ -60,7 +60,23 @@ namespace STS2RitsuLib.Telemetry
             if (basePayload.Count > 0)
                 root["base_payload"] = basePayload;
 
-            var shared = BuildSharedContributions(applicant, request, eventName, basePayload);
+            var privateContributions = BuildContributions(
+                TelemetryRegistry.ResolvePrivateContributions(applicant, request),
+                applicant,
+                request,
+                eventName,
+                basePayload,
+                "Private");
+            if (privateContributions.Count > 0)
+                root["private_contributions"] = privateContributions;
+
+            var shared = BuildContributions(
+                TelemetryRegistry.ResolveSharedContributions(applicant, request),
+                applicant,
+                request,
+                eventName,
+                basePayload,
+                "Shared");
             if (shared.Count > 0)
                 root["shared_contributions"] = shared;
 
@@ -97,14 +113,15 @@ namespace STS2RitsuLib.Telemetry
             };
         }
 
-        private static JsonObject BuildSharedContributions(
+        private static JsonObject BuildContributions(
+            IReadOnlyList<ITelemetryContributionProvider> providers,
             TelemetryApplicant applicant,
             TelemetryRequest request,
             string eventName,
-            JsonNode? basePayload)
+            JsonNode? basePayload,
+            string logPrefix)
         {
             var root = new JsonObject();
-            var providers = TelemetryRegistry.ResolveSharedContributions(applicant, request);
             foreach (var provider in providers)
             {
                 JsonNode? node;
@@ -121,7 +138,7 @@ namespace STS2RitsuLib.Telemetry
                 catch (Exception ex)
                 {
                     RitsuLibFramework.Logger.Warn(
-                        $"[Telemetry] Shared contribution '{provider.ContributorModId}/{provider.ContributionId}' failed: {ex.Message}");
+                        $"[Telemetry] {logPrefix} contribution '{provider.ContributorModId}/{provider.ContributionId}' failed: {ex.Message}");
                     continue;
                 }
 

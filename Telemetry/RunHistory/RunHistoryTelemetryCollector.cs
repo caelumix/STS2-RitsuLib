@@ -88,7 +88,7 @@ namespace STS2RitsuLib.Telemetry.RunHistory
                 ["occurred_at_utc"] = evt.OccurredAtUtc.ToString("O"),
             };
 
-            var captured = 0;
+            var capturedApplicants = new List<string>();
             foreach (var applicant in TelemetryRegistry.GetApplicants())
             {
                 if (!TelemetryRegistry.TryGetRequest(applicant, "run_history", out var request) ||
@@ -99,13 +99,13 @@ namespace STS2RitsuLib.Telemetry.RunHistory
                     continue;
 
                 CaptureVanillaRunHistory(applicant.ApplicantId, runHistory, null, properties);
-                captured++;
+                capturedApplicants.Add(applicant.ApplicantId);
             }
 
             RitsuLibFramework.Logger.Info(
-                $"[Telemetry] Captured ended run history for {captured} authorized applicant(s); abandoned={evt.IsAbandoned}, victory={evt.IsVictory}.");
-            if (captured > 0)
-                _ = TelemetryQueue.FlushAllAsync();
+                $"[Telemetry] Captured ended run history for {capturedApplicants.Count} authorized applicant(s); abandoned={evt.IsAbandoned}, victory={evt.IsVictory}.");
+            foreach (var applicantId in capturedApplicants)
+                _ = TelemetryQueue.FlushApplicantAsync(applicantId);
         }
 
         private static bool ShouldCaptureForRequest(

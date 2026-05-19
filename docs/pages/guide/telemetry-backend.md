@@ -145,6 +145,8 @@ A batch has a batch schema id, one applicant id, and one or more events:
 
 Backends should index `properties` first. Full `payload` should be stored as JSON/blob. Promote only the fields needed for dashboards or search.
 
+`payload` may contain `base_payload`, `private_contributions`, `shared_contributions`, and `applicant_payload`. Private contributions are data supplied by the applicant's own mod. Shared contributions are data from another mod source and are only included after explicit source consent.
+
 :::
 
 ## 数据{lang="zh-CN"}
@@ -189,6 +191,8 @@ Backends should index `properties` first. Full `payload` should be stored as JSO
 ```
 
 后端应优先索引 `properties`。完整 `payload` 建议按 JSON/blob 存储，只把看板或搜索所需字段提升为索引字段。
+
+`payload` 可能包含 `base_payload`、`private_contributions`、`shared_contributions` 和 `applicant_payload`。私有 contribution 来自申请方自己的 mod。共享 contribution 来自其他 mod 来源，并且只有在用户额外授权该来源后才会包含。
 
 :::
 

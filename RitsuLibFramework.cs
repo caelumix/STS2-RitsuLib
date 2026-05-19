@@ -21,6 +21,7 @@ using STS2RitsuLib.Interop;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Localization;
 using STS2RitsuLib.Localization.SmartFormat;
+using STS2RitsuLib.Models;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.Platform;
 using STS2RitsuLib.RunData;
@@ -562,6 +563,15 @@ namespace STS2RitsuLib
         public static ModUnlockRegistry GetUnlockRegistry(string modId)
         {
             return ModUnlockRegistry.For(modId);
+        }
+
+        /// <summary>
+        ///     Returns the model-clone listener registry for <paramref name="modId" />.
+        ///     返回 <paramref name="modId" /> 的模型复制监听器注册表。
+        /// </summary>
+        public static ModelCloneRegistry GetModelCloneRegistry(string modId)
+        {
+            return ModelCloneRegistry.For(modId);
         }
 
         /// <summary>

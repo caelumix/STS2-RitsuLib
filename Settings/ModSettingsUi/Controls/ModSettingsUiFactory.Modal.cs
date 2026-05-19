@@ -188,15 +188,16 @@ namespace STS2RitsuLib.Settings
 
             var escShortcut = new Shortcut();
             escShortcut.Events = [new InputEventKey { Keycode = Key.Escape, Pressed = true }];
-            if (escapeTriggersCancel && cancelBtn != null)
+            switch (escapeTriggersCancel)
             {
-                cancelBtn.Shortcut = escShortcut;
-                cancelBtn.ShortcutInTooltip = false;
-            }
-            else if (escapeTriggersCancel)
-            {
-                confirmBtn.Shortcut = escShortcut;
-                confirmBtn.ShortcutInTooltip = false;
+                case true when cancelBtn != null:
+                    cancelBtn.Shortcut = escShortcut;
+                    cancelBtn.ShortcutInTooltip = false;
+                    break;
+                case true:
+                    confirmBtn.Shortcut = escShortcut;
+                    confirmBtn.ShortcutInTooltip = false;
+                    break;
             }
 
             Callable.From(() =>

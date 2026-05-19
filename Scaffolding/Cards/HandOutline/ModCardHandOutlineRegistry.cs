@@ -32,6 +32,26 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
         ///     Registers rules for <typeparamref name="TCard" />. Throws if <see cref="ModContentRegistry.IsFrozen" />.
         ///     为 <typeparamref name="TCard" /> 注册规则。如果 <see cref="ModContentRegistry.IsFrozen" /> 则抛出。
         /// </summary>
+        public static void Register<TCard>(ModCardHandOutlineRules<TCard> rules) where TCard : CardModel
+        {
+            Register(typeof(TCard), rules.ToUntyped());
+        }
+
+        /// <summary>
+        ///     Registers a rule for <typeparamref name="TCard" />. Throws if <see cref="ModContentRegistry.IsFrozen" />.
+        ///     为 <typeparamref name="TCard" /> 注册规则。如果 <see cref="ModContentRegistry.IsFrozen" /> 则抛出。
+        /// </summary>
+        public static void Register<TCard>(ModCardHandOutlineSwitchRule<TCard> rule) where TCard : CardModel
+        {
+            Register(typeof(TCard), rule.ToUntyped());
+        }
+
+        /// <summary>
+        ///     Registers a type-erased rule for <typeparamref name="TCard" />.
+        ///     为 <typeparamref name="TCard" /> 注册类型擦除规则。
+        /// </summary>
+        [Obsolete(
+            "Use Register<TCard>(ModCardHandOutlineSwitchRule<TCard>) or Register<TCard>(ModCardHandOutlineRules<TCard>).")]
         public static void Register<TCard>(ModCardHandOutlineSwitchRule rule) where TCard : CardModel
         {
             Register(typeof(TCard), rule);
@@ -41,6 +61,17 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
         ///     Registers several rules for <typeparamref name="TCard" />.
         ///     为 <typeparamref name="TCard" /> 注册多条规则。
         /// </summary>
+        public static void Register<TCard>(params ModCardHandOutlineSwitchRule<TCard>[] rules) where TCard : CardModel
+        {
+            Register(ModCardHandOutlineRules<TCard>.Of(rules));
+        }
+
+        /// <summary>
+        ///     Registers several type-erased rules for <typeparamref name="TCard" />.
+        ///     为 <typeparamref name="TCard" /> 注册多条类型擦除规则。
+        /// </summary>
+        [Obsolete(
+            "Use Register<TCard>(params ModCardHandOutlineSwitchRule<TCard>[]) or Register<TCard>(ModCardHandOutlineRules<TCard>).")]
         public static void Register<TCard>(params ModCardHandOutlineSwitchRule[] rules) where TCard : CardModel
         {
             Register<TCard>(ModCardHandOutlineRules.Of(rules));

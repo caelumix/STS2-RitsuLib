@@ -32,7 +32,7 @@ namespace STS2RitsuLib.Scaffolding.Cards.HandOutline
     ///     显示金色/红色，也会强制以此颜色显示高亮（仍仅在战斗进行中）。
     /// </param>
     [Obsolete(
-        "Use ModCardHandOutlineSwitchRule or ModCardHandOutlineRules. This legacy rule is kept as a forwarding adapter.")]
+        "Use ModCardHandOutlineSwitchRule<TCard> or ModCardHandOutlineRules<TCard>. This legacy rule is kept as a forwarding adapter.")]
     public readonly record struct ModCardHandOutlineRule(
         Func<CardModel, bool> When,
         Color Color,

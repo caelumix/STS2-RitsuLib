@@ -139,7 +139,7 @@ components:
           additionalProperties: true
           description: Flat metadata. Query-critical fields should be placed here.
         payload:
-          description: Structured event data. Backends may store it as JSON/blob and promote selected fields.
+          description: Structured event data. Backends may store it as JSON/blob and promote selected fields. Common object members include base_payload, private_contributions, shared_contributions, and applicant_payload.
     IngestAccepted:
       type: object
       additionalProperties: false

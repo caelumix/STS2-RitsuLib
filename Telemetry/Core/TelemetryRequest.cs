@@ -34,9 +34,10 @@ namespace STS2RitsuLib.Telemetry
 
         /// <summary>
         ///     Contribution ids this request wants to attach. Private contributions only attach to their owning
-        ///     applicant; shared contributions additionally require explicit source consent.
+        ///     applicant; shared contributions additionally require explicit source consent and should use
+        ///     "contributorModId/contributionId" subscriptions.
         ///     此申请希望附加的 contribution ID。私有 contribution 仅附加到拥有者自己的申请；
-        ///     共享 contribution 还需要额外的来源授权。
+        ///     共享 contribution 还需要额外的来源授权，并应使用 "contributorModId/contributionId" 订阅。
         /// </summary>
         public IReadOnlyList<string> ContributionSubscriptions { get; init; } = [];
 

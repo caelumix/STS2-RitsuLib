@@ -114,6 +114,7 @@ namespace STS2RitsuLib.Telemetry.Integration
 
         private static void GrantApplicant(TelemetryApplicant applicant)
         {
+            GrantRequestedSharedContributions(applicant);
             TelemetryConsentStore.SetApplicantConsent(
                 applicant.ApplicantId,
                 TelemetryConsentState.Granted,
@@ -121,7 +122,6 @@ namespace STS2RitsuLib.Telemetry.Integration
 
             RitsuLibFramework.Logger.Info(
                 $"[Telemetry] User granted first-run telemetry consent for applicant '{applicant.ApplicantId}'.");
-            _ = TelemetryQueue.FlushApplicantAsync(applicant.ApplicantId);
             ShowPendingConsentToast();
         }
 
@@ -153,12 +153,36 @@ namespace STS2RitsuLib.Telemetry.Integration
                 string.Format(L("ritsulib.telemetry.prompt.requestLine", "- {0}: {1}"),
                     ResolveCategory(request.Category),
                     request.ResolveDescription())));
+
+            var sharedContributions = TelemetryRegistry.GetRequestedSharedContributions(applicant);
+            if (sharedContributions.Count > 0)
+            {
+                lines.Add("");
+                lines.Add(L("ritsulib.telemetry.prompt.shared.heading", "Additional shared data sources:"));
+                lines.AddRange(sharedContributions.Select(provider =>
+                    string.Format(
+                        L("ritsulib.telemetry.prompt.shared.line", "- {0}/{1} ({2})"),
+                        provider.ContributorModId,
+                        provider.ContributionId,
+                        ResolveCategory(provider.Category))));
+            }
+
             lines.Add("");
 
             lines.Add(L(
                 "ritsulib.telemetry.prompt.footer",
                 "You can manage each applicant later from RitsuLib > Telemetry."));
             return string.Join("\n", lines);
+        }
+
+        private static void GrantRequestedSharedContributions(TelemetryApplicant applicant)
+        {
+            foreach (var provider in TelemetryRegistry.GetRequestedSharedContributions(applicant))
+                TelemetryConsentStore.SetSharedContributionConsent(
+                    applicant.ApplicantId,
+                    provider.ContributorModId,
+                    provider.ContributionId,
+                    true);
         }
 
         private static Node? ResolveHostNode()

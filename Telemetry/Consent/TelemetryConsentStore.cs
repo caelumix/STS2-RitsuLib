@@ -65,6 +65,8 @@ namespace STS2RitsuLib.Telemetry
                 consent.GrantedRequests = grantedRequests == null
                     ? []
                     : new(grantedRequests, StringComparer.OrdinalIgnoreCase);
+                if (state != TelemetryConsentState.Granted)
+                    consent.SharedContributionSources.Clear();
                 Save();
                 RitsuLibFramework.Logger.Info(
                     $"[Telemetry] Applicant consent updated: {applicantId} -> {state} ({consent.GrantedRequests.Count} granted request(s)).");

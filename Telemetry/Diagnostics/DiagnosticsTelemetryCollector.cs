@@ -74,7 +74,7 @@ namespace STS2RitsuLib.Telemetry.Diagnostics
                     ["exception_type"] = exception.GetType().FullName ?? exception.GetType().Name,
                 };
 
-                var captured = 0;
+                var capturedApplicants = new List<string>();
                 foreach (var applicant in TelemetryRegistry.GetApplicants())
                 {
                     if (!TelemetryRegistry.TryGetRequest(applicant, "diagnostics", out var request) ||
@@ -82,13 +82,13 @@ namespace STS2RitsuLib.Telemetry.Diagnostics
                         continue;
 
                     new TelemetryClient(applicant.ApplicantId).CaptureException(exception, properties);
-                    captured++;
+                    capturedApplicants.Add(applicant.ApplicantId);
                 }
 
                 RitsuLibFramework.Logger.Info(
-                    $"[Telemetry] Captured exception diagnostics from '{source}' for {captured} authorized applicant(s): {exception.GetType().Name}.");
-                if (captured > 0)
-                    _ = TelemetryQueue.FlushAllAsync();
+                    $"[Telemetry] Captured exception diagnostics from '{source}' for {capturedApplicants.Count} authorized applicant(s): {exception.GetType().Name}.");
+                foreach (var applicantId in capturedApplicants)
+                    _ = TelemetryQueue.FlushApplicantAsync(applicantId);
             }
             catch (Exception captureException)
             {

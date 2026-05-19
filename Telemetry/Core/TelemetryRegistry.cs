@@ -119,8 +119,7 @@ namespace STS2RitsuLib.Telemetry
                     .Where(provider =>
                         provider.Visibility == TelemetryContributionVisibility.SharedToAuthorizedSubscribers)
                     .Where(provider => provider.Category == request.Category)
-                    .Where(provider =>
-                        subscriptions.Contains(provider.ContributionId, StringComparer.OrdinalIgnoreCase))
+                    .Where(provider => SubscriptionMatches(provider, applicant, subscriptions, false))
                     .Where(provider => TelemetryConsentStore.IsSharedContributionGranted(
                         applicant.ApplicantId,
                         provider.ContributorModId,
@@ -142,9 +141,25 @@ namespace STS2RitsuLib.Telemetry
                 return ContributionProviders.Values
                     .Where(provider => provider.Visibility == TelemetryContributionVisibility.PrivateToApplicant)
                     .Where(provider => provider.Category == request.Category)
-                    .Where(provider =>
-                        subscriptions.Contains(provider.ContributionId, StringComparer.OrdinalIgnoreCase))
+                    .Where(provider => SubscriptionMatches(provider, applicant, subscriptions, true))
                     .Where(provider => IsOwnedByApplicant(provider, applicant))
+                    .ToArray();
+            }
+        }
+
+        internal static IReadOnlyList<ITelemetryContributionProvider> GetRequestedSharedContributions(
+            TelemetryApplicant applicant)
+        {
+            lock (Sync)
+            {
+                return ContributionProviders.Values
+                    .Where(provider =>
+                        provider.Visibility == TelemetryContributionVisibility.SharedToAuthorizedSubscribers)
+                    .Where(provider => applicant.Requests.Any(request =>
+                        request.Category == provider.Category &&
+                        SubscriptionMatches(provider, applicant, request.ContributionSubscriptions, false)))
+                    .OrderBy(provider => provider.ContributorModId, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(provider => provider.ContributionId, StringComparer.OrdinalIgnoreCase)
                     .ToArray();
             }
         }
@@ -155,6 +170,37 @@ namespace STS2RitsuLib.Telemetry
         {
             return string.Equals(provider.ContributorModId, applicant.OwnerModId, StringComparison.OrdinalIgnoreCase) ||
                    string.Equals(provider.ContributorModId, applicant.ApplicantId, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool SubscriptionMatches(
+            ITelemetryContributionProvider provider,
+            TelemetryApplicant applicant,
+            IReadOnlyList<string> subscriptions,
+            bool allowUnqualifiedOwnedContribution)
+        {
+            foreach (var subscription in subscriptions)
+            {
+                var value = subscription.Trim();
+                if (string.IsNullOrEmpty(value))
+                    continue;
+
+                if (allowUnqualifiedOwnedContribution &&
+                    IsOwnedByApplicant(provider, applicant) &&
+                    string.Equals(value, provider.ContributionId, StringComparison.OrdinalIgnoreCase))
+                    return true;
+
+                if (string.Equals(
+                        value,
+                        $"{provider.ContributorModId}/{provider.ContributionId}",
+                        StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(
+                        value,
+                        $"{provider.ContributorModId}:{provider.ContributionId}",
+                        StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
 
         private static string BuildContributionKey(string contributorModId, string contributionId)

@@ -26,6 +26,9 @@
         <EnableDynamicLoading>true</EnableDynamicLoading>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);CS0436</NoWarn>
+        <RitsuLibTelemetryBuildChannel Condition="'$(RitsuLibTelemetryBuildChannel)' == '' and '$(Configuration)' == 'Debug'">local_debug</RitsuLibTelemetryBuildChannel>
+        <RitsuLibTelemetryBuildChannel Condition="'$(RitsuLibTelemetryBuildChannel)' == ''">local_release</RitsuLibTelemetryBuildChannel>
+        <RitsuLibTelemetryBuildConfiguration Condition="'$(RitsuLibTelemetryBuildConfiguration)' == ''">$(Configuration)</RitsuLibTelemetryBuildConfiguration>
     </PropertyGroup>
 
     <PropertyGroup Label="NuGet package">
@@ -63,6 +66,14 @@
     </Target>
 
     <ItemGroup>
+        <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+            <_Parameter1>RitsuLibTelemetryBuildChannel</_Parameter1>
+            <_Parameter2>$(RitsuLibTelemetryBuildChannel)</_Parameter2>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+            <_Parameter1>RitsuLibTelemetryBuildConfiguration</_Parameter1>
+            <_Parameter2>$(RitsuLibTelemetryBuildConfiguration)</_Parameter2>
+        </AssemblyAttribute>
         <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="all"/>
         <PackageReference Include="System.IO.Hashing" Version="9.0.0"/>
     </ItemGroup>

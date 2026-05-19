@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Nodes;
 using STS2RitsuLib.Telemetry.RunHistory;
 
@@ -6,7 +7,17 @@ namespace STS2RitsuLib.Telemetry
     internal static class TelemetryEnvelopeFactory
     {
         internal const string BasePayloadOverrideKey = "__ritsulib_base_payload";
+        private const string DevPackageVersionPrefix = "9999.0.0-dev.";
         private static readonly string SessionId = Guid.NewGuid().ToString("N");
+        private static readonly Assembly Assembly = typeof(Const).Assembly;
+
+        private static readonly string InformationalVersion =
+            Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ??
+            Const.Version;
+
+        private static readonly IReadOnlyDictionary<string, string> Metadata =
+            Assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
+                .ToDictionary(x => x.Key, x => x.Value ?? "", StringComparer.OrdinalIgnoreCase);
 
         internal static TelemetryEnvelope Create(
             TelemetryApplicant applicant,
@@ -39,11 +50,44 @@ namespace STS2RitsuLib.Telemetry
                 ["anonymous_install_id"] = TelemetryIdentityStore.AnonymousInstallId,
                 ["session_id"] = SessionId,
                 ["ritsulib_version"] = Const.Version,
+                ["ritsulib_informational_version"] = InformationalVersion,
+                ["ritsulib_build_channel"] = ResolveBuildChannel(),
+                ["ritsulib_build_configuration"] = ResolveBuildConfiguration(),
                 ["applicant_id"] = applicant.ApplicantId,
                 ["owner_mod_id"] = applicant.OwnerModId,
                 ["applicant_display_name"] = applicant.ResolveDisplayName(),
                 ["platform"] = Environment.OSVersion.Platform.ToString(),
             };
+        }
+
+        private static string ResolveBuildChannel()
+        {
+            if (Metadata.TryGetValue("RitsuLibTelemetryBuildChannel", out var channel) &&
+                !string.IsNullOrWhiteSpace(channel))
+                return channel;
+
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (InformationalVersion.StartsWith(DevPackageVersionPrefix, StringComparison.OrdinalIgnoreCase))
+                return "dev";
+
+#if DEBUG
+            return "local_debug";
+#else
+            return "release";
+#endif
+        }
+
+        private static string ResolveBuildConfiguration()
+        {
+            if (Metadata.TryGetValue("RitsuLibTelemetryBuildConfiguration", out var configuration) &&
+                !string.IsNullOrWhiteSpace(configuration))
+                return configuration;
+
+#if DEBUG
+            return "Debug";
+#else
+            return "Release";
+#endif
         }
 
         private static JsonObject BuildPayload(

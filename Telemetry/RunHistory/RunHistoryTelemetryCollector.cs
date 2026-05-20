@@ -1,5 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using STS2RitsuLib.Compat;
 
@@ -7,27 +10,120 @@ namespace STS2RitsuLib.Telemetry.RunHistory
 {
     internal static class RunHistoryTelemetryCollector
     {
-        internal static JsonArray BuildLoadedModList()
+        internal static JsonArray BuildModInventoryList()
         {
             var mods = new JsonArray();
-            foreach (var mod in Sts2ModManagerCompat.EnumerateLoadedModsWithAssembly()
+            foreach (var mod in Sts2ModManagerCompat.EnumerateModsForManifestLookup()
                          .OrderBy(m => m.manifest?.id ?? m.assembly?.GetName().Name ?? "<unknown>",
                              StringComparer.OrdinalIgnoreCase))
             {
                 var assemblyName = mod.assembly?.GetName();
+                var dependencies = new JsonArray();
+                foreach (var dependency in mod.manifest?.dependencies ?? [])
+                    dependencies.Add(new JsonObject
+                    {
+                        ["id"] = dependency.id,
+                        ["min_version"] = dependency.minVersion,
+                    });
+
                 mods.Add(new JsonObject
                 {
                     ["id"] = mod.manifest?.id ?? assemblyName?.Name ?? "<unknown>",
                     ["name"] = mod.manifest?.name ?? assemblyName?.Name ?? "<unknown>",
+                    ["author"] = mod.manifest?.author,
                     ["version"] = mod.manifest?.version,
+                    ["load_state"] = mod.state.ToString(),
                     ["state"] = mod.state.ToString(),
+                    ["is_loaded"] = mod.state == ModLoadState.Loaded,
                     ["source"] = mod.modSource.ToString(),
+                    ["affects_gameplay"] = mod.manifest?.affectsGameplay ?? true,
+                    ["has_dll"] = mod.manifest?.hasDll,
+                    ["has_pck"] = mod.manifest?.hasPck,
+                    ["min_game_version"] = mod.manifest?.minGameVersion,
+                    ["dependencies"] = dependencies,
                     ["assembly"] = assemblyName?.Name,
                     ["assembly_version"] = assemblyName?.Version?.ToString(),
+                    ["error_count"] = mod.errors?.Count ?? 0,
+                    ["errors"] = BuildModErrors(mod.errors),
                 });
             }
 
             return mods;
+        }
+
+        internal static JsonArray BuildLoadedModList()
+        {
+            return FilterLoadedMods(BuildModInventoryList());
+        }
+
+        internal static JsonArray FilterLoadedMods(JsonArray mods)
+        {
+            var loaded = new JsonArray();
+            foreach (var node in mods)
+            {
+                if (node is not JsonObject obj ||
+                    !string.Equals(obj["load_state"]?.GetValue<string>(), "Loaded",
+                        StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                loaded.Add(obj.DeepClone());
+            }
+
+            return loaded;
+        }
+
+        private static JsonArray BuildModErrors(IEnumerable<LocString>? errors)
+        {
+            var nodes = new JsonArray();
+            if (errors == null)
+                return nodes;
+
+            foreach (var error in errors)
+            {
+                var variables = new JsonObject();
+                foreach (var variable in error.Variables)
+                {
+                    if (MayContainLocalPath(variable.Key, variable.Value))
+                        continue;
+
+                    variables[variable.Key] = BuildSafeVariableNode(variable.Value);
+                }
+
+                nodes.Add(new JsonObject
+                {
+                    ["table"] = error.LocTable,
+                    ["key"] = error.LocEntryKey,
+                    ["variables"] = variables,
+                });
+            }
+
+            return nodes;
+        }
+
+        private static JsonNode? BuildSafeVariableNode(object? value)
+        {
+            if (value is IEnumerable<string> strings)
+                return new JsonArray(strings.Select(static s => JsonValue.Create(s)).ToArray<JsonNode?>());
+
+            return value switch
+            {
+                null => null,
+                bool b => JsonValue.Create(b),
+                _ => JsonValue.Create(value.ToString()),
+            };
+        }
+
+        private static bool MayContainLocalPath(string key, object? value)
+        {
+            if (key.Contains("path", StringComparison.OrdinalIgnoreCase) ||
+                key.Contains("folder", StringComparison.OrdinalIgnoreCase) ||
+                key.Contains("directory", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return value is string text &&
+                   (text.Contains(":\\", StringComparison.Ordinal) ||
+                    text.Contains(":/", StringComparison.Ordinal) ||
+                    text.Contains(@"\Users\", StringComparison.OrdinalIgnoreCase));
         }
 
         public static void CaptureVanillaRunHistory(
@@ -86,6 +182,17 @@ namespace STS2RitsuLib.Telemetry.RunHistory
                 ["is_victory"] = evt.IsVictory,
                 ["is_abandoned"] = evt.IsAbandoned,
                 ["occurred_at_utc"] = evt.OccurredAtUtc.ToString("O"),
+                ["run_game_mode"] = evt.Run.GameMode.ToString(),
+                ["run_is_daily"] = evt.Run.GameMode == GameMode.Daily || evt.Run.DailyTime.HasValue,
+                ["run_player_count"] = evt.Run.Players.Count,
+                ["run_floor_reached"] = evt.Run.FloorReached,
+                ["run_ascension"] = evt.Run.Ascension,
+                ["run_time_seconds"] = evt.Run.RunTime,
+                ["run_win_time_seconds"] = evt.Run.WinTime,
+                ["run_reload_count"] = evt.Run.NumReloads,
+                ["run_character_ids"] = evt.Run.Players
+                    .Select(player => player.CharacterId?.ToString() ?? "<unknown>")
+                    .ToArray(),
             };
 
             var capturedApplicants = new List<string>();

@@ -45,10 +45,10 @@ namespace STS2RitsuLib.Telemetry
                     TelemetryRequest.BasicUsage(
                         T(
                             "ritsulib.telemetry.request.basicUsage.description",
-                            "Session start, framework version, platform, and anonymous install id.")),
+                            "Session start, framework/game versions, build channel, platform, language, and anonymous install id.")),
                     TelemetryRequest.ModInventory(T(
                         "ritsulib.telemetry.request.modInventory.description",
-                        "Loaded mod list for compatibility and adoption analysis.")),
+                        "Registered mod inventory, load states, versions, and gameplay flags for compatibility analysis.")),
                     TelemetryRequest.Diagnostics(T(
                         "ritsulib.telemetry.request.diagnostics.description",
                         "Exception reports and framework runtime diagnostics.")),

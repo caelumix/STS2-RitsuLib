@@ -23,6 +23,9 @@ namespace STS2RitsuLib.Telemetry
         public static void RegisterApplicant(TelemetryApplicant applicant)
         {
             ArgumentNullException.ThrowIfNull(applicant);
+            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
+                return;
+
             ArgumentException.ThrowIfNullOrWhiteSpace(applicant.ApplicantId);
             ArgumentException.ThrowIfNullOrWhiteSpace(applicant.OwnerModId);
             ArgumentException.ThrowIfNullOrWhiteSpace(applicant.DisplayName);
@@ -45,6 +48,9 @@ namespace STS2RitsuLib.Telemetry
         public static void RegisterContributionProvider(ITelemetryContributionProvider provider)
         {
             ArgumentNullException.ThrowIfNull(provider);
+            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
+                return;
+
             ArgumentException.ThrowIfNullOrWhiteSpace(provider.ContributorModId);
             ArgumentException.ThrowIfNullOrWhiteSpace(provider.ContributionId);
             lock (Sync)

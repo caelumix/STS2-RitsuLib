@@ -20,6 +20,9 @@ namespace STS2RitsuLib.Telemetry
         /// </summary>
         internal static void CaptureStartupSnapshot()
         {
+            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
+                return;
+
             lock (Sync)
             {
                 if (_startupSnapshot != null)
@@ -42,6 +45,9 @@ namespace STS2RitsuLib.Telemetry
         /// </summary>
         internal static void ReplayStartupSnapshotToAuthorizedApplicants()
         {
+            if (TelemetryRuntimeGate.IsDisabled)
+                return;
+
             foreach (var applicant in TelemetryRegistry.GetApplicants())
                 ReplayStartupSnapshotToApplicant(applicant.ApplicantId);
         }
@@ -52,6 +58,9 @@ namespace STS2RitsuLib.Telemetry
         /// </summary>
         internal static void RefreshStartupModInventorySnapshot(string reason)
         {
+            if (TelemetryRuntimeGate.IsDisabled)
+                return;
+
             lock (Sync)
             {
                 if (_startupSnapshot == null)
@@ -72,6 +81,9 @@ namespace STS2RitsuLib.Telemetry
         /// </summary>
         internal static void ReplayStartupSnapshotToApplicant(string applicantId)
         {
+            if (TelemetryRuntimeGate.IsDisabled)
+                return;
+
             StartupTelemetrySnapshot snapshot;
 
             lock (Sync)
@@ -105,6 +117,9 @@ namespace STS2RitsuLib.Telemetry
         /// </summary>
         internal static void ResetStartupDeliveryForDiscardedEvents(IEnumerable<TelemetryEnvelope> events)
         {
+            if (TelemetryRuntimeGate.IsDisabled)
+                return;
+
             var discardedKeys = events
                 .Select(BuildStartupDeliveryKey)
                 .Where(key => key != null)
@@ -126,6 +141,9 @@ namespace STS2RitsuLib.Telemetry
         /// </summary>
         internal static void MarkStartupDeliveryConfirmed(IEnumerable<TelemetryEnvelope> events)
         {
+            if (TelemetryRuntimeGate.IsDisabled)
+                return;
+
             var confirmedKeys = events
                 .Select(BuildStartupDeliveryKey)
                 .Where(key => key != null)

@@ -24,6 +24,9 @@ namespace STS2RitsuLib.Telemetry
                 return;
 
             _initialized = true;
+            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
+                return;
+
             DiagnosticsTelemetryCollector.InitializeGlobalExceptionHandlers();
             RitsuLibFramework.SubscribeLifecycle<RunEndedEvent>(RunHistoryTelemetryCollector.CaptureEndedRun);
             RitsuLibFramework.SubscribeLifecycleOnce<MainMenuReadyEvent>(_ => InitializeMainMenuTelemetry());

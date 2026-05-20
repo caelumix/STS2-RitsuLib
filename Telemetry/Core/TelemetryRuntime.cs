@@ -11,6 +11,7 @@ namespace STS2RitsuLib.Telemetry
     {
         private static readonly Lock Sync = new();
         private static readonly HashSet<string> DeliveredStartupKeys = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> ConfirmedStartupKeys = new(StringComparer.OrdinalIgnoreCase);
         private static StartupTelemetrySnapshot? _startupSnapshot;
 
         /// <summary>
@@ -98,6 +99,50 @@ namespace STS2RitsuLib.Telemetry
                 snapshot.BuildModInventoryProperties());
         }
 
+        /// <summary>
+        ///     Clears startup delivery markers for queued events that were discarded before being sent.
+        ///     清除尚未发送就被丢弃的启动事件投递标记。
+        /// </summary>
+        internal static void ResetStartupDeliveryForDiscardedEvents(IEnumerable<TelemetryEnvelope> events)
+        {
+            var discardedKeys = events
+                .Select(BuildStartupDeliveryKey)
+                .Where(key => key != null)
+                .ToArray();
+            if (discardedKeys.Length == 0)
+                return;
+
+            lock (Sync)
+            {
+                foreach (var key in discardedKeys)
+                    if (!ConfirmedStartupKeys.Contains(key!))
+                        DeliveredStartupKeys.Remove(key!);
+            }
+        }
+
+        /// <summary>
+        ///     Marks startup events as successfully handed to the applicant backend.
+        ///     将启动事件标记为已成功交给申请方后端。
+        /// </summary>
+        internal static void MarkStartupDeliveryConfirmed(IEnumerable<TelemetryEnvelope> events)
+        {
+            var confirmedKeys = events
+                .Select(BuildStartupDeliveryKey)
+                .Where(key => key != null)
+                .ToArray();
+            if (confirmedKeys.Length == 0)
+                return;
+
+            lock (Sync)
+            {
+                foreach (var key in confirmedKeys)
+                {
+                    ConfirmedStartupKeys.Add(key!);
+                    DeliveredStartupKeys.Add(key!);
+                }
+            }
+        }
+
         private static void TryReplayStartupEvent(
             TelemetryApplicant applicant,
             string requestId,
@@ -111,7 +156,7 @@ namespace STS2RitsuLib.Telemetry
             if (!TelemetryConsentStore.IsRequestGranted(applicant, request))
                 return;
 
-            var deliveryKey = $"{applicant.ApplicantId}\n{requestId}\n{eventName}";
+            var deliveryKey = BuildStartupDeliveryKey(applicant.ApplicantId, requestId, eventName);
             lock (Sync)
             {
                 if (!DeliveredStartupKeys.Add(deliveryKey))
@@ -121,6 +166,18 @@ namespace STS2RitsuLib.Telemetry
             RitsuLibFramework.Logger.Info(
                 $"[Telemetry] Replaying startup event '{eventName}' to applicant '{applicant.ApplicantId}'.");
             new TelemetryClient(applicant.ApplicantId).CapturePayload(eventName, requestId, payload, properties);
+        }
+
+        private static string? BuildStartupDeliveryKey(TelemetryEnvelope envelope)
+        {
+            return envelope.EventName is "session_start" or "mod_inventory"
+                ? BuildStartupDeliveryKey(envelope.ApplicantId, envelope.RequestId, envelope.EventName)
+                : null;
+        }
+
+        private static string BuildStartupDeliveryKey(string applicantId, string requestId, string eventName)
+        {
+            return $"{applicantId}\n{requestId}\n{eventName}";
         }
 
         private sealed record StartupTelemetrySnapshot(DateTimeOffset CapturedAtUtc, JsonArray Mods)

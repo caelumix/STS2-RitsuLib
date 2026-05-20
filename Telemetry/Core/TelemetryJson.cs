@@ -12,6 +12,7 @@ namespace STS2RitsuLib.Telemetry
             PropertyNameCaseInsensitive = true,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             IncludeFields = false,
+            Converters = { new JsonStringEnumConverter() },
         };
     }
 }

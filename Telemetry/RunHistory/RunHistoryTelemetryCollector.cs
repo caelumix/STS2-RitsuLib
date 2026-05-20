@@ -102,15 +102,43 @@ namespace STS2RitsuLib.Telemetry.RunHistory
 
         private static JsonNode? BuildSafeVariableNode(object? value)
         {
-            if (value is IEnumerable<string> strings)
-                return new JsonArray(strings.Select(static s => JsonValue.Create(s)).ToArray<JsonNode?>());
-
             return value switch
             {
                 null => null,
-                bool b => JsonValue.Create(b),
-                _ => JsonValue.Create(value.ToString()),
+                JsonNode node => node.DeepClone(),
+                IEnumerable<string> strings => new JsonArray(strings.Select(static s => JsonValue.Create(s))
+                    .ToArray<JsonNode?>()),
+                _ => value switch
+                {
+                    string s => JsonValue.Create(s),
+                    bool b => JsonValue.Create(b),
+                    byte n => JsonValue.Create(n),
+                    sbyte n => JsonValue.Create(n),
+                    short n => JsonValue.Create(n),
+                    ushort n => JsonValue.Create(n),
+                    int n => JsonValue.Create(n),
+                    uint n => JsonValue.Create(n),
+                    long n => JsonValue.Create(n),
+                    ulong n => JsonValue.Create(n),
+                    float n when float.IsFinite(n) => JsonValue.Create(n),
+                    double n when double.IsFinite(n) => JsonValue.Create(n),
+                    decimal n => JsonValue.Create(n),
+                    Enum e => JsonValue.Create(e.ToString()),
+                    _ => SerializeVariableNode(value),
+                },
             };
+        }
+
+        private static JsonNode? SerializeVariableNode(object value)
+        {
+            try
+            {
+                return JsonSerializer.SerializeToNode(value, value.GetType(), TelemetryJson.Options);
+            }
+            catch
+            {
+                return JsonValue.Create(value.ToString());
+            }
         }
 
         private static bool MayContainLocalPath(string key, object? value)

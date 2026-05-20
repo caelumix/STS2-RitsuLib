@@ -52,6 +52,7 @@ namespace STS2RitsuLib.Telemetry
                 payload,
                 properties);
             TelemetryQueue.Enqueue(envelope);
+            _ = TelemetryQueue.FlushApplicantAsync(applicant.ApplicantId);
         }
 
         public void CaptureException(

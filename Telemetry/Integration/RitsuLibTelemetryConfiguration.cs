@@ -6,6 +6,9 @@ namespace STS2RitsuLib.Telemetry
 
         internal static ITelemetryAdapter CreateAdapter()
         {
+            if (TelemetryRuntimeGate.IsDisabled)
+                return new DisabledTelemetryAdapter(TelemetryRuntimeGate.MobileDisabledReason);
+
             return new HttpJsonTelemetryAdapter(DefaultIngestEndpoint);
         }
     }

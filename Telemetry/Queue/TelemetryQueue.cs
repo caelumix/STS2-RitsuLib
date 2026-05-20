@@ -11,6 +11,9 @@ namespace STS2RitsuLib.Telemetry
 
         internal static void Enqueue(TelemetryEnvelope envelope)
         {
+            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
+                return;
+
             lock (Sync)
             {
                 var doc = ReadQueue(envelope.ApplicantId);
@@ -25,6 +28,9 @@ namespace STS2RitsuLib.Telemetry
 
         public static async Task FlushApplicantAsync(string applicantId, CancellationToken cancellationToken = default)
         {
+            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
+                return;
+
             TelemetryApplicant applicant;
 
             lock (Sync)
@@ -133,12 +139,18 @@ namespace STS2RitsuLib.Telemetry
 
         public static async Task FlushAllAsync(CancellationToken cancellationToken = default)
         {
+            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
+                return;
+
             foreach (var applicant in TelemetryRegistry.GetApplicants())
                 await FlushApplicantAsync(applicant.ApplicantId, cancellationToken);
         }
 
         public static void ClearApplicant(string applicantId)
         {
+            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
+                return;
+
             lock (Sync)
             {
                 var doc = ReadQueue(applicantId);
@@ -150,6 +162,9 @@ namespace STS2RitsuLib.Telemetry
 
         public static int GetQueuedEventCount(string applicantId)
         {
+            if (TelemetryRuntimeGate.IsDisabled)
+                return 0;
+
             lock (Sync)
             {
                 return ReadQueue(applicantId).Events.Count;

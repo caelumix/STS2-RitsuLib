@@ -62,6 +62,8 @@ namespace STS2RitsuLib.Telemetry.Diagnostics
         {
             ArgumentNullException.ThrowIfNull(exception);
             ArgumentException.ThrowIfNullOrWhiteSpace(source);
+            if (TelemetryRuntimeGate.IsDisabled)
+                return;
 
             try
             {
@@ -100,6 +102,9 @@ namespace STS2RitsuLib.Telemetry.Diagnostics
 
         internal static void InitializeGlobalExceptionHandlers()
         {
+            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
+                return;
+
             lock (Sync)
             {
                 if (_globalHandlersInitialized)

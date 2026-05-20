@@ -1,7 +1,10 @@
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Nodes.Screens.Timeline;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Timeline;
 using MegaCrit.Sts2.Core.Timeline.Epochs;
+using STS2RitsuLib.Scaffolding.Characters;
 using STS2RitsuLib.Timeline.Scaffolding;
 
 namespace STS2RitsuLib.Timeline
@@ -61,6 +64,8 @@ namespace STS2RitsuLib.Timeline
 
         internal static void MergeModEpochTemplateSlotsInto(List<EpochSlotData> slotsToAdd, ProgressState? progress)
         {
+            PromoteNeowCharacterRootUnlocks(progress);
+            RefreshMergedModSlotStates(slotsToAdd, progress);
             RemoveUnattachedUnobtainedModEpochTemplateSlots(slotsToAdd, progress);
 
             var existing = new HashSet<string>(slotsToAdd.Count);
@@ -136,12 +141,70 @@ namespace STS2RitsuLib.Timeline
                 if (model is not ModEpochTemplate)
                     continue;
 
+                if (TryPromoteNeowCharacterRootUnlock(model, progress))
+                    continue;
+
                 var row = progress.Epochs.FirstOrDefault(e => e.Id == id);
                 if (row?.State != EpochState.ObtainedNoSlot && (row != null || !IsModTimelineRootSlot(id)))
                     continue;
 
                 SaveManager.Instance.UnlockSlot(id);
             }
+        }
+
+        private static void RefreshMergedModSlotStates(List<EpochSlotData> slotsToAdd, ProgressState? progress)
+        {
+            if (progress == null)
+                return;
+
+            for (var i = 0; i < slotsToAdd.Count; i++)
+            {
+                var slot = slotsToAdd[i];
+                if (slot.Model is not ModEpochTemplate)
+                    continue;
+
+                var state = ResolveMergedModSlotState(slot.Model.Id, progress);
+                if (slot.State == state)
+                    continue;
+
+                slotsToAdd[i] = new(slot.Model, state);
+            }
+        }
+
+        private static void PromoteNeowCharacterRootUnlocks(ProgressState? progress)
+        {
+            if (progress == null)
+                return;
+
+            foreach (var id in EpochModel.AllEpochIds)
+            {
+                EpochModel model;
+                try
+                {
+                    model = EpochModel.Get(id);
+                }
+                catch
+                {
+                    continue;
+                }
+
+                TryPromoteNeowCharacterRootUnlock(model, progress);
+            }
+        }
+
+        private static bool TryPromoteNeowCharacterRootUnlock(EpochModel model, ProgressState? progress)
+        {
+            if (progress == null)
+                return false;
+            if (!ShouldObtainWithNeow(model))
+                return false;
+
+            var row = progress.Epochs.FirstOrDefault(e => e.Id == model.Id);
+            if (row?.State is EpochState.Obtained or EpochState.Revealed)
+                return true;
+
+            SaveManager.Instance.ObtainEpochOverride(model.Id, EpochState.Obtained);
+            return true;
         }
 
         private static void RemoveUnattachedUnobtainedModEpochTemplateSlots(List<EpochSlotData> slotsToAdd,
@@ -166,6 +229,57 @@ namespace STS2RitsuLib.Timeline
         private static bool ShouldShowUnobtainedModSlot(string id, ProgressState? progress)
         {
             return IsModTimelineRootSlot(id) || IsParentVisibleUnobtainedModSlot(id, progress);
+        }
+
+        private static bool ShouldObtainWithNeow(EpochModel model)
+        {
+            if (model is not ModEpochTemplate)
+                return false;
+            if (!IsModTimelineRootSlot(model.Id))
+                return false;
+            if (!TryGetCharacterUnlockType(model.GetType(), out var characterType))
+                return false;
+
+            CharacterModel? character;
+            try
+            {
+                character = ModelDb.GetByIdOrNull<CharacterModel>(ModelDb.GetId(characterType));
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (character == null)
+                return false;
+            if (character is IModCharacterEpochTimelineRequirement { RequiresEpochAndTimeline: false })
+                return false;
+            if (character is not IModCharacterUnlockPrerequisite { UnlocksAfterRunAsType: { } prerequisiteType })
+                return false;
+
+            try
+            {
+                return ModelDb.GetId(prerequisiteType) == ModelDb.GetId<Ironclad>();
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryGetCharacterUnlockType(Type epochType, out Type characterType)
+        {
+            for (var type = epochType; type != null; type = type.BaseType)
+            {
+                if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(CharacterUnlockEpochTemplate<>))
+                    continue;
+
+                characterType = type.GetGenericArguments()[0];
+                return true;
+            }
+
+            characterType = typeof(CharacterModel);
+            return false;
         }
 
         private static bool IsModTimelineRootSlot(string id)

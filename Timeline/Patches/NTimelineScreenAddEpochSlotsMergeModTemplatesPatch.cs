@@ -35,7 +35,7 @@ namespace STS2RitsuLib.Timeline.Patches
 
         /// <inheritdoc />
         public static string Description =>
-            "Merge obtained, root, or parent-visible ModEpochTemplate slots after Neow expansion";
+            "Merge obtained, Neow-unlocked root, or parent-visible ModEpochTemplate slots after Neow expansion";
 
         /// <inheritdoc />
         public static bool IsCritical => false;

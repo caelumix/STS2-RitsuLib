@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using STS2RitsuLib.Compat;
@@ -20,29 +18,15 @@ namespace STS2RitsuLib.Telemetry.RunHistory
                              StringComparer.OrdinalIgnoreCase))
             {
                 var assemblyName = mod.assembly?.GetName();
-                var dependencies = new JsonArray();
-                foreach (var dependency in EnumerateDependencies(mod.manifest?.dependencies))
-                    dependencies.Add(new JsonObject
-                    {
-                        ["id"] = ReadStringMember(dependency, "id") ?? dependency.ToString(),
-                        ["min_version"] = ReadStringMember(dependency, "minVersion"),
-                    });
 
                 mods.Add(new JsonObject
                 {
                     ["id"] = mod.manifest?.id ?? assemblyName?.Name ?? "<unknown>",
                     ["name"] = mod.manifest?.name ?? assemblyName?.Name ?? "<unknown>",
-                    ["author"] = mod.manifest?.author,
                     ["version"] = mod.manifest?.version,
-                    ["load_state"] = mod.state.ToString(),
                     ["state"] = mod.state.ToString(),
-                    ["is_loaded"] = mod.state == ModLoadState.Loaded,
                     ["source"] = mod.modSource.ToString(),
                     ["affects_gameplay"] = mod.manifest?.affectsGameplay ?? true,
-                    ["has_dll"] = mod.manifest?.hasDll,
-                    ["has_pck"] = mod.manifest?.hasPck,
-                    ["min_game_version"] = ReadStringMember(mod.manifest, "minGameVersion"),
-                    ["dependencies"] = dependencies,
                     ["assembly"] = assemblyName?.Name,
                     ["assembly_version"] = assemblyName?.Version?.ToString(),
                     ["error_count"] = mod.errors?.Count ?? 0,
@@ -51,32 +35,6 @@ namespace STS2RitsuLib.Telemetry.RunHistory
             }
 
             return mods;
-        }
-
-        private static IEnumerable<object> EnumerateDependencies(object? dependencies)
-        {
-            if (dependencies is string dependency)
-            {
-                yield return dependency;
-                yield break;
-            }
-
-            if (dependencies is not IEnumerable enumerable)
-                yield break;
-
-            foreach (var item in enumerable)
-                if (item != null)
-                    yield return item;
-        }
-
-        private static string? ReadStringMember(object? source, string name)
-        {
-            if (source == null)
-                return null;
-            if (source is string text)
-                return string.Equals(name, "id", StringComparison.Ordinal) ? text : null;
-
-            return ReadMemberValue(source, name)?.ToString();
         }
 
         private static object? ReadMemberValue(object? source, string name)
@@ -108,7 +66,7 @@ namespace STS2RitsuLib.Telemetry.RunHistory
             foreach (var node in mods)
             {
                 if (node is not JsonObject obj ||
-                    !string.Equals(obj["load_state"]?.GetValue<string>(), "Loaded",
+                    !string.Equals(obj["state"]?.GetValue<string>(), "Loaded",
                         StringComparison.OrdinalIgnoreCase))
                     continue;
 

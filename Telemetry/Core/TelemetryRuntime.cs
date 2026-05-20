@@ -255,7 +255,7 @@ namespace STS2RitsuLib.Telemetry
                         continue;
 
                     if (loadState != null &&
-                        !string.Equals(obj["load_state"]?.GetValue<string>(), loadState,
+                        !string.Equals(obj["state"]?.GetValue<string>(), loadState,
                             StringComparison.OrdinalIgnoreCase))
                         continue;
 
@@ -271,7 +271,7 @@ namespace STS2RitsuLib.Telemetry
                 foreach (var node in Mods)
                 {
                     if (node is not JsonObject obj ||
-                        !string.Equals(obj["load_state"]?.GetValue<string>(), "Loaded",
+                        !string.Equals(obj["state"]?.GetValue<string>(), "Loaded",
                             StringComparison.OrdinalIgnoreCase) ||
                         obj["affects_gameplay"]?.GetValue<bool>() == false)
                         continue;

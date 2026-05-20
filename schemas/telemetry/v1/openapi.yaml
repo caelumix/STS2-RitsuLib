@@ -297,49 +297,16 @@ components:
           type: string
         name:
           type: string
-        author:
-          type:
-            - string
-            - 'null'
         version:
           type:
             - string
             - 'null'
-        load_state:
-          type: string
         state:
           type: string
-          description: Compatibility alias for load_state.
-        is_loaded:
-          type: boolean
         source:
           type: string
         affects_gameplay:
           type: boolean
-        has_dll:
-          type:
-            - boolean
-            - 'null'
-        has_pck:
-          type:
-            - boolean
-            - 'null'
-        min_game_version:
-          type:
-            - string
-            - 'null'
-        dependencies:
-          type: array
-          items:
-            type: object
-            additionalProperties: false
-            properties:
-              id:
-                type: string
-              min_version:
-                type:
-                  - string
-                  - 'null'
         assembly:
           type:
             - string

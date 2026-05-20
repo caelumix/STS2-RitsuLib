@@ -1,12 +1,28 @@
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
+using Godot;
+using STS2RitsuLib.Compat;
 using STS2RitsuLib.Telemetry.RunHistory;
+using STS2RitsuLib.Utils;
+using Environment = System.Environment;
 
 namespace STS2RitsuLib.Telemetry
 {
     internal static class TelemetryEnvelopeFactory
     {
         internal const string BasePayloadOverrideKey = "__ritsulib_base_payload";
+        private const string DevPackageVersionPrefix = "9999.0.0-dev.";
         private static readonly string SessionId = Guid.NewGuid().ToString("N");
+        private static readonly Assembly Assembly = typeof(Const).Assembly;
+
+        private static readonly string InformationalVersion =
+            Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ??
+            Const.Version;
+
+        private static readonly IReadOnlyDictionary<string, string> Metadata =
+            Assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
+                .ToDictionary(x => x.Key, x => x.Value ?? "", StringComparer.OrdinalIgnoreCase);
 
         internal static TelemetryEnvelope Create(
             TelemetryApplicant applicant,
@@ -15,10 +31,10 @@ namespace STS2RitsuLib.Telemetry
             JsonNode? applicantPayload,
             IReadOnlyDictionary<string, object?>? properties)
         {
-            var mergedProperties = BuildCommonProperties(applicant);
-            if (properties != null)
-                foreach (var kvp in properties)
-                    mergedProperties[kvp.Key] = kvp.Value;
+            var mergedProperties = properties == null
+                ? new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+                : new(properties, StringComparer.OrdinalIgnoreCase);
+            AddCommonProperties(mergedProperties, applicant);
 
             var payload = BuildPayload(applicant, request, eventName, applicantPayload);
             return new()
@@ -32,6 +48,12 @@ namespace STS2RitsuLib.Telemetry
             };
         }
 
+        private static void AddCommonProperties(Dictionary<string, object?> properties, TelemetryApplicant applicant)
+        {
+            foreach (var kvp in BuildCommonProperties(applicant))
+                properties[kvp.Key] = kvp.Value;
+        }
+
         private static Dictionary<string, object?> BuildCommonProperties(TelemetryApplicant applicant)
         {
             return new(StringComparer.OrdinalIgnoreCase)
@@ -39,11 +61,80 @@ namespace STS2RitsuLib.Telemetry
                 ["anonymous_install_id"] = TelemetryIdentityStore.AnonymousInstallId,
                 ["session_id"] = SessionId,
                 ["ritsulib_version"] = Const.Version,
+                ["ritsulib_informational_version"] = InformationalVersion,
+                ["ritsulib_build_channel"] = ResolveBuildChannel(),
+                ["ritsulib_build_configuration"] = ResolveBuildConfiguration(),
                 ["applicant_id"] = applicant.ApplicantId,
                 ["owner_mod_id"] = applicant.OwnerModId,
                 ["applicant_display_name"] = applicant.ResolveDisplayName(),
+                ["game_version"] = ResolveGameVersion(),
+                ["game_release_label"] = Sts2HostVersion.ReleaseLabel,
                 ["platform"] = Environment.OSVersion.Platform.ToString(),
+                ["os_name"] = ResolveGodotOsName(),
+                ["os_version"] = Environment.OSVersion.VersionString,
+                ["process_architecture"] = RuntimeInformation.ProcessArchitecture.ToString(),
+                ["dotnet_runtime"] = RuntimeInformation.FrameworkDescription,
+                ["game_language"] = ResolveGameLanguage(),
             };
+        }
+
+        private static string? ResolveGameVersion()
+        {
+            return Sts2HostVersion.Numeric?.ToString() ?? Sts2HostVersion.ReleaseLabel;
+        }
+
+        private static string? ResolveGodotOsName()
+        {
+            try
+            {
+                return OS.GetName();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static string? ResolveGameLanguage()
+        {
+            try
+            {
+                return I18N.ResolveCurrentLanguageCode();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static string ResolveBuildChannel()
+        {
+            if (Metadata.TryGetValue("RitsuLibTelemetryBuildChannel", out var channel) &&
+                !string.IsNullOrWhiteSpace(channel))
+                return channel;
+
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (InformationalVersion.StartsWith(DevPackageVersionPrefix, StringComparison.OrdinalIgnoreCase))
+                return "dev";
+
+#if DEBUG
+            return "local_debug";
+#else
+            return "release";
+#endif
+        }
+
+        private static string ResolveBuildConfiguration()
+        {
+            if (Metadata.TryGetValue("RitsuLibTelemetryBuildConfiguration", out var configuration) &&
+                !string.IsNullOrWhiteSpace(configuration))
+                return configuration;
+
+#if DEBUG
+            return "Debug";
+#else
+            return "Release";
+#endif
         }
 
         private static JsonObject BuildPayload(
@@ -107,6 +198,7 @@ namespace STS2RitsuLib.Telemetry
             {
                 TelemetryDataCategory.ModInventory => new()
                 {
+                    ["mods"] = RunHistoryTelemetryCollector.BuildModInventoryList(),
                     ["loaded_mods"] = RunHistoryTelemetryCollector.BuildLoadedModList(),
                 },
                 _ => new(),

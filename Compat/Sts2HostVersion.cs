@@ -7,9 +7,9 @@ namespace STS2RitsuLib.Compat
 {
     /// <summary>
     ///     Best-effort version of the running STS2 host from <c>release_info.json</c> or the <c>sts2</c> assembly.
-    ///     Not currently consumed by RitsuLib; kept for future version-gated behavior or diagnostics.
+    ///     Used by telemetry and kept available for future version-gated behavior or diagnostics.
     ///     从 <c>release_info.json</c> 或 <c>sts2</c> 程序集尽力获取正在运行的 STS2 宿主版本。
-    ///     RitsuLib 当前未使用；保留用于未来按版本门控的行为或诊断。
+    ///     供 telemetry 使用，并保留给未来按版本门控的行为或诊断。
     /// </summary>
     internal static class Sts2HostVersion
     {

@@ -130,6 +130,9 @@ def run_pack(
         args.append(f"/p:Version={override}")
         args.append(f"/p:PackageVersion={override}")
         args.append(f"/p:AssemblyInformationalVersion={override}")
+        args.append("/p:RitsuLibTelemetryBuildChannel=dev")
+    else:
+        args.append("/p:RitsuLibTelemetryBuildChannel=release")
     if sts2_api_signature_root is not None:
         args.append(f"/p:Sts2ApiSignatureRoot={sts2_api_signature_root}")
     if sts2_dir is not None:

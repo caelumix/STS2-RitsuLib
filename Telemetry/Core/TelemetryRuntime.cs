@@ -11,6 +11,7 @@ namespace STS2RitsuLib.Telemetry
     {
         private static readonly Lock Sync = new();
         private static readonly HashSet<string> DeliveredStartupKeys = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> ConfirmedStartupKeys = new(StringComparer.OrdinalIgnoreCase);
         private static StartupTelemetrySnapshot? _startupSnapshot;
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace STS2RitsuLib.Telemetry
 
                 _startupSnapshot = new(
                     DateTimeOffset.UtcNow,
-                    RunHistoryTelemetryCollector.BuildLoadedModList());
+                    RunHistoryTelemetryCollector.BuildModInventoryList());
             }
 
             RitsuLibFramework.Logger.Info("[Telemetry] Captured persistent startup telemetry snapshot.");
@@ -46,8 +47,8 @@ namespace STS2RitsuLib.Telemetry
         }
 
         /// <summary>
-        ///     Refreshes the cached loaded-mod list after the host has finished mod initialization.
-        ///     在宿主完成 mod 初始化后刷新缓存的已加载 mod 列表。
+        ///     Refreshes the cached mod inventory after the host has finished mod initialization.
+        ///     在宿主完成 mod 初始化后刷新缓存的 mod 清单。
         /// </summary>
         internal static void RefreshStartupModInventorySnapshot(string reason)
         {
@@ -58,7 +59,7 @@ namespace STS2RitsuLib.Telemetry
 
                 _startupSnapshot = _startupSnapshot with
                 {
-                    LoadedMods = RunHistoryTelemetryCollector.BuildLoadedModList(),
+                    Mods = RunHistoryTelemetryCollector.BuildModInventoryList(),
                 };
             }
 
@@ -84,15 +85,70 @@ namespace STS2RitsuLib.Telemetry
             if (!TelemetryRegistry.TryGetApplicant(applicantId, out var applicant))
                 return;
 
-            TryReplayStartupEvent(applicant, "basic_usage", "session_start", snapshot.BuildSessionStartPayload());
-            TryReplayStartupEvent(applicant, "mod_inventory", "mod_inventory", snapshot.BuildModInventoryPayload());
+            TryReplayStartupEvent(
+                applicant,
+                "basic_usage",
+                "session_start",
+                snapshot.BuildSessionStartPayload(),
+                snapshot.BuildSessionStartProperties());
+            TryReplayStartupEvent(
+                applicant,
+                "mod_inventory",
+                "mod_inventory",
+                snapshot.BuildModInventoryPayload(),
+                snapshot.BuildModInventoryProperties());
+        }
+
+        /// <summary>
+        ///     Clears startup delivery markers for queued events that were discarded before being sent.
+        ///     清除尚未发送就被丢弃的启动事件投递标记。
+        /// </summary>
+        internal static void ResetStartupDeliveryForDiscardedEvents(IEnumerable<TelemetryEnvelope> events)
+        {
+            var discardedKeys = events
+                .Select(BuildStartupDeliveryKey)
+                .Where(key => key != null)
+                .ToArray();
+            if (discardedKeys.Length == 0)
+                return;
+
+            lock (Sync)
+            {
+                foreach (var key in discardedKeys)
+                    if (!ConfirmedStartupKeys.Contains(key!))
+                        DeliveredStartupKeys.Remove(key!);
+            }
+        }
+
+        /// <summary>
+        ///     Marks startup events as successfully handed to the applicant backend.
+        ///     将启动事件标记为已成功交给申请方后端。
+        /// </summary>
+        internal static void MarkStartupDeliveryConfirmed(IEnumerable<TelemetryEnvelope> events)
+        {
+            var confirmedKeys = events
+                .Select(BuildStartupDeliveryKey)
+                .Where(key => key != null)
+                .ToArray();
+            if (confirmedKeys.Length == 0)
+                return;
+
+            lock (Sync)
+            {
+                foreach (var key in confirmedKeys)
+                {
+                    ConfirmedStartupKeys.Add(key!);
+                    DeliveredStartupKeys.Add(key!);
+                }
+            }
         }
 
         private static void TryReplayStartupEvent(
             TelemetryApplicant applicant,
             string requestId,
             string eventName,
-            JsonNode payload)
+            JsonNode payload,
+            IReadOnlyDictionary<string, object?>? properties)
         {
             if (!TelemetryRegistry.TryGetRequest(applicant, requestId, out var request))
                 return;
@@ -100,7 +156,7 @@ namespace STS2RitsuLib.Telemetry
             if (!TelemetryConsentStore.IsRequestGranted(applicant, request))
                 return;
 
-            var deliveryKey = $"{applicant.ApplicantId}\n{requestId}\n{eventName}";
+            var deliveryKey = BuildStartupDeliveryKey(applicant.ApplicantId, requestId, eventName);
             lock (Sync)
             {
                 if (!DeliveredStartupKeys.Add(deliveryKey))
@@ -109,10 +165,22 @@ namespace STS2RitsuLib.Telemetry
 
             RitsuLibFramework.Logger.Info(
                 $"[Telemetry] Replaying startup event '{eventName}' to applicant '{applicant.ApplicantId}'.");
-            new TelemetryClient(applicant.ApplicantId).CapturePayload(eventName, requestId, payload);
+            new TelemetryClient(applicant.ApplicantId).CapturePayload(eventName, requestId, payload, properties);
         }
 
-        private sealed record StartupTelemetrySnapshot(DateTimeOffset CapturedAtUtc, JsonArray LoadedMods)
+        private static string? BuildStartupDeliveryKey(TelemetryEnvelope envelope)
+        {
+            return envelope.EventName is "session_start" or "mod_inventory"
+                ? BuildStartupDeliveryKey(envelope.ApplicantId, envelope.RequestId, envelope.EventName)
+                : null;
+        }
+
+        private static string BuildStartupDeliveryKey(string applicantId, string requestId, string eventName)
+        {
+            return $"{applicantId}\n{requestId}\n{eventName}";
+        }
+
+        private sealed record StartupTelemetrySnapshot(DateTimeOffset CapturedAtUtc, JsonArray Mods)
         {
             /// <summary>
             ///     Builds the lightweight session-start payload. Common envelope properties carry version/platform ids.
@@ -127,14 +195,30 @@ namespace STS2RitsuLib.Telemetry
             }
 
             /// <summary>
-            ///     Builds the mod-inventory trigger payload; the envelope factory attaches the actual loaded-mod list.
-            ///     构建 mod-inventory 触发载荷；实际已加载 mod 清单由 envelope factory 附加。
+            ///     Builds query-friendly session-start metadata from the captured startup snapshot.
+            ///     从启动快照构建便于查询的 session-start 元数据。
+            /// </summary>
+            public Dictionary<string, object?> BuildSessionStartProperties()
+            {
+                return new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["startup_snapshot_at_utc"] = CapturedAtUtc.ToString("O"),
+                    ["registered_mod_count"] = CountMods(),
+                    ["loaded_mod_count"] = CountMods("Loaded"),
+                    ["gameplay_mod_count"] = CountGameplayLoadedMods(),
+                };
+            }
+
+            /// <summary>
+            ///     Builds the mod-inventory trigger payload with the captured mod inventory.
+            ///     使用已采集的 mod 清单构建 mod-inventory 触发载荷。
             /// </summary>
             public JsonObject BuildModInventoryPayload()
             {
                 var basePayload = new JsonObject
                 {
-                    ["loaded_mods"] = LoadedMods.DeepClone(),
+                    ["mods"] = Mods.DeepClone(),
+                    ["loaded_mods"] = RunHistoryTelemetryCollector.FilterLoadedMods(Mods),
                 };
 
                 return new()
@@ -142,6 +226,60 @@ namespace STS2RitsuLib.Telemetry
                     ["captured_at_utc"] = CapturedAtUtc.ToString("O"),
                     [TelemetryEnvelopeFactory.BasePayloadOverrideKey] = basePayload,
                 };
+            }
+
+            /// <summary>
+            ///     Builds query-friendly mod inventory metadata.
+            ///     构建便于查询的 mod 清单元数据。
+            /// </summary>
+            public Dictionary<string, object?> BuildModInventoryProperties()
+            {
+                return new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["startup_snapshot_at_utc"] = CapturedAtUtc.ToString("O"),
+                    ["registered_mod_count"] = CountMods(),
+                    ["loaded_mod_count"] = CountMods("Loaded"),
+                    ["disabled_mod_count"] = CountMods("Disabled"),
+                    ["failed_mod_count"] = CountMods("Failed"),
+                    ["added_at_runtime_mod_count"] = CountMods("AddedAtRuntime"),
+                    ["gameplay_mod_count"] = CountGameplayLoadedMods(),
+                };
+            }
+
+            private int CountMods(string? loadState = null)
+            {
+                var count = 0;
+                foreach (var node in Mods)
+                {
+                    if (node is not JsonObject obj)
+                        continue;
+
+                    if (loadState != null &&
+                        !string.Equals(obj["state"]?.GetValue<string>(), loadState,
+                            StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    count++;
+                }
+
+                return count;
+            }
+
+            private int CountGameplayLoadedMods()
+            {
+                var count = 0;
+                foreach (var node in Mods)
+                {
+                    if (node is not JsonObject obj ||
+                        !string.Equals(obj["state"]?.GetValue<string>(), "Loaded",
+                            StringComparison.OrdinalIgnoreCase) ||
+                        obj["affects_gameplay"]?.GetValue<bool>() == false)
+                        continue;
+
+                    count++;
+                }
+
+                return count;
             }
         }
     }

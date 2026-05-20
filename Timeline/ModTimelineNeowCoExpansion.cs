@@ -86,7 +86,7 @@ namespace STS2RitsuLib.Timeline
                     continue;
 
                 var state = ResolveMergedModSlotState(id, progress);
-                if (state == EpochSlotState.NotObtained && !IsParentVisibleUnobtainedModSlot(id, progress))
+                if (state == EpochSlotState.NotObtained && !ShouldShowUnobtainedModSlot(id, progress))
                     continue;
                 slotsToAdd.Add(new(model, state));
                 existing.Add(id);
@@ -137,7 +137,7 @@ namespace STS2RitsuLib.Timeline
                     continue;
 
                 var row = progress.Epochs.FirstOrDefault(e => e.Id == id);
-                if (row?.State != EpochState.ObtainedNoSlot)
+                if (row?.State != EpochState.ObtainedNoSlot && (row != null || !IsModTimelineRootSlot(id)))
                     continue;
 
                 SaveManager.Instance.UnlockSlot(id);
@@ -156,11 +156,40 @@ namespace STS2RitsuLib.Timeline
                 if (ResolveMergedModSlotState(slot.Model.Id, progress) != EpochSlotState.NotObtained)
                     continue;
 
-                if (IsParentVisibleUnobtainedModSlot(slot.Model.Id, progress))
+                if (ShouldShowUnobtainedModSlot(slot.Model.Id, progress))
                     continue;
 
                 slotsToAdd.RemoveAt(i);
             }
+        }
+
+        private static bool ShouldShowUnobtainedModSlot(string id, ProgressState? progress)
+        {
+            return IsModTimelineRootSlot(id) || IsParentVisibleUnobtainedModSlot(id, progress);
+        }
+
+        private static bool IsModTimelineRootSlot(string id)
+        {
+            foreach (var parentId in EpochModel.AllEpochIds)
+            {
+                if (parentId == id)
+                    continue;
+
+                EpochModel parent;
+                try
+                {
+                    parent = EpochModel.Get(parentId);
+                }
+                catch
+                {
+                    continue;
+                }
+
+                if (parent.GetTimelineExpansion().Any(child => child.Id == id))
+                    return false;
+            }
+
+            return true;
         }
 
         private static bool IsParentVisibleUnobtainedModSlot(string id, ProgressState? progress)

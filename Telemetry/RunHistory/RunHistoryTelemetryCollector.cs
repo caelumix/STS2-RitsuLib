@@ -164,9 +164,6 @@ namespace STS2RitsuLib.Telemetry.RunHistory
             JsonNode? applicantPayload = null,
             IReadOnlyDictionary<string, object?>? properties = null)
         {
-            if (TelemetryRuntimeGate.TryNoOpForDisabledMobile())
-                return;
-
             ArgumentException.ThrowIfNullOrWhiteSpace(applicantId);
             ArgumentNullException.ThrowIfNull(runHistory);
 
@@ -193,9 +190,6 @@ namespace STS2RitsuLib.Telemetry.RunHistory
 
         internal static void CaptureEndedRun(RunEndedEvent evt)
         {
-            if (TelemetryRuntimeGate.IsDisabled)
-                return;
-
             JsonNode? runHistory;
             try
             {
@@ -250,7 +244,9 @@ namespace STS2RitsuLib.Telemetry.RunHistory
             RitsuLibFramework.Logger.Info(
                 $"[Telemetry] Captured ended run history for {capturedApplicants.Count} authorized applicant(s); abandoned={evt.IsAbandoned}, victory={evt.IsVictory}.");
             foreach (var applicantId in capturedApplicants)
-                _ = TelemetryQueue.FlushApplicantAsync(applicantId);
+                TelemetryTaskRunner.Forget(
+                    TelemetryQueue.FlushApplicantAsync(applicantId),
+                    "flush_applicant_after_run_history");
         }
 
         private static bool ShouldCaptureForRequest(

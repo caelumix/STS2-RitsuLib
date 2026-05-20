@@ -61,6 +61,8 @@ namespace STS2RitsuLib.Timeline
 
         internal static void MergeModEpochTemplateSlotsInto(List<EpochSlotData> slotsToAdd, ProgressState? progress)
         {
+            RemoveUnattachedUnobtainedModEpochTemplateSlots(slotsToAdd, progress);
+
             var existing = new HashSet<string>(slotsToAdd.Count);
             foreach (var s in slotsToAdd)
                 existing.Add(s.Model.Id);
@@ -84,7 +86,7 @@ namespace STS2RitsuLib.Timeline
                     continue;
 
                 var state = ResolveMergedModSlotState(id, progress);
-                if (state == EpochSlotState.NotObtained)
+                if (state == EpochSlotState.NotObtained && !IsParentVisibleUnobtainedModSlot(id, progress))
                     continue;
                 slotsToAdd.Add(new(model, state));
                 existing.Add(id);
@@ -95,9 +97,10 @@ namespace STS2RitsuLib.Timeline
 
         /// <summary>
         ///     Called from <see cref="EpochModel.QueueTimelineExpansion" /> postfix only; runs mod
-        ///     <see cref="SaveManager.UnlockSlot" />
-        ///     when the expansion was triggered from <see cref="NeowEpoch.QueueUnlocks" />.
-        ///     仅从 <see cref="EpochModel.QueueTimelineExpansion" /> postfix 调用；当扩展由 <see cref="NeowEpoch.QueueUnlocks" /> 触发时运行 mod
+        ///     <see cref="SaveManager.UnlockSlot" /> for already-obtained mod epochs when the expansion was triggered from
+        ///     <see cref="NeowEpoch.QueueUnlocks" />.
+        ///     仅从 <see cref="EpochModel.QueueTimelineExpansion" /> postfix 调用；当扩展由 <see cref="NeowEpoch.QueueUnlocks" />
+        ///     触发时为已获得的 mod 纪元运行
         ///     <see cref="SaveManager.UnlockSlot" />。
         /// </summary>
         internal static void OnQueueTimelineExpansionPostfix(EpochModel[] vanillaEpochs)
@@ -113,6 +116,7 @@ namespace STS2RitsuLib.Timeline
 
         private static void UnlockModEpochSlotsCore(EpochModel[] vanillaEpochs)
         {
+            var progress = SaveManager.Instance.Progress;
             var vanillaIds = vanillaEpochs.Select(e => e.Id).ToHashSet();
             foreach (var id in EpochModel.AllEpochIds)
             {
@@ -132,8 +136,62 @@ namespace STS2RitsuLib.Timeline
                 if (model is not ModEpochTemplate)
                     continue;
 
+                var row = progress.Epochs.FirstOrDefault(e => e.Id == id);
+                if (row?.State != EpochState.ObtainedNoSlot)
+                    continue;
+
                 SaveManager.Instance.UnlockSlot(id);
             }
+        }
+
+        private static void RemoveUnattachedUnobtainedModEpochTemplateSlots(List<EpochSlotData> slotsToAdd,
+            ProgressState? progress)
+        {
+            for (var i = slotsToAdd.Count - 1; i >= 0; i--)
+            {
+                var slot = slotsToAdd[i];
+                if (slot.Model is not ModEpochTemplate)
+                    continue;
+
+                if (ResolveMergedModSlotState(slot.Model.Id, progress) != EpochSlotState.NotObtained)
+                    continue;
+
+                if (IsParentVisibleUnobtainedModSlot(slot.Model.Id, progress))
+                    continue;
+
+                slotsToAdd.RemoveAt(i);
+            }
+        }
+
+        private static bool IsParentVisibleUnobtainedModSlot(string id, ProgressState? progress)
+        {
+            if (progress == null)
+                return false;
+
+            var row = progress.Epochs.FirstOrDefault(e => e.Id == id);
+            if (row?.State != EpochState.NotObtained)
+                return false;
+
+            foreach (var epoch in progress.Epochs)
+            {
+                if (epoch.State < EpochState.Revealed)
+                    continue;
+
+                EpochModel parent;
+                try
+                {
+                    parent = EpochModel.Get(epoch.Id);
+                }
+                catch
+                {
+                    continue;
+                }
+
+                if (parent.GetTimelineExpansion().Any(child => child.Id == id))
+                    return true;
+            }
+
+            return false;
         }
 
         private static EpochSlotState ResolveMergedModSlotState(string id, ProgressState? progress)

@@ -83,7 +83,10 @@ namespace STS2RitsuLib.Timeline
                 if (model is not ModEpochTemplate)
                     continue;
 
-                slotsToAdd.Add(new(model, ResolveMergedModSlotState(id, progress)));
+                var state = ResolveMergedModSlotState(id, progress);
+                if (state == EpochSlotState.NotObtained)
+                    continue;
+                slotsToAdd.Add(new(model, state));
                 existing.Add(id);
             }
 

@@ -396,6 +396,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<AllCharactersPatch>();
             patcher.RegisterPatch<AllMonstersPatch>();
             patcher.RegisterPatch<ActsPatch>();
+            patcher.RegisterPatch<RelicCollectionActListPatch>();
             patcher.RegisterPatch<AllPowersPatch>();
             patcher.RegisterPatch<AllOrbsPatch>();
             patcher.RegisterPatch<AllSharedCardPoolsPatch>();

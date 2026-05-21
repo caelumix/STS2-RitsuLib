@@ -29,7 +29,6 @@ using STS2RitsuLib.RuntimeInput;
 using STS2RitsuLib.Scaffolding.Ancients.Options;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Settings;
-using STS2RitsuLib.Settings.RunSidecar;
 using STS2RitsuLib.Telemetry;
 using STS2RitsuLib.Telemetry.Diagnostics;
 using STS2RitsuLib.Timeline;
@@ -440,8 +439,6 @@ namespace STS2RitsuLib
                 ProfileManager.Instance.Initialize();
                 ModDataStore.InitializeAllProfileScoped();
                 ModDataRuntimeInterop.PushLoadedDataToAllProviders();
-                ModRunSidecarSession.AttachLifecycleHandlers();
-
                 _profileServicesInitialized = true;
 
                 var profileInitializedEvent = new ProfileServicesInitializedEvent(

@@ -136,7 +136,9 @@ namespace STS2RitsuLib
                 patcher.RegisterPatch<RitsuLibMobileModelDbInitPostfixPatch>();
             else
                 patcher.RegisterPatch<NDailyRunLoadScreenBeginRunMissingCharacterPatch>();
+            patcher.RegisterPatch<LocManagerGetTableI18NBridgePatch>();
             patcher.RegisterPatch<LocTableHasEntryI18NBridgePatch>();
+            patcher.RegisterPatch<LocTableIsLocalKeyI18NBridgePatch>();
             patcher.RegisterPatch<LocTableGetRawTextI18NBridgePatch>();
             patcher.RegisterPatch<LocTableGetLocStringI18NBridgePatch>();
             patcher.RegisterPatch<LocTableGetLocStringCompatibilityPatch>();

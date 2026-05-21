@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Diagnostics;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace STS2RitsuLib.Content
@@ -49,6 +50,7 @@ namespace STS2RitsuLib.Content
         private static readonly HashSet<Type> RegisteredMonsters = [];
         private static readonly HashSet<Type> RegisteredPowers = [];
         private static readonly HashSet<Type> RegisteredOrbs = [];
+        private static readonly HashSet<Type> RegisteredModelComponents = [];
         private static readonly HashSet<Type> RegisteredSharedCardPools = [];
         private static readonly HashSet<Type> RegisteredSharedEvents = [];
         private static readonly HashSet<Type> RegisteredSharedAncients = [];
@@ -271,6 +273,19 @@ namespace STS2RitsuLib.Content
             ArgumentException.ThrowIfNullOrWhiteSpace(localTargetTypeStem);
 
             return GetCompoundId(modId, "TARGETTYPE", localTargetTypeStem);
+        }
+
+        /// <summary>
+        ///     Builds a mod-scoped model-component id using the ritsulib three-segment convention with middle segment
+        ///     <c>MODELCOMPONENT</c>.
+        ///     使用 ritsulib 三段式约定构建 mod 作用域的模型组件 ID，中间段为 <c>MODELCOMPONENT</c>。
+        /// </summary>
+        public static string GetQualifiedModelComponentId(string modId, string localComponentStem)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(modId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(localComponentStem);
+
+            return GetCompoundId(modId, "MODELCOMPONENT", localComponentStem);
         }
 
         /// <summary>
@@ -702,6 +717,95 @@ namespace STS2RitsuLib.Content
         public void RegisterOrb(Type orbType)
         {
             RegisterStandaloneModel(RegisteredOrbs, orbType, typeof(OrbModel), "orb");
+        }
+
+        /// <summary>
+        ///     Registers a model-backed component for use with <see cref="ModelComponents" />.
+        ///     注册一个基于模型的组件，供 <see cref="ModelComponents" /> 使用。
+        /// </summary>
+        public void RegisterModelComponent<TComponent>() where TComponent : ModelComponent
+        {
+            RegisterModelComponent<TComponent>(default);
+        }
+
+        /// <summary>
+        ///     Registers a model-backed component using <paramref name="publicEntry" /> rules.
+        ///     使用 <paramref name="publicEntry" /> 规则注册一个基于模型的组件。
+        /// </summary>
+        public void RegisterModelComponent<TComponent>(ModelPublicEntryOptions publicEntry)
+            where TComponent : ModelComponent
+        {
+            RegisterModelComponent(typeof(TComponent), publicEntry);
+        }
+
+        /// <summary>
+        ///     Registers <paramref name="componentType" /> as a model-backed component.
+        ///     将 <paramref name="componentType" /> 注册为基于模型的组件。
+        /// </summary>
+        public void RegisterModelComponent(Type componentType)
+        {
+            RegisterModelComponent(componentType, default);
+        }
+
+        /// <summary>
+        ///     Registers <paramref name="componentType" /> as a model-backed component using
+        ///     <paramref name="publicEntry" /> rules.
+        ///     使用 <paramref name="publicEntry" /> 规则将 <paramref name="componentType" /> 注册为基于模型的组件。
+        /// </summary>
+        public void RegisterModelComponent(Type componentType, ModelPublicEntryOptions publicEntry)
+        {
+            EnsureMutable($"register model component '{componentType.Name}'");
+            EnsureModelType(componentType, typeof(ModelComponent), nameof(componentType));
+            PrimeOwnedType(componentType);
+            ApplyFixedPublicEntryForModel(componentType, publicEntry);
+            RegistrationConflictDetector.ThrowIfModelIdConflicts(componentType);
+
+            lock (SyncRoot)
+            {
+                if (!RegisteredModelComponents.Add(componentType))
+                {
+                    _logger.Debug($"[Content] Skipping duplicate model component registration: {componentType.Name}");
+                    return;
+                }
+
+                RememberOwner(componentType);
+            }
+
+            var componentId = ResolveModelComponentId(componentType, publicEntry);
+            ModelComponentRegistry.RegisterModelComponent(componentType, componentId);
+            _logger.Info($"[Content] Registered model component: {componentType.Name} ({componentId})");
+        }
+
+        /// <summary>
+        ///     Registers a modifier for the default component list of matching <paramref name="modelType" /> instances.
+        ///     为匹配的 <paramref name="modelType" /> 实例默认组件列表注册修改器。
+        /// </summary>
+        public void ModifyDefaultModelComponents(
+            Type modelType,
+            string modifierId,
+            Action<AbstractModel, ModelDefaultComponentList> modifier,
+            int order = 0)
+        {
+            EnsureMutable($"modify default model components '{modelType.Name}/{modifierId}'");
+            EnsureModelFamilyType(modelType, nameof(modelType));
+            ModelDefaultComponents.Modify(ModId, modifierId, modelType, modifier, order);
+            _logger.Info($"[Content] Registered default model component modifier: {modelType.Name}/{modifierId}");
+        }
+
+        /// <summary>
+        ///     Registers a modifier for the default component list of matching <typeparamref name="TModel" /> instances.
+        ///     为匹配的 <typeparamref name="TModel" /> 实例默认组件列表注册修改器。
+        /// </summary>
+        public void ModifyDefaultModelComponents<TModel>(
+            string modifierId,
+            Action<TModel, ModelDefaultComponentList> modifier,
+            int order = 0)
+            where TModel : AbstractModel
+        {
+            EnsureMutable($"modify default model components '{typeof(TModel).Name}/{modifierId}'");
+            ModelDefaultComponents.Modify(ModId, modifierId, modifier, order);
+            _logger.Info(
+                $"[Content] Registered default model component modifier: {typeof(TModel).Name}/{modifierId}");
         }
 
         /// <summary>
@@ -1164,6 +1268,8 @@ namespace STS2RitsuLib.Content
                     new ContentModelReference(type, typeof(PowerModel), "registered power")));
                 AddMany(list, RegisteredOrbs.Select(static type =>
                     new ContentModelReference(type, typeof(OrbModel), "registered orb")));
+                AddMany(list, RegisteredModelComponents.Select(static type =>
+                    new ContentModelReference(type, typeof(ModelComponent), "registered model component")));
                 AddMany(list, RegisteredEnchantments.Select(static type =>
                     new ContentModelReference(type, typeof(EnchantmentModel), "registered enchantment")));
                 AddMany(list, RegisteredAfflictions.Select(static type =>
@@ -1476,6 +1582,7 @@ namespace STS2RitsuLib.Content
                     .Concat(RegisteredMonsters)
                     .Concat(RegisteredPowers)
                     .Concat(RegisteredOrbs)
+                    .Concat(RegisteredModelComponents)
                     .Concat(RegisteredEnchantments)
                     .Concat(RegisteredAfflictions)
                     .Concat(RegisteredAchievements)
@@ -1657,6 +1764,15 @@ namespace STS2RitsuLib.Content
                 );
         }
 
+        private static void EnsureModelFamilyType(Type type, string paramName)
+        {
+            if (type.IsInterface || type.ContainsGenericParameters || !typeof(AbstractModel).IsAssignableFrom(type))
+                throw new ArgumentException(
+                    $"Type '{type.FullName}' must be an abstract model type or a concrete model type.",
+                    paramName
+                );
+        }
+
         private static void EnsureBadgeType(Type type, string paramName)
         {
             if (type.IsAbstract || type.IsInterface || !typeof(ModBadgeTemplate).IsAssignableFrom(type))
@@ -1791,6 +1907,17 @@ namespace STS2RitsuLib.Content
 
                 FixedPublicEntryOverrides[modelType] = resolved;
             }
+        }
+
+        private string ResolveModelComponentId(Type componentType, ModelPublicEntryOptions options)
+        {
+            return options.Kind switch
+            {
+                ModelPublicEntryKind.FromTypeName => GetQualifiedModelComponentId(ModId, componentType.Name),
+                ModelPublicEntryKind.Stem => GetQualifiedModelComponentId(ModId, options.Value!),
+                ModelPublicEntryKind.FullEntry => NormalizeFullPublicEntry(options.Value!),
+                _ => throw new ArgumentOutOfRangeException(nameof(options), options.Kind, null),
+            };
         }
 
         [GeneratedRegex("[^A-Za-z0-9]+")]

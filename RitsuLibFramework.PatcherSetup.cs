@@ -13,6 +13,8 @@ using STS2RitsuLib.Interop.Patches;
 using STS2RitsuLib.Keywords.Patches;
 using STS2RitsuLib.Lifecycle.Patches;
 using STS2RitsuLib.Localization.Patches;
+using STS2RitsuLib.Models.Capabilities;
+using STS2RitsuLib.Models.Capabilities.Patches;
 using STS2RitsuLib.Models.Patches;
 using STS2RitsuLib.Networking.Sidecar.Patches;
 using STS2RitsuLib.Patching.Core;
@@ -67,6 +69,9 @@ namespace STS2RitsuLib
 
         private static void RegisterLifecyclePatches()
         {
+            ModelSavedDataRegistry.EnsureInitialized();
+            ModelComponents.EnsureInitialized();
+
             var patcher = CreatePatcher(Const.ModId, "framework-core", "framework core");
             patcher.RegisterPatch<ModTypeDiscoveryPatch>();
             patcher.RegisterPatch<NAudioManagerGuidMappedStudioEventsPatches.PlayOneShot>();
@@ -87,6 +92,8 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<SavedPropertiesTypeCacheInjectionPatch>();
             patcher.RegisterPatch<SavedAttachedStatePatches.SavedPropertiesFromInternalPatch>();
             patcher.RegisterPatch<SavedAttachedStatePatches.SavedPropertiesFillInternalPatch>();
+            patcher.RegisterPatch<ModelSavedDataPatches.SavedPropertiesFromInternalPatch>();
+            patcher.RegisterPatch<ModelSavedDataPatches.SavedPropertiesFillInternalPatch>();
             patcher.RegisterPatch<RunSavedDataLoadRunSavePatch>();
             patcher.RegisterPatch<RunSavedDataLoadMultiplayerRunSavePatch>();
             patcher.RegisterPatch<RunSavedDataCanonicalizeSavePatch>();
@@ -219,6 +226,45 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<CardModelKeywordsModSeedPatch>();
             patcher.RegisterPatch<CardModelTagsModSeedPatch>();
             patcher.RegisterPatch<CardModelHoverTipsModKeywordPatch>();
+            patcher.RegisterPatch<ModelComponentHookListenerPatches.RunStateHookListenersPatch>();
+            patcher.RegisterPatch<ModelComponentHookListenerPatches.CombatStateHookListenersPatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.UpdateDynamicVarPreviewPatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.UpgradeInternalPatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.FinalizeUpgradeInternalPatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.DowngradeInternalPatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.TransformPatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.DescriptionForPilePatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.DescriptionForUpgradePreviewPatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.HoverTipsPatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.ShouldGlowGoldPatch>();
+            patcher.RegisterPatch<CardModelComponentCapabilityPatches.ShouldGlowRedPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.RelicDynamicDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.RelicDynamicEventDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.PotionDynamicDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.EnchantmentDynamicDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.EnchantmentDynamicExtraCardTextPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.AfflictionDynamicDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.AfflictionDynamicExtraCardTextPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.PowerDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.PowerSmartDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.PowerRemoteDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.OrbDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.OrbSmartDescriptionPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.RelicHoverTipsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.RelicHoverTipsExcludingRelicPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.PowerHoverTipsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.OrbHoverTipsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.PotionHoverTipsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.AfflictionHoverTipsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.EnchantmentHoverTipsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.CardRunAssetPathsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.CharacterAssetPathsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.CharacterSelectAssetPathsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.OrbAssetPathsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.MonsterAssetPathsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.ActAssetPathsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.EncounterAssetPathsPatch>();
+            patcher.RegisterPatch<ModelDisplayCapabilityPatches.EventAssetPathsPatch>();
             patcher.RegisterPatch<CardRewardToSerializablePatch>();
             patcher.RegisterPatch<CombatRoomToSerializableRewardExtPatch>();
             if (!RitsuLibMobileSteamRuntime.SuppressNativeSteamIntegration)

@@ -9,6 +9,7 @@ using STS2RitsuLib.Content;
 using STS2RitsuLib.Diagnostics;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Localization.SmartFormat;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Timeline;
 using STS2RitsuLib.Timeline.Scaffolding;
@@ -250,6 +251,52 @@ namespace STS2RitsuLib.Interop.AutoRegistration
                                 $"RegisterSingleton:{type.FullName}", nameof(RegisterSingletonAttribute),
                                 () => contentRegistry.RegisterSingleton(type)));
                         });
+                        break;
+                    case RegisterModelComponentAttribute registerModelComponent:
+                        RegisterCase($"RegisterModelComponent:{type.FullName}", () =>
+                        {
+                            operations.Add(CreateOperation(ownerModId, type, AutoRegistrationPhase.ContentPrimary,
+                                registerModelComponent.Order,
+                                $"RegisterModelComponent:{type.FullName}", nameof(RegisterModelComponentAttribute),
+                                () => contentRegistry.RegisterModelComponent(
+                                    type,
+                                    ResolvePublicEntryOptions(registerModelComponent)),
+                                providedKeys: [TypeDependencyKey(type)]));
+                        });
+                        break;
+                    case RegisterDefaultModelComponentAttribute defaultModelComponent:
+                        RegisterCase(
+                            $"RegisterDefaultModelComponent:{defaultModelComponent.TargetModelType.FullName}->{type.FullName}:{defaultModelComponent.ModifierId}",
+                            () =>
+                            {
+                                EnsureConcreteAssignable(type, typeof(IModelComponent), nameof(type));
+                                EnsureModelFamilyType(
+                                    defaultModelComponent.TargetModelType,
+                                    nameof(defaultModelComponent.TargetModelType));
+
+                                var dependencies = typeof(ModelComponent).IsAssignableFrom(type)
+                                    ? new[] { TypeDependencyKey(type) }
+                                    : [];
+
+                                operations.Add(CreateOperation(ownerModId, type, AutoRegistrationPhase.ContentSecondary,
+                                    defaultModelComponent.Order,
+                                    $"RegisterDefaultModelComponent:{defaultModelComponent.TargetModelType.FullName}->{type.FullName}:{defaultModelComponent.ModifierId}",
+                                    nameof(RegisterDefaultModelComponentAttribute),
+                                    () =>
+                                    {
+                                        var modifierId = ResolveDefaultModelComponentModifierId(
+                                            ownerModId,
+                                            type,
+                                            defaultModelComponent.TargetModelType,
+                                            defaultModelComponent.ModifierId);
+                                        contentRegistry.ModifyDefaultModelComponents(
+                                            defaultModelComponent.TargetModelType,
+                                            modifierId,
+                                            (_, components) => components.Add(type),
+                                            defaultModelComponent.Order);
+                                    },
+                                    dependencies));
+                            });
                         break;
                     case RegisterGoodModifierAttribute registerGoodModifier:
                         RegisterCase($"RegisterGoodModifier:{type.FullName}", () =>
@@ -1191,6 +1238,37 @@ namespace STS2RitsuLib.Interop.AutoRegistration
             };
         }
 
+        private static ModelPublicEntryOptions ResolvePublicEntryOptions(RegisterModelComponentAttribute attribute)
+        {
+            ArgumentNullException.ThrowIfNull(attribute);
+
+            var hasStem = !string.IsNullOrWhiteSpace(attribute.StableEntryStem);
+            var hasFull = !string.IsNullOrWhiteSpace(attribute.FullPublicEntry);
+
+            return hasStem switch
+            {
+                true when hasFull => throw new InvalidOperationException(
+                    "StableEntryStem and FullPublicEntry cannot both be specified."),
+                true => ModelPublicEntryOptions.FromStem(attribute.StableEntryStem!),
+                _ => hasFull
+                    ? ModelPublicEntryOptions.FromFullPublicEntry(attribute.FullPublicEntry!)
+                    : ModelPublicEntryOptions.FromTypeName,
+            };
+        }
+
+        private static string ResolveDefaultModelComponentModifierId(
+            string ownerModId,
+            Type componentType,
+            Type targetModelType,
+            string? explicitModifierId)
+        {
+            if (!string.IsNullOrWhiteSpace(explicitModifierId))
+                return explicitModifierId;
+
+            var stem = $"{targetModelType.Name}_{componentType.Name}";
+            return ModContentRegistry.GetQualifiedModelComponentId(ownerModId, stem);
+        }
+
         private static void EnsureConcreteSubtype(Type type, Type expectedBaseType, string paramName)
         {
             ArgumentNullException.ThrowIfNull(type);
@@ -1216,6 +1294,16 @@ namespace STS2RitsuLib.Interop.AutoRegistration
             if (type.IsAbstract || type.IsInterface || !expectedType.IsAssignableFrom(type))
                 throw new ArgumentException(
                     $"Type '{type.FullName}' must be a concrete implementation of '{expectedType.FullName}'.",
+                    paramName);
+        }
+
+        private static void EnsureModelFamilyType(Type type, string paramName)
+        {
+            ArgumentNullException.ThrowIfNull(type);
+
+            if (type.IsInterface || type.ContainsGenericParameters || !typeof(AbstractModel).IsAssignableFrom(type))
+                throw new ArgumentException(
+                    $"Type '{type.FullName}' must be an abstract model type or a concrete model type.",
                     paramName);
         }
 

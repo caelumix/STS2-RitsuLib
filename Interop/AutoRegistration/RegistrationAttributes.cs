@@ -94,6 +94,50 @@ namespace STS2RitsuLib.Interop.AutoRegistration
     public sealed class RegisterSingletonAttribute : ContentRegistrationAttribute;
 
     /// <summary>
+    ///     Registers the annotated type as a model component.
+    ///     将带注解的类型注册为模型组件。
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RegisterModelComponentAttribute : ContentRegistrationAttribute
+    {
+        /// <summary>
+        ///     Optional stable author-chosen component id and public-entry stem.
+        ///     可选的、由作者选择的稳定组件 ID 与 public-entry stem。
+        /// </summary>
+        public string? StableEntryStem { get; set; }
+
+        /// <summary>
+        ///     Optional full fixed public entry and component id override.
+        ///     可选的完整固定 public-entry 与组件 ID 覆盖。
+        /// </summary>
+        public string? FullPublicEntry { get; set; }
+    }
+
+    /// <summary>
+    ///     Adds the annotated component type to the default component list for matching model instances.
+    ///     将带注解的组件类型添加到匹配模型实例的默认组件列表。
+    /// </summary>
+    /// <param name="targetModelType">
+    ///     Target model type.
+    ///     目标模型类型。
+    /// </param>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+    public sealed class RegisterDefaultModelComponentAttribute(Type targetModelType) : ContentRegistrationAttribute
+    {
+        /// <summary>
+        ///     Target model type.
+        ///     目标模型类型。
+        /// </summary>
+        public Type TargetModelType { get; } = targetModelType;
+
+        /// <summary>
+        ///     Optional stable modifier id. Defaults to a mod-scoped id derived from the component and target type.
+        ///     可选的稳定 modifier ID。默认根据组件与目标类型派生 mod 作用域 ID。
+        /// </summary>
+        public string? ModifierId { get; set; }
+    }
+
+    /// <summary>
     ///     Registers the annotated type as a good daily modifier.
     ///     将带注解的类型注册为正面每日修饰符。
     /// </summary>

@@ -229,10 +229,6 @@ namespace STS2RitsuLib.Models.Capabilities
                     if (!IsStillAttachedToCard(component, card))
                         return;
 
-                    component.ResetDynamicVarsForDowngrade();
-                    if (!IsStillAttachedToCard(component, card))
-                        return;
-
                     component.NotifyOwnerCardDowngraded(card);
                 });
             }

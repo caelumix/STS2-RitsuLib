@@ -164,11 +164,6 @@ namespace STS2RitsuLib.Models.Capabilities
             DynamicVars.FinalizeUpgrade();
         }
 
-        internal void ResetDynamicVarsForDowngrade()
-        {
-            ResetDynamicVarsToCanonical();
-        }
-
         internal void MarkDynamicVarsJustUpgraded()
         {
             foreach (var dynamicVar in DynamicVars.Values)

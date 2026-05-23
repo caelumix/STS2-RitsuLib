@@ -209,8 +209,7 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
             ExtraCornerHostKind hostKind,
             Action<Control> applyHostStyle)
         {
-            var reserved = GetReservedCorners(hostKind);
-            var occupied = reserved.Count == 0 ? [] : new HashSet<ExtraIconAmountLabelCorner>(reserved);
+            var occupied = new HashSet<ExtraIconAmountLabelCorner>();
 
             var writeIndex = 0;
             foreach (var slot in specs)
@@ -225,7 +224,7 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
                 if (slot.Corner != ExtraIconAmountLabelCorner.Custom)
                     if (!occupied.Add(slot.Corner))
                     {
-                        ReportCornerRejectedOnce(host, hostKind, in slot, reserved);
+                        ReportCornerRejectedOnce(host, hostKind, in slot);
                         continue;
                     }
 
@@ -345,27 +344,14 @@ namespace STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels
             };
         }
 
-        private static IReadOnlyList<ExtraIconAmountLabelCorner> GetReservedCorners(ExtraCornerHostKind hostKind)
-        {
-            return hostKind switch
-            {
-                ExtraCornerHostKind.Power or ExtraCornerHostKind.Relic => [ExtraIconAmountLabelCorner.BottomRight],
-                ExtraCornerHostKind.Intent => [ExtraIconAmountLabelCorner.BottomLeft],
-                _ => [],
-            };
-        }
-
         private static void ReportCornerRejectedOnce(
             Control host,
             ExtraCornerHostKind hostKind,
-            in ExtraIconAmountLabelSpec slot,
-            IReadOnlyList<ExtraIconAmountLabelCorner> reservedCorners)
+            in ExtraIconAmountLabelSpec slot)
         {
             var hostId = host.GetInstanceId();
             var text = slot.Text.Trim();
-            var reason = reservedCorners.Contains(slot.Corner)
-                ? "requested corner is reserved by vanilla UI"
-                : "requested corner is already occupied by another extra badge";
+            const string reason = "requested corner is already occupied by another extra badge";
             var hostKey = GetHostLogKey(host, hostKind);
 
             var key = $"{hostKind}:{hostKey}:{slot.Corner}:{reason}";

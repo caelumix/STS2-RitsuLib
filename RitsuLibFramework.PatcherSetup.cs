@@ -279,6 +279,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<OrbIconPatch>();
             patcher.RegisterPatch<OrbSpritePathPatch>();
             patcher.RegisterPatch<OrbAssetPathsPatch>();
+            patcher.RegisterPatch<NOrbValueDisplayPolicyPatch>();
 
             patcher.RegisterPatch<PotionImagePathPatch>();
             patcher.RegisterPatch<PotionTexturePatch>();
@@ -402,6 +403,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<RelicCollectionActListPatch>();
             patcher.RegisterPatch<AllPowersPatch>();
             patcher.RegisterPatch<AllOrbsPatch>();
+            patcher.RegisterPatch<OrbModelRandomPoolPolicyPatch>();
             patcher.RegisterPatch<AllSharedCardPoolsPatch>();
             patcher.RegisterPatch<AllSharedEventsPatch>();
             patcher.RegisterPatch<AllEventsPatch>();

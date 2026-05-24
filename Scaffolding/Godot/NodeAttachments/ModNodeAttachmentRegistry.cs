@@ -174,18 +174,29 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
             }
         }
 
-        private NodeAttachmentDefinition RegisterCore<TParent, TNode>(
+        internal NodeAttachmentDefinition RegisterReadyChildUntyped(
             string localId,
-            Func<TParent, TNode> factory,
-            Action<TParent, TNode>? setup,
+            Type parentType,
+            Type nodeType,
+            Func<Node, Node> factory,
+            Action<Node, Node>? setup,
             NodeAttachmentOptions? options,
             string sourceKind,
             string? scenePath)
-            where TParent : Node
-            where TNode : Node
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(localId);
+            ArgumentNullException.ThrowIfNull(parentType);
+            ArgumentNullException.ThrowIfNull(nodeType);
             ArgumentNullException.ThrowIfNull(factory);
+
+            if (!typeof(Node).IsAssignableFrom(parentType))
+                throw new ArgumentException(
+                    $"Parent type '{parentType.FullName}' must derive from {typeof(Node).FullName}.",
+                    nameof(parentType));
+
+            if (!typeof(Node).IsAssignableFrom(nodeType))
+                throw new ArgumentException(
+                    $"Node type '{nodeType.FullName}' must derive from {typeof(Node).FullName}.", nameof(nodeType));
 
             var normalizedLocalId = localId.Trim();
             var id = GetQualifiedNodeAttachmentId(_modId, normalizedLocalId);
@@ -196,15 +207,15 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
                 _modId,
                 id,
                 normalizedLocalId,
-                typeof(TParent),
-                typeof(TNode),
-                parent => factory((TParent)parent),
-                setup == null ? null : (parent, node) => setup((TParent)parent, (TNode)node),
+                parentType,
+                nodeType,
+                factory,
+                setup,
                 attachmentOptions,
                 sourceKind,
                 scenePath);
 
-            NodeAttachmentPatchInstaller.EnsureReadyPatched(typeof(TParent));
+            NodeAttachmentPatchInstaller.EnsureReadyPatched(parentType);
 
             lock (SyncRoot)
             {
@@ -225,8 +236,30 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
             }
 
             RitsuLibFramework.Logger.Info(
-                $"[NodeAttachment] Registered {id}: {typeof(TParent).FullName} -> {typeof(TNode).FullName} (Order={definition.Order}, Source={sourceKind})");
+                $"[NodeAttachment] Registered {id}: {parentType.FullName} -> {nodeType.FullName} (Order={definition.Order}, Source={sourceKind})");
             return definition;
+        }
+
+        private NodeAttachmentDefinition RegisterCore<TParent, TNode>(
+            string localId,
+            Func<TParent, TNode> factory,
+            Action<TParent, TNode>? setup,
+            NodeAttachmentOptions? options,
+            string sourceKind,
+            string? scenePath)
+            where TParent : Node
+            where TNode : Node
+        {
+            ArgumentNullException.ThrowIfNull(factory);
+            return RegisterReadyChildUntyped(
+                localId,
+                typeof(TParent),
+                typeof(TNode),
+                parent => factory((TParent)parent),
+                setup == null ? null : (parent, node) => setup((TParent)parent, (TNode)node),
+                options,
+                sourceKind,
+                scenePath);
         }
 
         private static TNode InstantiateScene<TNode>(string scenePath) where TNode : Node

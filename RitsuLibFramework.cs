@@ -506,10 +506,20 @@ namespace STS2RitsuLib
 
         /// <summary>
         ///     Returns the ready-time Godot node attachment registry for <paramref name="modId" />.
+        ///     返回 <paramref name="modId" /> 的 ready 阶段 Godot 节点挂载注册表。
         /// </summary>
         public static ModNodeAttachmentRegistry GetNodeAttachmentRegistry(string modId)
         {
             return ModNodeAttachmentRegistry.For(modId);
+        }
+
+        /// <summary>
+        ///     Ensures all ready-time node attachments registered for <paramref name="parent" /> have been applied.
+        ///     确保已应用为 <paramref name="parent" /> 注册的所有 ready 阶段节点挂载项。
+        /// </summary>
+        public static void EnsureReadyNodeAttachments(Node parent)
+        {
+            ModNodeAttachmentRegistry.EnsureReadyAttachments(parent);
         }
 
         /// <summary>

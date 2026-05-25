@@ -5,6 +5,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
 {
     /// <summary>
     ///     Per-mod registration surface for attaching child nodes when a Godot parent becomes ready.
+    ///     当 Godot 父节点进入 ready 时挂载子节点的逐 mod 注册入口。
     /// </summary>
     public sealed class ModNodeAttachmentRegistry
     {
@@ -26,6 +27,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
 
         /// <summary>
         ///     Returns the singleton registry for <paramref name="modId" />.
+        ///     返回 <paramref name="modId" /> 对应的单例注册表。
         /// </summary>
         public static ModNodeAttachmentRegistry For(string modId)
         {
@@ -44,6 +46,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
 
         /// <summary>
         ///     Registers a factory-created child for <typeparamref name="TParent" /> ready events.
+        ///     为 <typeparamref name="TParent" /> 的 ready 事件注册由工厂创建的子节点。
         /// </summary>
         public NodeAttachmentDefinition RegisterReadyChild<TParent, TNode>(
             string localId,
@@ -57,6 +60,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
 
         /// <summary>
         ///     Registers a factory-created child with setup for <typeparamref name="TParent" /> ready events.
+        ///     为 <typeparamref name="TParent" /> 的 ready 事件注册带 setup 的工厂创建子节点。
         /// </summary>
         public NodeAttachmentDefinition RegisterReadyChild<TParent, TNode>(
             string localId,
@@ -78,6 +82,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
 
         /// <summary>
         ///     Registers a child instantiated directly from a <see cref="PackedScene" /> path.
+        ///     注册直接从 <see cref="PackedScene" /> 路径实例化的子节点。
         /// </summary>
         public NodeAttachmentDefinition RegisterReadyChildFromScene<TParent, TNode>(
             string localId,
@@ -100,6 +105,8 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
         /// <summary>
         ///     Registers a child created from a scene converted by
         ///     <see cref="RitsuGodotNodeFactories.CreateFromScenePath{TNode}(string)" />.
+        ///     注册由 <see cref="RitsuGodotNodeFactories.CreateFromScenePath{TNode}(string)" />
+        ///     转换 scene 后创建的子节点。
         /// </summary>
         public NodeAttachmentDefinition RegisterReadyChildFromConvertedScene<TParent, TNode>(
             string localId,
@@ -121,6 +128,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
 
         /// <summary>
         ///     Reads an attached node by this registry's local id without creating it.
+        ///     通过该注册表的本地 id 读取已挂载节点，不会创建节点。
         /// </summary>
         public bool TryGetAttached<TParent, TNode>(TParent parent, string localId, out TNode node)
             where TParent : Node
@@ -132,6 +140,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
 
         /// <summary>
         ///     Reads an attached node by fully qualified attachment id without creating it.
+        ///     通过完整限定挂载 id 读取已挂载节点，不会创建节点。
         /// </summary>
         public static bool TryGetAttachedById<TParent, TNode>(TParent parent, string id, out TNode node)
             where TParent : Node
@@ -141,7 +150,18 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
         }
 
         /// <summary>
+        ///     Ensures all ready-time attachments registered for <paramref name="parent" /> have been applied.
+        ///     确保已应用为 <paramref name="parent" /> 注册的所有 ready 阶段挂载项。
+        /// </summary>
+        public static void EnsureReadyAttachments(Node parent)
+        {
+            ArgumentNullException.ThrowIfNull(parent);
+            NodeAttachmentRuntime.AttachReadyChildren(parent);
+        }
+
+        /// <summary>
         ///     Returns every registered node attachment for diagnostics and audit UIs.
+        ///     返回所有已注册节点挂载项，供诊断和审计 UI 使用。
         /// </summary>
         public static NodeAttachmentDefinition[] GetDefinitionsSnapshot()
         {
@@ -157,6 +177,7 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
 
         /// <summary>
         ///     Builds the stable public id for a mod-scoped node attachment.
+        ///     构建 mod 作用域节点挂载项的稳定公开 id。
         /// </summary>
         public static string GetQualifiedNodeAttachmentId(string modId, string localId)
         {

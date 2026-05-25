@@ -969,6 +969,25 @@ namespace STS2RitsuLib
         }
 
         /// <summary>
+        ///     Logs an error message without the stack trace appended by the game logger.
+        ///     记录 Error 级日志，但不附加游戏 logger 自动生成的 stack trace。
+        /// </summary>
+        /// <remarks>
+        ///     Include an explicit stack trace in <paramref name="text" /> if one is needed.
+        ///     如需堆栈信息，请由调用方将堆栈内容放入 <paramref name="text" />。
+        /// </remarks>
+        public static void ErrorNoTrace(this Logger logger, string text)
+        {
+            ArgumentNullException.ThrowIfNull(logger);
+
+            if (!logger.WillLog(LogLevel.Error))
+                return;
+
+            var formattedText = logger.Context != null ? $"[{logger.Context}] {text}" : text;
+            GD.PrintErr($"[ERROR] {formattedText}");
+        }
+
+        /// <summary>
         ///     Creates a <see cref="STS2RitsuLib.Patching.Core.ModPatcher" /> with a dedicated logger for the owning mod.
         ///     使用所属 mod 的专用 logger 创建 <see cref="STS2RitsuLib.Patching.Core.ModPatcher" />。
         /// </summary>

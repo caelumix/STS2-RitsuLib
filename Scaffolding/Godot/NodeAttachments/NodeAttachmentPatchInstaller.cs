@@ -1,5 +1,6 @@
 using System.Reflection;
 using Godot;
+using HarmonyLib;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.Patching.Models;
 
@@ -38,10 +39,14 @@ namespace STS2RitsuLib.Scaffolding.Godot.NodeAttachments
                                   "Postfix");
 
                 var patchId = BuildPatchId(readyMethod);
+                var postfixMethod = new HarmonyMethod(postfix)
+                {
+                    priority = Priority.First,
+                };
                 var patch = new DynamicPatchInfo(
                     patchId,
                     readyMethod,
-                    postfix: new(postfix),
+                    postfix: postfixMethod,
                     isCritical: false,
                     description:
                     $"Attach registered RitsuLib child nodes after {readyMethod.DeclaringType?.FullName}.{readyMethod.Name}");

@@ -350,7 +350,11 @@ namespace STS2RitsuLib.Content.Patches
             return
             [
                 new(typeof(PotionModel), "HoverTip", MethodType.Getter),
+#if STS2_AT_LEAST_0_106_0
                 new(typeof(PowerModel), "GetDumbHoverTip", [typeof(int?)]),
+#else
+                new(typeof(PowerModel), "DumbHoverTip", MethodType.Getter),
+#endif
                 new(typeof(RelicModel), "HoverTip", MethodType.Getter),
                 new(typeof(OrbModel), "DumbHoverTip", MethodType.Getter),
                 new(typeof(EnchantmentModel), "HoverTip", MethodType.Getter),

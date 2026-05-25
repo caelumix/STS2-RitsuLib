@@ -44,29 +44,19 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var rewriter = HarmonyIlRewriter.From(instructions);
-            var pattern = HarmonyIlPattern.Sequence(
-                HarmonyIl.IsStloc(),
-                IsModelDbActsCall,
-                HarmonyIl.IsLdloc(),
-                instruction => IsLinqCall(instruction, nameof(Enumerable.Except)),
-                instruction => IsLinqCall(instruction, nameof(Enumerable.Any)),
-                HarmonyIl.IsBranch(),
-                IsActListErrorString);
+            const string operation = "[RelicCollection] Replace hard-coded ancient act list";
 
-            var report = rewriter.TryInsertBeforeFirst(
-                "[RelicCollection] Replace hard-coded ancient act list",
-                pattern,
+            if (rewriter.Contains(instruction => HarmonyIl.IsCallTo(instruction, RuntimeActListMethod)))
+                return rewriter.InstructionsChecked(operation);
+
+            if (TryFindVanillaActListStore(rewriter.Code, out var match))
+            {
+                rewriter.InsertBefore(match,
                 [
                     HarmonyIl.Pop(),
                     HarmonyIl.Call(RuntimeActListMethod),
-                ],
-                code => code.Any(instruction => HarmonyIl.IsCallTo(instruction, RuntimeActListMethod)));
-
-            if (report.Succeeded)
-            {
-                if (report.Applied > 0)
-                    report.RequireExactly(1);
-                return rewriter.InstructionsChecked("[RelicCollection] Replace hard-coded ancient act list");
+                ]);
+                return rewriter.InstructionsChecked(operation);
             }
 
             RitsuLibFramework.Logger.Warn(
@@ -118,6 +108,51 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         {
             return instruction.opcode == OpCodes.Ldstr && instruction.operand is string value &&
                    value.Contains("act list", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool TryFindVanillaActListStore(IReadOnlyList<CodeInstruction> code, out HarmonyIlMatch match)
+        {
+            for (var errorIndex = 0; errorIndex < code.Count; errorIndex++)
+            {
+                if (!IsActListErrorString(code[errorIndex]))
+                    continue;
+
+                var anyIndex = FindPrevious(code, errorIndex,
+                    instruction => IsLinqCall(instruction, nameof(Enumerable.Any)));
+                if (anyIndex < 0)
+                    continue;
+
+                var exceptIndex = FindPrevious(code, anyIndex,
+                    instruction => IsLinqCall(instruction, nameof(Enumerable.Except)));
+                if (exceptIndex < 0)
+                    continue;
+
+                var actsIndex = FindPrevious(code, exceptIndex, IsModelDbActsCall);
+                if (actsIndex < 0)
+                    continue;
+
+                var storeIndex = FindPrevious(code, actsIndex, instruction => instruction.IsStloc());
+                if (storeIndex < 0)
+                    continue;
+
+                match = new(storeIndex, 1);
+                return true;
+            }
+
+            match = default;
+            return false;
+        }
+
+        private static int FindPrevious(
+            IReadOnlyList<CodeInstruction> code,
+            int beforeIndex,
+            Func<CodeInstruction, bool> predicate)
+        {
+            for (var i = beforeIndex - 1; i >= 0; i--)
+                if (predicate(code[i]))
+                    return i;
+
+            return -1;
         }
     }
 }

@@ -339,6 +339,36 @@ store.Save("settings");
 
 :::
 
+## Cached Access{lang="en"}
+
+::: en
+
+Do not keep a `Get<T>` result as a long-lived profile cache. Profile reloads may replace the root object. Use `CreateCache<T>` when you want a reusable accessor that invalidates itself after profile changes or data reloads.
+
+```csharp
+private static ModDataStoreCache<MySettings> Settings =
+    RitsuLibFramework.GetDataStore("MyMod").CreateCache<MySettings>("settings");
+
+var settings = Settings.Value;
+```
+
+:::
+
+## 缓存访问{lang="zh-CN"}
+
+::: zh-CN
+
+不要把 `Get<T>` 的结果作为长期 profile 缓存保存。档案重新加载时，根对象可能被替换。需要复用访问器时，使用 `CreateCache<T>`；它会在 profile 变化或数据重新加载后自动失效。
+
+```csharp
+private static ModDataStoreCache<MySettings> Settings =
+    RitsuLibFramework.GetDataStore("MyMod").CreateCache<MySettings>("settings");
+
+var settings = Settings.Value;
+```
+
+:::
+
 ## Migrate Formats{lang="en"}
 
 ::: en

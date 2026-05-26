@@ -961,6 +961,21 @@ namespace STS2RitsuLib.Settings
             return this;
         }
 
+        /// <summary>
+        ///     Host surfaces where one entry's interactive controls are read-only.
+        ///     配置某个条目的交互控件在哪些宿主界面中只读。
+        /// </summary>
+        public ModSettingsSectionBuilder WithEntryReadOnlyOnHostSurfaces(string id,
+            ModSettingsHostSurface surfaces)
+        {
+            var entry = _entries.FirstOrDefault(existing =>
+                            string.Equals(existing.Id, id, StringComparison.OrdinalIgnoreCase))
+                        ?? throw new InvalidOperationException(
+                            $"Settings entry '{id}' does not exist in section '{Id}'.");
+            entry.ReadOnlyOnHostSurfaces = surfaces;
+            return this;
+        }
+
         internal ModSettingsSectionBuilder WithEntryVisibleWhen(string id, Func<bool> predicate)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(id);
@@ -973,7 +988,11 @@ namespace STS2RitsuLib.Settings
             return this;
         }
 
-        internal ModSettingsSectionBuilder WithEntryEnabledWhen(string id, Func<bool> predicate)
+        /// <summary>
+        ///     Disables one entry (dimmed, non-interactive) while <paramref name="predicate" /> is false.
+        ///     当 <paramref name="predicate" /> 为 false 时禁用某个条目（变暗且不可交互）。
+        /// </summary>
+        public ModSettingsSectionBuilder WithEntryEnabledWhen(string id, Func<bool> predicate)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(id);
             ArgumentNullException.ThrowIfNull(predicate);
@@ -1005,12 +1024,14 @@ namespace STS2RitsuLib.Settings
                     entry = new ModSettingsEntryEnabledWrapper(entry, enabledPredicate)
                     {
                         MenuCapabilities = entry.MenuCapabilities,
+                        ReadOnlyOnHostSurfaces = entry.ReadOnlyOnHostSurfaces,
                     };
                 if (_entryVisibleWhen.TryGetValue(entry.Id, out var visibilityPredicate))
                 {
                     var wrapped = new ModSettingsEntryVisibilityWrapper(entry, visibilityPredicate)
                     {
                         MenuCapabilities = entry.MenuCapabilities,
+                        ReadOnlyOnHostSurfaces = entry.ReadOnlyOnHostSurfaces,
                     };
                     result[i] = wrapped;
                     continue;

@@ -2,7 +2,6 @@ using System.Reflection;
 using System.Text;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
-using STS2RitsuLib;
 using STS2RitsuLib.Patching.Models;
 
 namespace STS2RitsuLib.Patching.Core

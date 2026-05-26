@@ -365,6 +365,7 @@ namespace STS2RitsuLib.Utils.HarmonyIl
             var before = _code.Count;
             var matches = 0;
             var applied = 0;
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (var instruction in _code)
             {
                 if (instruction.opcode != OpCodes.Call && instruction.opcode != OpCodes.Callvirt)

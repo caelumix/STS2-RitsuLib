@@ -333,6 +333,9 @@ namespace STS2RitsuLib.Lifecycle.Patches
     /// </summary>
     public class RunEndedLifecyclePatch : IPatchMethod
     {
+        private static readonly FieldInfo? RunHistoryWasUploadedField =
+            typeof(RunManager).GetField("_runHistoryWasUploaded", BindingFlags.Instance | BindingFlags.NonPublic);
+
         /// <inheritdoc />
         public static string PatchId => "run_ended_lifecycle";
 
@@ -353,12 +356,24 @@ namespace STS2RitsuLib.Lifecycle.Patches
 
         // ReSharper disable InconsistentNaming
         /// <summary>
+        ///     Captures vanilla's own run-end guard before <see cref="RunManager.OnEnded" /> mutates it.
+        ///     在 <see cref="RunManager.OnEnded" /> 修改原版跑局结束保护标记前捕获它。
+        /// </summary>
+        public static void Prefix(RunManager __instance, out bool __state)
+        {
+            __state = RunHistoryWasUploadedField?.GetValue(__instance) is true;
+        }
+
+        /// <summary>
         ///     Runs unlock bookkeeping and publishes <see cref="RunEndedEvent" /> when a run terminates.
         ///     当跑局终止时运行解锁记账并发布 <see cref="RunEndedEvent" />。
         /// </summary>
-        public static void Postfix(RunManager __instance, bool isVictory, SerializableRun __result)
+        public static void Postfix(RunManager __instance, bool isVictory, SerializableRun __result, bool __state)
             // ReSharper restore InconsistentNaming
         {
+            if (__state)
+                return;
+
             ModUnlockRegistry.ProcessRunEnded(__instance, __result, isVictory, __instance.IsAbandoned);
             RitsuLibFramework.PublishLifecycleEvent(
                 new RunEndedEvent(__result, isVictory, __instance.IsAbandoned, DateTimeOffset.UtcNow),

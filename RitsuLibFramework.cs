@@ -318,6 +318,7 @@ namespace STS2RitsuLib
                 Logger.Info($"Framework Name: {Const.Name}");
                 Logger.Info(BuildVersionLogText());
                 Logger.Info("Initializing shared framework...");
+                RitsuLibModImageResourceLoader.EnsureRegistered();
                 RitsuLibMobileSteamRuntime.LogSuppressedSteamFeaturesAtStartup();
                 ModTypeDiscoveryHub.EnsureBuiltInContributorsRegistered();
                 RitsuLibSettingsStore.Initialize();
@@ -966,6 +967,25 @@ namespace STS2RitsuLib
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(modId);
             return new(modId, logType);
+        }
+
+        /// <summary>
+        ///     Logs an error message without the stack trace appended by the game logger.
+        ///     记录 Error 级日志，但不附加游戏 logger 自动生成的 stack trace。
+        /// </summary>
+        /// <remarks>
+        ///     Include an explicit stack trace in <paramref name="text" /> if one is needed.
+        ///     如需堆栈信息，请由调用方将堆栈内容放入 <paramref name="text" />。
+        /// </remarks>
+        public static void ErrorNoTrace(this Logger logger, string text)
+        {
+            ArgumentNullException.ThrowIfNull(logger);
+
+            if (!logger.WillLog(LogLevel.Error))
+                return;
+
+            var formattedText = logger.Context != null ? $"[{logger.Context}] {text}" : text;
+            GD.PrintErr($"[ERROR] {formattedText}");
         }
 
         /// <summary>

@@ -29,6 +29,12 @@ namespace STS2RitsuLib.Settings
         public ModSettingsMenuCapabilities MenuCapabilities { get; internal set; } = ModSettingsMenuCapabilities.All;
 
         /// <summary>
+        ///     Host surfaces where this entry's interactive controls are forced read-only.
+        ///     此条目的交互控件被强制只读的宿主 surface。
+        /// </summary>
+        public ModSettingsHostSurface ReadOnlyOnHostSurfaces { get; internal set; } = ModSettingsHostSurface.None;
+
+        /// <summary>
         ///     Unique entry id within its section (used for chrome clipboard and anchors).
         ///     section 内唯一的条目 id（用于 chrome 剪贴板和锚点）。
         /// </summary>

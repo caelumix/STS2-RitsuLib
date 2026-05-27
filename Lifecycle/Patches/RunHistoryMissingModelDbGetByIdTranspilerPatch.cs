@@ -66,6 +66,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
                 {
                     if (IsModelDbGetByIdFor(called, typeof(CharacterModel)))
                         return CharacterFallback;
+                    // ReSharper disable once ConvertIfStatementToReturnStatement
                     if (IsModelDbGetByIdFor(called, typeof(ActModel)))
                         return ActFallback;
                     return null;

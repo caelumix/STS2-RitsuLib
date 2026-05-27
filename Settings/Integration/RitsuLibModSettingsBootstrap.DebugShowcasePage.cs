@@ -306,7 +306,9 @@ namespace STS2RitsuLib.Settings
                             ui.HostSurfaceCombatReadOnlyDemo,
                             T("ritsulib.hostSurface.demoToggle.description",
                                 "Editable on the main menu and run pause; locked while paused in a fight."))
-                        .WithReadOnlyOnHostSurfaces(ModSettingsHostSurface.CombatPause))
+                        .WithEntryReadOnlyOnHostSurfaces(
+                            "host_surface_combat_readonly_demo",
+                            ModSettingsHostSurface.CombatPause))
                     .AddSection("host_surface_combat_only_demo", section => section
                         .WithTitle(T("ritsulib.section.hostSurfaceCombatOnly.title", "Combat pause only (demo)"))
                         .WithVisibleOnHostSurfaces(ModSettingsHostSurface.CombatPause)

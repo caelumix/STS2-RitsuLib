@@ -9,6 +9,7 @@ namespace STS2RitsuLib.Settings
     {
         private readonly Dictionary<string, Dictionary<string, object?>> _rowUiState = [];
 
+        private ModSettingsEntryDefinition? _sectionBuildEntry;
         private ModSettingsPage? _sectionBuildPage;
         private ModSettingsSection? _sectionBuildSection;
 
@@ -94,11 +95,23 @@ namespace STS2RitsuLib.Settings
         {
             _sectionBuildPage = null;
             _sectionBuildSection = null;
+            _sectionBuildEntry = null;
+        }
+
+        internal void BeginEntrySurfaceScope(ModSettingsEntryDefinition entry)
+        {
+            _sectionBuildEntry = entry;
+        }
+
+        internal void EndEntrySurfaceScope()
+        {
+            _sectionBuildEntry = null;
         }
 
         internal ModSettingsHostSurface GetSectionHostReadOnlyMask()
         {
-            return ModSettingsUiHostSurfacePolicy.MergeReadOnlyMask(_sectionBuildPage, _sectionBuildSection);
+            return ModSettingsUiHostSurfacePolicy.MergeReadOnlyMask(_sectionBuildPage, _sectionBuildSection,
+                _sectionBuildEntry);
         }
 
         /// <summary>

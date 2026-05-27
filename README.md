@@ -10,6 +10,9 @@ API and other libraries such as [BaseLib](https://github.com/Alchyr/BaseLib-StS2
 
 Documentation site: https://sts2-ritsulib.ritsukage.com/
 
+Chinese Slay the Spire 2 modding tutorial:
+https://tutorials.sts2modding.com/ ([GitHub](https://github.com/GlitchedReme/SlayTheSpire2ModdingTutorials))
+
 ## Install
 
 Reference the NuGet package in your mod project:

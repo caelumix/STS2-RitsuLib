@@ -533,6 +533,8 @@ namespace STS2RitsuLib.Settings
             try
             {
                 foreach (var entry in section.Entries)
+                {
+                    context.BeginEntrySurfaceScope(entry);
                     try
                     {
                         var control = entry.CreateControl(context);
@@ -550,6 +552,11 @@ namespace STS2RitsuLib.Settings
                                 ModSettingsLocalization.Get("entry.failed.body", "Failed to build setting '{0}'."),
                                 entry.Id)));
                     }
+                    finally
+                    {
+                        context.EndEntrySurfaceScope();
+                    }
+                }
             }
             finally
             {

@@ -292,6 +292,20 @@ namespace STS2RitsuLib.Content
         }
 
         /// <summary>
+        ///     Builds a mod-scoped right-click binding id using the ritsulib <c>MODID_CATEGORY_TYPENAME</c>
+        ///     convention with middle segment <c>RIGHTCLICK</c>.
+        ///     使用 ritsulib <c>MODID_CATEGORY_TYPENAME</c> 约定构建 mod 作用域右键绑定 id，
+        ///     中间段为 <c>RIGHTCLICK</c>。
+        /// </summary>
+        public static string GetQualifiedRightClickId(string modId, string localRightClickStem)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(modId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(localRightClickStem);
+
+            return GetCompoundId(modId, "RIGHTCLICK", localRightClickStem);
+        }
+
+        /// <summary>
         ///     Returns the singleton registry for <paramref name="modId" /> (created on first use).
         ///     返回 <paramref name="modId" /> 的单例注册表（首次使用时创建）。
         /// </summary>

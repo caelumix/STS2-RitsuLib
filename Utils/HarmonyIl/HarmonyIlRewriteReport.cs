@@ -10,7 +10,9 @@ namespace STS2RitsuLib.Utils.HarmonyIl
         int Applied,
         int BeforeCount,
         int AfterCount,
-        bool AlreadySatisfied = false)
+        bool AlreadySatisfied = false,
+        IReadOnlyList<int>? MatchedIndexes = null,
+        IReadOnlyList<int>? AppliedIndexes = null)
     {
         /// <summary>
         ///     True when this operation emitted a changed instruction list.
@@ -34,7 +36,8 @@ namespace STS2RitsuLib.Utils.HarmonyIl
                 return;
 
             throw new InvalidOperationException(
-                $"{Operation} did not match the target IL. before={BeforeCount}, after={AfterCount}.");
+                $"{Operation} did not match the target IL. before={BeforeCount}, after={AfterCount}, " +
+                $"matchedIndexes={FormatIndexes(MatchedIndexes)}.");
         }
 
         /// <summary>
@@ -49,7 +52,8 @@ namespace STS2RitsuLib.Utils.HarmonyIl
             var maxText = max?.ToString() ?? "unbounded";
             throw new InvalidOperationException(
                 $"{Operation} applied {Applied} rewrite(s), expected range [{min}, {maxText}]. " +
-                $"matches={Matches}, alreadySatisfied={AlreadySatisfied}, before={BeforeCount}, after={AfterCount}.");
+                $"matches={Matches}, alreadySatisfied={AlreadySatisfied}, before={BeforeCount}, after={AfterCount}, " +
+                $"matchedIndexes={FormatIndexes(MatchedIndexes)}, appliedIndexes={FormatIndexes(AppliedIndexes)}.");
         }
 
         /// <summary>
@@ -69,7 +73,13 @@ namespace STS2RitsuLib.Utils.HarmonyIl
         {
             return
                 $"{Operation}: matches={Matches}, applied={Applied}, alreadySatisfied={AlreadySatisfied}, " +
-                $"before={BeforeCount}, after={AfterCount}";
+                $"before={BeforeCount}, after={AfterCount}, matchedIndexes={FormatIndexes(MatchedIndexes)}, " +
+                $"appliedIndexes={FormatIndexes(AppliedIndexes)}";
+        }
+
+        private static string FormatIndexes(IReadOnlyList<int>? indexes)
+        {
+            return indexes == null ? "[]" : $"[{string.Join(", ", indexes)}]";
         }
     }
 }

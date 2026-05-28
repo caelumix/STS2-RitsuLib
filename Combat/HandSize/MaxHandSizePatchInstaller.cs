@@ -208,7 +208,7 @@ namespace STS2RitsuLib.Combat.HandSize
             return HarmonyIl.LoadsInt32(ins, DefaultMaxHandSize);
 #else
             return HarmonyIl.LoadsInt32(ins, DefaultMaxHandSize)
-                   || HarmonyIl.IsCallTo(ins, MaxCardsInHandGetter);
+                   || HarmonyIl.IsCall(MaxCardsInHandGetter)(ins);
 #endif
         }
 
@@ -259,7 +259,7 @@ namespace STS2RitsuLib.Combat.HandSize
         private static IEnumerable<CodeInstruction> StateMachineTranspiler(IEnumerable<CodeInstruction> instructions)
         {
             var rewriter = HarmonyIlRewriter.From(instructions);
-            var loadPlayer = FindStateMachinePlayerLoad(rewriter.Code);
+            var loadPlayer = FindStateMachinePlayerLoad(rewriter);
             if (loadPlayer == null)
             {
                 RitsuLibFramework.Logger.Warn(
@@ -279,7 +279,7 @@ namespace STS2RitsuLib.Combat.HandSize
         private static IEnumerable<CodeInstruction> CardOnPlayTranspiler(IEnumerable<CodeInstruction> instructions)
         {
             var rewriter = HarmonyIlRewriter.From(instructions);
-            var loadCard = FindStateMachineCardLoad(rewriter.Code);
+            var loadCard = FindStateMachineCardLoad(rewriter);
             if (loadCard == null)
             {
                 RitsuLibFramework.Logger.Warn(
@@ -296,35 +296,29 @@ namespace STS2RitsuLib.Combat.HandSize
             return rewriter.InstructionsChecked("[MaxHandSize] Card OnPlay max-hand-size replacement");
         }
 
-        private static IReadOnlyList<CodeInstruction>? FindStateMachinePlayerLoad(IReadOnlyList<CodeInstruction> code)
+        private static IReadOnlyList<CodeInstruction>? FindStateMachinePlayerLoad(HarmonyIlRewriter rewriter)
         {
-            var pattern = HarmonyIlPattern.Sequence(HarmonyIl.IsLdarg(0), HarmonyIl.IsLdfld());
-            foreach (var match in pattern.FindAll(code))
-            {
-                var fieldInstruction = match.InstructionAt(code, 1);
-                if (fieldInstruction.operand is not FieldInfo field || field.FieldType != typeof(Player))
-                    continue;
-
-                return [match.InstructionAt(code, 0).Clone(), fieldInstruction.Clone()];
-            }
-
-            return null;
+            return FindStateMachineFieldLoad(rewriter, field => field.FieldType == typeof(Player),
+                "[MaxHandSize] state-machine Player field load");
         }
 
-        private static IReadOnlyList<CodeInstruction>? FindStateMachineCardLoad(IReadOnlyList<CodeInstruction> code)
+        private static IReadOnlyList<CodeInstruction>? FindStateMachineCardLoad(HarmonyIlRewriter rewriter)
+        {
+            return FindStateMachineFieldLoad(rewriter, field => typeof(CardModel).IsAssignableFrom(field.FieldType),
+                "[MaxHandSize] state-machine CardModel field load");
+        }
+
+        private static IReadOnlyList<CodeInstruction>? FindStateMachineFieldLoad(
+            HarmonyIlRewriter rewriter,
+            Func<FieldInfo, bool> fieldPredicate,
+            string description)
         {
             var pattern = HarmonyIlPattern.Sequence(HarmonyIl.IsLdarg(0), HarmonyIl.IsLdfld());
-            foreach (var match in pattern.FindAll(code))
-            {
-                var fieldInstruction = match.InstructionAt(code, 1);
-                if (fieldInstruction.operand is not FieldInfo field ||
-                    !typeof(CardModel).IsAssignableFrom(field.FieldType))
-                    continue;
-
-                return [match.InstructionAt(code, 0).Clone(), fieldInstruction.Clone()];
-            }
-
-            return null;
+            return (from match in rewriter.FindMatches(pattern, description).Items
+                    where fieldPredicate(match.GetFieldOperand(rewriter.Code, 1))
+                    select (IReadOnlyList<CodeInstruction>?)
+                        [match.InstructionAt(rewriter.Code, 0).Clone(), match.InstructionAt(rewriter.Code, 1).Clone()])
+                .FirstOrDefault();
         }
 
         // ReSharper disable InconsistentNaming
@@ -371,7 +365,7 @@ namespace STS2RitsuLib.Combat.HandSize
 
         private static bool ContainsCall(IReadOnlyList<CodeInstruction> code, MethodInfo method)
         {
-            return code.Any(instruction => HarmonyIl.IsCallTo(instruction, method));
+            return code.Any(HarmonyIl.IsCall(method));
         }
 
         private static void WarnIfRewriteUnsatisfied(HarmonyIlRewriteReport report)

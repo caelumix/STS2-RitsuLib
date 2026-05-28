@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Acts;
@@ -49,7 +48,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             if (rewriter.Contains(instruction => HarmonyIl.IsCallTo(instruction, RuntimeActListMethod)))
                 return rewriter.InstructionsChecked(operation);
 
-            if (TryFindVanillaActListStore(rewriter.Code, out var match))
+            if (TryFindVanillaActListStore(rewriter, out var match))
             {
                 rewriter.InsertBefore(match,
                 [
@@ -90,69 +89,47 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         private static bool IsModelDbActsCall(CodeInstruction instruction)
         {
-            return HarmonyIl.IsCallTo(instruction, ModelDbActsGetter);
+            return HarmonyIl.IsCall(ModelDbActsGetter)(instruction);
         }
 
         private static bool IsLinqCall(CodeInstruction instruction, string methodName)
         {
-            if (instruction.opcode != OpCodes.Call || instruction.operand is not MethodInfo method)
-                return false;
-
-            if (method.DeclaringType != typeof(Enumerable) || method.Name != methodName)
-                return false;
-
-            return !method.IsGenericMethod || method.GetGenericArguments().Contains(typeof(ActModel));
+            return HarmonyIl.IsCall(method =>
+                method.DeclaringType == typeof(Enumerable) &&
+                method.Name == methodName &&
+                (!method.IsGenericMethod || method.GetGenericArguments().Contains(typeof(ActModel))))(instruction);
         }
 
         private static bool IsActListErrorString(CodeInstruction instruction)
         {
-            return instruction.opcode == OpCodes.Ldstr && instruction.operand is string value &&
-                   value.Contains("act list", StringComparison.OrdinalIgnoreCase);
+            return HarmonyIl.OperandMatches<string>(instruction,
+                value => value.Contains("act list", StringComparison.OrdinalIgnoreCase));
         }
 
-        private static bool TryFindVanillaActListStore(IReadOnlyList<CodeInstruction> code, out HarmonyIlMatch match)
+        private static bool TryFindVanillaActListStore(HarmonyIlRewriter rewriter, out HarmonyIlMatch match)
         {
-            for (var errorIndex = 0; errorIndex < code.Count; errorIndex++)
+            foreach (var errorMatch in rewriter.FindAll(IsActListErrorString, "relic collection act-list error string")
+                         .Items)
             {
-                if (!IsActListErrorString(code[errorIndex]))
+                if (!rewriter.TryFindBefore(errorMatch,
+                        instruction => IsLinqCall(instruction, nameof(Enumerable.Any)), out var anyMatch))
                     continue;
 
-                var anyIndex = FindPrevious(code, errorIndex,
-                    instruction => IsLinqCall(instruction, nameof(Enumerable.Any)));
-                if (anyIndex < 0)
+                if (!rewriter.TryFindBefore(anyMatch,
+                        instruction => IsLinqCall(instruction, nameof(Enumerable.Except)), out var exceptMatch))
                     continue;
 
-                var exceptIndex = FindPrevious(code, anyIndex,
-                    instruction => IsLinqCall(instruction, nameof(Enumerable.Except)));
-                if (exceptIndex < 0)
+                if (!rewriter.TryFindBefore(exceptMatch, IsModelDbActsCall, out var actsMatch))
                     continue;
 
-                var actsIndex = FindPrevious(code, exceptIndex, IsModelDbActsCall);
-                if (actsIndex < 0)
+                if (!rewriter.TryFindBefore(actsMatch, instruction => instruction.IsStloc(), out match))
                     continue;
 
-                var storeIndex = FindPrevious(code, actsIndex, instruction => instruction.IsStloc());
-                if (storeIndex < 0)
-                    continue;
-
-                match = new(storeIndex, 1);
                 return true;
             }
 
             match = default;
             return false;
-        }
-
-        private static int FindPrevious(
-            IReadOnlyList<CodeInstruction> code,
-            int beforeIndex,
-            Func<CodeInstruction, bool> predicate)
-        {
-            for (var i = beforeIndex - 1; i >= 0; i--)
-                if (predicate(code[i]))
-                    return i;
-
-            return -1;
         }
     }
 }

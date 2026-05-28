@@ -5,6 +5,46 @@ using HarmonyLib;
 namespace STS2RitsuLib.Utils.HarmonyIl
 {
     /// <summary>
+    ///     A local variable reference decoded from Harmony IL.
+    ///     从 Harmony IL 解码出的本地变量引用。
+    /// </summary>
+    public readonly record struct HarmonyIlLocalRef(int Index, LocalBuilder? Builder = null, Type? LocalType = null)
+    {
+        /// <summary>
+        ///     True when the local variable type is known.
+        ///     已知本地变量类型时为 true。
+        /// </summary>
+        public bool HasKnownType => LocalType != null;
+
+        /// <summary>
+        ///     Creates a load instruction for this local.
+        ///     为此本地变量创建读取指令。
+        /// </summary>
+        public CodeInstruction Load()
+        {
+            return HarmonyIl.LoadLocal(this);
+        }
+
+        /// <summary>
+        ///     Creates a store instruction for this local.
+        ///     为此本地变量创建存储指令。
+        /// </summary>
+        public CodeInstruction Store()
+        {
+            return HarmonyIl.StoreLocal(this);
+        }
+
+        /// <summary>
+        ///     Returns true when both references point at the same local index.
+        ///     当两个引用指向同一本地变量索引时返回 true。
+        /// </summary>
+        public bool IsSameLocal(HarmonyIlLocalRef other)
+        {
+            return Index == other.Index;
+        }
+    }
+
+    /// <summary>
     ///     Small instruction factories and predicates for RitsuLib Harmony transpilers.
     ///     RitsuLib Harmony transpiler 使用的小型指令工厂与谓词。
     /// </summary>
@@ -230,6 +270,54 @@ namespace STS2RitsuLib.Utils.HarmonyIl
         }
 
         /// <summary>
+        ///     Converts a local-load instruction to the corresponding local-store instruction.
+        ///     将本地变量读取指令转换为对应的本地变量存储指令。
+        /// </summary>
+        public static CodeInstruction StoreLocalFromLoad(CodeInstruction load)
+        {
+            ArgumentNullException.ThrowIfNull(load);
+
+            if (load.opcode == OpCodes.Ldloc_0) return new(OpCodes.Stloc_0);
+            if (load.opcode == OpCodes.Ldloc_1) return new(OpCodes.Stloc_1);
+            if (load.opcode == OpCodes.Ldloc_2) return new(OpCodes.Stloc_2);
+            if (load.opcode == OpCodes.Ldloc_3) return new(OpCodes.Stloc_3);
+            if (load.opcode == OpCodes.Ldloc_S) return new(OpCodes.Stloc_S, load.operand);
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (load.opcode == OpCodes.Ldloc) return new(OpCodes.Stloc, load.operand);
+
+            throw new ArgumentException($"Instruction '{load}' is not a ldloc instruction.", nameof(load));
+        }
+
+        /// <summary>
+        ///     Creates a local-load instruction from a decoded local reference.
+        ///     根据已解码的本地变量引用创建读取指令。
+        /// </summary>
+        public static CodeInstruction LoadLocal(HarmonyIlLocalRef local)
+        {
+            return local.Builder != null ? new(OpCodes.Ldloc_S, local.Builder) : Ldloc(local.Index);
+        }
+
+        /// <summary>
+        ///     Creates a local-store instruction from a decoded local reference.
+        ///     根据已解码的本地变量引用创建存储指令。
+        /// </summary>
+        public static CodeInstruction StoreLocal(HarmonyIlLocalRef local)
+        {
+            return local.Builder != null ? new(OpCodes.Stloc_S, local.Builder) : Stloc(local.Index);
+        }
+
+        /// <summary>
+        ///     Returns true when both instructions reference the same local variable.
+        ///     当两条指令引用同一本地变量时返回 true。
+        /// </summary>
+        public static bool SameLocal(CodeInstruction left, CodeInstruction right)
+        {
+            return TryGetLocal(left, out var leftLocal) &&
+                   TryGetLocal(right, out var rightLocal) &&
+                   leftLocal.IsSameLocal(rightLocal);
+        }
+
+        /// <summary>
         ///     Matches any instruction.
         ///     匹配任意指令。
         /// </summary>
@@ -308,6 +396,62 @@ namespace STS2RitsuLib.Utils.HarmonyIl
         }
 
         /// <summary>
+        ///     Matches a local-load instruction for the supplied local reference.
+        ///     匹配指定本地变量引用的读取指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsLdloc(HarmonyIlLocalRef local)
+        {
+            return instruction => TryGetLocalLoad(instruction, out var actual) && actual.IsSameLocal(local);
+        }
+
+        /// <summary>
+        ///     Matches a local-store instruction for the supplied local reference.
+        ///     匹配指定本地变量引用的存储指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsStloc(HarmonyIlLocalRef local)
+        {
+            return instruction => TryGetLocalStore(instruction, out var actual) && actual.IsSameLocal(local);
+        }
+
+        /// <summary>
+        ///     Matches a local-load instruction whose operand exposes the supplied local type.
+        ///     匹配 operand 暴露出指定本地变量类型的读取指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsLdlocOfType(Type localType)
+        {
+            ArgumentNullException.ThrowIfNull(localType);
+            return instruction => TryGetLocalLoad(instruction, out var local) && local.LocalType == localType;
+        }
+
+        /// <summary>
+        ///     Matches a local-load instruction whose operand exposes the supplied local type.
+        ///     匹配 operand 暴露出指定本地变量类型的读取指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsLdlocOfType<T>()
+        {
+            return IsLdlocOfType(typeof(T));
+        }
+
+        /// <summary>
+        ///     Matches a local-store instruction whose operand exposes the supplied local type.
+        ///     匹配 operand 暴露出指定本地变量类型的存储指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsStlocOfType(Type localType)
+        {
+            ArgumentNullException.ThrowIfNull(localType);
+            return instruction => TryGetLocalStore(instruction, out var local) && local.LocalType == localType;
+        }
+
+        /// <summary>
+        ///     Matches a local-store instruction whose operand exposes the supplied local type.
+        ///     匹配 operand 暴露出指定本地变量类型的存储指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsStlocOfType<T>()
+        {
+            return IsStlocOfType(typeof(T));
+        }
+
+        /// <summary>
         ///     Matches a string-load instruction.
         ///     匹配字符串加载指令。
         /// </summary>
@@ -335,6 +479,61 @@ namespace STS2RitsuLib.Utils.HarmonyIl
         public static Func<CodeInstruction, bool> IsCall(MethodInfo? method)
         {
             return instruction => IsCallTo(instruction, method);
+        }
+
+        /// <summary>
+        ///     Matches a call/callvirt instruction using a method predicate.
+        ///     使用方法谓词匹配 call/callvirt 指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsCall(Func<MethodInfo, bool> predicate)
+        {
+            ArgumentNullException.ThrowIfNull(predicate);
+            return instruction => IsAnyCallInstruction(instruction) &&
+                                  instruction.operand is MethodInfo method &&
+                                  predicate(method);
+        }
+
+        /// <summary>
+        ///     Matches a call/callvirt to a method declared on the supplied type with the supplied name.
+        ///     匹配对指定类型上指定名称方法的 call/callvirt。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsCallTo(Type declaringType, string methodName)
+        {
+            ArgumentNullException.ThrowIfNull(declaringType);
+            ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
+            return IsCall(method => method.DeclaringType == declaringType &&
+                                    string.Equals(method.Name, methodName, StringComparison.Ordinal));
+        }
+
+        /// <summary>
+        ///     Matches a call/callvirt to a method with the supplied name.
+        ///     匹配对指定名称方法的 call/callvirt。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsCallTo(string methodName)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
+            return IsCall(method => string.Equals(method.Name, methodName, StringComparison.Ordinal));
+        }
+
+        /// <summary>
+        ///     Matches a call/callvirt whose return type is the supplied type.
+        ///     匹配返回类型为指定类型的 call/callvirt。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsCallReturning(Type returnType)
+        {
+            ArgumentNullException.ThrowIfNull(returnType);
+            return IsCall(method => method.ReturnType == returnType);
+        }
+
+        /// <summary>
+        ///     Matches a call/callvirt whose parameter types match the supplied sequence.
+        ///     匹配参数类型序列等于指定序列的 call/callvirt。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsCallWithParameters(params Type[] parameterTypes)
+        {
+            ArgumentNullException.ThrowIfNull(parameterTypes);
+            return IsCall(method => method.GetParameters().Select(static parameter => parameter.ParameterType)
+                .SequenceEqual(parameterTypes));
         }
 
         /// <summary>
@@ -391,6 +590,50 @@ namespace STS2RitsuLib.Utils.HarmonyIl
         public static Func<CodeInstruction, bool> IsLdsfld(FieldInfo? field = null)
         {
             return IsField(OpCodes.Ldsfld, field);
+        }
+
+        /// <summary>
+        ///     Matches any field access instruction for the supplied field.
+        ///     匹配对指定字段的任意字段访问指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsFieldAccess(FieldInfo? field = null)
+        {
+            return instruction => IsFieldAccessInstruction(instruction) &&
+                                  (field == null || Equals(instruction.operand, field));
+        }
+
+        /// <summary>
+        ///     Matches any field access instruction using a field predicate.
+        ///     使用字段谓词匹配任意字段访问指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsFieldAccess(Func<FieldInfo, bool> predicate)
+        {
+            ArgumentNullException.ThrowIfNull(predicate);
+            return instruction => IsFieldAccessInstruction(instruction) &&
+                                  instruction.operand is FieldInfo field &&
+                                  predicate(field);
+        }
+
+        /// <summary>
+        ///     Matches any field access instruction whose field type is the supplied type.
+        ///     匹配字段类型为指定类型的任意字段访问指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsFieldOfType(Type fieldType)
+        {
+            ArgumentNullException.ThrowIfNull(fieldType);
+            return IsFieldAccess(field => field.FieldType == fieldType);
+        }
+
+        /// <summary>
+        ///     Matches any field access instruction for a named field on the supplied declaring type.
+        ///     匹配指定类型上指定名称字段的任意字段访问指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> IsFieldNamed(Type declaringType, string fieldName)
+        {
+            ArgumentNullException.ThrowIfNull(declaringType);
+            ArgumentException.ThrowIfNullOrWhiteSpace(fieldName);
+            return IsFieldAccess(field => field.DeclaringType == declaringType &&
+                                          string.Equals(field.Name, fieldName, StringComparison.Ordinal));
         }
 
         /// <summary>
@@ -459,6 +702,94 @@ namespace STS2RitsuLib.Utils.HarmonyIl
         public static bool LoadsInt32(CodeInstruction instruction, int value)
         {
             return TryGetInt32(instruction, out var actual) && actual == value;
+        }
+
+        /// <summary>
+        ///     Reads a typed operand from an instruction.
+        ///     从指令读取指定类型的 operand。
+        /// </summary>
+        public static bool TryGetOperand<T>(CodeInstruction instruction, out T operand)
+        {
+            ArgumentNullException.ThrowIfNull(instruction);
+            if (instruction.operand is T typed)
+            {
+                operand = typed;
+                return true;
+            }
+
+            operand = default!;
+            return false;
+        }
+
+        /// <summary>
+        ///     Returns true when the instruction operand equals the supplied operand.
+        ///     当指令 operand 等于指定 operand 时返回 true。
+        /// </summary>
+        public static bool OperandEquals(CodeInstruction instruction, object? operand)
+        {
+            ArgumentNullException.ThrowIfNull(instruction);
+            return Equals(instruction.operand, operand);
+        }
+
+        /// <summary>
+        ///     Returns true when a typed operand satisfies the supplied predicate.
+        ///     当指定类型的 operand 满足谓词时返回 true。
+        /// </summary>
+        public static bool OperandMatches<T>(CodeInstruction instruction, Func<T, bool> predicate)
+        {
+            ArgumentNullException.ThrowIfNull(predicate);
+            return TryGetOperand<T>(instruction, out var operand) && predicate(operand);
+        }
+
+        /// <summary>
+        ///     Matches instructions whose typed operand satisfies the supplied predicate.
+        ///     匹配指定类型 operand 满足谓词的指令。
+        /// </summary>
+        public static Func<CodeInstruction, bool> HasOperand<T>(Func<T, bool>? predicate = null)
+        {
+            return instruction => TryGetOperand<T>(instruction, out var operand) &&
+                                  (predicate == null || predicate(operand));
+        }
+
+        /// <summary>
+        ///     Reads a local reference from a local-load instruction.
+        ///     从本地变量读取指令读取本地变量引用。
+        /// </summary>
+        public static bool TryGetLocalLoad(CodeInstruction instruction, out HarmonyIlLocalRef local)
+        {
+            if (!TryGetLocalLoadIndex(instruction, out var index))
+            {
+                local = default;
+                return false;
+            }
+
+            local = CreateLocalRef(index, instruction.operand);
+            return true;
+        }
+
+        /// <summary>
+        ///     Reads a local reference from a local-store instruction.
+        ///     从本地变量存储指令读取本地变量引用。
+        /// </summary>
+        public static bool TryGetLocalStore(CodeInstruction instruction, out HarmonyIlLocalRef local)
+        {
+            if (!TryGetLocalStoreIndex(instruction, out var index))
+            {
+                local = default;
+                return false;
+            }
+
+            local = CreateLocalRef(index, instruction.operand);
+            return true;
+        }
+
+        /// <summary>
+        ///     Reads a local reference from a local load or store instruction.
+        ///     从本地变量读取或存储指令读取本地变量引用。
+        /// </summary>
+        public static bool TryGetLocal(CodeInstruction instruction, out HarmonyIlLocalRef local)
+        {
+            return TryGetLocalLoad(instruction, out local) || TryGetLocalStore(instruction, out local);
         }
 
         /// <summary>
@@ -727,6 +1058,9 @@ namespace STS2RitsuLib.Utils.HarmonyIl
                 case LocalBuilder local:
                     index = local.LocalIndex;
                     return true;
+                case LocalVariableInfo local:
+                    index = local.LocalIndex;
+                    return true;
                 case ParameterInfo parameter:
                     index = parameter.Position;
                     return true;
@@ -734,6 +1068,30 @@ namespace STS2RitsuLib.Utils.HarmonyIl
                     index = -1;
                     return false;
             }
+        }
+
+        private static HarmonyIlLocalRef CreateLocalRef(int index, object? operand)
+        {
+            return operand switch
+            {
+                LocalBuilder builder => new(index, builder, builder.LocalType),
+                LocalVariableInfo info => new(index, null, info.LocalType),
+                _ => new(index),
+            };
+        }
+
+        private static bool IsAnyCallInstruction(CodeInstruction instruction)
+        {
+            return instruction.opcode == OpCodes.Call || instruction.opcode == OpCodes.Callvirt;
+        }
+
+        private static bool IsFieldAccessInstruction(CodeInstruction instruction)
+        {
+            return instruction.opcode == OpCodes.Ldfld ||
+                   instruction.opcode == OpCodes.Ldflda ||
+                   instruction.opcode == OpCodes.Ldsfld ||
+                   instruction.opcode == OpCodes.Stfld ||
+                   instruction.opcode == OpCodes.Stsfld;
         }
     }
 }

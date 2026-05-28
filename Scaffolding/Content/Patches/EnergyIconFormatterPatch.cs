@@ -105,18 +105,17 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
                 return rewriter.Instructions();
             }
 
-            var ldlocText = match.InstructionAt(rewriter.Code, 1).Clone();
-            var stlocText3 = match.InstructionAt(rewriter.Code, 4);
-            var ldlocText3 = HarmonyIl.LoadLocalFromStore(stlocText3);
+            var prefixLocal = match.GetLocalLoad(rewriter.Code, 1);
+            var textIconLocal = match.GetLocalStore(rewriter.Code, 4);
 
             var report = rewriter.TryInsertAfterFirst(
                 "[EnergyIconFormatter] Insert text energy icon override",
                 pattern,
                 [
-                    ldlocText,
-                    ldlocText3,
+                    prefixLocal.Load(),
+                    textIconLocal.Load(),
                     HarmonyIl.Call(overrideMethod),
-                    stlocText3.Clone(),
+                    textIconLocal.Store(),
                 ],
                 code => code.Any(instruction => HarmonyIl.IsCallTo(instruction, overrideMethod)));
             report.RequireSucceeded();

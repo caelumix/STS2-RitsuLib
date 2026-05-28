@@ -1,3 +1,4 @@
+using System.Reflection;
 using HarmonyLib;
 
 namespace STS2RitsuLib.Utils.HarmonyIl
@@ -122,6 +123,15 @@ namespace STS2RitsuLib.Utils.HarmonyIl
         }
 
         /// <summary>
+        ///     Finds all non-overlapping occurrences of this pattern and returns assertion helpers.
+        ///     查找此模式的所有非重叠匹配并返回断言辅助对象。
+        /// </summary>
+        public HarmonyIlMatches FindMatches(IReadOnlyList<CodeInstruction> code, string description = "IL pattern")
+        {
+            return new(description, FindAll(code));
+        }
+
+        /// <summary>
         ///     Returns true when this pattern matches at <paramref name="index" />.
         ///     当此模式在 <paramref name="index" /> 处匹配时返回 true。
         /// </summary>
@@ -134,6 +144,134 @@ namespace STS2RitsuLib.Utils.HarmonyIl
         private bool MatchesAtCore(IReadOnlyList<CodeInstruction> code, int index)
         {
             return !_parts.Where((t, offset) => !t(code[index + offset])).Any();
+        }
+    }
+
+    /// <summary>
+    ///     A collection of IL matches with assertion helpers.
+    ///     带断言辅助方法的 IL 匹配集合。
+    /// </summary>
+    public sealed class HarmonyIlMatches
+    {
+        /// <summary>
+        ///     Creates a match collection.
+        ///     创建匹配集合。
+        /// </summary>
+        public HarmonyIlMatches(string description, IEnumerable<HarmonyIlMatch> matches)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(description);
+            ArgumentNullException.ThrowIfNull(matches);
+            Description = description;
+            Items = matches.ToList();
+        }
+
+        /// <summary>
+        ///     Human-readable description used in assertion errors.
+        ///     断言错误中使用的可读描述。
+        /// </summary>
+        public string Description { get; }
+
+        /// <summary>
+        ///     Number of matches.
+        ///     匹配数量。
+        /// </summary>
+        public int Count => Items.Count;
+
+        /// <summary>
+        ///     Matched spans.
+        ///     已匹配区间。
+        /// </summary>
+        public IReadOnlyList<HarmonyIlMatch> Items { get; }
+
+        /// <summary>
+        ///     Returns true when at least one match exists.
+        ///     存在至少一个匹配时返回 true。
+        /// </summary>
+        public bool Any => Items.Count > 0;
+
+        /// <summary>
+        ///     Returns the first match and throws when none exist.
+        ///     返回第一个匹配；不存在匹配时抛出异常。
+        /// </summary>
+        public HarmonyIlMatch First()
+        {
+            if (Items.Count > 0)
+                return Items[0];
+
+            throw NewCountException("at least 1");
+        }
+
+        /// <summary>
+        ///     Returns the last match and throws when none exist.
+        ///     返回最后一个匹配；不存在匹配时抛出异常。
+        /// </summary>
+        public HarmonyIlMatch Last()
+        {
+            if (Items.Count > 0)
+                return Items[^1];
+
+            throw NewCountException("at least 1");
+        }
+
+        /// <summary>
+        ///     Requires exactly one match and returns it.
+        ///     要求恰好一个匹配并返回它。
+        /// </summary>
+        public HarmonyIlMatch RequireSingle()
+        {
+            if (Items.Count == 1)
+                return Items[0];
+
+            throw NewCountException("exactly 1");
+        }
+
+        /// <summary>
+        ///     Requires an exact match count.
+        ///     要求精确匹配数量。
+        /// </summary>
+        public HarmonyIlMatches RequireExactly(int count)
+        {
+            if (Items.Count == count)
+                return this;
+
+            throw NewCountException($"exactly {count}");
+        }
+
+        /// <summary>
+        ///     Requires at least <paramref name="count" /> matches.
+        ///     要求至少 <paramref name="count" /> 个匹配。
+        /// </summary>
+        public HarmonyIlMatches RequireAtLeast(int count)
+        {
+            if (Items.Count >= count)
+                return this;
+
+            throw NewCountException($"at least {count}");
+        }
+
+        /// <summary>
+        ///     Requires no matches.
+        ///     要求没有匹配。
+        /// </summary>
+        public HarmonyIlMatches RequireNone()
+        {
+            return RequireExactly(0);
+        }
+
+        /// <summary>
+        ///     Returns a compact diagnostic string.
+        ///     返回紧凑诊断字符串。
+        /// </summary>
+        public string Describe()
+        {
+            return
+                $"{Description}: count={Items.Count}, indexes=[{string.Join(", ", Items.Select(static match => match.Index))}]";
+        }
+
+        private InvalidOperationException NewCountException(string expected)
+        {
+            return new($"{Description} matched {Items.Count} span(s), expected {expected}. " +
+                       $"indexes=[{string.Join(", ", Items.Select(static match => match.Index))}].");
         }
     }
 
@@ -160,6 +298,75 @@ namespace STS2RitsuLib.Utils.HarmonyIl
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
             return code[Index + offset];
+        }
+
+        /// <summary>
+        ///     Reads a local-load reference from the matched instruction at <paramref name="offset" />.
+        ///     从匹配区间中 <paramref name="offset" /> 处的指令读取本地变量读取引用。
+        /// </summary>
+        public HarmonyIlLocalRef GetLocalLoad(IReadOnlyList<CodeInstruction> code, int offset)
+        {
+            var instruction = InstructionAt(code, offset);
+            if (HarmonyIl.TryGetLocalLoad(instruction, out var local))
+                return local;
+
+            throw new InvalidOperationException(
+                $"Matched instruction at offset {offset} is not a local-load instruction.");
+        }
+
+        /// <summary>
+        ///     Reads a local-store reference from the matched instruction at <paramref name="offset" />.
+        ///     从匹配区间中 <paramref name="offset" /> 处的指令读取本地变量存储引用。
+        /// </summary>
+        public HarmonyIlLocalRef GetLocalStore(IReadOnlyList<CodeInstruction> code, int offset)
+        {
+            var instruction = InstructionAt(code, offset);
+            if (HarmonyIl.TryGetLocalStore(instruction, out var local))
+                return local;
+
+            throw new InvalidOperationException(
+                $"Matched instruction at offset {offset} is not a local-store instruction.");
+        }
+
+        /// <summary>
+        ///     Reads a typed operand from the matched instruction at <paramref name="offset" />.
+        ///     从匹配区间中 <paramref name="offset" /> 处的指令读取指定类型 operand。
+        /// </summary>
+        public T GetOperand<T>(IReadOnlyList<CodeInstruction> code, int offset)
+        {
+            var instruction = InstructionAt(code, offset);
+            if (HarmonyIl.TryGetOperand<T>(instruction, out var operand))
+                return operand;
+
+            throw new InvalidOperationException(
+                $"Matched instruction at offset {offset} does not have a {typeof(T).Name} operand.");
+        }
+
+        /// <summary>
+        ///     Reads a method operand from the matched instruction at <paramref name="offset" />.
+        ///     从匹配区间中 <paramref name="offset" /> 处的指令读取方法 operand。
+        /// </summary>
+        public MethodInfo GetMethodOperand(IReadOnlyList<CodeInstruction> code, int offset)
+        {
+            return GetOperand<MethodInfo>(code, offset);
+        }
+
+        /// <summary>
+        ///     Reads a field operand from the matched instruction at <paramref name="offset" />.
+        ///     从匹配区间中 <paramref name="offset" /> 处的指令读取字段 operand。
+        /// </summary>
+        public FieldInfo GetFieldOperand(IReadOnlyList<CodeInstruction> code, int offset)
+        {
+            return GetOperand<FieldInfo>(code, offset);
+        }
+
+        /// <summary>
+        ///     Reads a string operand from the matched instruction at <paramref name="offset" />.
+        ///     从匹配区间中 <paramref name="offset" /> 处的指令读取字符串 operand。
+        /// </summary>
+        public string GetStringOperand(IReadOnlyList<CodeInstruction> code, int offset)
+        {
+            return GetOperand<string>(code, offset);
         }
     }
 }

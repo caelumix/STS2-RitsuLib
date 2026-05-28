@@ -60,22 +60,41 @@ namespace STS2RitsuLib.Lifecycle.Patches
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var rewriter = HarmonyIlRewriter.From(instructions);
-            _ = rewriter.RedirectCalls(
-                "[RunHistory] Redirect ModelDb.GetById calls",
-                static called =>
-                {
-                    if (IsModelDbGetByIdFor(called, typeof(CharacterModel)))
-                        return CharacterFallback;
-                    // ReSharper disable once ConvertIfStatementToReturnStatement
-                    if (IsModelDbGetByIdFor(called, typeof(ActModel)))
-                        return ActFallback;
-                    return null;
-                },
-                static code => code.Any(instruction =>
-                    HarmonyIl.IsCallTo(instruction, CharacterFallback) ||
-                    HarmonyIl.IsCallTo(instruction, ActFallback)));
+            var operation = "[RunHistory] Redirect ModelDb.GetById calls";
+            var targets = rewriter.FindCalls(IsSupportedModelDbGetById, operation);
 
-            return rewriter.InstructionsChecked("[RunHistory] Redirect ModelDb.GetById calls");
+            if (!targets.Any && !rewriter.FindAll(IsFallbackCall, "[RunHistory] existing fallback calls").Any)
+                return rewriter.InstructionsChecked(operation);
+
+            var report = rewriter.RedirectCalls(
+                operation,
+                ResolveModelDbFallback,
+                static code => code.Any(IsFallbackCall));
+            if (report.Changed)
+                report.RequireApplied();
+
+            return rewriter.InstructionsChecked(operation);
+        }
+
+        private static MethodInfo? ResolveModelDbFallback(MethodInfo called)
+        {
+            if (IsModelDbGetByIdFor(called, typeof(CharacterModel)))
+                return CharacterFallback;
+
+            if (IsModelDbGetByIdFor(called, typeof(ActModel)))
+                return ActFallback;
+
+            return null;
+        }
+
+        private static bool IsFallbackCall(CodeInstruction instruction)
+        {
+            return HarmonyIl.IsCall(method => method == CharacterFallback || method == ActFallback)(instruction);
+        }
+
+        private static bool IsSupportedModelDbGetById(MethodInfo method)
+        {
+            return IsModelDbGetByIdFor(method, typeof(CharacterModel)) || IsModelDbGetByIdFor(method, typeof(ActModel));
         }
 
         private static bool IsModelDbGetByIdFor(MethodInfo mi, Type typeArg)

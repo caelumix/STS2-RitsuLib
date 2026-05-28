@@ -13,6 +13,13 @@ Documentation site: https://sts2-ritsulib.ritsukage.com/
 Chinese Slay the Spire 2 modding tutorial:
 https://tutorials.sts2modding.com/ ([GitHub](https://github.com/GlitchedReme/SlayTheSpire2ModdingTutorials))
 
+## Related Libraries
+
+For minion, summon, companion-card, or guardian-style mechanics, prefer
+[MinionLib](https://github.com/FuYnAloft/MinionLib). It focuses on creating and summoning minions, minion actions,
+minion-card interactions, guardian behavior, custom targeting, and minion positioning. RitsuLib remains the general
+framework layer and does not try to replace that specialized library.
+
 ## Install
 
 Reference the NuGet package in your mod project:

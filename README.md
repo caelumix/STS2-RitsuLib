@@ -113,6 +113,10 @@ paths, and its package can automatically pass common project files to the analyz
 This analyzer is provided, maintained, and supported by a third party. RitsuLib does not guarantee that it fully
 matches current RitsuLib capabilities or that all analyzer behavior is correct.
 
+## Acknowledgements
+
+See [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md) for the people and users who helped shape RitsuLib.
+
 ## License
 
 MIT

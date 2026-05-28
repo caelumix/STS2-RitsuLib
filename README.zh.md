@@ -104,6 +104,10 @@ RitsuLib 风格项目的推荐可选分析器是
 `buildTransitive` 会自动把常见项目文件传给 analyzer。该分析器由第三方提供、维护和支持；RitsuLib 不保证它与
 当前 RitsuLib 能力完全对齐，也不保证所有分析器行为都正确。
 
+## 致谢
+
+感谢在开发过程中帮助 RitsuLib 的人们，以及所有使用者。完整名单见 [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md)。
+
 ## 许可证
 
 MIT

@@ -296,10 +296,7 @@ namespace STS2RitsuLib.CardPiles
                 return true;
             }
 
-            if (Enum.TryParse(idOrEnumName.Trim(), true, out value))
-                return true;
-
-            return TryGetPileType(idOrEnumName, out value);
+            return Enum.TryParse(idOrEnumName.Trim(), true, out value) || TryGetPileType(idOrEnumName, out value);
         }
 
         /// <summary>

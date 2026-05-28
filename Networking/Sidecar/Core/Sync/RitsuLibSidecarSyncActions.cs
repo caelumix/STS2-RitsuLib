@@ -45,6 +45,8 @@ namespace STS2RitsuLib.Networking.Sidecar
     /// </summary>
     public static class RitsuLibSidecarSyncActions
     {
+        private const uint NextHookIdDelta = 1;
+
         private static readonly Lock Gate = new();
         private static readonly Dictionary<ulong, RegistrationBase> Registrations = [];
         private static readonly Dictionary<ActionKey, PendingActionPayload> PendingPayloads = [];
@@ -253,6 +255,7 @@ namespace STS2RitsuLib.Networking.Sidecar
             }
 
             StorePending(packet);
+            FastForwardHookIdPast(runManager.ActionQueueSynchronizer, packet.HookActionId);
             var action = runManager.ActionQueueSynchronizer.GetHookActionForId(
                 packet.HookActionId,
                 packet.OwnerNetId,
@@ -271,6 +274,7 @@ namespace STS2RitsuLib.Networking.Sidecar
             }
 
             StorePending(packet);
+            FastForwardHookIdPast(RunManager.Instance.ActionQueueSynchronizer, packet.HookActionId);
         }
 
         private static bool TryGetRegistration(ulong opcode, out RegistrationBase registration)
@@ -339,6 +343,18 @@ namespace STS2RitsuLib.Networking.Sidecar
             if (actionType is not (GameActionType.Combat or GameActionType.CombatPlayPhaseOnly))
                 throw new InvalidOperationException(
                     $"Sidecar sync actions only support {GameActionType.Combat} and {GameActionType.CombatPlayPhaseOnly}.");
+        }
+
+        private static void FastForwardHookIdPast(
+            ActionQueueSynchronizer synchronizer,
+            uint hookActionId)
+        {
+            if (hookActionId == uint.MaxValue)
+                return;
+
+            var nextHookId = hookActionId + NextHookIdDelta;
+            if (synchronizer.NextHookId < nextHookId)
+                synchronizer.FastForwardHookId(nextHookId);
         }
 
         private readonly record struct ActionKey(ulong OwnerNetId, uint HookActionId);

@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Multiplayer;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Serialization;
 using MegaCrit.Sts2.Core.Runs;
+using STS2RitsuLib.Models.Identity;
 using STS2RitsuLib.Networking.Sidecar;
 
 namespace STS2RitsuLib.Interactions.RightClick
@@ -24,7 +25,6 @@ namespace STS2RitsuLib.Interactions.RightClick
         private const string SidecarNonCombatRequestKey = "model_right_click_noncombat_request";
         private const string SidecarNonCombatApplyKey = "model_right_click_noncombat_apply";
         private const int InitialOffset = 0;
-        private const int MissingPotionSlotIndex = -1;
 
         private static readonly Lock Gate = new();
 
@@ -118,55 +118,41 @@ namespace STS2RitsuLib.Interactions.RightClick
         private static bool TryCreatePayload(ModRightClickContext context, out ModRightClickSyncPayload payload)
         {
             payload = default;
-            switch (context.Model)
+            if (!TryGetModelKind(context.Model, context.Player, out var kind))
+                return false;
+            if (!ModModelIdentityRegistry.TryGetToken(context.Model, out var token))
+                return false;
+
+            payload = new(
+                context.Player.NetId,
+                kind,
+                token,
+                context.Trigger);
+            return true;
+        }
+
+        private static bool TryGetModelKind(
+            AbstractModel model,
+            Player player,
+            out ModRightClickModelKind kind)
+        {
+            kind = default;
+            switch (model)
             {
-                case CardModel card when card.Owner == context.Player:
-                    payload = new(
-                        context.Player.NetId,
-                        ModRightClickModelKind.Card,
-                        card.Id,
-                        NetCombatCard.FromModel(card),
-                        0,
-                        0,
-                        context.Trigger);
+                case CardModel card when card.Owner == player:
+                    kind = ModRightClickModelKind.Card;
                     return true;
 
-                case RelicModel relic when relic.Owner == context.Player:
-                    payload = new(
-                        context.Player.NetId,
-                        ModRightClickModelKind.Relic,
-                        relic.Id,
-                        default,
-                        0,
-                        0,
-                        context.Trigger);
+                case RelicModel relic when relic.Owner == player:
+                    kind = ModRightClickModelKind.Relic;
                     return true;
 
-                case PowerModel power when IsPowerReachableForPlayer(power, context.Player) &&
-                                           power.Owner.CombatId.HasValue:
-                    payload = new(
-                        context.Player.NetId,
-                        ModRightClickModelKind.Power,
-                        power.Id,
-                        default,
-                        power.Owner.CombatId.Value,
-                        0,
-                        context.Trigger);
+                case PowerModel power when IsPowerReachableForPlayer(power, player):
+                    kind = ModRightClickModelKind.Power;
                     return true;
 
-                case PotionModel potion when potion.Owner == context.Player:
-                    var slotIndex = potion.Owner.GetPotionSlotIndex(potion);
-                    if (slotIndex == MissingPotionSlotIndex)
-                        return false;
-
-                    payload = new(
-                        context.Player.NetId,
-                        ModRightClickModelKind.Potion,
-                        potion.Id,
-                        default,
-                        0,
-                        (uint)slotIndex,
-                        context.Trigger);
+                case PotionModel potion when potion.Owner == player:
+                    kind = ModRightClickModelKind.Potion;
                     return true;
 
                 default:
@@ -206,19 +192,8 @@ namespace STS2RitsuLib.Interactions.RightClick
             var writer = new PacketWriter { WarnOnGrow = false };
             writer.WriteULong(payload.OwnerNetId);
             writer.WriteEnum(payload.Kind);
-            writer.WriteFullModelId(payload.ModelId);
-            switch (payload.Kind)
-            {
-                case ModRightClickModelKind.Card:
-                    writer.Write(payload.NetCombatCard);
-                    break;
-                case ModRightClickModelKind.Power:
-                    writer.WriteUInt(payload.CreatureCombatId);
-                    break;
-                case ModRightClickModelKind.Potion:
-                    writer.WriteUInt(payload.PotionSlotIndex);
-                    break;
-            }
+            writer.WriteFullModelId(payload.Token.ModelId);
+            writer.WriteUInt(payload.Token.Identity.Value);
 
             writer.WriteBool(payload.Trigger.IsController);
             writer.WriteBool(payload.Trigger.Metadata != null);
@@ -236,32 +211,14 @@ namespace STS2RitsuLib.Interactions.RightClick
             var ownerNetId = reader.ReadULong();
             var kind = reader.ReadEnum<ModRightClickModelKind>();
             var modelId = reader.ReadFullModelId();
-            var netCombatCard = default(NetCombatCard);
-            var creatureCombatId = 0U;
-            var potionSlotIndex = 0U;
-
-            switch (kind)
-            {
-                case ModRightClickModelKind.Card:
-                    netCombatCard = reader.Read<NetCombatCard>();
-                    break;
-                case ModRightClickModelKind.Power:
-                    creatureCombatId = reader.ReadUInt();
-                    break;
-                case ModRightClickModelKind.Potion:
-                    potionSlotIndex = reader.ReadUInt();
-                    break;
-            }
+            var identity = new ModModelIdentity(reader.ReadUInt());
 
             var isController = reader.ReadBool();
             var metadata = reader.ReadBool() ? reader.ReadString() : null;
             return new(
                 ownerNetId,
                 kind,
-                modelId,
-                netCombatCard,
-                creatureCombatId,
-                potionSlotIndex,
+                new(identity, modelId),
                 new(isController, metadata));
         }
 
@@ -333,11 +290,13 @@ namespace STS2RitsuLib.Interactions.RightClick
             out AbstractModel model)
         {
             model = null!;
+            if (!ModModelIdentityRegistry.TryResolve(payload.Token, out var resolved))
+                return false;
+
             switch (payload.Kind)
             {
                 case ModRightClickModelKind.Card:
-                    var card = payload.NetCombatCard.ToCardModelOrNull();
-                    if (card == null || card.Id != payload.ModelId || card.Owner != player ||
+                    if (resolved is not CardModel card || card.Owner != player ||
                         card.Pile?.Type != PileType.Hand)
                         return false;
 
@@ -345,27 +304,21 @@ namespace STS2RitsuLib.Interactions.RightClick
                     return true;
 
                 case ModRightClickModelKind.Relic:
-                    var relic = player.GetRelicById(payload.ModelId);
-                    if (relic == null)
+                    if (resolved is not RelicModel relic || relic.Owner != player)
                         return false;
 
                     model = relic;
                     return true;
 
                 case ModRightClickModelKind.Power:
-                    var power = player.Creature.CombatState
-                        ?.GetCreature(payload.CreatureCombatId)
-                        ?.Powers
-                        .FirstOrDefault(p => p.Id == payload.ModelId);
-                    if (power == null)
+                    if (resolved is not PowerModel power || !IsPowerReachableForPlayer(power, player))
                         return false;
 
                     model = power;
                     return true;
 
                 case ModRightClickModelKind.Potion:
-                    var potion = player.GetPotionAtSlotIndex((int)payload.PotionSlotIndex);
-                    if (potion == null || potion.Id != payload.ModelId)
+                    if (resolved is not PotionModel potion || potion.Owner != player)
                         return false;
 
                     model = potion;
@@ -389,10 +342,7 @@ namespace STS2RitsuLib.Interactions.RightClick
         private readonly record struct ModRightClickSyncPayload(
             ulong OwnerNetId,
             ModRightClickModelKind Kind,
-            ModelId ModelId,
-            NetCombatCard NetCombatCard,
-            uint CreatureCombatId,
-            uint PotionSlotIndex,
+            ModModelIdentityToken Token,
             ModRightClickTrigger Trigger);
     }
 }

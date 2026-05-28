@@ -9,6 +9,7 @@ using STS2RitsuLib.Combat.Rewards.Patches;
 using STS2RitsuLib.Combat.Ui.Patches;
 using STS2RitsuLib.Content.Patches;
 using STS2RitsuLib.Diagnostics.Patches;
+using STS2RitsuLib.Interactions.RightClick.Patches;
 using STS2RitsuLib.Interop.Patches;
 using STS2RitsuLib.Keywords.Patches;
 using STS2RitsuLib.Lifecycle.Patches;
@@ -197,6 +198,10 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<NRelicInventoryHolderExtraCornerAmountLabelsExitTreePatch>();
             patcher.RegisterPatch<NIntentExtraCornerAmountLabelsPatch>();
             patcher.RegisterPatch<NIntentExtraCornerAmountLabelsExitTreePatch>();
+            patcher.RegisterPatch<ModRightClickCardHolderPatch>();
+            patcher.RegisterPatch<ModRightClickRelicPatch>();
+            patcher.RegisterPatch<ModRightClickPowerPatch>();
+            patcher.RegisterPatch<ModRightClickPotionPatch>();
             patcher.RegisterPatch<ArchaicToothGetTranscendenceStarterCardPatch>();
             patcher.RegisterPatch<ArchaicToothGetTranscendenceTransformedCardPatch>();
             patcher.RegisterPatch<ArchaicToothTranscendenceCardsPatch>();

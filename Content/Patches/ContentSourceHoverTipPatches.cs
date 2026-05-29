@@ -4,6 +4,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -541,6 +542,31 @@ namespace STS2RitsuLib.Content.Patches
                 AppendModelSourceTipIfModelTipMissing(relic, ref hoverTips);
 
             AppendCardHoverTipSources(ref hoverTips);
+        }
+    }
+
+    internal sealed class ContentSourceCreatureHoverTipsPatch : IPatchMethod
+    {
+        public static string PatchId => "content_source_creature_hover_tips";
+
+        public static string Description =>
+            "Add content source hover tip to enemy creature hover tips in combat when enabled";
+
+        public static bool IsCritical => false;
+
+        public static ModPatchTarget[] GetTargets()
+        {
+            return [new(typeof(Creature), "HoverTips", MethodType.Getter)];
+        }
+
+        // ReSharper disable InconsistentNaming
+        public static void Postfix(Creature __instance, ref IEnumerable<IHoverTip> __result)
+            // ReSharper restore InconsistentNaming
+        {
+            if (!__instance.IsMonster)
+                return;
+
+            ContentSourceHoverTipPatchHelper.Append(__instance.Monster!, ref __result);
         }
     }
 

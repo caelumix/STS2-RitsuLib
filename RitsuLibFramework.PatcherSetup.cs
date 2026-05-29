@@ -310,6 +310,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<ContentSourceModelHoverTipPatch>();
             patcher.RegisterPatch<ContentSourcePowerHoverTipsPatch>();
             patcher.RegisterPatch<ContentSourceNHoverTipSetShowPatch>();
+            patcher.RegisterPatch<ContentSourceCreatureHoverTipsPatch>();
             patcher.RegisterPatch<ContentSourceEventLayoutBadgePatch>();
             patcher.RegisterPatch<ModKeywordCardDescriptionPatches>();
             patcher.RegisterPatch<EnergyIconHelperPathPatch>();

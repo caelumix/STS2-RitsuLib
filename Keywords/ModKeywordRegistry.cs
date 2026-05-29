@@ -469,10 +469,7 @@ namespace STS2RitsuLib.Keywords
                 return true;
             }
 
-            if (Enum.TryParse(idOrEnumName.Trim(), true, out value))
-                return true;
-
-            return TryGetCardKeyword(idOrEnumName, out value);
+            return Enum.TryParse(idOrEnumName.Trim(), true, out value) || TryGetCardKeyword(idOrEnumName, out value);
         }
 
         /// <summary>

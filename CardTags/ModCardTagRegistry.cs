@@ -211,10 +211,7 @@ namespace STS2RitsuLib.CardTags
                 return true;
             }
 
-            if (Enum.TryParse(idOrEnumName.Trim(), true, out value))
-                return true;
-
-            return TryGetCardTag(idOrEnumName, out value);
+            return Enum.TryParse(idOrEnumName.Trim(), true, out value) || TryGetCardTag(idOrEnumName, out value);
         }
 
         /// <summary>

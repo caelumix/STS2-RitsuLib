@@ -2482,6 +2482,9 @@ namespace STS2RitsuLib.Settings
         private void OnLocaleChanged()
         {
             FlushDirtyBindings();
+            // Mod display names participate in the sidebar sort tie-break, so the cached ordering must be
+            // dropped when the locale changes (the registry cannot observe locale changes itself).
+            ModSettingsRegistry.InvalidateOrderingCache();
             _sidebarStructureDirty = true;
             _contentStructureDirty = true;
             _selectionDirty = true;

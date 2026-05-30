@@ -51,15 +51,6 @@ namespace STS2RitsuLib.Settings
         internal static IEnumerable<PageBuildItem> CreatePageBuildItems(ModSettingsUiContext context,
             ModSettingsPage page)
         {
-            // A divider only separates two *visible* sections. Sections can be hidden dynamically (host surface
-            // or VisibleWhen), so the leading divider must follow the same visibility as its section, and must
-            // also disappear when no earlier section is visible. Otherwise a hidden middle section leaves its two
-            // adjacent dividers stacked with nothing between them (or a stray divider sits above the first visible
-            // section). Each section's predicate is reused so the divider stays in sync on every refresh.
-            // 分割线只在两个“可见”section 之间起分隔作用。section 可被动态隐藏（host surface 或 VisibleWhen），因此其前导分割线
-            // 必须跟随该 section 的可见性，且当其之前没有任何可见 section 时也要隐藏。否则一个被隐藏的中间 section 会让它两侧的
-            // 分割线叠在一起、中间空无一物（或在首个可见 section 之上留下一条孤立分割线）。复用每个 section 的谓词，使分割线在
-            // 每次刷新时保持同步。
             var sectionVisible = new Func<bool>[page.Sections.Count];
             for (var index = 0; index < page.Sections.Count; index++)
                 sectionVisible[index] = BuildSectionVisiblePredicate(page.Sections[index]);

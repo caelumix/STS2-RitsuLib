@@ -297,6 +297,7 @@ namespace STS2RitsuLib.Settings
             PushPaneHotkeys();
             UpdatePaneHotkeyHintIcons();
             RequestMirrorVisibilitySyncRefreshIfNeeded();
+            Callable.From(RefreshContentLayout).CallDeferred();
         }
 
         /// <inheritdoc />
@@ -1321,6 +1322,8 @@ namespace STS2RitsuLib.Settings
                 foreach (var cache in _pageContentCaches.Values)
                 {
                     cache.BuildCancellation?.Cancel();
+                    if (cache.State == PageBuildState.Building)
+                        cache.State = PageBuildState.NotBuilt;
                     if (IsInstanceValid(cache.Root))
                         cache.Root.Visible = false;
                 }
@@ -1893,13 +1896,14 @@ namespace STS2RitsuLib.Settings
 
         private async Task BuildPageAsync(ModSettingsPage page, PageContentCache cache)
         {
-            if (cache.BuildCancellation != null)
-                await cache.BuildCancellation.CancelAsync();
+            var previousCancellation = cache.BuildCancellation;
             cache.BuildCancellation = new();
             var ct = cache.BuildCancellation.Token;
             var buildVersion = ++cache.BuildVersion;
             cache.State = PageBuildState.Building;
             ShowContentBuildOverlay(ModSettingsLocalization.Get("entry.loading", "Loading settings…"));
+            if (previousCancellation != null)
+                await previousCancellation.CancelAsync();
 
             var nextHeader = new VBoxContainer
             {
@@ -1940,14 +1944,6 @@ namespace STS2RitsuLib.Settings
                             page.Id)));
                 }
 
-                // Yield by a per-frame time budget rather than after every section. The old "yield after each
-                // section" cadence forced one full frame wait per section, so a page of several light sections
-                // took many frames to populate even though the total work was trivial. Now sections accumulate
-                // within a frame and only yield once the budget is exceeded: light pages appear in a single
-                // frame, while heavy pages still chunk across frames to avoid a long hitch.
-                // 按每帧时间预算让帧,而非每个 section 之后都让帧。旧的"每 section 让帧一次"会为每个 section 强制等待一整帧,
-                // 于是由若干轻量 section 组成的页面即使总工作量很小也要好几帧才填满。现在 section 在一帧内累积,仅当超出预算
-                // 才让帧:轻量页面单帧呈现,重量页面仍跨帧分块以避免长卡顿。
                 var lastYieldMsec = Time.GetTicksMsec();
                 foreach (var item in ModSettingsUiFactory.CreatePageBuildItems(context, page))
                 {
@@ -1960,6 +1956,8 @@ namespace STS2RitsuLib.Settings
                     await this.AwaitRitsuProcessFrame(ct);
                     lastYieldMsec = Time.GetTicksMsec();
                 }
+
+                await this.AwaitRitsuProcessFrame(ct);
 
                 if (buildVersion != cache.BuildVersion || !IsInstanceValid(cache.Root))
                     return;
@@ -2002,6 +2000,8 @@ namespace STS2RitsuLib.Settings
             {
                 nextHeader.QueueFree();
                 nextContent.QueueFree();
+                if (buildVersion == cache.BuildVersion && cache.State == PageBuildState.Building)
+                    cache.State = PageBuildState.NotBuilt;
             }
             catch (Exception ex)
             {
@@ -2353,16 +2353,6 @@ namespace STS2RitsuLib.Settings
 
         private static void WireVerticalOnlyChain(IReadOnlyList<Control> chain)
         {
-            // Pin every neighbor to self so Godot's native focus traversal never moves on its own. Up/down are
-            // driven live by TryHandleDirectionalFocusInput (which recomputes the focusable order each press),
-            // and left/right stay blocked so vertical navigation cannot escape sideways into the other pane.
-            // The previous design wired absolute NodePaths to the prev/next chain entry; those dangle the moment
-            // the content tree mutates (refresh frees/recreates controls, list add/remove, host swaps,
-            // expand/collapse), which made focus jump to a freed node and disappear on complex/dynamic pages.
-            // 把每个 neighbor 都钉到自身,使 Godot 原生焦点遍历不会自行移动。上/下由 TryHandleDirectionalFocusInput 实时驱动
-            // (每次按键重新计算可聚焦顺序),左/右保持封锁,使纵向导航不会横向逃逸到另一个窗格。旧设计把绝对 NodePath 接到
-            // 链中前/后一项;一旦内容树变动(刷新释放/重建控件、列表增删、host 替换、展开/折叠),这些路径就悬空,导致焦点跳到已
-            // 释放的节点并在复杂/动态页面上消失。
             foreach (var current in chain)
             {
                 var selfPath = current.GetPath();
@@ -2381,19 +2371,6 @@ namespace STS2RitsuLib.Settings
             base._Input(@event);
         }
 
-        /// <summary>
-        ///     Live up/down focus navigation for the active pane. Instead of relying on pre-wired
-        ///     <see cref="Control.FocusNeighborTop" /> / <see cref="Control.FocusNeighborBottom" /> paths (which go
-        ///     stale and drop focus the moment the content tree mutates), the focusable order is recomputed from
-        ///     the live tree on every press, so navigation stays correct through refreshes, list edits, host swaps
-        ///     and expand/collapse. Order matches the previous preorder chain, so secondary controls (e.g. the
-        ///     per-entry actions button) remain reachable. Text editors, popups and the open dropdown keep their
-        ///     own up/down handling.
-        ///     当前窗格的实时上/下焦点导航。不再依赖预先连好的 <see cref="Control.FocusNeighborTop" /> /
-        ///     <see cref="Control.FocusNeighborBottom" /> 路径(它们在内容树变动时会悬空并丢失焦点),而是每次按键都从实时树重新
-        ///     计算可聚焦顺序,因此在刷新、列表编辑、host 替换、展开/折叠期间导航始终正确。顺序与旧的前序链一致,故次级控件(如每
-        ///     条目的 actions 按钮)仍可到达。文本编辑器、弹窗与展开的下拉框保留各自的上/下处理。
-        /// </summary>
         private bool TryHandleDirectionalFocusInput(InputEvent @event)
         {
             if (!Visible || !IsInstanceValid(this))
@@ -2401,7 +2378,6 @@ namespace STS2RitsuLib.Settings
             if (!ActiveScreenContext.Instance.IsCurrent(this))
                 return false;
 
-            // Echo is allowed so holding the key keeps moving the focus, matching the previous behavior.
             int delta;
             if (@event.IsActionPressed("ui_up"))
                 delta = -1;
@@ -2414,14 +2390,9 @@ namespace STS2RitsuLib.Settings
             if (owner == null || !IsInstanceValid(owner))
                 return false;
 
-            // Multiline editors use up/down to move the caret; native popups handle their own vertical
-            // navigation. Leave those to their own input handling.
             if (owner is TextEdit || IsFocusUnderPopupOrTransientWindow(owner))
                 return false;
 
-            // An open dropdown / actions menu, or a key-binding control recording input, owns directional input
-            // while active (its overlay lives inside the content pane, so the pane check above does not exclude
-            // it). Defer to the control's own handling in that case.
             for (Node? n = owner; n != null && !ReferenceEquals(n, this); n = n.GetParent())
                 if (n is IModSettingsDirectionalInputClaimant { ClaimsDirectionalInput: true })
                     return false;
@@ -2455,7 +2426,6 @@ namespace STS2RitsuLib.Settings
                 return false;
 
             var nextIndex = currentIndex + delta;
-            // At either end, consume the event so focus stays put rather than escaping the pane or being lost.
             if (nextIndex >= 0 && nextIndex < focusables.Count)
             {
                 var target = focusables[nextIndex];
@@ -2624,8 +2594,6 @@ namespace STS2RitsuLib.Settings
         private void OnLocaleChanged()
         {
             FlushDirtyBindings();
-            // Mod display names participate in the sidebar sort tie-break, so the cached ordering must be
-            // dropped when the locale changes (the registry cannot observe locale changes itself).
             ModSettingsRegistry.InvalidateOrderingCache();
             _sidebarStructureDirty = true;
             _contentStructureDirty = true;

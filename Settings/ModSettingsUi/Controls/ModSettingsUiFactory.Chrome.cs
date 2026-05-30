@@ -208,14 +208,7 @@ namespace STS2RitsuLib.Settings
             if (target.MouseFilter == Control.MouseFilterEnum.Ignore)
                 target.MouseFilter = Control.MouseFilterEnum.Pass;
 
-            // Build-time cost matters here: every control in a setting line gets a context menu, and a page has
-            // many lines. A persistent Timer child node per control roughly doubled the node count. Instead the
-            // long-press timer is a transient SceneTreeTimer created only when a touch press actually begins; a
-            // per-press token guards cancellation (SceneTreeTimer cannot be stopped) on release or drag.
-            // 这里构建期成本很关键:设置行里每个控件都挂上下文菜单,而一页有很多行。每控件一个常驻 Timer 子节点会让节点数大致
-            // 翻倍。改为仅在触摸按下真正开始时创建瞬态 SceneTreeTimer;由于 SceneTreeTimer 无法停止,用每次按下的 token 在抬起或
-            // 拖拽时守卫取消。
-            object? activeLongPressToken = null;
+            object? activeLongPressToken;
 
             target.GuiInput += @event =>
             {

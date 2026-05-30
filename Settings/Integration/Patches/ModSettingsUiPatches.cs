@@ -186,11 +186,6 @@ namespace STS2RitsuLib.Settings.Patches
             if (screen.HasMeta(PrewarmScheduledMeta))
                 return;
             screen.SetMeta(PrewarmScheduledMeta, true);
-
-            // Idle frame 1: framework page registration (cheap / usually already warm from the postfix above).
-            // Idle frame 2: reflection-based mirror registration (the heavy data-layer scan).
-            // Idle frame 3: pre-create the submenu, building chrome + sidebar and kicking off the async first
-            //               page build, so the eventual click is instant.
             Callable.From(() => PrewarmStep(screen, 0)).CallDeferred();
         }
 

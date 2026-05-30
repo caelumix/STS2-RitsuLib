@@ -1221,9 +1221,8 @@ namespace STS2RitsuLib.Settings
             {
                 _selectedModId = rootPages[0].Key;
                 _selectionDirty = true;
+                ExpandOnlyMod(_selectedModId);
             }
-
-            ExpandOnlyMod(_selectedModId);
 
             var modPages = ModSettingsRegistry.GetPages()
                 .Where(page => string.Equals(page.ModId, _selectedModId, StringComparison.OrdinalIgnoreCase))
@@ -1803,18 +1802,30 @@ namespace STS2RitsuLib.Settings
                 string.Empty,
                 () =>
                 {
-                    _selectedModId = modId;
-                    _selectedPageId = ModSettingsRegistry.GetPages()
-                        .Where(page => string.Equals(page.ModId, modId, StringComparison.OrdinalIgnoreCase) &&
-                                       string.IsNullOrWhiteSpace(page.ParentPageId))
-                        .OrderBy(ModSettingsRegistry.GetEffectivePageSortOrder)
-                        .ThenBy(page => page.Id, StringComparer.OrdinalIgnoreCase)
-                        .Select(page => page.Id)
-                        .FirstOrDefault();
-                    _selectedSectionId = null;
+                    if (_expandedModIds.Contains(modId))
+                    {
+                        _expandedModIds.Remove(modId);
+                        _selectionDirty = true;
+                        EnsureUiUpToDate();
+                        return;
+                    }
+
+                    if (!string.Equals(_selectedModId, modId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _selectedModId = modId;
+                        _selectedPageId = ModSettingsRegistry.GetPages()
+                            .Where(page => string.Equals(page.ModId, modId, StringComparison.OrdinalIgnoreCase) &&
+                                           string.IsNullOrWhiteSpace(page.ParentPageId))
+                            .OrderBy(ModSettingsRegistry.GetEffectivePageSortOrder)
+                            .ThenBy(page => page.Id, StringComparer.OrdinalIgnoreCase)
+                            .Select(page => page.Id)
+                            .FirstOrDefault();
+                        _selectedSectionId = null;
+                        _focusSelectedPageButtonOnNextRefresh = true;
+                    }
+
                     ExpandOnlyMod(modId);
                     _selectionDirty = true;
-                    _focusSelectedPageButtonOnNextRefresh = true;
                     EnsureUiUpToDate();
                 },
                 ModSettingsSidebarItemKind.ModGroup,

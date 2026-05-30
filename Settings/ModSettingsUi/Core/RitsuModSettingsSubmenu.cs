@@ -36,6 +36,15 @@ namespace STS2RitsuLib.Settings
 
         private const string ScrollbarContentRightGutterTokenPath = "components.scrollbar.layout.contentRightGutter";
 
+        /// <summary>
+        ///     Per-frame build budget (ms) for <see cref="BuildPageAsync" />. Sections accumulate within a frame
+        ///     until this is exceeded, then the build yields one frame. Tuned below a 60 fps frame (~16ms) so the
+        ///     UI stays responsive while light pages still populate in a single frame.
+        ///     <see cref="BuildPageAsync" /> 的每帧构建预算(毫秒)。section 在一帧内累积直到超过该值,然后让出一帧。取值低于
+        ///     60fps 单帧(~16ms),既保持 UI 响应,又让轻量页面在单帧内填满。
+        /// </summary>
+        private const ulong PageBuildFrameBudgetMsec = 6;
+
         private static readonly StringName PaneSidebarHotkey = MegaInput.viewDeckAndTabLeft;
         private static readonly StringName PaneContentHotkey = MegaInput.viewExhaustPileAndTabRight;
 
@@ -1931,6 +1940,15 @@ namespace STS2RitsuLib.Settings
                             page.Id)));
                 }
 
+                // Yield by a per-frame time budget rather than after every section. The old "yield after each
+                // section" cadence forced one full frame wait per section, so a page of several light sections
+                // took many frames to populate even though the total work was trivial. Now sections accumulate
+                // within a frame and only yield once the budget is exceeded: light pages appear in a single
+                // frame, while heavy pages still chunk across frames to avoid a long hitch.
+                // 按每帧时间预算让帧,而非每个 section 之后都让帧。旧的"每 section 让帧一次"会为每个 section 强制等待一整帧,
+                // 于是由若干轻量 section 组成的页面即使总工作量很小也要好几帧才填满。现在 section 在一帧内累积,仅当超出预算
+                // 才让帧:轻量页面单帧呈现,重量页面仍跨帧分块以避免长卡顿。
+                var lastYieldMsec = Time.GetTicksMsec();
                 foreach (var item in ModSettingsUiFactory.CreatePageBuildItems(context, page))
                 {
                     ct.ThrowIfCancellationRequested();
@@ -1938,8 +1956,11 @@ namespace STS2RitsuLib.Settings
                         return;
 
                     nextContent.AddChild(item.Control);
-                    if (item.YieldAfter)
+                    if (item.YieldAfter && Time.GetTicksMsec() - lastYieldMsec >= PageBuildFrameBudgetMsec)
+                    {
                         await this.AwaitRitsuProcessFrame(ct);
+                        lastYieldMsec = Time.GetTicksMsec();
+                    }
                 }
 
                 if (buildVersion != cache.BuildVersion || !IsInstanceValid(cache.Root))

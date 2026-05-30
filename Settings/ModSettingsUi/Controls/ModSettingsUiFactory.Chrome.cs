@@ -2,7 +2,6 @@ using Godot;
 using MegaCrit.Sts2.addons.mega_text;
 using STS2RitsuLib.Ui.Shell;
 using STS2RitsuLib.Ui.Shell.Theme;
-using Timer = Godot.Timer;
 
 namespace STS2RitsuLib.Settings
 {
@@ -22,6 +21,8 @@ namespace STS2RitsuLib.Settings
         private const string DisabledFixedTokenPath = "semantic.state.disabled.fixed";
 
         private const string DisabledStylePathMetaKey = "__ritsu_disabled_style_path";
+
+        private const double ContextMenuLongPressSeconds = 0.55;
 
         public static ModSettingsSidebarButton CreateSidebarButton(string text, Action onPressed,
             ModSettingsSidebarItemKind kind = ModSettingsSidebarItemKind.Page,
@@ -207,25 +208,14 @@ namespace STS2RitsuLib.Settings
             if (target.MouseFilter == Control.MouseFilterEnum.Ignore)
                 target.MouseFilter = Control.MouseFilterEnum.Pass;
 
-            var longPressTimer = new Timer
-            {
-                OneShot = true,
-                WaitTime = 0.55f,
-                Autostart = false,
-                ProcessCallback = Timer.TimerProcessCallback.Idle,
-            };
-            target.AddChild(longPressTimer);
-            var pendingTouchPosition = Vector2.Zero;
-            longPressTimer.Timeout += () =>
-            {
-                if (!CanOpenContextMenu(target, button))
-                {
-                    button.ForceCloseDropdown();
-                    return;
-                }
-
-                button.OpenAt(pendingTouchPosition);
-            };
+            // Build-time cost matters here: every control in a setting line gets a context menu, and a page has
+            // many lines. A persistent Timer child node per control roughly doubled the node count. Instead the
+            // long-press timer is a transient SceneTreeTimer created only when a touch press actually begins; a
+            // per-press token guards cancellation (SceneTreeTimer cannot be stopped) on release or drag.
+            // 这里构建期成本很关键:设置行里每个控件都挂上下文菜单,而一页有很多行。每控件一个常驻 Timer 子节点会让节点数大致
+            // 翻倍。改为仅在触摸按下真正开始时创建瞬态 SceneTreeTimer;由于 SceneTreeTimer 无法停止,用每次按下的 token 在抬起或
+            // 拖拽时守卫取消。
+            object? activeLongPressToken = null;
 
             target.GuiInput += @event =>
             {
@@ -238,22 +228,40 @@ namespace STS2RitsuLib.Settings
                             if (!CanOpenContextMenu(target, button))
                             {
                                 button.ForceCloseDropdown();
-                                longPressTimer.Stop();
+                                activeLongPressToken = null;
                                 return;
                             }
 
-                            pendingTouchPosition = target.GetGlobalTransformWithCanvas().Origin + touch.Position;
-                            longPressTimer.Start();
+                            var pendingTouchPosition =
+                                target.GetGlobalTransformWithCanvas().Origin + touch.Position;
+                            var token = new object();
+                            activeLongPressToken = token;
+                            var tree = target.GetTree();
+                            var timer = tree?.CreateTimer(ContextMenuLongPressSeconds);
+                            if (timer != null)
+                                timer.Timeout += () =>
+                                {
+                                    if (!ReferenceEquals(activeLongPressToken, token))
+                                        return;
+                                    activeLongPressToken = null;
+                                    if (!CanOpenContextMenu(target, button))
+                                    {
+                                        button.ForceCloseDropdown();
+                                        return;
+                                    }
+
+                                    button.OpenAt(pendingTouchPosition);
+                                };
                         }
                         else
                         {
-                            longPressTimer.Stop();
+                            activeLongPressToken = null;
                         }
 
                         return;
                     }
                     case InputEventScreenDrag:
-                        longPressTimer.Stop();
+                        activeLongPressToken = null;
                         return;
                 }
 

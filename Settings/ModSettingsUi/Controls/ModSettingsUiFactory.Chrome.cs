@@ -159,7 +159,7 @@ namespace STS2RitsuLib.Settings
         }
 
         private static void AttachHostSurfaceReadOnlySync(ModSettingsUiContext context, Control valueControl,
-            Control? actionControl)
+            Control? actionControl, Func<bool>? canApply = null)
         {
             var readOnlyMask = context.GetSectionHostReadOnlyMask();
 
@@ -171,6 +171,8 @@ namespace STS2RitsuLib.Settings
 
             void Sync()
             {
+                if (canApply != null && !canApply())
+                    return;
                 if (!GodotObject.IsInstanceValid(valueControl))
                     return;
 
@@ -518,7 +520,7 @@ namespace STS2RitsuLib.Settings
             }
         }
 
-        private static Control CreateSection(ModSettingsUiContext context, ModSettingsPage page,
+        private static SectionBuildPlan CreateSectionShell(ModSettingsUiContext context, ModSettingsPage page,
             ModSettingsSection section)
         {
             var sectionUiContext = new ModSettingsSectionUiContext(page, section, context);
@@ -529,42 +531,8 @@ namespace STS2RitsuLib.Settings
             if (sectionActionsButton != null)
                 sectionActionsButton.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
 
-            var wrappedEntries = new List<Control>(section.Entries.Count);
-            context.BeginSectionSurfaceScope(page, section);
-            try
-            {
-                foreach (var entry in section.Entries)
-                {
-                    context.BeginEntrySurfaceScope(entry);
-                    try
-                    {
-                        var control = entry.CreateControl(context);
-                        control = MaybeWrapDynamicVisibility(context, control, entry.VisibilityPredicate);
-                        control = MaybeWrapDynamicEnabled(context, control, entry.EnabledPredicate);
-                        wrappedEntries.Add(control);
-                    }
-                    catch (Exception ex)
-                    {
-                        RitsuLibFramework.Logger.Warn(
-                            $"[Settings] Failed to build entry '{page.ModId}:{page.Id}:{section.Id}:{entry.Id}': {ex.Message}");
-                        wrappedEntries.Add(CreateBuildErrorPlaceholder(
-                            ModSettingsLocalization.Get("entry.failed.title", "Setting failed to load"),
-                            string.Format(
-                                ModSettingsLocalization.Get("entry.failed.body", "Failed to build setting '{0}'."),
-                                entry.Id)));
-                    }
-                    finally
-                    {
-                        context.EndEntrySurfaceScope();
-                    }
-                }
-            }
-            finally
-            {
-                context.EndSectionSurfaceScope();
-            }
-
             Control built;
+            Control entryHost;
             if (section.IsCollapsible)
             {
                 var collapsible = new ModSettingsCollapsibleSection(
@@ -572,11 +540,12 @@ namespace STS2RitsuLib.Settings
                     section.Id,
                     section.Description != null ? ModSettingsUiContext.Resolve(section.Description) : null,
                     section.StartCollapsed,
-                    wrappedEntries.ToArray(),
+                    [],
                     sectionActionsButton);
                 if (sectionActionsButton != null)
                     AttachContextMenuTargets(collapsible, collapsible, sectionActionsButton);
                 built = collapsible;
+                entryHost = collapsible.ContentHost;
             }
             else
             {
@@ -622,11 +591,10 @@ namespace STS2RitsuLib.Settings
                 if (section.Description != null)
                     container.AddChild(CreateRefreshableDescriptionLabel(context, section.Description,
                         () => ModSettingsUiContext.Resolve(section.Description)));
-                foreach (var wrapped in wrappedEntries)
-                    container.AddChild(wrapped);
                 if (sectionActionsButton != null)
                     AttachContextMenuTargets(container, container, sectionActionsButton);
                 built = container;
+                entryHost = container;
             }
 
             var hostCombined = ModSettingsHostSurfaceResolver.CombineVisibility(section.VisibleWhen,
@@ -635,10 +603,10 @@ namespace STS2RitsuLib.Settings
 
             // For collapsible sections, keep the collapse toggle operable while disabling the content/actions.
             if (section.EnabledWhen == null || built is not ModSettingsCollapsibleSection collapsibleHost)
-                return MaybeWrapDynamicEnabled(context, visibleHost, section.EnabledWhen);
+                return new(visibleHost, entryHost, sectionActionsButton);
             Apply();
             RegisterRefreshWhenAlive(context, visibleHost, Apply, ModSettingsUiRefreshSpec.Always);
-            return visibleHost;
+            return new(visibleHost, entryHost, sectionActionsButton);
 
             void Apply()
             {
@@ -654,6 +622,41 @@ namespace STS2RitsuLib.Settings
 
                 collapsibleHost.SetContentEnabled(enabled);
             }
+        }
+
+        private static PageBuildItem CreateEntryBuildItem(ModSettingsUiContext context, ModSettingsPage page,
+            ModSettingsSection section, ModSettingsEntryDefinition entry, SectionBuildPlan sectionPlan,
+            ModSettingsReusableEntryNodePool? entryNodePool)
+        {
+            Control control;
+            context.BeginSectionSurfaceScope(page, section);
+            context.BeginEntrySurfaceScope(entry);
+            try
+            {
+                control = TryCreatePooledStandardEntry(context, entry, entryNodePool, out var pooled)
+                    ? pooled
+                    : entry.CreateControl(context);
+                control = MaybeWrapDynamicVisibility(context, control, entry.VisibilityPredicate);
+                control = MaybeWrapDynamicEnabled(context, control, entry.EnabledPredicate);
+            }
+            catch (Exception ex)
+            {
+                RitsuLibFramework.Logger.Warn(
+                    $"[Settings] Failed to build entry '{page.ModId}:{page.Id}:{section.Id}:{entry.Id}': {ex.Message}");
+                control = CreateBuildErrorPlaceholder(
+                    ModSettingsLocalization.Get("entry.failed.title", "Setting failed to load"),
+                    string.Format(ModSettingsLocalization.Get("entry.failed.body", "Failed to build setting '{0}'."),
+                        entry.Id));
+            }
+            finally
+            {
+                context.EndEntrySurfaceScope();
+                context.EndSectionSurfaceScope();
+            }
+
+            return new(control, true, sectionPlan.EntryHost, sectionPlan.SectionActionsButton == null
+                ? null
+                : added => AttachContextMenuTargets(added, added, sectionPlan.SectionActionsButton));
         }
 
         internal static Control MaybeWrapDynamicEnabled(ModSettingsUiContext context, Control host,
@@ -1183,5 +1186,10 @@ namespace STS2RitsuLib.Settings
         {
             return RitsuShellChromeStyles.CreatePillStyle(highlighted);
         }
+
+        private sealed record SectionBuildPlan(
+            Control Control,
+            Control EntryHost,
+            ModSettingsActionsButton? SectionActionsButton);
     }
 }

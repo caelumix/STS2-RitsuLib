@@ -15,8 +15,10 @@ namespace STS2RitsuLib.Diagnostics
     internal static class RitsuLibStartupAudit
     {
         private static readonly Lock Gate = new();
-        private static readonly List<(string Phase, double Milliseconds)> Phases = [];
+        private static readonly List<PhaseTiming> Phases = [];
         private static int _reportedCount;
+
+        [ThreadStatic] private static MeasureScope? _currentScope;
 
         /// <summary>
         ///     Times <paramref name="action" /> and records its duration under <paramref name="phase" />.
@@ -24,6 +26,7 @@ namespace STS2RitsuLib.Diagnostics
         /// </summary>
         internal static void Measure(string phase, Action action)
         {
+            var scope = PushScope(phase);
             var sw = Stopwatch.StartNew();
             try
             {
@@ -32,7 +35,7 @@ namespace STS2RitsuLib.Diagnostics
             finally
             {
                 sw.Stop();
-                Record(phase, sw.Elapsed.TotalMilliseconds);
+                PopScope(scope, sw.Elapsed.TotalMilliseconds);
             }
         }
 
@@ -42,6 +45,7 @@ namespace STS2RitsuLib.Diagnostics
         /// </summary>
         internal static T Measure<T>(string phase, Func<T> func)
         {
+            var scope = PushScope(phase);
             var sw = Stopwatch.StartNew();
             try
             {
@@ -50,7 +54,7 @@ namespace STS2RitsuLib.Diagnostics
             finally
             {
                 sw.Stop();
-                Record(phase, sw.Elapsed.TotalMilliseconds);
+                PopScope(scope, sw.Elapsed.TotalMilliseconds);
             }
         }
 
@@ -60,9 +64,10 @@ namespace STS2RitsuLib.Diagnostics
         /// </summary>
         internal static void Record(string phase, double milliseconds)
         {
+            _currentScope?.AddChild(milliseconds);
             lock (Gate)
             {
-                Phases.Add((phase, milliseconds));
+                Phases.Add(new(phase, milliseconds, milliseconds));
             }
         }
 
@@ -77,20 +82,62 @@ namespace STS2RitsuLib.Diagnostics
                 if (Phases.Count <= _reportedCount)
                     return;
 
-                var total = Phases.Sum(static entry => entry.Milliseconds);
+                var total = Phases.Sum(static entry => entry.ExclusiveMilliseconds);
                 var text = new StringBuilder()
                     .AppendLine()
                     .AppendLine($"=== RitsuLib Startup Audit: {title} ===");
 
-                foreach (var (phase, milliseconds) in Phases)
-                    text.AppendLine($"  {phase}: {milliseconds:F1} ms");
+                foreach (var timing in Phases)
+                {
+                    text.Append($"  {timing.Phase}: {timing.ExclusiveMilliseconds:F1} ms");
+                    if (Math.Abs(timing.InclusiveMilliseconds - timing.ExclusiveMilliseconds) >= 0.05d)
+                        text.Append($" (inclusive {timing.InclusiveMilliseconds:F1} ms)");
+
+                    text.AppendLine();
+                }
 
                 text.AppendLine("  ---")
-                    .Append($"  RitsuLib self-time total: {total:F1} ms");
+                    .Append($"  RitsuLib exclusive self-time total: {total:F1} ms");
 
                 _reportedCount = Phases.Count;
                 RitsuLibFramework.Logger.Info(text.ToString());
             }
         }
+
+        private static MeasureScope PushScope(string phase)
+        {
+            var scope = new MeasureScope(phase, _currentScope);
+            _currentScope = scope;
+            return scope;
+        }
+
+        private static void PopScope(MeasureScope scope, double inclusiveMilliseconds)
+        {
+            _currentScope = scope.Parent;
+            scope.Parent?.AddChild(inclusiveMilliseconds);
+
+            var exclusiveMilliseconds = Math.Max(0d, inclusiveMilliseconds - scope.ChildMilliseconds);
+            lock (Gate)
+            {
+                Phases.Add(new(scope.Phase, inclusiveMilliseconds, exclusiveMilliseconds));
+            }
+        }
+
+        private sealed class MeasureScope(string phase, MeasureScope? parent)
+        {
+            internal string Phase { get; } = phase;
+            internal MeasureScope? Parent { get; } = parent;
+            internal double ChildMilliseconds { get; private set; }
+
+            internal void AddChild(double milliseconds)
+            {
+                ChildMilliseconds += milliseconds;
+            }
+        }
+
+        private readonly record struct PhaseTiming(
+            string Phase,
+            double InclusiveMilliseconds,
+            double ExclusiveMilliseconds);
     }
 }

@@ -4,12 +4,25 @@ namespace STS2RitsuLib.Utils
 {
     internal static class AssetPathDiagnostics
     {
+        private static readonly Lock StartupMissingPathCacheGate = new();
+        private static readonly HashSet<string> StartupMissingPathCache = [];
+        private static bool _startupMissingPathCacheEnabled = true;
+        private static bool _startupMissingPathCacheShutdownRegistered;
+
         internal static bool Exists(string path, object owner, string memberName)
         {
+            var ownerLabel = DescribeOwner(owner);
+            var cacheKey = BuildMissingPathCacheKey(ownerLabel, memberName, path);
+
+            if (IsCachedStartupMissingPath(cacheKey))
+                return false;
+
             if (GodotResourcePath.ResourceExists(path))
                 return true;
 
-            WarnMissingPath(owner, memberName, path);
+            if (ShouldWarnMissingPath(cacheKey))
+                WarnMissingPath(ownerLabel, memberName, path);
+
             return false;
         }
 
@@ -22,6 +35,10 @@ namespace STS2RitsuLib.Utils
         internal static void WarnModCharacterAssetOverrideMissing(object owner, string memberName, string path)
         {
             var ownerLabel = DescribeOwner(owner);
+            var cacheKey = BuildMissingPathCacheKey(ownerLabel, memberName, path);
+
+            if (!ShouldWarnMissingPath(cacheKey))
+                return;
 
             RitsuLibFramework.Logger.Warn(
                 $"[Assets] Mod character asset override path not found for {ownerLabel}.{memberName}: '{path}'. " +
@@ -45,12 +62,60 @@ namespace STS2RitsuLib.Utils
             return [.. results];
         }
 
-        private static void WarnMissingPath(object owner, string memberName, string path)
+        private static void WarnMissingPath(string ownerLabel, string memberName, string path)
         {
-            var ownerLabel = DescribeOwner(owner);
-
             RitsuLibFramework.Logger.Warn(
                 $"[Assets] Missing resource path for {ownerLabel}.{memberName}: '{path}'. Falling back to the base asset.");
+        }
+
+        private static bool IsCachedStartupMissingPath(string cacheKey)
+        {
+            EnsureStartupMissingPathCacheShutdownRegistered();
+
+            lock (StartupMissingPathCacheGate)
+            {
+                return _startupMissingPathCacheEnabled && StartupMissingPathCache.Contains(cacheKey);
+            }
+        }
+
+        private static bool ShouldWarnMissingPath(string cacheKey)
+        {
+            EnsureStartupMissingPathCacheShutdownRegistered();
+
+            lock (StartupMissingPathCacheGate)
+            {
+                return !_startupMissingPathCacheEnabled || StartupMissingPathCache.Add(cacheKey);
+            }
+        }
+
+        private static void EnsureStartupMissingPathCacheShutdownRegistered()
+        {
+            if (_startupMissingPathCacheShutdownRegistered)
+                return;
+
+            lock (StartupMissingPathCacheGate)
+            {
+                if (_startupMissingPathCacheShutdownRegistered)
+                    return;
+
+                _startupMissingPathCacheShutdownRegistered = true;
+            }
+
+            RitsuLibFramework.SubscribeLifecycleOnce<MainMenuReadyEvent>(_ => DisableStartupMissingPathCache());
+        }
+
+        private static void DisableStartupMissingPathCache()
+        {
+            lock (StartupMissingPathCacheGate)
+            {
+                _startupMissingPathCacheEnabled = false;
+                StartupMissingPathCache.Clear();
+            }
+        }
+
+        private static string BuildMissingPathCacheKey(string ownerLabel, string memberName, string path)
+        {
+            return $"{ownerLabel}\n{memberName}\n{path}";
         }
 
         private static string DescribeOwner(object owner)

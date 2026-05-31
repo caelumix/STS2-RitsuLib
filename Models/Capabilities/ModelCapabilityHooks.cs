@@ -5,7 +5,7 @@ namespace STS2RitsuLib.Models.Capabilities
     /// <summary>
     ///     Opt-in contract for model-backed capabilities that should receive the owner's vanilla model hook callbacks.
     ///     Gameplay-affecting multiplayer logic should use this path because vanilla hooks await model callbacks.
-    ///     基于模型的组件可实现此协定，以接收 owner 的原版模型 hook 回调。
+    ///     基于模型的能力可实现此协定，以接收 owner 的原版模型 hook 回调。
     ///     影响多人同步的 gameplay 逻辑应使用此路径，因为原版 hook 会 await 模型回调。
     /// </summary>
     public interface IModelCapabilityHookListener
@@ -30,9 +30,9 @@ namespace STS2RitsuLib.Models.Capabilities
             var snapshot = owners.ToArray();
             HashSet<AbstractModel> alreadyExpandedOwners = new(ReferenceEqualityComparer.Instance);
 
-            foreach (var component in snapshot.OfType<IModelCapability>())
-                if (component.Owner != null)
-                    alreadyExpandedOwners.Add(component.Owner);
+            foreach (var capability in snapshot.OfType<IModelCapability>())
+                if (capability.Owner != null)
+                    alreadyExpandedOwners.Add(capability.Owner);
 
             foreach (var owner in snapshot)
             {
@@ -42,16 +42,16 @@ namespace STS2RitsuLib.Models.Capabilities
                     continue;
                 }
 
-                var components =
+                var capabilities =
                     alreadyExpandedOwners.Contains(owner) ? [] : GetOwnerHookCapabilities(owner);
 
-                foreach (var entry in components)
+                foreach (var entry in capabilities)
                     if (entry.OwnerHookOrder < 0 && TryGetStillAttachedModel(entry, owner, out var model))
                         yield return model;
 
                 yield return owner;
 
-                foreach (var entry in components)
+                foreach (var entry in capabilities)
                     if (entry.OwnerHookOrder >= 0 && TryGetStillAttachedModel(entry, owner, out var model))
                         yield return model;
             }
@@ -67,7 +67,7 @@ namespace STS2RitsuLib.Models.Capabilities
                 collection = ModelCapabilities.Get(owner);
             }
 
-            var capabilities = collection.Items;
+            var capabilities = collection.All;
             if (capabilities.Count == 0)
                 return [];
 

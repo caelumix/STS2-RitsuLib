@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Serialization;
 using MegaCrit.Sts2.Core.Runs;
 using STS2RitsuLib.Content;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Models.Identity;
 using STS2RitsuLib.Networking.Sidecar;
 
@@ -27,6 +28,8 @@ namespace STS2RitsuLib.Interactions.RightClick
         private const string SidecarNonCombatApplyKey = "model_right_click_noncombat_apply";
         private const int InitialOffset = 0;
         private const int InterfaceBindingPriority = int.MinValue;
+        private const string RightClickPreflightSurface = "right-click preflight";
+        private const string RightClickExecuteSurface = "right-click execute";
 
         private static readonly Lock Gate = new();
         private static long _nextBindingSequence;
@@ -40,6 +43,9 @@ namespace STS2RitsuLib.Interactions.RightClick
 
         private static readonly ModRightClickBindingId InterfaceBindingId =
             new(ModContentRegistry.GetQualifiedRightClickId(Const.ModId, "model_interface"));
+
+        private static readonly ModRightClickBindingId CapabilityBindingId =
+            new(ModContentRegistry.GetQualifiedRightClickId(Const.ModId, "model_capability"));
 
         private static readonly RitsuLibSidecarSyncActionDescriptor<ModRightClickSyncPayload> SyncActionDescriptor =
             new(
@@ -340,7 +346,9 @@ namespace STS2RitsuLib.Interactions.RightClick
                 }
                 catch (Exception ex)
                 {
-                    RitsuLibFramework.Logger.Warn($"[RightClick] Binding '{bindingId}' failed: {ex.Message}");
+                    RitsuLibFramework.Logger.Warn(
+                        $"[RightClick] Binding execution failed. BindingId='{bindingId}' " +
+                        $"ModelId='{model.Id}' OwnerType='{model.GetType().FullName}' Error='{ex.Message}'");
                 }
 
             if (executed)
@@ -414,12 +422,84 @@ namespace STS2RitsuLib.Interactions.RightClick
                 return true;
             }
 
+            if (bindingId == CapabilityBindingId)
+                return await TryExecuteCapabilityRightClick(model, context);
+
             var binding = TryGetBinding(bindingId);
             if (binding == null || !binding.ModelType.IsInstanceOfType(model))
                 return false;
 
             await binding.Execute(context);
             return true;
+        }
+
+        private static async Task<bool> TryExecuteCapabilityRightClick(
+            AbstractModel model,
+            ModRightClickExecutionContext context)
+        {
+            var localContext = new ModRightClickContext(context.Player, model, context.Trigger);
+            var executed = false;
+            foreach (var capability in GetRightClickCapabilities(model))
+            {
+                if (!TryCanHandleCapability(capability, localContext))
+                    continue;
+
+                try
+                {
+                    await capability.OnRightClick(context);
+                }
+                catch (Exception ex)
+                {
+                    ModelCapabilityDiagnostics.WarnFailure(RightClickExecuteSurface, model, capability, ex);
+                    continue;
+                }
+
+                executed = true;
+                if (capability.RightClickRunMode == ModelRightClickCapabilityRunMode.Exclusive)
+                    break;
+            }
+
+            return executed;
+        }
+
+        private static IReadOnlyList<IModelRightClickCapability> GetRightClickCapabilities(AbstractModel model)
+        {
+            if (ModelCapabilities.TryGet(model, out var collection))
+                return SortRightClickCapabilities(collection.All);
+            if (!ModelCapabilityDefaults.HasDefaultCapabilitySource(model))
+                return [];
+
+            collection = ModelCapabilities.Get(model);
+
+            return SortRightClickCapabilities(collection.All);
+        }
+
+        private static bool TryCanHandleCapability(
+            IModelRightClickCapability capability,
+            ModRightClickContext context)
+        {
+            try
+            {
+                return capability.CanHandleRightClickLocal(context);
+            }
+            catch (Exception ex)
+            {
+                ModelCapabilityDiagnostics.WarnFailure(RightClickPreflightSurface, context.Model, capability, ex);
+                return false;
+            }
+        }
+
+        private static IReadOnlyList<IModelRightClickCapability> SortRightClickCapabilities(
+            IReadOnlyList<IModelCapability> capabilities)
+        {
+            return capabilities
+                .Select((capability, index) => new OrderedRightClickCapability(capability, index))
+                .Where(static entry => entry.Capability is IModelRightClickCapability)
+                .OrderByDescending(static entry =>
+                    ((IModelRightClickCapability)entry.Capability).RightClickPriority)
+                .ThenBy(static entry => entry.Index)
+                .Select(static entry => (IModelRightClickCapability)entry.Capability)
+                .ToArray();
         }
 
         private static RegisteredRightClickBinding? TryGetBinding(ModRightClickBindingId bindingId)
@@ -493,16 +573,58 @@ namespace STS2RitsuLib.Interactions.RightClick
                     where TryCanHandle(binding, context)
                     select binding.Id).ToList();
 
-                if (context.Model is not IModRightClickableModel rightClickable ||
-                    !rightClickable.CanHandleRightClickLocal(context))
+                if (context.Model is IModRightClickableModel rightClickable &&
+                    TryCanHandleRightClickable(rightClickable, context))
+                    InsertBuiltInBinding(ids, bindings, InterfaceBindingId, InterfaceBindingPriority);
+
+                return AddCapabilityBinding(context, ids);
+            }
+
+            private static List<ModRightClickBindingId> AddCapabilityBinding(
+                ModRightClickContext context,
+                List<ModRightClickBindingId> ids)
+            {
+                var capabilities = GetRightClickCapabilities(context.Model)
+                    .Where(capability => TryCanHandleCapability(capability, context))
+                    .ToArray();
+                if (capabilities.Length == 0)
                     return ids;
 
-                var insertIndex = 0;
-                while (insertIndex < bindings.Length && bindings[insertIndex].Priority > InterfaceBindingPriority)
-                    insertIndex++;
+                var priority = capabilities.Max(static capability => capability.RightClickPriority);
+                InsertBuiltInBinding(ids, GetBindingsSnapshot(), CapabilityBindingId, priority);
 
-                ids.Insert(Math.Min(insertIndex, ids.Count), InterfaceBindingId);
                 return ids;
+            }
+
+            private static void InsertBuiltInBinding(
+                List<ModRightClickBindingId> ids,
+                IReadOnlyList<RegisteredRightClickBinding> bindings,
+                ModRightClickBindingId id,
+                int priority)
+            {
+                var insertIndex =
+                    ids.Select(bindingId => bindings.FirstOrDefault(candidate => candidate.Id == bindingId))
+                        .TakeWhile(binding => binding != null && binding.Priority > priority).Count();
+
+                ids.Insert(insertIndex, id);
+            }
+
+            private static bool TryCanHandleRightClickable(
+                IModRightClickableModel rightClickable,
+                ModRightClickContext context)
+            {
+                try
+                {
+                    return rightClickable.CanHandleRightClickLocal(context);
+                }
+                catch (Exception ex)
+                {
+                    RitsuLibFramework.Logger.Warn(
+                        $"[RightClick] Interface preflight failed. " +
+                        $"ModelId='{context.Model.Id}' OwnerType='{context.Model.GetType().FullName}' " +
+                        $"SourceType='{rightClickable.GetType().FullName}' Error='{ex.Message}'");
+                    return false;
+                }
             }
 
             private static bool TryCanHandle(RegisteredRightClickBinding binding, ModRightClickContext context)
@@ -514,7 +636,9 @@ namespace STS2RitsuLib.Interactions.RightClick
                 catch (Exception ex)
                 {
                     RitsuLibFramework.Logger.Warn(
-                        $"[RightClick] Binding '{binding.Id}' preflight failed: {ex.Message}");
+                        $"[RightClick] Binding preflight failed. BindingId='{binding.Id}' " +
+                        $"ModelId='{context.Model.Id}' OwnerType='{context.Model.GetType().FullName}' " +
+                        $"Error='{ex.Message}'");
                     return false;
                 }
             }
@@ -549,6 +673,8 @@ namespace STS2RitsuLib.Interactions.RightClick
                 }
             }
         }
+
+        private readonly record struct OrderedRightClickCapability(IModelCapability Capability, int Index);
 
         private readonly record struct ModRightClickSyncPayload(
             ulong OwnerNetId,

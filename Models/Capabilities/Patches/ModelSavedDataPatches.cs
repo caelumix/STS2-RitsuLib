@@ -25,7 +25,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
                 "Bridge ModelSavedData through SavedProperties save -> SavedProperties.FromInternal(...)";
 
             /// <inheritdoc />
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             /// <inheritdoc />
             public static ModPatchTarget[] GetTargets()
@@ -71,7 +71,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
                 "Bridge ModelSavedData through SavedProperties load -> SavedProperties.FillInternal(...)";
 
             /// <inheritdoc />
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             /// <inheritdoc />
             public static ModPatchTarget[] GetTargets()

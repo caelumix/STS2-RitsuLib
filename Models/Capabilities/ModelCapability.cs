@@ -7,9 +7,9 @@ using STS2RitsuLib.Cards.DynamicVars;
 namespace STS2RitsuLib.Models.Capabilities
 {
     /// <summary>
-    ///     Model-backed component base class. Register subclasses as model capabilities when they need a stable
+    ///     Model-backed capability base class. Register subclasses as model capabilities when they need a stable
     ///     <see cref="ModelId" /> and persistence identity.
-    ///     基于模型的组件基类。需要稳定 <see cref="ModelId" /> 与持久化身份时，可将子类注册为模型组件。
+    ///     基于模型的能力基类。需要稳定 <see cref="ModelId" /> 与持久化身份时，可将子类注册为模型能力。
     /// </summary>
     public abstract class ModelCapability : AbstractModel, IModelCapability, IModelCapabilityJsonState,
         IModelCapabilityCloneHandler, IModelDynamicVarContributor
@@ -23,9 +23,9 @@ namespace STS2RitsuLib.Models.Capabilities
             this is IModelCapabilityHookListener { ShouldReceiveOwnerHooks: true };
 
         /// <summary>
-        ///     Component-owned dynamic vars used by localized text, gameplay commands, and card preview when the
+        ///     Capability-owned dynamic vars used by localized text, gameplay commands, and card preview when the
         ///     owner is a card.
-        ///     组件自有动态变量；可用于本地化文本、游戏指令，以及 owner 为卡牌时的卡牌预览。
+        ///     能力自有动态变量；可用于本地化文本、游戏指令，以及 owner 为卡牌时的卡牌预览。
         /// </summary>
         public DynamicVarSet DynamicVars
         {
@@ -40,8 +40,8 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Component-owned canonical dynamic vars. Override to register vars directly on the component.
-        ///     组件拥有的动态变量原型。重写此属性即可直接在组件本身注册变量。
+        ///     Capability-owned canonical dynamic vars. Override to register vars directly on the capability.
+        ///     能力拥有的动态变量原型。重写此属性即可直接在能力本身注册变量。
         /// </summary>
         protected virtual IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -118,7 +118,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
         /// <summary>
         ///     Marks the owning capability set dirty after in-place state changes.
-        ///     在原地状态变更后将所属组件集合标记为已变更。
+        ///     在原地状态变更后将所属能力集合标记为已变更。
         /// </summary>
         protected void MarkDirty()
         {
@@ -127,8 +127,8 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Saves extra component state in addition to the component dynamic vars.
-        ///     保存组件动态变量以外的额外组件状态。
+        ///     Saves extra capability state in addition to the capability dynamic vars.
+        ///     保存能力动态变量以外的额外能力状态。
         /// </summary>
         protected virtual JsonNode? SaveAdditionalState()
         {
@@ -136,16 +136,16 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Loads extra component state in addition to the component dynamic vars.
-        ///     读取组件动态变量以外的额外组件状态。
+        ///     Loads extra capability state in addition to the capability dynamic vars.
+        ///     读取能力动态变量以外的额外能力状态。
         /// </summary>
         protected virtual void LoadAdditionalState(JsonNode? state, int schemaVersion)
         {
         }
 
         /// <summary>
-        ///     Resets component-owned dynamic vars to their canonical definitions.
-        ///     将组件自有动态变量重置为原型定义。
+        ///     Resets capability-owned dynamic vars to their canonical definitions.
+        ///     将能力自有动态变量重置为原型定义。
         /// </summary>
         protected void ResetDynamicVarsToCanonical()
         {
@@ -171,8 +171,8 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Removes this component from its owner collection when it is currently attached.
-        ///     当前组件已附加时，将其从所属 collection 中移除。
+        ///     Removes this capability from its owner collection when it is currently attached.
+        ///     当前能力已附加时，将其从所属 collection 中移除。
         /// </summary>
         public bool RemoveFromOwner()
         {
@@ -181,16 +181,16 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Called when this component is attached.
-        ///     当此组件被附加时调用。
+        ///     Called when this capability is attached.
+        ///     当此能力被附加时调用。
         /// </summary>
         protected virtual void OnAttach(AbstractModel owner)
         {
         }
 
         /// <summary>
-        ///     Called when this component is detached.
-        ///     当此组件被分离时调用。
+        ///     Called when this capability is detached.
+        ///     当此能力被分离时调用。
         /// </summary>
         protected virtual void OnDetach(AbstractModel owner)
         {
@@ -298,7 +298,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Typed base class for model-backed capabilities that only attach to <typeparamref name="TModel" />.
-    ///     只附加到 <typeparamref name="TModel" /> 的模型组件类型化基类。
+    ///     只附加到 <typeparamref name="TModel" /> 的模型能力类型化基类。
     /// </summary>
     public abstract class ModelCapability<TModel> : ModelCapability, IModelCapability<TModel>
         where TModel : AbstractModel
@@ -312,23 +312,23 @@ namespace STS2RitsuLib.Models.Capabilities
             ArgumentNullException.ThrowIfNull(owner);
             if (owner is not TModel)
                 throw new ArgumentException(
-                    $"Component '{GetType().FullName}' can only attach to '{typeof(TModel).FullName}'.",
+                    $"Capability '{GetType().FullName}' can only attach to '{typeof(TModel).FullName}'.",
                     nameof(owner));
 
             base.Attach(owner, isInternal);
         }
 
         /// <summary>
-        ///     Called when this component is attached to a typed owner.
-        ///     当此组件附加到类型化 owner 时调用。
+        ///     Called when this capability is attached to a typed owner.
+        ///     当此能力附加到类型化 owner 时调用。
         /// </summary>
         protected virtual void OnAttach(TModel owner)
         {
         }
 
         /// <summary>
-        ///     Called when this component is detached from a typed owner.
-        ///     当此组件从类型化 owner 分离时调用。
+        ///     Called when this capability is detached from a typed owner.
+        ///     当此能力从类型化 owner 分离时调用。
         /// </summary>
         protected virtual void OnDetach(TModel owner)
         {
@@ -349,14 +349,14 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Model capability base class with a typed JSON state payload.
-    ///     带类型化 JSON 状态 payload 的模型组件基类。
+    ///     带类型化 JSON 状态 payload 的模型能力基类。
     /// </summary>
     public abstract class StatefulModelCapability<TState> : ModelCapability
         where TState : class, new()
     {
         /// <summary>
-        ///     Mutable component state.
-        ///     可变组件状态。
+        ///     Mutable capability state.
+        ///     可变能力状态。
         /// </summary>
         protected TState State { get; private set; } = new();
 
@@ -406,15 +406,15 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Typed model capability base class with a typed JSON state payload.
-    ///     带类型化 JSON 状态 payload 的类型化模型组件基类。
+    ///     带类型化 JSON 状态 payload 的类型化模型能力基类。
     /// </summary>
     public abstract class StatefulModelCapability<TModel, TState> : ModelCapability<TModel>
         where TModel : AbstractModel
         where TState : class, new()
     {
         /// <summary>
-        ///     Mutable component state.
-        ///     可变组件状态。
+        ///     Mutable capability state.
+        ///     可变能力状态。
         /// </summary>
         protected TState State { get; private set; } = new();
 

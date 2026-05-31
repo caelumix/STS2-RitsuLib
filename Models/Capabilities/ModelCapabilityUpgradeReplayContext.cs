@@ -38,7 +38,7 @@ namespace STS2RitsuLib.Models.Capabilities
             catch (Exception ex)
             {
                 RitsuLibFramework.Logger.Warn(
-                    $"[ModelCapabilities] Failed to import deferred card component data for {card.Id}: {ex.Message}");
+                    $"[ModelCapabilities] Failed to import deferred card capability data for {card.Id}: {ex.Message}");
             }
         }
 

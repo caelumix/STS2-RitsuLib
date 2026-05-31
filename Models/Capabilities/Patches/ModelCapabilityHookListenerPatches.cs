@@ -12,7 +12,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
 {
     /// <summary>
     ///     Inserts opt-in model-backed capabilities into vanilla run/combat hook listener streams.
-    ///     将 opt-in 的基于模型组件插入原版跑局/战斗 hook listener 流。
+    ///     将 opt-in 的基于模型能力插入原版跑局/战斗 hook listener 流。
     /// </summary>
     internal static class ModelCapabilityHookListenerPatches
     {
@@ -22,7 +22,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
 
             public static string Description => "Insert model capabilities into run hook listener streams";
 
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             public static ModPatchTarget[] GetTargets()
             {
@@ -43,7 +43,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
 
             public static string Description => "Insert model capabilities into combat hook listener streams";
 
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             public static ModPatchTarget[] GetTargets()
             {

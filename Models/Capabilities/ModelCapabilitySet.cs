@@ -4,11 +4,11 @@ namespace STS2RitsuLib.Models.Capabilities
 {
     /// <summary>
     ///     Mutable capability set attached to one model instance.
-    ///     附加到单个模型实例上的可变组件集合。
+    ///     附加到单个模型实例上的可变能力集合。
     /// </summary>
     public sealed class ModelCapabilitySet
     {
-        private readonly List<IModelCapability> _components = [];
+        private readonly List<IModelCapability> _capabilities = [];
         private readonly HashSet<IModelCapability> _defaultCapabilities = new(ReferenceEqualityComparer.Instance);
         private readonly List<ModelCapabilitySaveEntry> _unknownEntries = [];
 
@@ -24,31 +24,37 @@ namespace STS2RitsuLib.Models.Capabilities
         public AbstractModel Owner { get; }
 
         /// <summary>
-        ///     Current attached components.
-        ///     当前附加组件。
+        ///     All attached capabilities in execution order.
+        ///     按执行顺序排列的所有已附加能力。
         /// </summary>
-        public IReadOnlyList<IModelCapability> Items => _components;
+        public IReadOnlyList<IModelCapability> All => _capabilities;
+
+        /// <summary>
+        ///     All attached capabilities in execution order.
+        ///     按执行顺序排列的所有已附加能力。
+        /// </summary>
+        public IReadOnlyList<IModelCapability> Attached => _capabilities;
 
         internal bool IsDirty { get; private set; }
 
         /// <summary>
-        ///     Number of currently attached components.
-        ///     当前附加组件数量。
+        ///     Number of currently attached capabilities.
+        ///     当前附加能力数量。
         /// </summary>
-        public int Count => _components.Count;
+        public int Count => _capabilities.Count;
 
         /// <summary>
-        ///     Applies a component, optionally merging it with an existing component.
-        ///     应用组件，并可选择与已有组件合并。
+        ///     Applies a capability, optionally merging it with an existing capability.
+        ///     应用能力，并可选择与已有能力合并。
         /// </summary>
         public IModelCapability? Apply(IModelCapability incoming, ApplyModelCapabilityOptions options = new())
         {
             ArgumentNullException.ThrowIfNull(incoming);
 
             if (options.AllowMerge)
-                for (var i = 0; i < _components.Count; i++)
+                for (var i = 0; i < _capabilities.Count; i++)
                 {
-                    var existing = _components[i];
+                    var existing = _capabilities[i];
                     if (existing is not IModelCapabilityMergeHandler mergeHandler)
                         continue;
 
@@ -72,12 +78,12 @@ namespace STS2RitsuLib.Models.Capabilities
 
                     if (merged == null)
                     {
-                        _components.RemoveAt(i);
+                        _capabilities.RemoveAt(i);
                         MarkDirty();
                         return null;
                     }
 
-                    _components[i] = merged;
+                    _capabilities[i] = merged;
                     if (defaultCapabilityId != null &&
                         string.Equals(merged.CapabilityId, defaultCapabilityId, StringComparison.Ordinal))
                         _defaultCapabilities.Add(merged);
@@ -90,7 +96,7 @@ namespace STS2RitsuLib.Models.Capabilities
             if (options.UseSubtractiveMerge)
                 return null;
 
-            _components.Add(incoming);
+            _capabilities.Add(incoming);
             incoming.Attach(Owner);
             MarkDynamicVarsJustUpgraded(incoming, options);
             MarkDirty();
@@ -98,8 +104,8 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Applies a component and returns the typed result.
-        ///     应用组件并返回类型化结果。
+        ///     Applies a capability and returns the typed result.
+        ///     应用能力并返回类型化结果。
         /// </summary>
         public TCapability? Apply<TCapability>(TCapability incoming, ApplyModelCapabilityOptions options = new())
             where TCapability : class, IModelCapability
@@ -108,59 +114,134 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Applies several components in order.
-        ///     按顺序应用多个组件。
+        ///     Applies several capabilities in order.
+        ///     按顺序应用多个能力。
         /// </summary>
         public IReadOnlyList<IModelCapability?> ApplyRange(
-            IEnumerable<IModelCapability> components,
+            IEnumerable<IModelCapability> capabilities,
             ApplyModelCapabilityOptions options = new())
         {
-            ArgumentNullException.ThrowIfNull(components);
+            ArgumentNullException.ThrowIfNull(capabilities);
 
-            return components.Select(component => Apply(component, options)).ToList();
+            return capabilities.Select(capability => Apply(capability, options)).ToList();
         }
 
         /// <summary>
-        ///     Adds a component without subtractive merge behavior.
-        ///     添加组件，不使用减法合并行为。
+        ///     Inserts <paramref name="capability" /> at <paramref name="index" /> without merge behavior.
+        ///     在 <paramref name="index" /> 插入 <paramref name="capability" />，不执行合并。
         /// </summary>
-        public IModelCapability? Add(IModelCapability component, bool allowMerge = true, bool isUpgrade = false)
+        public IModelCapability Insert(int index, IModelCapability capability)
         {
-            return Apply(component, new(allowMerge, false, isUpgrade));
+            ArgumentNullException.ThrowIfNull(capability);
+            if (index < 0 || index > _capabilities.Count)
+                throw new ArgumentOutOfRangeException(nameof(index), index, "Index is outside the set bounds.");
+
+            _capabilities.Insert(index, capability);
+            capability.Attach(Owner);
+            MarkDirty();
+            return capability;
         }
 
         /// <summary>
-        ///     Adds a component as part of an owner upgrade.
-        ///     作为 owner 升级的一部分添加组件。
+        ///     Inserts <paramref name="capability" /> at <paramref name="index" /> without merge behavior and returns
+        ///     the typed capability.
+        ///     在 <paramref name="index" /> 插入 <paramref name="capability" />，不执行合并，并返回类型化能力。
         /// </summary>
-        public IModelCapability? AddForUpgrade(IModelCapability component, bool allowMerge = true)
-        {
-            return Apply(component, ApplyModelCapabilityOptions.Upgrade(allowMerge));
-        }
-
-        /// <summary>
-        ///     Adds a component and returns the typed result.
-        ///     添加组件并返回类型化结果。
-        /// </summary>
-        public TCapability? Add<TCapability>(TCapability component, bool allowMerge = true, bool isUpgrade = false)
+        public TCapability Insert<TCapability>(int index, TCapability capability)
             where TCapability : class, IModelCapability
         {
-            return Add((IModelCapability)component, allowMerge, isUpgrade) as TCapability;
+            return (TCapability)Insert(index, (IModelCapability)capability);
         }
 
         /// <summary>
-        ///     Adds a component as part of an owner upgrade and returns the typed result.
-        ///     作为 owner 升级的一部分添加组件并返回类型化结果。
+        ///     Inserts <paramref name="capability" /> before the first attached <typeparamref name="TExisting" />.
+        ///     将 <paramref name="capability" /> 插入到第一个已附加 <typeparamref name="TExisting" /> 之前。
         /// </summary>
-        public TCapability? AddForUpgrade<TCapability>(TCapability component, bool allowMerge = true)
+        public IModelCapability? InsertBefore<TExisting>(
+            IModelCapability capability,
+            MissingModelCapabilityAnchorPolicy missingAnchorPolicy = MissingModelCapabilityAnchorPolicy.Append)
+            where TExisting : class, IModelCapability
+        {
+            return InsertRelativeTo<TExisting>(capability, false, missingAnchorPolicy);
+        }
+
+        /// <summary>
+        ///     Inserts <paramref name="capability" /> after the first attached <typeparamref name="TExisting" />.
+        ///     将 <paramref name="capability" /> 插入到第一个已附加 <typeparamref name="TExisting" /> 之后。
+        /// </summary>
+        public IModelCapability? InsertAfter<TExisting>(
+            IModelCapability capability,
+            MissingModelCapabilityAnchorPolicy missingAnchorPolicy = MissingModelCapabilityAnchorPolicy.Append)
+            where TExisting : class, IModelCapability
+        {
+            return InsertRelativeTo<TExisting>(capability, true, missingAnchorPolicy);
+        }
+
+        /// <summary>
+        ///     Shorthand for <see cref="InsertBefore{TExisting}" />.
+        ///     <see cref="InsertBefore{TExisting}" /> 的简写。
+        /// </summary>
+        public IModelCapability? Before<TExisting>(
+            IModelCapability capability,
+            MissingModelCapabilityAnchorPolicy missingAnchorPolicy = MissingModelCapabilityAnchorPolicy.Append)
+            where TExisting : class, IModelCapability
+        {
+            return InsertBefore<TExisting>(capability, missingAnchorPolicy);
+        }
+
+        /// <summary>
+        ///     Shorthand for <see cref="InsertAfter{TExisting}" />.
+        ///     <see cref="InsertAfter{TExisting}" /> 的简写。
+        /// </summary>
+        public IModelCapability? After<TExisting>(
+            IModelCapability capability,
+            MissingModelCapabilityAnchorPolicy missingAnchorPolicy = MissingModelCapabilityAnchorPolicy.Append)
+            where TExisting : class, IModelCapability
+        {
+            return InsertAfter<TExisting>(capability, missingAnchorPolicy);
+        }
+
+        /// <summary>
+        ///     Adds a capability without subtractive merge behavior.
+        ///     添加能力，不使用减法合并行为。
+        /// </summary>
+        public IModelCapability? Add(IModelCapability capability, bool allowMerge = true, bool isUpgrade = false)
+        {
+            return Apply(capability, new(allowMerge, false, isUpgrade));
+        }
+
+        /// <summary>
+        ///     Adds a capability as part of an owner upgrade.
+        ///     作为 owner 升级的一部分添加能力。
+        /// </summary>
+        public IModelCapability? AddForUpgrade(IModelCapability capability, bool allowMerge = true)
+        {
+            return Apply(capability, ApplyModelCapabilityOptions.Upgrade(allowMerge));
+        }
+
+        /// <summary>
+        ///     Adds a capability and returns the typed result.
+        ///     添加能力并返回类型化结果。
+        /// </summary>
+        public TCapability? Add<TCapability>(TCapability capability, bool allowMerge = true, bool isUpgrade = false)
             where TCapability : class, IModelCapability
         {
-            return AddForUpgrade((IModelCapability)component, allowMerge) as TCapability;
+            return Add((IModelCapability)capability, allowMerge, isUpgrade) as TCapability;
+        }
+
+        /// <summary>
+        ///     Adds a capability as part of an owner upgrade and returns the typed result.
+        ///     作为 owner 升级的一部分添加能力并返回类型化结果。
+        /// </summary>
+        public TCapability? AddForUpgrade<TCapability>(TCapability capability, bool allowMerge = true)
+            where TCapability : class, IModelCapability
+        {
+            return AddForUpgrade((IModelCapability)capability, allowMerge) as TCapability;
         }
 
         /// <summary>
         ///     Creates a registered capability and applies it as part of an owner upgrade.
-        ///     创建已注册组件，并作为 owner 升级的一部分应用。
+        ///     创建已注册能力，并作为 owner 升级的一部分应用。
         /// </summary>
         public TCapability? AddUpgrade<TCapability>(bool allowMerge = true)
             where TCapability : class, IModelCapability
@@ -175,87 +256,87 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Subtracts a component through merge handlers.
-        ///     通过合并处理器减去组件。
+        ///     Subtracts a capability through merge handlers.
+        ///     通过合并处理器减去能力。
         /// </summary>
-        public IModelCapability? Subtract(IModelCapability component, bool isUpgrade = false)
+        public IModelCapability? Subtract(IModelCapability capability, bool isUpgrade = false)
         {
-            return Apply(component, new(true, true, isUpgrade));
+            return Apply(capability, new(true, true, isUpgrade));
         }
 
         /// <summary>
-        ///     Removes the first component of type <typeparamref name="TCapability" />.
-        ///     移除第一个 <typeparamref name="TCapability" /> 类型组件。
+        ///     Removes the first capability of type <typeparamref name="TCapability" />.
+        ///     移除第一个 <typeparamref name="TCapability" /> 类型能力。
         /// </summary>
         public TCapability? Remove<TCapability>() where TCapability : class, IModelCapability
         {
-            var index = _components.FindIndex(static c => c is TCapability);
+            var index = _capabilities.FindIndex(static c => c is TCapability);
             if (index < 0)
                 return null;
 
-            var removed = (TCapability)_components[index];
+            var removed = (TCapability)_capabilities[index];
             removed.Detach();
-            _components.RemoveAt(index);
+            _capabilities.RemoveAt(index);
             _defaultCapabilities.Remove(removed);
             MarkDirty();
             return removed;
         }
 
         /// <summary>
-        ///     Removes the first component with <paramref name="capabilityId" />.
-        ///     移除第一个组件 ID 为 <paramref name="capabilityId" /> 的组件。
+        ///     Removes the first capability with <paramref name="capabilityId" />.
+        ///     移除第一个能力 ID 为 <paramref name="capabilityId" /> 的能力。
         /// </summary>
         public IModelCapability? Remove(string capabilityId)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(capabilityId);
 
-            var index = _components.FindIndex(component =>
-                string.Equals(component.CapabilityId, capabilityId, StringComparison.Ordinal));
+            var index = _capabilities.FindIndex(capability =>
+                string.Equals(capability.CapabilityId, capabilityId, StringComparison.Ordinal));
             if (index < 0)
                 return null;
 
-            var removed = _components[index];
+            var removed = _capabilities[index];
             removed.Detach();
-            _components.RemoveAt(index);
+            _capabilities.RemoveAt(index);
             _defaultCapabilities.Remove(removed);
             MarkDirty();
             return removed;
         }
 
         /// <summary>
-        ///     Removes this exact component instance.
-        ///     移除此组件实例。
+        ///     Removes this exact capability instance.
+        ///     移除此能力实例。
         /// </summary>
-        public bool Remove(IModelCapability component)
+        public bool Remove(IModelCapability capability)
         {
-            ArgumentNullException.ThrowIfNull(component);
-            var index = _components.FindIndex(c => ReferenceEquals(c, component));
+            ArgumentNullException.ThrowIfNull(capability);
+            var index = _capabilities.FindIndex(c => ReferenceEquals(c, capability));
             if (index < 0)
                 return false;
 
-            _components[index].Detach();
-            _defaultCapabilities.Remove(_components[index]);
-            _components.RemoveAt(index);
+            _capabilities[index].Detach();
+            _defaultCapabilities.Remove(_capabilities[index]);
+            _capabilities.RemoveAt(index);
             MarkDirty();
             return true;
         }
 
         /// <summary>
-        ///     Removes all components of type <typeparamref name="TCapability" />.
-        ///     移除所有 <typeparamref name="TCapability" /> 类型组件。
+        ///     Removes all capabilities of type <typeparamref name="TCapability" />.
+        ///     移除所有 <typeparamref name="TCapability" /> 类型能力。
         /// </summary>
         public IReadOnlyList<TCapability> RemoveAll<TCapability>() where TCapability : class, IModelCapability
         {
             List<TCapability> removed = [];
-            for (var i = _components.Count - 1; i >= 0; i--)
+            for (var i = _capabilities.Count - 1; i >= 0; i--)
             {
-                if (_components[i] is not TCapability component)
+                if (_capabilities[i] is not TCapability capability)
                     continue;
 
-                component.Detach();
-                _components.RemoveAt(i);
-                _defaultCapabilities.Remove(component);
-                removed.Add(component);
+                capability.Detach();
+                _capabilities.RemoveAt(i);
+                _defaultCapabilities.Remove(capability);
+                removed.Add(capability);
             }
 
             if (removed.Count == 0)
@@ -267,24 +348,24 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Removes all components with <paramref name="capabilityId" />.
-        ///     移除所有组件 ID 为 <paramref name="capabilityId" /> 的组件。
+        ///     Removes all capabilities with <paramref name="capabilityId" />.
+        ///     移除所有能力 ID 为 <paramref name="capabilityId" /> 的能力。
         /// </summary>
         public IReadOnlyList<IModelCapability> RemoveAll(string capabilityId)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(capabilityId);
 
             List<IModelCapability> removed = [];
-            for (var i = _components.Count - 1; i >= 0; i--)
+            for (var i = _capabilities.Count - 1; i >= 0; i--)
             {
-                var component = _components[i];
-                if (!string.Equals(component.CapabilityId, capabilityId, StringComparison.Ordinal))
+                var capability = _capabilities[i];
+                if (!string.Equals(capability.CapabilityId, capabilityId, StringComparison.Ordinal))
                     continue;
 
-                component.Detach();
-                _components.RemoveAt(i);
-                _defaultCapabilities.Remove(component);
-                removed.Add(component);
+                capability.Detach();
+                _capabilities.RemoveAt(i);
+                _defaultCapabilities.Remove(capability);
+                removed.Add(capability);
             }
 
             if (removed.Count == 0)
@@ -296,19 +377,19 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Clears known components, optionally clearing unknown saved entries as well.
-        ///     清空已知组件，并可选择同时清空未知保存条目。
+        ///     Clears known capabilities, optionally clearing unknown saved entries as well.
+        ///     清空已知能力，并可选择同时清空未知保存条目。
         /// </summary>
         public void Clear(UnknownModelCapabilityPolicy unknownPolicy = UnknownModelCapabilityPolicy.Preserve)
         {
-            if (_components.Count == 0 &&
+            if (_capabilities.Count == 0 &&
                 (unknownPolicy == UnknownModelCapabilityPolicy.Preserve || _unknownEntries.Count == 0))
                 return;
 
-            foreach (var component in _components)
-                component.Detach();
+            foreach (var capability in _capabilities)
+                capability.Detach();
 
-            _components.Clear();
+            _capabilities.Clear();
             _defaultCapabilities.Clear();
             if (unknownPolicy == UnknownModelCapabilityPolicy.Remove)
                 _unknownEntries.Clear();
@@ -317,75 +398,75 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Replaces all known components with <paramref name="components" />.
-        ///     使用 <paramref name="components" /> 替换所有已知组件。
+        ///     Replaces all known capabilities with <paramref name="capabilities" />.
+        ///     使用 <paramref name="capabilities" /> 替换所有已知能力。
         /// </summary>
         public void ReplaceAll(
-            IEnumerable<IModelCapability> components,
+            IEnumerable<IModelCapability> capabilities,
             UnknownModelCapabilityPolicy unknownPolicy = UnknownModelCapabilityPolicy.Preserve)
         {
-            ArgumentNullException.ThrowIfNull(components);
+            ArgumentNullException.ThrowIfNull(capabilities);
 
-            foreach (var component in _components)
-                component.Detach();
+            foreach (var capability in _capabilities)
+                capability.Detach();
 
-            _components.Clear();
+            _capabilities.Clear();
             _defaultCapabilities.Clear();
             if (unknownPolicy == UnknownModelCapabilityPolicy.Remove)
                 _unknownEntries.Clear();
 
-            foreach (var component in components)
+            foreach (var capability in capabilities)
             {
-                _components.Add(component);
-                component.Attach(Owner);
+                _capabilities.Add(capability);
+                capability.Attach(Owner);
             }
 
             MarkDirty();
         }
 
         /// <summary>
-        ///     Gets the first component of type <typeparamref name="TCapability" />.
-        ///     获取第一个 <typeparamref name="TCapability" /> 类型组件。
+        ///     Gets the first capability of type <typeparamref name="TCapability" />.
+        ///     获取第一个 <typeparamref name="TCapability" /> 类型能力。
         /// </summary>
         public TCapability? Get<TCapability>() where TCapability : class, IModelCapability
         {
-            return _components.OfType<TCapability>().FirstOrDefault();
+            return _capabilities.OfType<TCapability>().FirstOrDefault();
         }
 
         /// <summary>
-        ///     Attempts to get the first component of type <typeparamref name="TCapability" />.
-        ///     尝试获取第一个 <typeparamref name="TCapability" /> 类型组件。
+        ///     Attempts to get the first capability of type <typeparamref name="TCapability" />.
+        ///     尝试获取第一个 <typeparamref name="TCapability" /> 类型能力。
         /// </summary>
-        public bool TryGet<TCapability>(out TCapability component) where TCapability : class, IModelCapability
+        public bool TryGet<TCapability>(out TCapability capability) where TCapability : class, IModelCapability
         {
-            component = Get<TCapability>()!;
-            return component != null;
+            capability = Get<TCapability>()!;
+            return capability != null;
         }
 
         /// <summary>
-        ///     Gets the first component with <paramref name="capabilityId" />.
-        ///     获取第一个组件 ID 为 <paramref name="capabilityId" /> 的组件。
+        ///     Gets the first capability with <paramref name="capabilityId" />.
+        ///     获取第一个能力 ID 为 <paramref name="capabilityId" /> 的能力。
         /// </summary>
         public IModelCapability? Get(string capabilityId)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(capabilityId);
 
-            return _components.FirstOrDefault(component =>
-                string.Equals(component.CapabilityId, capabilityId, StringComparison.Ordinal));
+            return _capabilities.FirstOrDefault(capability =>
+                string.Equals(capability.CapabilityId, capabilityId, StringComparison.Ordinal));
         }
 
         /// <summary>
-        ///     Returns true when at least one component of type <typeparamref name="TCapability" /> is attached.
-        ///     当至少附加了一个 <typeparamref name="TCapability" /> 类型组件时返回 true。
+        ///     Returns true when at least one capability of type <typeparamref name="TCapability" /> is attached.
+        ///     当至少附加了一个 <typeparamref name="TCapability" /> 类型能力时返回 true。
         /// </summary>
         public bool Contains<TCapability>() where TCapability : class, IModelCapability
         {
-            return _components.Any(static c => c is TCapability);
+            return _capabilities.Any(static c => c is TCapability);
         }
 
         /// <summary>
-        ///     Returns true when at least one component with <paramref name="capabilityId" /> is attached.
-        ///     当至少附加了一个组件 ID 为 <paramref name="capabilityId" /> 的组件时返回 true。
+        ///     Returns true when at least one capability with <paramref name="capabilityId" /> is attached.
+        ///     当至少附加了一个能力 ID 为 <paramref name="capabilityId" /> 的能力时返回 true。
         /// </summary>
         public bool Contains(string capabilityId)
         {
@@ -393,31 +474,31 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Gets all components of type <typeparamref name="TCapability" />.
-        ///     获取所有 <typeparamref name="TCapability" /> 类型组件。
+        ///     Gets all capabilities of type <typeparamref name="TCapability" />.
+        ///     获取所有 <typeparamref name="TCapability" /> 类型能力。
         /// </summary>
         public IReadOnlyList<TCapability> GetAll<TCapability>() where TCapability : class, IModelCapability
         {
-            return _components.OfType<TCapability>().ToArray();
+            return _capabilities.OfType<TCapability>().ToArray();
         }
 
         /// <summary>
-        ///     Gets all components with <paramref name="capabilityId" />.
-        ///     获取所有组件 ID 为 <paramref name="capabilityId" /> 的组件。
+        ///     Gets all capabilities with <paramref name="capabilityId" />.
+        ///     获取所有能力 ID 为 <paramref name="capabilityId" /> 的能力。
         /// </summary>
         public IReadOnlyList<IModelCapability> GetAll(string capabilityId)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(capabilityId);
 
-            return _components
-                .Where(component => string.Equals(component.CapabilityId, capabilityId, StringComparison.Ordinal))
+            return _capabilities
+                .Where(capability => string.Equals(capability.CapabilityId, capabilityId, StringComparison.Ordinal))
                 .ToArray();
         }
 
         /// <summary>
-        ///     Gets an existing component of type <typeparamref name="TCapability" />, or applies a new component
+        ///     Gets an existing capability of type <typeparamref name="TCapability" />, or applies a new capability
         ///     created by <paramref name="factory" />.
-        ///     获取已有 <typeparamref name="TCapability" /> 组件；不存在时应用由 <paramref name="factory" /> 创建的新组件。
+        ///     获取已有 <typeparamref name="TCapability" /> 能力；不存在时应用由 <paramref name="factory" /> 创建的新能力。
         /// </summary>
         public TCapability GetOrAdd<TCapability>(
             Func<TCapability> factory,
@@ -430,15 +511,15 @@ namespace STS2RitsuLib.Models.Capabilities
             if (existing != null)
                 return existing;
 
-            var component = Apply(factory(), options);
-            return component ?? throw new InvalidOperationException(
-                $"Applying component '{typeof(TCapability).FullName}' did not produce a component of that type.");
+            var capability = Apply(factory(), options);
+            return capability ?? throw new InvalidOperationException(
+                $"Applying capability '{typeof(TCapability).FullName}' did not produce a capability of that type.");
         }
 
         /// <summary>
-        ///     Gets an existing component of type <typeparamref name="TCapability" />, or creates one from
+        ///     Gets an existing capability of type <typeparamref name="TCapability" />, or creates one from
         ///     <see cref="ModelCapabilityRegistry" />.
-        ///     获取已有 <typeparamref name="TCapability" /> 组件；不存在时通过 <see cref="ModelCapabilityRegistry" /> 创建。
+        ///     获取已有 <typeparamref name="TCapability" /> 能力；不存在时通过 <see cref="ModelCapabilityRegistry" /> 创建。
         /// </summary>
         public TCapability GetOrCreate<TCapability>(ApplyModelCapabilityOptions options = new())
             where TCapability : class, IModelCapability
@@ -452,14 +533,14 @@ namespace STS2RitsuLib.Models.Capabilities
                 throw new InvalidOperationException(
                     $"Model capability type is not registered: {typeof(TCapability).FullName}");
 
-            var component = Apply(ModelCapabilityRegistry.Create(capabilityId), options) as TCapability;
-            return component ?? throw new InvalidOperationException(
+            var capability = Apply(ModelCapabilityRegistry.Create(capabilityId), options) as TCapability;
+            return capability ?? throw new InvalidOperationException(
                 $"Registered capability '{capabilityId}' is not a '{typeof(TCapability).FullName}'.");
         }
 
         /// <summary>
         ///     Gets an existing registered capability, or creates it as part of an owner upgrade.
-        ///     获取已有已注册组件；不存在时作为 owner 升级的一部分创建。
+        ///     获取已有已注册能力；不存在时作为 owner 升级的一部分创建。
         /// </summary>
         public TCapability GetOrCreateUpgrade<TCapability>(bool allowMerge = true)
             where TCapability : class, IModelCapability
@@ -468,17 +549,17 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Enumerates components that implement a capability interface.
-        ///     枚举实现某个能力接口的组件。
+        ///     Enumerates capabilities that implement a capability interface.
+        ///     枚举实现某个能力接口的能力。
         /// </summary>
         public IEnumerable<TCapability> Capabilities<TCapability>() where TCapability : class
         {
-            return _components.OfType<TCapability>();
+            return _capabilities.OfType<TCapability>();
         }
 
         /// <summary>
-        ///     Marks the collection dirty after a component mutates itself in place.
-        ///     组件原地修改自身后，将 collection 标记为已变更。
+        ///     Marks the collection dirty after a capability mutates itself in place.
+        ///     能力原地修改自身后，将 collection 标记为已变更。
         /// </summary>
         public void MarkDirty()
         {
@@ -489,17 +570,17 @@ namespace STS2RitsuLib.Models.Capabilities
         internal bool ShouldSave()
         {
             return IsDirty ||
-                   _components.Count > 0 ||
+                   _capabilities.Count > 0 ||
                    _unknownEntries.Count > 0 ||
-                   _components.Any(ComponentHasSavedState);
+                   _capabilities.Any(CapabilityHasSavedState);
         }
 
         internal void Load(ModelCapabilitySaveDocument? document)
         {
-            foreach (var component in _components)
-                component.Detach(true);
+            foreach (var capability in _capabilities)
+                capability.Detach(true);
 
-            _components.Clear();
+            _capabilities.Clear();
             _defaultCapabilities.Clear();
             _unknownEntries.Clear();
             IsDirty = false;
@@ -526,37 +607,37 @@ namespace STS2RitsuLib.Models.Capabilities
 
                 if (defaultItems.TryTake(entry.Id, out var defaultCapability))
                 {
-                    LoadComponentState(defaultCapability, entry);
+                    LoadCapabilityState(defaultCapability, entry);
                     AddDefaultCapability(defaultCapability);
                     continue;
                 }
 
-                if (!ModelCapabilityRegistry.TryCreate(entry.Id, out var component))
+                if (!ModelCapabilityRegistry.TryCreate(entry.Id, out var capability))
                 {
                     _unknownEntries.Add(CloneEntry(entry));
                     continue;
                 }
 
-                LoadComponentState(component, entry);
-                _components.Add(component);
-                component.Attach(Owner, true);
+                LoadCapabilityState(capability, entry);
+                _capabilities.Add(capability);
+                capability.Attach(Owner, true);
             }
         }
 
         internal ModelCapabilitySaveDocument? Save()
         {
-            if (_components.Count == 0 && _unknownEntries.Count == 0 && !IsDirty)
+            if (_capabilities.Count == 0 && _unknownEntries.Count == 0 && !IsDirty)
                 return null;
 
             var document = new ModelCapabilitySaveDocument();
             document.Capabilities.AddRange(_unknownEntries.Select(CloneEntry));
 
-            foreach (var component in _components)
+            foreach (var capability in _capabilities)
             {
-                var state = component as IModelCapabilityJsonState;
+                var state = capability as IModelCapabilityJsonState;
                 document.Capabilities.Add(new()
                 {
-                    Id = component.CapabilityId,
+                    Id = capability.CapabilityId,
                     Schema = state?.SchemaVersion ?? 1,
                     Data = state?.SaveState()?.DeepClone(),
                 });
@@ -567,62 +648,62 @@ namespace STS2RitsuLib.Models.Capabilities
 
         internal void CopyTo(ModelCapabilitySet target)
         {
-            foreach (var component in target._components)
-                component.Detach(true);
+            foreach (var capability in target._capabilities)
+                capability.Detach(true);
 
-            target._components.Clear();
+            target._capabilities.Clear();
             target._defaultCapabilities.Clear();
             target._unknownEntries.Clear();
             target._unknownEntries.AddRange(_unknownEntries.Select(CloneEntry));
             target.IsDirty = false;
 
-            foreach (var component in _components)
+            foreach (var capability in _capabilities)
             {
-                var cloned = component is IModelCapabilityCloneHandler cloneHandler
+                var cloned = capability is IModelCapabilityCloneHandler cloneHandler
                     ? cloneHandler.CloneFor(target.Owner)
-                    : CloneThroughSave(component, target.Owner);
+                    : CloneThroughSave(capability, target.Owner);
 
-                target._components.Add(cloned);
-                if (_defaultCapabilities.Contains(component))
+                target._capabilities.Add(cloned);
+                if (_defaultCapabilities.Contains(capability))
                     target._defaultCapabilities.Add(cloned);
 
                 if (!ReferenceEquals(cloned.Owner, target.Owner))
                     cloned.Attach(target.Owner, true);
 
                 if (cloned is IModelCapabilityCloneNotification notification)
-                    notification.AfterOwnerCloned(Owner, target.Owner, component);
+                    notification.AfterOwnerCloned(Owner, target.Owner, capability);
             }
 
             if (IsDirty || _unknownEntries.Count > 0 ||
-                _components.Any(component => !_defaultCapabilities.Contains(component)))
+                _capabilities.Any(capability => !_defaultCapabilities.Contains(capability)))
                 target.MarkDirty();
         }
 
         private DefaultCapabilityLoadState CreateDefaultCapabilities()
         {
             var state = new DefaultCapabilityLoadState();
-            foreach (var component in ModelCapabilityDefaults.Create(Owner))
-                state.Add(component);
+            foreach (var capability in ModelCapabilityDefaults.Create(Owner))
+                state.Add(capability);
 
             return state;
         }
 
-        private void AddDefaultCapability(IModelCapability component)
+        private void AddDefaultCapability(IModelCapability capability)
         {
-            _components.Add(component);
-            _defaultCapabilities.Add(component);
-            component.Attach(Owner, true);
+            _capabilities.Add(capability);
+            _defaultCapabilities.Add(capability);
+            capability.Attach(Owner, true);
         }
 
         private void AddMissingDefaultCapabilities(DefaultCapabilityLoadState defaultItems)
         {
-            foreach (var component in defaultItems.TakeRemaining())
-                AddDefaultCapability(component);
+            foreach (var capability in defaultItems.TakeRemaining())
+                AddDefaultCapability(capability);
         }
 
-        private static void LoadComponentState(IModelCapability component, ModelCapabilitySaveEntry entry)
+        private static void LoadCapabilityState(IModelCapability capability, ModelCapabilitySaveEntry entry)
         {
-            if (component is IModelCapabilityJsonState state)
+            if (capability is IModelCapabilityJsonState state)
                 state.LoadState(entry.Data?.DeepClone(), entry.Schema);
         }
 
@@ -631,25 +712,52 @@ namespace STS2RitsuLib.Models.Capabilities
             IsDirty = true;
         }
 
-        private static bool ComponentHasSavedState(IModelCapability component)
+        private IModelCapability? InsertRelativeTo<TExisting>(
+            IModelCapability capability,
+            bool after,
+            MissingModelCapabilityAnchorPolicy missingAnchorPolicy)
+            where TExisting : class, IModelCapability
         {
-            return component is IModelCapabilityJsonState state && state.SaveState() != null;
+            ArgumentNullException.ThrowIfNull(capability);
+
+            var index = _capabilities.FindIndex(static existing => existing is TExisting);
+            if (index >= 0)
+                return Insert(after ? index + 1 : index, capability);
+
+            return missingAnchorPolicy switch
+            {
+                MissingModelCapabilityAnchorPolicy.Append => Insert(_capabilities.Count, capability),
+                MissingModelCapabilityAnchorPolicy.Prepend => Insert(0, capability),
+                MissingModelCapabilityAnchorPolicy.Skip => null,
+                MissingModelCapabilityAnchorPolicy.Throw => throw new InvalidOperationException(
+                    $"Cannot find capability anchor '{typeof(TExisting).FullName}' on model '{Owner.Id}'."),
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(missingAnchorPolicy),
+                    missingAnchorPolicy,
+                    "Unknown missing anchor policy."),
+            };
+        }
+
+        private static bool CapabilityHasSavedState(IModelCapability capability)
+        {
+            return capability is IModelCapabilityJsonState state && state.SaveState() != null;
         }
 
         private static void MarkDynamicVarsJustUpgraded(
-            IModelCapability component,
+            IModelCapability capability,
             ApplyModelCapabilityOptions options)
         {
-            if (options.IsUpgrade && component is ModelCapability modelComponent)
-                modelComponent.MarkDynamicVarsJustUpgraded();
+            if (options.IsUpgrade && capability is ModelCapability modelCapability)
+                modelCapability.MarkDynamicVarsJustUpgraded();
         }
 
-        private static IModelCapability CloneThroughSave(IModelCapability component, AbstractModel clonedOwner)
+        private static IModelCapability CloneThroughSave(IModelCapability capability, AbstractModel clonedOwner)
         {
-            if (!ModelCapabilityRegistry.TryCreate(component.CapabilityId, out var clone))
-                throw new InvalidOperationException($"Cannot clone unknown model capability '{component.CapabilityId}'.");
+            if (!ModelCapabilityRegistry.TryCreate(capability.CapabilityId, out var clone))
+                throw new InvalidOperationException(
+                    $"Cannot clone unknown model capability '{capability.CapabilityId}'.");
 
-            if (component is IModelCapabilityJsonState sourceState && clone is IModelCapabilityJsonState targetState)
+            if (capability is IModelCapabilityJsonState sourceState && clone is IModelCapabilityJsonState targetState)
                 targetState.LoadState(sourceState.SaveState()?.DeepClone(), sourceState.SchemaVersion);
 
             clone.Attach(clonedOwner, true);
@@ -671,26 +779,26 @@ namespace STS2RitsuLib.Models.Capabilities
             private readonly Dictionary<string, Queue<IModelCapability>> _queues = new(StringComparer.Ordinal);
             private readonly List<IModelCapability> _remaining = [];
 
-            public void Add(IModelCapability component)
+            public void Add(IModelCapability capability)
             {
-                _remaining.Add(component);
-                if (!_queues.TryGetValue(component.CapabilityId, out var queue))
+                _remaining.Add(capability);
+                if (!_queues.TryGetValue(capability.CapabilityId, out var queue))
                 {
                     queue = new();
-                    _queues[component.CapabilityId] = queue;
+                    _queues[capability.CapabilityId] = queue;
                 }
 
-                queue.Enqueue(component);
+                queue.Enqueue(capability);
             }
 
-            public bool TryTake(string capabilityId, out IModelCapability component)
+            public bool TryTake(string capabilityId, out IModelCapability capability)
             {
-                component = null!;
+                capability = null!;
                 if (!_queues.TryGetValue(capabilityId, out var queue) || queue.Count == 0)
                     return false;
 
-                component = queue.Dequeue();
-                var taken = component;
+                capability = queue.Dequeue();
+                var taken = capability;
                 var index = _remaining.FindIndex(candidate => ReferenceEquals(candidate, taken));
                 if (index >= 0)
                     _remaining.RemoveAt(index);

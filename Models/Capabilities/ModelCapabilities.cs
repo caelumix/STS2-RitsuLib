@@ -5,7 +5,7 @@ namespace STS2RitsuLib.Models.Capabilities
 {
     /// <summary>
     ///     Entry point for model capability hosts.
-    ///     模型组件宿主的入口。
+    ///     模型能力宿主的入口。
     /// </summary>
     public static class ModelCapabilities
     {
@@ -16,7 +16,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
         /// <summary>
         ///     Initializes the built-in persistence slot for model capabilities.
-        ///     初始化模型组件的内置持久化槽位。
+        ///     初始化模型能力的内置持久化槽位。
         /// </summary>
         public static void EnsureInitialized()
         {
@@ -38,7 +38,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
         /// <summary>
         ///     Gets the capability set for <paramref name="model" />.
-        ///     获取 <paramref name="model" /> 的组件集合。
+        ///     获取 <paramref name="model" /> 的能力集合。
         /// </summary>
         public static ModelCapabilitySet Get(AbstractModel model)
         {
@@ -49,7 +49,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
         /// <summary>
         ///     Attempts to get an existing capability set without creating one.
-        ///     尝试获取已有组件集合，但不创建新集合。
+        ///     尝试获取已有能力集合，但不创建新集合。
         /// </summary>
         public static bool TryGet(AbstractModel model, out ModelCapabilitySet collection)
         {
@@ -153,7 +153,7 @@ namespace STS2RitsuLib.Models.Capabilities
             ApplyModelCapabilityOptions options = new())
             where TCapability : class, IModelCapability
         {
-            return ModelCapabilities.Get(model).Apply(capability, options) as TCapability;
+            return ModelCapabilities.Get(model).Apply(capability, options);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace STS2RitsuLib.Models.Capabilities
             bool isUpgrade = false)
             where TCapability : class, IModelCapability
         {
-            return ModelCapabilities.Get(model).Add(capability, allowMerge, isUpgrade) as TCapability;
+            return ModelCapabilities.Get(model).Add(capability, allowMerge, isUpgrade);
         }
 
         /// <summary>

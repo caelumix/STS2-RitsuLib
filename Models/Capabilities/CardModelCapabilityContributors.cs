@@ -11,7 +11,7 @@ namespace STS2RitsuLib.Models.Capabilities
 {
     /// <summary>
     ///     Context passed to card-description contributors.
-    ///     传给卡牌描述组件的上下文。
+    ///     传给卡牌描述贡献者的上下文。
     /// </summary>
     public readonly record struct CardDescriptionContext(
         CardModel Card,
@@ -20,8 +20,8 @@ namespace STS2RitsuLib.Models.Capabilities
         bool IsUpgradePreview);
 
     /// <summary>
-    ///     Placement for component-provided card description fragments.
-    ///     组件提供的卡牌描述片段插入位置。
+    ///     Placement for capability-provided card description fragments.
+    ///     能力提供的卡牌描述片段插入位置。
     /// </summary>
     public enum CardDescriptionFragmentPlacement
     {
@@ -39,8 +39,8 @@ namespace STS2RitsuLib.Models.Capabilities
     }
 
     /// <summary>
-    ///     Localized card description fragment contributed by a component.
-    ///     由组件贡献的本地化卡牌描述片段。
+    ///     Localized card description fragment contributed by a capability.
+    ///     由能力贡献的本地化卡牌描述片段。
     /// </summary>
     public readonly record struct CardDescriptionFragment(
         LocString Text,
@@ -49,7 +49,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Optional model capability that contributes localized card-description fragments.
-    ///     可选组件能力：贡献本地化卡牌描述片段。
+    ///     可选能力：贡献本地化卡牌描述片段。
     /// </summary>
     public interface ICardDescriptionContributor
     {
@@ -63,7 +63,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Optional model capability that contributes card hover tips.
-    ///     可选组件能力：贡献卡牌悬停提示。
+    ///     可选能力：贡献卡牌悬停提示。
     /// </summary>
     public interface ICardHoverTipContributor
     {
@@ -76,7 +76,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Optional model capability that contributes hand glow predicates.
-    ///     可选组件能力：贡献手牌发光判定。
+    ///     可选能力：贡献手牌发光判定。
     /// </summary>
     public interface ICardGlowContributor
     {
@@ -99,21 +99,254 @@ namespace STS2RitsuLib.Models.Capabilities
         }
     }
 
+    /// <summary>
+    ///     Optional card capability that contributes card-facing property overrides.
+    ///     可选卡牌能力：贡献卡牌侧属性覆盖。
+    /// </summary>
+    public interface ICardPropertyContributor
+    {
+        /// <summary>
+        ///     Returns a card type override, or null to leave the current value unchanged. The first non-null
+        ///     contributor result wins; additional overrides are reported when
+        ///     <see cref="ModelCapabilityDiagnostics.ConflictLogs" /> is enabled.
+        ///     返回卡牌类型覆盖；返回 null 表示不修改当前值。
+        /// </summary>
+        CardType? GetCardType(CardModel card)
+        {
+            return null;
+        }
+
+        /// <summary>
+        ///     Returns a card rarity override, or null to leave the current value unchanged. The first non-null
+        ///     contributor result wins; additional overrides are reported when
+        ///     <see cref="ModelCapabilityDiagnostics.ConflictLogs" /> is enabled.
+        ///     返回卡牌稀有度覆盖；返回 null 表示不修改当前值。
+        /// </summary>
+        CardRarity? GetCardRarity(CardModel card)
+        {
+            return null;
+        }
+
+        /// <summary>
+        ///     Returns a target type override, or null to leave the current value unchanged. The first non-null
+        ///     contributor result wins; additional overrides are reported when
+        ///     <see cref="ModelCapabilityDiagnostics.ConflictLogs" /> is enabled.
+        ///     返回目标类型覆盖；返回 null 表示不修改当前值。
+        /// </summary>
+        TargetType? GetTargetType(CardModel card)
+        {
+            return null;
+        }
+
+        /// <summary>
+        ///     Returns additional card tags. Tags from all contributors are appended, then de-duplicated.
+        ///     返回额外卡牌标签。
+        /// </summary>
+        IEnumerable<CardTag> GetTags(CardModel card)
+        {
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Optional card capability that contributes play-state decisions.
+    ///     可选卡牌能力：贡献出牌状态决策。
+    /// </summary>
+    public interface ICardPlayStateContributor
+    {
+        /// <summary>
+        ///     Returns null to leave the current playability unchanged; otherwise overrides it. Contributors run in
+        ///     capability order and later non-null results replace earlier results. Multiple overrides are reported
+        ///     when <see cref="ModelCapabilityDiagnostics.ConflictLogs" /> is enabled.
+        ///     返回 null 表示不修改当前可打出状态；否则覆盖该状态。
+        /// </summary>
+        bool? CanPlay(CardModel card)
+        {
+            return null;
+        }
+
+        /// <summary>
+        ///     Returns true when the owning card should receive turn-end-in-hand handling. Results are combined with OR.
+        ///     返回 true 时，所属卡牌应接收手牌回合结束处理。
+        /// </summary>
+        bool HasTurnEndInHandEffect(CardModel card)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     Optional card capability that routes the owning card to a custom result pile after play.
+    ///     可选卡牌能力：自定义所属卡牌打出后的目标牌堆。
+    /// </summary>
+    public interface ICardPlayResultContributor
+    {
+        /// <summary>
+        ///     Returns a result pile override, or null to keep the current result. The first non-null contributor
+        ///     result wins; additional overrides are reported when
+        ///     <see cref="ModelCapabilityDiagnostics.ConflictLogs" /> is enabled.
+        ///     返回目标牌堆覆盖；返回 null 表示保持当前结果。
+        /// </summary>
+        PileType? GetResultPileTypeForCardPlay(CardModel card)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Optional card capability that can carry itself from an original card to a transform result.
+    ///     可选卡牌能力：可将自身从转化前卡牌携带到转化结果卡牌。
+    /// </summary>
+    public interface ICardTransformCarryOverCapability
+    {
+        /// <summary>
+        ///     Returns true when this capability should be copied to <paramref name="replacement" />.
+        ///     返回 true 时，此能力会复制到 <paramref name="replacement" />。
+        /// </summary>
+        bool ShouldCarryOverToTransformResult(CardModel original, CardModel replacement)
+        {
+            return true;
+        }
+
+        /// <summary>
+        ///     Creates the capability instance that should be attached to <paramref name="replacement" />.
+        ///     创建应附加到 <paramref name="replacement" /> 的能力实例。
+        /// </summary>
+        IModelCapability CreateCarryOverCapability(CardModel original, CardModel replacement)
+        {
+            if (this is IModelCapabilityCloneHandler cloneHandler)
+                return cloneHandler.CloneFor(replacement);
+
+            throw new InvalidOperationException(
+                $"Capability '{GetType().FullName}' must implement IModelCapabilityCloneHandler to carry over through transform.");
+        }
+    }
+
     internal static class CardModelCapabilityHost
     {
+        private const string CardTypeSurface = "card property/type";
+        private const string CardRaritySurface = "card property/rarity";
+        private const string TargetTypeSurface = "card property/target-type";
+        private const string TagsSurface = "card property/tags";
+        private const string CanPlaySurface = "card play/can-play";
+        private const string TurnEndInHandSurface = "card play/turn-end-in-hand";
+        private const string ResultPileSurface = "card play/result-pile";
+        private const string TransformCarryOverSurface = "card transform/carry-over";
+        private const string DynamicVarPreviewSurface = "card dynamic-var/preview";
+        private const string DescriptionSurface = "card description/fragments";
+        private const string UpgradeLifecycleSurface = "card lifecycle/upgraded";
+        private const string FinalizeUpgradeLifecycleSurface = "card lifecycle/finalize-upgrade";
+        private const string DowngradeLifecycleSurface = "card lifecycle/downgraded";
+        private const string TransformFromLifecycleSurface = "card lifecycle/transform-from";
+        private const string TransformToLifecycleSurface = "card lifecycle/transform-to";
+        private const string HoverTipsSurface = "card display/hover-tips";
+        private const string GoldGlowSurface = "card display/gold-glow";
+        private const string RedGlowSurface = "card display/red-glow";
+
+        internal static CardType ApplyCardType(CardModel card, CardType current)
+        {
+            return ApplyFirstOverride<CardType, ICardPropertyContributor>(
+                card,
+                CardTypeSurface,
+                current,
+                capability => capability.GetCardType(card));
+        }
+
+        internal static CardRarity ApplyCardRarity(CardModel card, CardRarity current)
+        {
+            return ApplyFirstOverride<CardRarity, ICardPropertyContributor>(
+                card,
+                CardRaritySurface,
+                current,
+                capability => capability.GetCardRarity(card));
+        }
+
+        internal static TargetType ApplyTargetType(CardModel card, TargetType current)
+        {
+            return ApplyFirstOverride<TargetType, ICardPropertyContributor>(
+                card,
+                TargetTypeSurface,
+                current,
+                capability => capability.GetTargetType(card));
+        }
+
+        internal static IEnumerable<CardTag> ApplyTags(CardModel card, IEnumerable<CardTag> current)
+        {
+            List<CardTag>? extraTags = null;
+            foreach (var capability in GetCapabilities<ICardPropertyContributor>(card))
+            {
+                IEnumerable<CardTag> tags = [];
+                TryRun(capability, card, TagsSurface, () => tags = capability.GetTags(card));
+                foreach (var tag in tags)
+                {
+                    extraTags ??= [];
+                    extraTags.Add(tag);
+                }
+            }
+
+            return extraTags is not { Count: > 0 } ? current : MergeTags(current, extraTags);
+        }
+
+        internal static bool ApplyCanPlay(CardModel card, bool current)
+        {
+            return ApplyLastOverride<bool, ICardPlayStateContributor>(
+                card,
+                CanPlaySurface,
+                current,
+                capability => capability.CanPlay(card));
+        }
+
+        internal static bool HasTurnEndInHandEffect(CardModel card)
+        {
+            foreach (var capability in GetCapabilities<ICardPlayStateContributor>(card))
+            {
+                var value = false;
+                TryRun(capability, card, TurnEndInHandSurface, () => value = capability.HasTurnEndInHandEffect(card));
+                if (value)
+                    return true;
+            }
+
+            return false;
+        }
+
+        internal static PileType ApplyResultPileTypeForCardPlay(CardModel card, PileType current)
+        {
+            return ApplyFirstOverride<PileType, ICardPlayResultContributor>(
+                card,
+                ResultPileSurface,
+                current,
+                capability => capability.GetResultPileTypeForCardPlay(card));
+        }
+
+        internal static void CarryOverTransformCapabilities(CardModel original, CardModel? replacement)
+        {
+            if (replacement == null || ReferenceEquals(original, replacement))
+                return;
+
+            foreach (var capability in GetCapabilities<ICardTransformCarryOverCapability>(original))
+                TryRun(capability, original, TransformCarryOverSurface, () =>
+                {
+                    if (!capability.ShouldCarryOverToTransformResult(original, replacement))
+                        return;
+
+                    var carried = capability.CreateCarryOverCapability(original, replacement);
+                    replacement.Capabilities().Apply(carried);
+                });
+        }
+
         internal static void UpdateDynamicVarPreviews(
             CardModel card,
             CardPreviewMode previewMode,
             Creature? target)
         {
-            foreach (var component in GetCapabilities<IModelDynamicVarContributor>(card))
+            foreach (var capability in GetCapabilities<IModelDynamicVarContributor>(card))
             {
                 DynamicVarSet? dynamicVars = null;
-                TryRun(component, card, () => dynamicVars = component.GetDynamicVars(card));
+                TryRun(capability, card, DynamicVarPreviewSurface, () => dynamicVars = capability.GetDynamicVars(card));
                 if (dynamicVars == null)
                     continue;
 
-                TryRun(component, card, () =>
+                TryRun(capability, card, DynamicVarPreviewSurface, () =>
                 {
                     dynamicVars.ClearPreview();
                     card.UpdateDynamicVarPreview(previewMode, target, dynamicVars);
@@ -125,25 +358,25 @@ namespace STS2RitsuLib.Models.Capabilities
         {
             List<OrderedDescriptionFragment> beforeFragments = [];
             List<OrderedDescriptionFragment> afterFragments = [];
-            var componentIndex = 0;
-            foreach (var component in GetCapabilities<ICardDescriptionContributor>(context.Card))
+            var capabilityIndex = 0;
+            foreach (var capability in GetCapabilities<ICardDescriptionContributor>(context.Card))
             {
-                var currentSourceIndex = componentIndex++;
+                var currentSourceIndex = capabilityIndex++;
                 IReadOnlyList<CardDescriptionFragment> fragments;
                 try
                 {
-                    fragments = (component.GetDescriptionFragments(context) ?? []).ToArray();
+                    fragments = (capability.GetDescriptionFragments(context) ?? []).ToArray();
                 }
                 catch (Exception ex)
                 {
-                    LogFailure(component, context.Card, ex);
+                    LogFailure(capability, context.Card, DescriptionSurface, ex);
                     continue;
                 }
 
                 foreach (var (locString, cardDescriptionFragmentPlacement, order) in fragments)
-                    TryRun(component, context.Card, () =>
+                    TryRun(capability, context.Card, DescriptionSurface, () =>
                     {
-                        PrepareDescriptionFragment(context, locString, component);
+                        PrepareDescriptionFragment(context, locString, capability);
 
                         var text = locString.GetFormattedText();
                         if (string.IsNullOrWhiteSpace(text)) return;
@@ -177,82 +410,84 @@ namespace STS2RitsuLib.Models.Capabilities
 
         internal static void AfterOwnerCardUpgraded(CardModel card)
         {
-            foreach (var component in GetCapabilities<CardCapability>(card))
+            foreach (var capability in GetCapabilities<CardCapability>(card))
             {
-                if (!IsStillAttachedToCard(component, card))
+                if (!IsStillAttachedToCard(capability, card))
                     continue;
 
-                TryRun(component, card, () =>
+                TryRun(capability, card, UpgradeLifecycleSurface, () =>
                 {
-                    if (!IsStillAttachedToCard(component, card))
+                    if (!IsStillAttachedToCard(capability, card))
                         return;
 
-                    component.NotifyOwnerCardUpgraded(card);
-                    if (!IsStillAttachedToCard(component, card))
+                    capability.NotifyOwnerCardUpgraded(card);
+                    if (!IsStillAttachedToCard(capability, card))
                         return;
 
-                    component.RecalculateDynamicVarsForUpgradeOrEnchant();
+                    capability.RecalculateDynamicVarsForUpgradeOrEnchant();
                 });
             }
         }
 
         internal static void AfterOwnerCardUpgradeFinalized(CardModel card)
         {
-            foreach (var component in GetCapabilities<CardCapability>(card))
+            foreach (var capability in GetCapabilities<CardCapability>(card))
             {
-                if (!IsStillAttachedToCard(component, card))
+                if (!IsStillAttachedToCard(capability, card))
                     continue;
 
-                TryRun(component, card, () =>
+                TryRun(capability, card, FinalizeUpgradeLifecycleSurface, () =>
                 {
-                    if (!IsStillAttachedToCard(component, card))
+                    if (!IsStillAttachedToCard(capability, card))
                         return;
 
-                    component.FinalizeDynamicVarUpgrade();
-                    if (!IsStillAttachedToCard(component, card))
+                    capability.FinalizeDynamicVarUpgrade();
+                    if (!IsStillAttachedToCard(capability, card))
                         return;
 
-                    component.NotifyOwnerCardUpgradeFinalized(card);
+                    capability.NotifyOwnerCardUpgradeFinalized(card);
                 });
             }
         }
 
         internal static void AfterOwnerCardDowngraded(CardModel card)
         {
-            foreach (var component in GetCapabilities<CardCapability>(card))
+            foreach (var capability in GetCapabilities<CardCapability>(card))
             {
-                if (!IsStillAttachedToCard(component, card))
+                if (!IsStillAttachedToCard(capability, card))
                     continue;
 
-                TryRun(component, card, () =>
+                TryRun(capability, card, DowngradeLifecycleSurface, () =>
                 {
-                    if (!IsStillAttachedToCard(component, card))
+                    if (!IsStillAttachedToCard(capability, card))
                         return;
 
-                    component.NotifyOwnerCardDowngraded(card);
+                    capability.NotifyOwnerCardDowngraded(card);
                 });
             }
         }
 
         internal static void AfterOwnerCardTransformedFrom(CardModel card)
         {
-            foreach (var component in GetCapabilities<CardCapability>(card))
+            foreach (var capability in GetCapabilities<CardCapability>(card))
             {
-                if (!IsStillAttachedToCard(component, card))
+                if (!IsStillAttachedToCard(capability, card))
                     continue;
 
-                TryRun(component, card, () => component.NotifyOwnerCardTransformedFrom(card));
+                TryRun(capability, card, TransformFromLifecycleSurface,
+                    () => capability.NotifyOwnerCardTransformedFrom(card));
             }
         }
 
         internal static void AfterOwnerCardTransformedTo(CardModel card)
         {
-            foreach (var component in GetCapabilities<CardCapability>(card))
+            foreach (var capability in GetCapabilities<CardCapability>(card))
             {
-                if (!IsStillAttachedToCard(component, card))
+                if (!IsStillAttachedToCard(capability, card))
                     continue;
 
-                TryRun(component, card, () => component.NotifyOwnerCardTransformedTo(card));
+                TryRun(capability, card, TransformToLifecycleSurface,
+                    () => capability.NotifyOwnerCardTransformedTo(card));
             }
         }
 
@@ -264,8 +499,8 @@ namespace STS2RitsuLib.Models.Capabilities
             var card = context.Card;
 
             card.DynamicVars.AddTo(locString);
-            if (source is IModelDynamicVarContributor dynamicVarComponent)
-                dynamicVarComponent.GetDynamicVars(card).AddTo(locString);
+            if (source is IModelDynamicVarContributor dynamicVarCapability)
+                dynamicVarCapability.GetDynamicVars(card).AddTo(locString);
 
             var upgradeDisplay = context.IsUpgradePreview
                 ? UpgradeDisplay.UpgradePreview
@@ -295,10 +530,10 @@ namespace STS2RitsuLib.Models.Capabilities
             foreach (var tip in ModelCapabilityHost.GetHoverTips(card))
                 yield return tip;
 
-            foreach (var component in GetCapabilities<ICardHoverTipContributor>(card))
+            foreach (var capability in GetCapabilities<ICardHoverTipContributor>(card))
             {
                 IEnumerable<IHoverTip> tips = [];
-                TryRun(component, card, () => tips = component.GetHoverTips(card));
+                TryRun(capability, card, HoverTipsSurface, () => tips = capability.GetHoverTips(card));
 
                 foreach (var tip in tips)
                     yield return tip;
@@ -307,10 +542,10 @@ namespace STS2RitsuLib.Models.Capabilities
 
         internal static bool ShouldGlowGold(CardModel card)
         {
-            foreach (var component in GetCapabilities<ICardGlowContributor>(card))
+            foreach (var capability in GetCapabilities<ICardGlowContributor>(card))
             {
                 var shouldGlow = false;
-                TryRun(component, card, () => shouldGlow = component.ShouldGlowGold(card));
+                TryRun(capability, card, GoldGlowSurface, () => shouldGlow = capability.ShouldGlowGold(card));
                 if (shouldGlow)
                     return true;
             }
@@ -320,10 +555,10 @@ namespace STS2RitsuLib.Models.Capabilities
 
         internal static bool ShouldGlowRed(CardModel card)
         {
-            foreach (var component in GetCapabilities<ICardGlowContributor>(card))
+            foreach (var capability in GetCapabilities<ICardGlowContributor>(card))
             {
                 var shouldGlow = false;
-                TryRun(component, card, () => shouldGlow = component.ShouldGlowRed(card));
+                TryRun(capability, card, RedGlowSurface, () => shouldGlow = capability.ShouldGlowRed(card));
                 if (shouldGlow)
                     return true;
             }
@@ -331,13 +566,110 @@ namespace STS2RitsuLib.Models.Capabilities
             return false;
         }
 
-        private static IReadOnlyList<TCapability> GetCapabilities<TCapability>(CardModel card)
+        private static T ApplyFirstOverride<T, TCapability>(
+            CardModel card,
+            string surface,
+            T current,
+            Func<TCapability, T?> getValue)
+            where T : struct
             where TCapability : class
         {
-            return ModelCapabilityHost.GetCapabilities<TCapability>(card).ToArray();
+            var hasWinner = false;
+            var winnerValue = default(T);
+            TCapability? winner = null;
+
+            foreach (var capability in GetCapabilities<TCapability>(card))
+            {
+                T? value = null;
+                TryRun(capability, card, surface, () => value = getValue(capability));
+                if (!value.HasValue)
+                    continue;
+
+                if (!hasWinner)
+                {
+                    hasWinner = true;
+                    winnerValue = value.Value;
+                    winner = capability;
+                    if (!ModelCapabilityDiagnostics.ShouldInspectConflicts)
+                        return winnerValue;
+                    continue;
+                }
+
+                ModelCapabilityDiagnostics.WarnSurfaceConflict(
+                    surface,
+                    card,
+                    winner!,
+                    winnerValue,
+                    capability,
+                    value.Value);
+            }
+
+            return hasWinner ? winnerValue : current;
         }
 
-        private static void TryRun<TCapability>(TCapability component, CardModel card, Action action)
+        private static T ApplyLastOverride<T, TCapability>(
+            CardModel card,
+            string surface,
+            T current,
+            Func<TCapability, T?> getValue)
+            where T : struct
+            where TCapability : class
+        {
+            var result = current;
+            var hasPrevious = false;
+            var previousValue = default(T);
+            TCapability? previous = null;
+
+            foreach (var capability in GetCapabilities<TCapability>(card))
+            {
+                T? value = null;
+                TryRun(capability, card, surface, () => value = getValue(capability));
+                if (!value.HasValue)
+                    continue;
+
+                if (hasPrevious)
+                    ModelCapabilityDiagnostics.WarnSurfaceConflict(
+                        surface,
+                        card,
+                        previous!,
+                        previousValue,
+                        capability,
+                        value.Value);
+
+                result = value.Value;
+                previousValue = result;
+                previous = capability;
+                hasPrevious = true;
+            }
+
+            return result;
+        }
+
+        private static IEnumerable<TCapability> GetCapabilities<TCapability>(CardModel card)
+            where TCapability : class
+        {
+            return ModelCapabilityHost.GetCapabilities<TCapability>(card);
+        }
+
+        private static IEnumerable<CardTag> MergeTags(
+            IEnumerable<CardTag> current,
+            IReadOnlyList<CardTag> extraTags)
+        {
+            HashSet<CardTag> seen = [];
+            foreach (var tag in current)
+                if (seen.Add(tag))
+                    yield return tag;
+
+            foreach (var tag in extraTags)
+                if (seen.Add(tag))
+                    yield return tag;
+        }
+
+        private static void TryRun<TCapability>(
+            TCapability capability,
+            CardModel card,
+            string surface,
+            Action action)
             where TCapability : class
         {
             try
@@ -346,20 +678,23 @@ namespace STS2RitsuLib.Models.Capabilities
             }
             catch (Exception ex)
             {
-                LogFailure(component, card, ex);
+                LogFailure(capability, card, surface, ex);
             }
         }
 
-        private static void LogFailure<TCapability>(TCapability component, CardModel card, Exception ex)
+        private static void LogFailure<TCapability>(
+            TCapability capability,
+            CardModel card,
+            string surface,
+            Exception ex)
             where TCapability : class
         {
-            RitsuLibFramework.Logger.Warn(
-                $"[ModelCapabilities] Card model capability '{component.GetType().FullName}' failed for {card.Id}: {ex.Message}");
+            ModelCapabilityDiagnostics.WarnFailure(surface, card, capability, ex);
         }
 
-        private static bool IsStillAttachedToCard(CardCapability component, CardModel card)
+        private static bool IsStillAttachedToCard(CardCapability capability, CardModel card)
         {
-            return ReferenceEquals(component.Owner, card);
+            return ReferenceEquals(capability.Owner, card);
         }
 
         private readonly record struct OrderedDescriptionFragment(string Text, int Order, int SourceIndex);

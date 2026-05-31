@@ -15,8 +15,8 @@ using STS2RitsuLib.Patching.Models;
 namespace STS2RitsuLib.Models.Capabilities.Patches
 {
     /// <summary>
-    ///     Bridges model capabilities into card-facing display surfaces.
-    ///     将模型组件桥接到卡牌侧展示 surface。
+    ///     Bridges model capabilities into card-facing behavior and display surfaces.
+    ///     将模型能力桥接到卡牌侧行为与展示 surface。
     /// </summary>
     internal static class CardModelCapabilityPatches
     {
@@ -39,7 +39,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
 
         /// <summary>
         ///     Updates capability dynamic vars through the same card preview path as vanilla card dynamic vars.
-        ///     通过与原版卡牌动态变量相同的卡牌预览路径更新组件动态变量。
+        ///     通过与原版卡牌动态变量相同的卡牌预览路径更新能力动态变量。
         /// </summary>
         internal sealed class UpdateDynamicVarPreviewPatch : IPatchMethod
         {
@@ -50,7 +50,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
             public static string Description => "Update model-capability card dynamic vars through CardModel preview";
 
             /// <inheritdoc />
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             /// <inheritdoc />
             public static ModPatchTarget[] GetTargets()
@@ -75,6 +75,175 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
             }
         }
 
+        internal sealed class CardTypePatch : IPatchMethod
+        {
+            public static string PatchId => "ritsulib_card_capability_type";
+
+            public static string Description => "Apply model-capability card type overrides";
+
+            public static bool IsCritical => true;
+
+            public static ModPatchTarget[] GetTargets()
+            {
+                return [new(typeof(CardModel), "Type", MethodType.Getter)];
+            }
+
+            // ReSharper disable InconsistentNaming
+            public static void Postfix(CardModel __instance, ref CardType __result)
+                // ReSharper restore InconsistentNaming
+            {
+                __result = CardModelCapabilityHost.ApplyCardType(__instance, __result);
+            }
+        }
+
+        internal sealed class CardRarityPatch : IPatchMethod
+        {
+            public static string PatchId => "ritsulib_card_capability_rarity";
+
+            public static string Description => "Apply model-capability card rarity overrides";
+
+            public static bool IsCritical => true;
+
+            public static ModPatchTarget[] GetTargets()
+            {
+                return [new(typeof(CardModel), "Rarity", MethodType.Getter)];
+            }
+
+            // ReSharper disable InconsistentNaming
+            public static void Postfix(CardModel __instance, ref CardRarity __result)
+                // ReSharper restore InconsistentNaming
+            {
+                __result = CardModelCapabilityHost.ApplyCardRarity(__instance, __result);
+            }
+        }
+
+        internal sealed class TargetTypePatch : IPatchMethod
+        {
+            public static string PatchId => "ritsulib_card_capability_target_type";
+
+            public static string Description => "Apply model-capability card target type overrides";
+
+            public static bool IsCritical => true;
+
+            public static ModPatchTarget[] GetTargets()
+            {
+                return [new(typeof(CardModel), "TargetType", MethodType.Getter)];
+            }
+
+            // ReSharper disable InconsistentNaming
+            public static void Postfix(CardModel __instance, ref TargetType __result)
+                // ReSharper restore InconsistentNaming
+            {
+                __result = CardModelCapabilityHost.ApplyTargetType(__instance, __result);
+            }
+        }
+
+        internal sealed class TagsPatch : IPatchMethod
+        {
+            public static string PatchId => "ritsulib_card_capability_tags";
+
+            public static string Description => "Append model-capability card tags";
+
+            public static bool IsCritical => true;
+
+            public static ModPatchTarget[] GetTargets()
+            {
+                return [new(typeof(CardModel), "Tags", MethodType.Getter)];
+            }
+
+            // ReSharper disable InconsistentNaming
+            public static void Postfix(CardModel __instance, ref IEnumerable<CardTag> __result)
+                // ReSharper restore InconsistentNaming
+            {
+                __result = CardModelCapabilityHost.ApplyTags(__instance, __result);
+            }
+        }
+
+        internal sealed class IsPlayablePatch : IPatchMethod
+        {
+            public static string PatchId => "ritsulib_card_capability_is_playable";
+
+            public static string Description => "Apply model-capability card playability decisions";
+
+            public static bool IsCritical => true;
+
+            public static ModPatchTarget[] GetTargets()
+            {
+                return [new(typeof(CardModel), "IsPlayable", MethodType.Getter)];
+            }
+
+            // ReSharper disable InconsistentNaming
+            public static void Postfix(CardModel __instance, ref bool __result)
+                // ReSharper restore InconsistentNaming
+            {
+                __result = CardModelCapabilityHost.ApplyCanPlay(__instance, __result);
+            }
+        }
+
+        internal sealed class HasTurnEndInHandEffectPatch : IPatchMethod
+        {
+            public static string PatchId => "ritsulib_card_capability_turn_end_in_hand";
+
+            public static string Description => "Apply model-capability turn-end-in-hand markers";
+
+            public static bool IsCritical => true;
+
+            public static ModPatchTarget[] GetTargets()
+            {
+                return [new(typeof(CardModel), "HasTurnEndInHandEffect", MethodType.Getter)];
+            }
+
+            // ReSharper disable InconsistentNaming
+            public static void Postfix(CardModel __instance, ref bool __result)
+                // ReSharper restore InconsistentNaming
+            {
+                if (!__result && CardModelCapabilityHost.HasTurnEndInHandEffect(__instance))
+                    __result = true;
+            }
+        }
+
+        internal sealed class ResultPileTypeForCardPlayPatch : IPatchMethod
+        {
+            public static string PatchId => "ritsulib_card_capability_result_pile";
+
+            public static string Description => "Apply model-capability card play result pile overrides";
+
+            public static bool IsCritical => true;
+
+            public static ModPatchTarget[] GetTargets()
+            {
+                return [new(typeof(CardModel), "GetResultPileTypeForCardPlay", Type.EmptyTypes)];
+            }
+
+            // ReSharper disable InconsistentNaming
+            public static void Postfix(CardModel __instance, ref PileType __result)
+                // ReSharper restore InconsistentNaming
+            {
+                __result = CardModelCapabilityHost.ApplyResultPileTypeForCardPlay(__instance, __result);
+            }
+        }
+
+        internal sealed class TransformCarryOverPatch : IPatchMethod
+        {
+            public static string PatchId => "ritsulib_card_capability_transform_carry_over";
+
+            public static string Description => "Carry opted-in card capabilities to transform results";
+
+            public static bool IsCritical => true;
+
+            public static ModPatchTarget[] GetTargets()
+            {
+                return [new(typeof(CardTransformation), nameof(CardTransformation.GetReplacement), [typeof(Rng)])];
+            }
+
+            // ReSharper disable InconsistentNaming
+            public static void Postfix(CardTransformation __instance, CardModel? __result)
+                // ReSharper restore InconsistentNaming
+            {
+                CardModelCapabilityHost.CarryOverTransformCapabilities(__instance.Original, __result);
+            }
+        }
+
         internal sealed class FromSerializableUpgradeReplayPatch : IPatchMethod
         {
             public static string PatchId => "ritsulib_card_capability_from_serializable_upgrade_replay";
@@ -82,7 +251,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
             public static string Description =>
                 "Defer saved card capability imports until CardModel.FromSerializable upgrade replay completes";
 
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             public static ModPatchTarget[] GetTargets()
             {
@@ -119,7 +288,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
 
             public static string Description => "Notify card capabilities during CardModel upgrade lifecycle";
 
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             public static ModPatchTarget[] GetTargets()
             {
@@ -165,9 +334,10 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         {
             public static string PatchId => "ritsulib_card_capability_finalize_upgrade_lifecycle";
 
-            public static string Description => "Finalize card capability dynamic vars with CardModel upgrade lifecycle";
+            public static string Description =>
+                "Finalize card capability dynamic vars with CardModel upgrade lifecycle";
 
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             public static ModPatchTarget[] GetTargets()
             {
@@ -188,7 +358,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
 
             public static string Description => "Notify card capabilities during CardModel downgrade lifecycle";
 
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             public static ModPatchTarget[] GetTargets()
             {
@@ -234,7 +404,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
 
             public static string Description => "Notify card capabilities during CardCmd transform lifecycle";
 
-            public static bool IsCritical => false;
+            public static bool IsCritical => true;
 
             public static ModPatchTarget[] GetTargets()
             {
@@ -295,8 +465,8 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         }
 
         /// <summary>
-        ///     Applies component description modifiers to normal card description rendering.
-        ///     将组件描述修改器应用到常规卡牌描述渲染。
+        ///     Applies capability description modifiers to normal card description rendering.
+        ///     将能力描述修改器应用到常规卡牌描述渲染。
         /// </summary>
         internal sealed class DescriptionForPilePatch : IPatchMethod
         {
@@ -333,8 +503,8 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         }
 
         /// <summary>
-        ///     Applies component description modifiers to upgrade-preview text.
-        ///     将组件描述修改器应用到升级预览文本。
+        ///     Applies capability description modifiers to upgrade-preview text.
+        ///     将能力描述修改器应用到升级预览文本。
         /// </summary>
         internal sealed class DescriptionForUpgradePreviewPatch : IPatchMethod
         {
@@ -363,8 +533,8 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         }
 
         /// <summary>
-        ///     Appends component hover tips to card hover tips.
-        ///     将组件悬停提示追加到卡牌悬停提示。
+        ///     Appends capability hover tips to card hover tips.
+        ///     将能力悬停提示追加到卡牌悬停提示。
         /// </summary>
         internal sealed class HoverTipsPatch : IPatchMethod
         {
@@ -396,8 +566,8 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         }
 
         /// <summary>
-        ///     ORs component glow predicates into gold hand glow.
-        ///     将组件发光判定 OR 到金色手牌发光。
+        ///     ORs capability glow predicates into gold hand glow.
+        ///     将能力发光判定 OR 到金色手牌发光。
         /// </summary>
         internal sealed class ShouldGlowGoldPatch : IPatchMethod
         {
@@ -426,8 +596,8 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         }
 
         /// <summary>
-        ///     ORs component glow predicates into red hand glow.
-        ///     将组件发光判定 OR 到红色手牌发光。
+        ///     ORs capability glow predicates into red hand glow.
+        ///     将能力发光判定 OR 到红色手牌发光。
         /// </summary>
         internal sealed class ShouldGlowRedPatch : IPatchMethod
         {

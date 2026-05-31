@@ -269,6 +269,14 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<ModelCapabilityHookListenerPatches.RunStateHookListenersPatch>();
             patcher.RegisterPatch<ModelCapabilityHookListenerPatches.CombatStateHookListenersPatch>();
             patcher.RegisterPatch<CardModelCapabilityPatches.UpdateDynamicVarPreviewPatch>();
+            patcher.RegisterPatch<CardModelCapabilityPatches.CardTypePatch>();
+            patcher.RegisterPatch<CardModelCapabilityPatches.CardRarityPatch>();
+            patcher.RegisterPatch<CardModelCapabilityPatches.TargetTypePatch>();
+            patcher.RegisterPatch<CardModelCapabilityPatches.TagsPatch>();
+            patcher.RegisterPatch<CardModelCapabilityPatches.IsPlayablePatch>();
+            patcher.RegisterPatch<CardModelCapabilityPatches.HasTurnEndInHandEffectPatch>();
+            patcher.RegisterPatch<CardModelCapabilityPatches.ResultPileTypeForCardPlayPatch>();
+            patcher.RegisterPatch<CardModelCapabilityPatches.TransformCarryOverPatch>();
             patcher.RegisterPatch<CardModelCapabilityPatches.FromSerializableUpgradeReplayPatch>();
             patcher.RegisterPatch<CardModelCapabilityPatches.UpgradeInternalPatch>();
             patcher.RegisterPatch<CardModelCapabilityPatches.FinalizeUpgradeInternalPatch>();

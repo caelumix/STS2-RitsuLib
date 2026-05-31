@@ -43,8 +43,8 @@ namespace STS2RitsuLib.Models.Capabilities
     }
 
     /// <summary>
-    ///     Context passed to model asset path components.
-    ///     传给模型资源路径组件的上下文。
+    ///     Context passed to model asset path capabilities.
+    ///     传给模型资源路径能力的上下文。
     /// </summary>
     public readonly record struct ModelAssetPathContext(
         AbstractModel Model,
@@ -53,20 +53,20 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Optional model capability that contributes dynamic vars for any model text surface.
-    ///     可选组件能力：为任意模型文本 surface 贡献动态变量。
+    ///     可选能力：为任意模型文本 surface 贡献动态变量。
     /// </summary>
     public interface IModelDynamicVarContributor
     {
         /// <summary>
-        ///     Returns the component-owned dynamic-var set for <paramref name="model" />.
-        ///     返回 <paramref name="model" /> 对应的组件自有动态变量集合。
+        ///     Returns the capability-owned dynamic-var set for <paramref name="model" />.
+        ///     返回 <paramref name="model" /> 对应的能力自有动态变量集合。
         /// </summary>
         DynamicVarSet GetDynamicVars(AbstractModel model);
     }
 
     /// <summary>
     ///     Optional model capability that contributes hover tips for any model.
-    ///     可选组件能力：为任意模型贡献悬停提示。
+    ///     可选能力：为任意模型贡献悬停提示。
     /// </summary>
     public interface IModelHoverTipContributor
     {
@@ -79,7 +79,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Optional typed model capability that contributes hover tips for <typeparamref name="TModel" />.
-    ///     可选类型化组件能力：为 <typeparamref name="TModel" /> 贡献悬停提示。
+    ///     可选类型化能力：为 <typeparamref name="TModel" /> 贡献悬停提示。
     /// </summary>
     public interface IModelHoverTipContributor<in TModel> where TModel : AbstractModel
     {
@@ -92,7 +92,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Optional model capability that contributes asset paths for any model.
-    ///     可选组件能力：为任意模型贡献资源路径。
+    ///     可选能力：为任意模型贡献资源路径。
     /// </summary>
     public interface IModelAssetPathContributor
     {
@@ -105,7 +105,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
     /// <summary>
     ///     Optional typed model capability that contributes asset paths for <typeparamref name="TModel" />.
-    ///     可选类型化组件能力：为 <typeparamref name="TModel" /> 贡献资源路径。
+    ///     可选类型化能力：为 <typeparamref name="TModel" /> 贡献资源路径。
     /// </summary>
     public interface IModelAssetPathContributor<in TModel> where TModel : AbstractModel
     {
@@ -118,16 +118,20 @@ namespace STS2RitsuLib.Models.Capabilities
 
     internal static partial class ModelCapabilityHost
     {
+        private const string ModelHoverTipsSurface = "model display/hover-tips";
+        private const string ModelAssetPathsSurface = "model asset/paths";
+        private const string ModelDynamicVarsSurface = "model dynamic-var/add-to-loc-string";
+
         internal static IEnumerable<IHoverTip> GetHoverTips<TModel>(TModel model)
             where TModel : AbstractModel
         {
-            foreach (var component in GetComponentSnapshot(model))
-                switch (component)
+            foreach (var capability in GetCapabilitySnapshot(model))
+                switch (capability)
                 {
                     case IModelHoverTipContributor general:
                     {
                         IEnumerable<IHoverTip> tips = [];
-                        TryRun(component, model, () => tips = general.GetHoverTips(model));
+                        TryRun(capability, model, ModelHoverTipsSurface, () => tips = general.GetHoverTips(model));
                         foreach (var tip in tips)
                             yield return tip;
                         break;
@@ -135,7 +139,7 @@ namespace STS2RitsuLib.Models.Capabilities
                     case IModelHoverTipContributor<TModel> typed:
                     {
                         IEnumerable<IHoverTip> tips = [];
-                        TryRun(component, model, () => tips = typed.GetHoverTips(model));
+                        TryRun(capability, model, ModelHoverTipsSurface, () => tips = typed.GetHoverTips(model));
                         foreach (var tip in tips)
                             yield return tip;
                         break;
@@ -146,13 +150,13 @@ namespace STS2RitsuLib.Models.Capabilities
         internal static IEnumerable<string> GetAssetPaths<TModel>(TModel model, ModelAssetPathContext context)
             where TModel : AbstractModel
         {
-            foreach (var component in GetComponentSnapshot(model))
-                switch (component)
+            foreach (var capability in GetCapabilitySnapshot(model))
+                switch (capability)
                 {
                     case IModelAssetPathContributor general:
                     {
                         IEnumerable<string> paths = [];
-                        TryRun(component, model, () => paths = general.GetAssetPaths(context));
+                        TryRun(capability, model, ModelAssetPathsSurface, () => paths = general.GetAssetPaths(context));
                         foreach (var path in paths)
                             yield return path;
                         break;
@@ -160,7 +164,8 @@ namespace STS2RitsuLib.Models.Capabilities
                     case IModelAssetPathContributor<TModel> typed:
                     {
                         IEnumerable<string> paths = [];
-                        TryRun(component, model, () => paths = typed.GetAssetPaths(model, context));
+                        TryRun(capability, model, ModelAssetPathsSurface,
+                            () => paths = typed.GetAssetPaths(model, context));
                         foreach (var path in paths)
                             yield return path;
                         break;
@@ -171,7 +176,9 @@ namespace STS2RitsuLib.Models.Capabilities
         internal static IEnumerable<TCapability> GetCapabilities<TCapability>(AbstractModel model)
             where TCapability : class
         {
-            return GetComponentSnapshot(model).OfType<TCapability>().ToArray();
+            foreach (var capability in GetCapabilitySnapshot(model))
+                if (capability is TCapability typed)
+                    yield return typed;
         }
 
         internal static void AddDynamicVarsTo(AbstractModel model, LocString locString)
@@ -179,18 +186,23 @@ namespace STS2RitsuLib.Models.Capabilities
             ArgumentNullException.ThrowIfNull(model);
             ArgumentNullException.ThrowIfNull(locString);
 
-            foreach (var component in GetComponentSnapshot(model))
+            foreach (var capability in GetCapabilitySnapshot(model))
             {
-                if (component is not IModelDynamicVarContributor dynamicVarComponent)
+                if (capability is not IModelDynamicVarContributor dynamicVarCapability)
                     continue;
 
                 DynamicVarSet? dynamicVars = null;
-                TryRun(component, model, () => dynamicVars = dynamicVarComponent.GetDynamicVars(model));
+                TryRun(capability, model, ModelDynamicVarsSurface, () =>
+                    dynamicVars = dynamicVarCapability.GetDynamicVars(model));
                 dynamicVars?.AddTo(locString);
             }
         }
 
-        internal static void TryRun(IModelCapability component, AbstractModel model, Action action)
+        internal static void TryRun(
+            IModelCapability capability,
+            AbstractModel model,
+            string surface,
+            Action action)
         {
             try
             {
@@ -198,20 +210,20 @@ namespace STS2RitsuLib.Models.Capabilities
             }
             catch (Exception ex)
             {
-                RitsuLibFramework.Logger.Warn(
-                    $"[ModelCapabilities] Model capability '{component.GetType().FullName}' failed for {model.Id}: {ex.Message}");
+                ModelCapabilityDiagnostics.WarnFailure(surface, model, capability, ex);
             }
         }
 
-        private static IReadOnlyList<IModelCapability> GetComponentSnapshot(AbstractModel model)
+        private static IReadOnlyList<IModelCapability> GetCapabilitySnapshot(AbstractModel model)
         {
-            if (ModelCapabilities.TryGet(model, out var collection)) return collection.Items.ToArray();
+            if (ModelCapabilities.TryGet(model, out var collection))
+                return collection.Count == 0 ? [] : collection.All.ToArray();
             if (!ModelCapabilityDefaults.HasDefaultCapabilitySource(model))
                 return [];
 
             collection = ModelCapabilities.Get(model);
 
-            return collection.Items.ToArray();
+            return collection.Count == 0 ? [] : collection.All.ToArray();
         }
     }
 }

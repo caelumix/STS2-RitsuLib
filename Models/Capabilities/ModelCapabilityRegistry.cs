@@ -4,7 +4,7 @@ namespace STS2RitsuLib.Models.Capabilities
 {
     /// <summary>
     ///     Registry for capability ids and factories.
-    ///     组件 ID 与工厂的注册表。
+    ///     能力 ID 与工厂的注册表。
     /// </summary>
     public static class ModelCapabilityRegistry
     {
@@ -19,8 +19,8 @@ namespace STS2RitsuLib.Models.Capabilities
         private static readonly Dictionary<Type, string> TypeIds = [];
 
         /// <summary>
-        ///     Registers or replaces a component factory.
-        ///     注册或替换组件工厂。
+        ///     Registers or replaces a capability factory.
+        ///     注册或替换能力工厂。
         /// </summary>
         public static void Register(string capabilityId, Type capabilityType, Func<IModelCapability> factory)
         {
@@ -29,7 +29,7 @@ namespace STS2RitsuLib.Models.Capabilities
             ArgumentNullException.ThrowIfNull(factory);
 
             if (!typeof(IModelCapability).IsAssignableFrom(capabilityType))
-                throw new ArgumentException("Component type must implement IModelCapability.", nameof(capabilityType));
+                throw new ArgumentException("Capability type must implement IModelCapability.", nameof(capabilityType));
 
             lock (SyncRoot)
             {
@@ -49,8 +49,8 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Registers a component factory.
-        ///     注册组件工厂。
+        ///     Registers a capability factory.
+        ///     注册能力工厂。
         /// </summary>
         public static void Register<TCapability>(string capabilityId, Func<TCapability> factory)
             where TCapability : IModelCapability
@@ -60,8 +60,8 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Registers a parameterless component factory.
-        ///     注册无参组件工厂。
+        ///     Registers a parameterless capability factory.
+        ///     注册无参能力工厂。
         /// </summary>
         public static void Register<TCapability>(string capabilityId)
             where TCapability : IModelCapability, new()
@@ -70,38 +70,38 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
-        ///     Creates a component by id.
-        ///     通过 ID 创建组件。
+        ///     Creates a capability by id.
+        ///     通过 ID 创建能力。
         /// </summary>
-        public static bool TryCreate(string capabilityId, out IModelCapability component)
+        public static bool TryCreate(string capabilityId, out IModelCapability capability)
         {
             lock (SyncRoot)
             {
                 if (!Factories.TryGetValue(capabilityId, out var factory))
                 {
-                    component = null!;
+                    capability = null!;
                     return false;
                 }
 
-                component = factory();
+                capability = factory();
                 return true;
             }
         }
 
         /// <summary>
-        ///     Creates a component by id or throws when no factory is registered.
-        ///     通过 ID 创建组件；未注册工厂时抛出异常。
+        ///     Creates a capability by id or throws when no factory is registered.
+        ///     通过 ID 创建能力；未注册工厂时抛出异常。
         /// </summary>
         public static IModelCapability Create(string capabilityId)
         {
-            return TryCreate(capabilityId, out var component)
-                ? component
+            return TryCreate(capabilityId, out var capability)
+                ? capability
                 : throw new InvalidOperationException($"Model capability id is not registered: {capabilityId}");
         }
 
         /// <summary>
         ///     Gets the registered capability id for a capability type, if any.
-        ///     获取组件类型已注册的组件 ID（如果存在）。
+        ///     获取能力类型已注册的能力 ID（如果存在）。
         /// </summary>
         public static string? GetCapabilityId(Type capabilityType)
         {
@@ -114,7 +114,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
         /// <summary>
         ///     Gets the registered capability id for <typeparamref name="TCapability" />, if any.
-        ///     获取 <typeparamref name="TCapability" /> 已注册的组件 ID（如果存在）。
+        ///     获取 <typeparamref name="TCapability" /> 已注册的能力 ID（如果存在）。
         /// </summary>
         public static string? GetCapabilityId<TCapability>() where TCapability : IModelCapability
         {
@@ -123,7 +123,7 @@ namespace STS2RitsuLib.Models.Capabilities
 
         /// <summary>
         ///     Attempts to resolve the capability type registered for <paramref name="capabilityId" />.
-        ///     尝试解析 <paramref name="capabilityId" /> 注册的组件类型。
+        ///     尝试解析 <paramref name="capabilityId" /> 注册的能力类型。
         /// </summary>
         public static bool TryGetCapabilityType(string capabilityId, out Type capabilityType)
         {
@@ -137,7 +137,7 @@ namespace STS2RitsuLib.Models.Capabilities
         internal static void RegisterModelCapability(Type capabilityType, string capabilityId)
         {
             if (!typeof(ModelCapability).IsAssignableFrom(capabilityType))
-                throw new ArgumentException("Component type must inherit ModelCapability.", nameof(capabilityType));
+                throw new ArgumentException("Capability type must inherit ModelCapability.", nameof(capabilityType));
 
             Register(capabilityId, capabilityType, () => (IModelCapability)ModelDb.Get(capabilityType).MutableClone());
         }

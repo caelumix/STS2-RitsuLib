@@ -33,9 +33,9 @@ namespace STS2RitsuLib.Settings
     /// </summary>
     public sealed partial class ModSettingsToggleControl : ModSettingsGamepadCompatibleButton
     {
-        private readonly bool _initialValue;
-        private readonly Action<bool>? _onChanged;
+        private bool _initialValue;
         private bool _isOn;
+        private Action<bool>? _onChanged;
 
         /// <summary>
         ///     Creates a toggle control with an initial value and change callback.
@@ -49,7 +49,7 @@ namespace STS2RitsuLib.Settings
         ///     Callback invoked after the value changes.
         ///     值变化后调用的回调。
         /// </param>
-        public ModSettingsToggleControl(bool initialValue, Action<bool> onChanged)
+        public ModSettingsToggleControl(bool initialValue, Action<bool>? onChanged)
         {
             _initialValue = initialValue;
             _onChanged = onChanged;
@@ -78,6 +78,22 @@ namespace STS2RitsuLib.Settings
         /// </summary>
         public ModSettingsToggleControl()
         {
+        }
+
+        internal void BindValue(bool value, Action<bool>? onChanged)
+        {
+            _initialValue = value;
+            _onChanged = onChanged;
+            SetValue(value);
+        }
+
+        internal void ClearBinding()
+        {
+            _onChanged = null;
+            ReleaseFocus();
+            Disabled = false;
+            ProcessMode = ProcessModeEnum.Inherit;
+            Modulate = Colors.White;
         }
 
         /// <summary>
@@ -5367,6 +5383,8 @@ namespace STS2RitsuLib.Settings
         {
         }
 
+        internal VBoxContainer ContentHost => _content ??= CreateContentHost();
+
         public override void _Ready()
         {
             if (!string.IsNullOrWhiteSpace(_sectionId))
@@ -5427,10 +5445,8 @@ namespace STS2RitsuLib.Settings
                 cardContent.AddChild(headerRow);
             }
 
-            _content = new() { MouseFilter = MouseFilterEnum.Ignore };
-            _content.AddThemeConstantOverride("separation",
-                RitsuShellThemeLayoutResolver.ResolveInt("components.collapsible.layout.contentSeparation", 8));
-            if (_contentControls != null)
+            _content ??= CreateContentHost();
+            if (_contentControls != null && _content.GetChildCount() == 0)
                 foreach (var control in _contentControls)
                     _content.AddChild(control);
             cardContent.AddChild(_content);
@@ -5472,6 +5488,14 @@ namespace STS2RitsuLib.Settings
 
             // Collapsing stays operable; only the content becomes disabled.
             _toggle?.SetContentEnabled(_contentEnabled);
+        }
+
+        private static VBoxContainer CreateContentHost()
+        {
+            var content = new VBoxContainer { MouseFilter = MouseFilterEnum.Ignore };
+            content.AddThemeConstantOverride("separation",
+                RitsuShellThemeLayoutResolver.ResolveInt("components.collapsible.layout.contentSeparation", 8));
+            return content;
         }
 
         private void EnsureExpandedSectionVisible()
@@ -5733,9 +5757,11 @@ namespace STS2RitsuLib.Settings
     /// </summary>
     public partial class ModSettingsTextButton : ModSettingsGamepadCompatibleButton
     {
-        private readonly string? _text;
-        private readonly ModSettingsButtonTone _tone;
+        private Action? _action;
+        private bool _pressedHandlerAttached;
         private bool _selected;
+        private string? _text;
+        private ModSettingsButtonTone _tone;
 
         /// <summary>
         ///     Creates a standard settings action button.
@@ -5755,9 +5781,24 @@ namespace STS2RitsuLib.Settings
         /// </param>
         public ModSettingsTextButton(string text, ModSettingsButtonTone tone, Action? action)
         {
+            Configure(text, tone, action);
+            EnsurePressedHandlerAttached();
+        }
+
+        /// <summary>
+        ///     Godot serialization constructor.
+        ///     Godot 序列化构造函数。
+        /// </summary>
+        public ModSettingsTextButton()
+        {
+            EnsurePressedHandlerAttached();
+        }
+
+        internal void Configure(string text, ModSettingsButtonTone tone, Action? action)
+        {
             _text = text;
             _tone = tone;
-
+            _action = action;
             Text = text;
             Alignment = HorizontalAlignment.Center;
             CustomMinimumSize = RitsuShellThemeLayoutResolver.ResolveMinSize(
@@ -5778,28 +5819,17 @@ namespace STS2RitsuLib.Settings
             AddThemeColorOverride("font_focus_color", RitsuShellTheme.Current.Text.HoverHighlight);
             AddThemeColorOverride("font_disabled_color", RitsuShellTheme.Current.Text.LabelSecondary);
             ApplyVisualState();
-            Pressed += () =>
-            {
-                if (action == null)
-                    return;
-
-                try
-                {
-                    action();
-                }
-                catch (Exception ex)
-                {
-                    RitsuLibFramework.Logger.Warn($"[ModSettingsTextButton] action failed: {ex.Message}");
-                }
-            };
         }
 
-        /// <summary>
-        ///     Godot serialization constructor.
-        ///     Godot 序列化构造函数。
-        /// </summary>
-        public ModSettingsTextButton()
+        internal void ClearAction()
         {
+            _action = null;
+            _selected = false;
+            ReleaseFocus();
+            Disabled = false;
+            ProcessMode = ProcessModeEnum.Inherit;
+            Modulate = Colors.White;
+            ApplyVisualState();
         }
 
         /// <inheritdoc />
@@ -5822,6 +5852,29 @@ namespace STS2RitsuLib.Settings
         {
             _selected = selected;
             ApplyVisualState();
+        }
+
+        private void EnsurePressedHandlerAttached()
+        {
+            if (_pressedHandlerAttached)
+                return;
+            Pressed += InvokeActionSafely;
+            _pressedHandlerAttached = true;
+        }
+
+        private void InvokeActionSafely()
+        {
+            if (_action == null)
+                return;
+
+            try
+            {
+                _action();
+            }
+            catch (Exception ex)
+            {
+                RitsuLibFramework.Logger.Warn($"[ModSettingsTextButton] action failed: {ex.Message}");
+            }
         }
 
         private void ApplyVisualState()

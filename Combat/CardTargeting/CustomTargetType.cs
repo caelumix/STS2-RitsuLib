@@ -104,7 +104,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
         /// </summary>
         public static bool IsCustomSingleTargetType(TargetType type)
         {
-            return CustomTargetTypeRegistry.IsCustomSingleTargetType(type);
+            return CustomTargetTypeResolver.IsCustomSingleTargetType(type);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
         /// </summary>
         public static bool IsCustomMultiTargetType(TargetType type)
         {
-            return CustomTargetTypeRegistry.IsCustomMultiTargetType(type);
+            return CustomTargetTypeResolver.IsCustomMultiTargetType(type);
         }
 
         /// <summary>

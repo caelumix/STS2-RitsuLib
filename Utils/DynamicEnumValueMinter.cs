@@ -185,6 +185,17 @@ namespace STS2RitsuLib.Utils
             }
         }
 
+        internal (string Id, TEnum Value)[] GetMintedValuesSnapshot()
+        {
+            lock (_sync)
+            {
+                return _byId
+                    .OrderBy(static pair => pair.Key, StringComparer.Ordinal)
+                    .Select(static pair => (pair.Key, pair.Value))
+                    .ToArray();
+            }
+        }
+
         private TEnum Compute(string normalizedId)
         {
             var bytes = Encoding.UTF8.GetBytes(normalizedId);

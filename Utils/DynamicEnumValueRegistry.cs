@@ -293,6 +293,11 @@ namespace STS2RitsuLib.Utils
             return Minter.IsDynamic(value);
         }
 
+        internal static (string Id, TEnum Value)[] GetMintedValuesSnapshot()
+        {
+            return Minter.GetMintedValuesSnapshot();
+        }
+
         /// <summary>
         ///     Snapshot of all registered dynamic enum definitions, stable-ordered by id.
         ///     获取所有已注册动态枚举定义的快照，并按 ID 稳定排序。

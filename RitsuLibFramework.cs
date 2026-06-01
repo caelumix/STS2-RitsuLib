@@ -25,6 +25,7 @@ using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Localization;
 using STS2RitsuLib.Localization.SmartFormat;
 using STS2RitsuLib.Models;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.Platform;
 using STS2RitsuLib.RunData;
@@ -629,6 +630,73 @@ namespace STS2RitsuLib
         public static ModelCloneRegistry GetModelCloneRegistry(string modId)
         {
             return ModelCloneRegistry.For(modId);
+        }
+
+        /// <summary>
+        ///     Returns the model-saved data store facade for <paramref name="modId" />.
+        ///     返回 <paramref name="modId" /> 的模型保存数据存储 facade。
+        /// </summary>
+        public static ModelSavedDataStore GetModelSavedDataStore(string modId)
+        {
+            return ModelSavedDataStore.For(modId);
+        }
+
+        /// <summary>
+        ///     Gets the capability set attached to <paramref name="model" />.
+        ///     获取附加到 <paramref name="model" /> 的能力集合。
+        /// </summary>
+        public static ModelCapabilitySet GetModelCapabilities(AbstractModel model)
+        {
+            return ModelCapabilities.Get(model);
+        }
+
+        /// <summary>
+        ///     Registers a model-backed capability in this mod's content registry.
+        ///     在此 mod 的内容注册表中注册一个基于模型的能力。
+        /// </summary>
+        public static void RegisterModelCapability<TCapability>(string modId)
+            where TCapability : ModelCapability
+        {
+            GetContentRegistry(modId).RegisterModelCapability<TCapability>();
+        }
+
+        /// <summary>
+        ///     Registers a model-backed capability in this mod's content registry using
+        ///     <paramref name="publicEntry" /> rules.
+        ///     使用 <paramref name="publicEntry" /> 规则在此 mod 的内容注册表中注册一个基于模型的能力。
+        /// </summary>
+        public static void RegisterModelCapability<TCapability>(string modId, ModelPublicEntryOptions publicEntry)
+            where TCapability : ModelCapability
+        {
+            GetContentRegistry(modId).RegisterModelCapability<TCapability>(publicEntry);
+        }
+
+        /// <summary>
+        ///     Configures the default capability set for matching <typeparamref name="TModel" /> instances.
+        ///     配置匹配的 <typeparamref name="TModel" /> 实例的默认能力集合。
+        /// </summary>
+        public static void ConfigureDefaultModelCapabilities<TModel>(
+            string modId,
+            string modifierId,
+            Action<TModel, ModelCapabilityList> modifier,
+            int order = 0)
+            where TModel : AbstractModel
+        {
+            GetContentRegistry(modId).ConfigureDefaultModelCapabilities(modifierId, modifier, order);
+        }
+
+        /// <summary>
+        ///     Configures the default capability set for matching <paramref name="modelType" /> instances.
+        ///     配置匹配的 <paramref name="modelType" /> 实例的默认能力集合。
+        /// </summary>
+        public static void ConfigureDefaultModelCapabilities(
+            string modId,
+            Type modelType,
+            string modifierId,
+            Action<AbstractModel, ModelCapabilityList> modifier,
+            int order = 0)
+        {
+            GetContentRegistry(modId).ConfigureDefaultModelCapabilities(modelType, modifierId, modifier, order);
         }
 
         /// <summary>

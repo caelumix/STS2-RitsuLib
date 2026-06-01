@@ -10,6 +10,7 @@ using STS2RitsuLib.Content;
 using STS2RitsuLib.Diagnostics;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Localization.SmartFormat;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Scaffolding.Godot;
 using STS2RitsuLib.Scaffolding.Godot.NodeAttachments;
@@ -253,6 +254,52 @@ namespace STS2RitsuLib.Interop.AutoRegistration
                                 $"RegisterSingleton:{type.FullName}", nameof(RegisterSingletonAttribute),
                                 () => contentRegistry.RegisterSingleton(type)));
                         });
+                        break;
+                    case RegisterModelCapabilityAttribute registerModelCapability:
+                        RegisterCase($"RegisterModelCapability:{type.FullName}", () =>
+                        {
+                            operations.Add(CreateOperation(ownerModId, type, AutoRegistrationPhase.ContentPrimary,
+                                registerModelCapability.Order,
+                                $"RegisterModelCapability:{type.FullName}", nameof(RegisterModelCapabilityAttribute),
+                                () => contentRegistry.RegisterModelCapability(
+                                    type,
+                                    ResolvePublicEntryOptions(registerModelCapability)),
+                                providedKeys: [TypeDependencyKey(type)]));
+                        });
+                        break;
+                    case RegisterDefaultModelCapabilityAttribute defaultModelCapability:
+                        RegisterCase(
+                            $"RegisterDefaultModelCapability:{defaultModelCapability.TargetModelType.FullName}->{type.FullName}:{defaultModelCapability.ModifierId}",
+                            () =>
+                            {
+                                EnsureConcreteAssignable(type, typeof(IModelCapability), nameof(type));
+                                EnsureModelFamilyType(
+                                    defaultModelCapability.TargetModelType,
+                                    nameof(defaultModelCapability.TargetModelType));
+
+                                var dependencies = typeof(ModelCapability).IsAssignableFrom(type)
+                                    ? new[] { TypeDependencyKey(type) }
+                                    : [];
+
+                                operations.Add(CreateOperation(ownerModId, type, AutoRegistrationPhase.ContentSecondary,
+                                    defaultModelCapability.Order,
+                                    $"RegisterDefaultModelCapability:{defaultModelCapability.TargetModelType.FullName}->{type.FullName}:{defaultModelCapability.ModifierId}",
+                                    nameof(RegisterDefaultModelCapabilityAttribute),
+                                    () =>
+                                    {
+                                        var modifierId = ResolveDefaultModelCapabilityModifierId(
+                                            ownerModId,
+                                            type,
+                                            defaultModelCapability.TargetModelType,
+                                            defaultModelCapability.ModifierId);
+                                        contentRegistry.ConfigureDefaultModelCapabilities(
+                                            defaultModelCapability.TargetModelType,
+                                            modifierId,
+                                            (_, components) => components.Add(type),
+                                            defaultModelCapability.Order);
+                                    },
+                                    dependencies));
+                            });
                         break;
                     case RegisterGoodModifierAttribute registerGoodModifier:
                         RegisterCase($"RegisterGoodModifier:{type.FullName}", () =>
@@ -1408,6 +1455,37 @@ namespace STS2RitsuLib.Interop.AutoRegistration
             };
         }
 
+        private static ModelPublicEntryOptions ResolvePublicEntryOptions(RegisterModelCapabilityAttribute attribute)
+        {
+            ArgumentNullException.ThrowIfNull(attribute);
+
+            var hasStem = !string.IsNullOrWhiteSpace(attribute.StableEntryStem);
+            var hasFull = !string.IsNullOrWhiteSpace(attribute.FullPublicEntry);
+
+            return hasStem switch
+            {
+                true when hasFull => throw new InvalidOperationException(
+                    "StableEntryStem and FullPublicEntry cannot both be specified."),
+                true => ModelPublicEntryOptions.FromStem(attribute.StableEntryStem!),
+                _ => hasFull
+                    ? ModelPublicEntryOptions.FromFullPublicEntry(attribute.FullPublicEntry!)
+                    : ModelPublicEntryOptions.FromTypeName,
+            };
+        }
+
+        private static string ResolveDefaultModelCapabilityModifierId(
+            string ownerModId,
+            Type capabilityType,
+            Type targetModelType,
+            string? explicitModifierId)
+        {
+            if (!string.IsNullOrWhiteSpace(explicitModifierId))
+                return explicitModifierId;
+
+            var stem = $"{targetModelType.Name}_{capabilityType.Name}";
+            return ModContentRegistry.GetQualifiedModelCapabilityId(ownerModId, stem);
+        }
+
         private static void EnsureConcreteSubtype(Type type, Type expectedBaseType, string paramName)
         {
             ArgumentNullException.ThrowIfNull(type);
@@ -1433,6 +1511,16 @@ namespace STS2RitsuLib.Interop.AutoRegistration
             if (type.IsAbstract || type.IsInterface || !expectedType.IsAssignableFrom(type))
                 throw new ArgumentException(
                     $"Type '{type.FullName}' must be a concrete implementation of '{expectedType.FullName}'.",
+                    paramName);
+        }
+
+        private static void EnsureModelFamilyType(Type type, string paramName)
+        {
+            ArgumentNullException.ThrowIfNull(type);
+
+            if (type.IsInterface || type.ContainsGenericParameters || !typeof(AbstractModel).IsAssignableFrom(type))
+                throw new ArgumentException(
+                    $"Type '{type.FullName}' must be an abstract model type or a concrete model type.",
                     paramName);
         }
 

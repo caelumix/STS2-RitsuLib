@@ -326,11 +326,11 @@ namespace STS2RitsuLib.Patching.Core
                     if (originalMethod == null) continue;
                     _harmony.Unpatch(originalMethod, HarmonyPatchType.All, _harmony.Id);
                     _patchedStatus[patchInfo.Id] = false;
-                    logger.Info($"{_logPrefix}✓ Removed patch: {patchInfo.Id}");
+                    logger.Debug($"{_logPrefix}✓ Removed patch: {patchInfo.Id}");
                 }
                 catch (Exception ex)
                 {
-                    logger.Error($"{_logPrefix}✗ Failed to remove patch: {patchInfo.Id} - {ex.Message}");
+                    logger.ErrorNoTrace($"{_logPrefix}✗ Failed to remove patch: {patchInfo.Id} - {ex.Message}");
                 }
 
             foreach (var patchInfo in _registeredDynamicPatches.Where(patchInfo =>
@@ -339,11 +339,11 @@ namespace STS2RitsuLib.Patching.Core
                 {
                     _harmony.Unpatch(patchInfo.OriginalMethod, HarmonyPatchType.All, _harmony.Id);
                     _patchedStatus[patchInfo.Id] = false;
-                    logger.Info($"{_logPrefix}✓ Removed dynamic patch: {patchInfo.Id}");
+                    logger.Debug($"{_logPrefix}✓ Removed dynamic patch: {patchInfo.Id}");
                 }
                 catch (Exception ex)
                 {
-                    logger.Error($"{_logPrefix}✗ Failed to remove dynamic patch: {patchInfo.Id} - {ex.Message}");
+                    logger.ErrorNoTrace($"{_logPrefix}✗ Failed to remove dynamic patch: {patchInfo.Id} - {ex.Message}");
                 }
 
             IsApplied = false;

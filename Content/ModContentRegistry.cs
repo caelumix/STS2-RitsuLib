@@ -1465,6 +1465,14 @@ namespace STS2RitsuLib.Content
             return AppendResolved(source, ResolveModels<ActModel>(RegisteredActs));
         }
 
+        internal static Type[] GetRegisteredActTypes()
+        {
+            lock (SyncRoot)
+            {
+                return RegisteredActs.ToArray();
+            }
+        }
+
         internal static IEnumerable<PowerModel> AppendPowers(IEnumerable<PowerModel> source)
         {
             return AppendResolved(source, ResolveModels<PowerModel>(RegisteredPowers));

@@ -153,6 +153,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<AncientDialoguePopulateLocKeysPatch>();
             patcher.RegisterPatch<AncientEventInitialOptionsRegistryPatch>();
             patcher.RegisterPatch<ModAncientActValidityPatch>();
+            patcher.RegisterPatch<ModEncounterActValidityPatch>();
             patcher.RegisterPatch<TheArchitectLoadDialogueMissingFallbackPatch>();
             patcher.RegisterPatch<ModelRegistryLifecyclePatch>();
             patcher.RegisterPatch<GameNodeLifecyclePatch>();

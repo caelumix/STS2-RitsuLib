@@ -24,6 +24,8 @@ namespace STS2RitsuLib.Content
 
                 var logger = RitsuLibFramework.Logger;
                 var actTypes = ReflectionHelper.GetSubtypes<ActModel>()
+                    .Concat(ReflectionHelper.GetSubtypesInMods<ActModel>())
+                    .Concat(ModContentRegistry.GetRegisteredActTypes())
                     .Where(type => type is { IsAbstract: false, IsInterface: false })
                     .Distinct()
                     .ToArray();

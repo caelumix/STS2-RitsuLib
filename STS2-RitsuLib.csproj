@@ -143,12 +143,12 @@
             AfterTargets="Build"
             BeforeTargets="Copy Mod"
             Condition="Exists('$(RitsuLibViewerDistDir)\index.html')">
-        <RemoveDir Directories="$(TargetDir)viewer" Condition="Exists('$(TargetDir)viewer')"/>
         <ItemGroup>
             <RitsuDebugViewerDistFiles Include="$(RitsuLibViewerDistDir)\**\*"/>
         </ItemGroup>
         <Copy SourceFiles="@(RitsuDebugViewerDistFiles)"
-              DestinationFiles="@(RitsuDebugViewerDistFiles->'$(TargetDir)viewer\%(RecursiveDir)%(Filename)%(Extension)')"/>
+              DestinationFiles="@(RitsuDebugViewerDistFiles->'$(TargetDir)viewer\%(RecursiveDir)%(Filename)%(Extension)')"
+              SkipUnchangedFiles="true"/>
     </Target>
     <Target Name="Copy Mod" AfterTargets="Build" Condition="'$(Sts2ApiCompat)' == '$(RitsuLibLatestApiCompat)'">
         <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high"/>
@@ -158,9 +158,8 @@
         <ItemGroup>
             <RitsuDebugViewerOutputFiles Include="$(TargetDir)viewer\**\*" Condition="Exists('$(TargetDir)viewer\index.html')"/>
         </ItemGroup>
-        <RemoveDir Directories="$(Sts2Dir)\mods\$(MSBuildProjectName)\viewer"
-                   Condition="Exists('$(TargetDir)viewer\index.html') and Exists('$(Sts2Dir)\mods\$(MSBuildProjectName)\viewer')"/>
         <Copy SourceFiles="@(RitsuDebugViewerOutputFiles)"
-              DestinationFiles="@(RitsuDebugViewerOutputFiles->'$(Sts2Dir)\mods\$(MSBuildProjectName)\viewer\%(RecursiveDir)%(Filename)%(Extension)')"/>
+              DestinationFiles="@(RitsuDebugViewerOutputFiles->'$(Sts2Dir)\mods\$(MSBuildProjectName)\viewer\%(RecursiveDir)%(Filename)%(Extension)')"
+              SkipUnchangedFiles="true"/>
     </Target>
 </Project>

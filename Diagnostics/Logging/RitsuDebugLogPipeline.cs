@@ -2,14 +2,12 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using Godot;
 using MegaCrit.Sts2.Core.Logging;
-using MegaCrit.Sts2.Core.Modding;
 
 namespace STS2RitsuLib.Diagnostics.Logging
 {
     internal static class RitsuDebugLogPipeline
     {
         private static readonly Lock InitLock = new();
-        private static readonly Lock ModDisplayNameLock = new();
         private static readonly ConcurrentQueue<RitsuDebugLogRecord> Queue = new();
         private static readonly SemaphoreSlim QueueSignal = new(0);
         private static readonly TimeSpan InternalWarningInterval = TimeSpan.FromSeconds(30);
@@ -26,7 +24,6 @@ namespace STS2RitsuLib.Diagnostics.Logging
         private static long _nextId;
         private static long _dropped;
         private static DateTimeOffset _lastInternalWarning;
-        private static Dictionary<string, string>? _modDisplayNames;
 
         public static string? ViewerUrl => _server?.Url;
 
@@ -251,12 +248,7 @@ namespace STS2RitsuLib.Diagnostics.Logging
             var attributes = new Dictionary<string, object?>(record.Attributes);
 
             if (!string.IsNullOrWhiteSpace(record.Source))
-            {
                 attributes.TryAdd("ritsulib.log.source", record.Source);
-                var displayName = ResolveSourceDisplayName(record.Source);
-                if (!string.IsNullOrWhiteSpace(displayName))
-                    attributes.TryAdd("ritsulib.log.source_display_name", displayName);
-            }
 
             if (!string.IsNullOrWhiteSpace(record.Category))
                 attributes.TryAdd("ritsulib.log.category", record.Category);
@@ -376,45 +368,6 @@ namespace STS2RitsuLib.Diagnostics.Logging
         private static string ToUnixNanoString(DateTimeOffset timestamp)
         {
             return ((timestamp.UtcTicks - DateTimeOffset.UnixEpoch.UtcTicks) * 100L).ToString();
-        }
-
-        private static string? ResolveSourceDisplayName(string source)
-        {
-            if (string.Equals(source, "Godot", StringComparison.OrdinalIgnoreCase))
-                return null;
-
-            var map = GetModDisplayNames();
-            return map.TryGetValue(source, out var displayName) &&
-                   !string.Equals(displayName, source, StringComparison.Ordinal)
-                ? displayName
-                : null;
-        }
-
-        private static IReadOnlyDictionary<string, string> GetModDisplayNames()
-        {
-            lock (ModDisplayNameLock)
-            {
-                if (_modDisplayNames != null)
-                    return _modDisplayNames;
-
-                try
-                {
-                    _modDisplayNames = ModManager.GetLoadedMods()
-                        .Where(static mod => !string.IsNullOrWhiteSpace(mod.manifest?.id))
-                        .ToDictionary(
-                            static mod => mod.manifest!.id!,
-                            static mod => string.IsNullOrWhiteSpace(mod.manifest!.name)
-                                ? mod.manifest!.id!
-                                : mod.manifest!.name!,
-                            StringComparer.Ordinal);
-                }
-                catch
-                {
-                    _modDisplayNames = new(StringComparer.Ordinal);
-                }
-
-                return _modDisplayNames;
-            }
         }
 
         private static string? ResolveViewerAssetRoot()

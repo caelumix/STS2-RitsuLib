@@ -144,7 +144,6 @@ const messages = {
     colOrigin: "来源",
     colMessage: "消息",
     game: "游戏",
-    sourceId: "来源 ID",
     tipPause: "暂停或继续接收新日志。暂停不会清除已有日志。",
     tipFollow: "保持在底部时自动滚动；手动上翻会自动关闭，回到底部后恢复。",
     tipTheme: "切换浅色/深色主题。",
@@ -163,10 +162,10 @@ const messages = {
     tipColId: "日志管道分配的递增 ID。",
     tipColTime: "日志进入管道的本地时间。",
     tipColLevel: "OpenTelemetry severity text / 游戏日志等级。",
-    tipColOrigin: "优先显示 Mod 名称，下面保留分类或来源 id。",
+    tipColOrigin: "第一行显示日志来源，第二行仅显示分类。",
     tipColMessage: "日志正文。长日志会换行展开。",
     tipSelect: "选择此行。Shift 单击范围选择，Ctrl/Cmd 单击追加选择。",
-    tipSource: "按此来源筛选。显示名称来自 mod manifest，括号内为原始 id。",
+    tipSource: "按此日志来源筛选。",
     tipColumnResize: "拖动调整列宽。",
     noiseAtlas: "隐藏图集缺失 sprite 的常见开发噪音。",
     noiseAssetCache: "隐藏资源未缓存/预加载缺失的重复提示。",
@@ -222,7 +221,6 @@ const messages = {
     colOrigin: "Origin",
     colMessage: "Message",
     game: "game",
-    sourceId: "Source id",
     tipPause: "Pause or resume incoming log events. Existing rows stay visible.",
     tipFollow: "Auto-scroll while at bottom. Manual scrolling disables it until you return to the bottom.",
     tipTheme: "Switch light/dark theme.",
@@ -241,10 +239,10 @@ const messages = {
     tipColId: "Incremental id assigned by the log pipeline.",
     tipColTime: "Local time when the record entered the pipeline.",
     tipColLevel: "OpenTelemetry severity text / game log level.",
-    tipColOrigin: "Prefers mod display name; keeps category or source id as secondary text.",
+    tipColOrigin: "Shows the log source on the first line and category only on the second line.",
     tipColMessage: "Expanded log body. Long logs wrap.",
     tipSelect: "Select this row. Shift-click selects a range, Ctrl/Cmd-click toggles.",
-    tipSource: "Filter by this source. Display names come from mod manifests; raw ids stay available.",
+    tipSource: "Filter by this log source.",
     tipColumnResize: "Drag to resize this column.",
     noiseAtlas: "Hide common missing atlas sprite noise.",
     noiseAssetCache: "Hide repeated asset cache/preload miss messages.",
@@ -409,16 +407,14 @@ function handleLogScroll() {
 
 function summarize(field: "source") {
   const counts = new Map<string, number>();
-  const displayNames = new Map<string, string>();
   for (const record of records.value) {
     const value = record[field];
     if (!value) continue;
     counts.set(value, (counts.get(value) ?? 0) + 1);
-    displayNames.set(value, originName(record));
   }
   return [...counts.entries()]
-      .map(([name, count]) => ({name, displayName: displayNames.get(name) ?? name, count}))
-      .sort((a, b) => b.count - a.count || a.displayName.localeCompare(b.displayName));
+      .map(([name, count]) => ({name, count}))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
 function compileRegex(text: string) {
@@ -664,33 +660,18 @@ function tt(key: string) {
 }
 
 function originName(record: LogRecord) {
-  return attributeString(record, "ritsulib.log.source_display_name") ??
-      attributeString(record, "mod.display_name") ??
-      attributeString(record, "mod.name") ??
-      record.source ??
-      t.value.game;
+  return record.source || t.value.game;
 }
 
 function originSubtitle(record: LogRecord) {
-  const source = record.source ?? "";
-  if (record.category && source)
-    return `${record.category} · ${source}`;
-
-  return record.category || source;
+  return record.category || "";
 }
 
 function originTooltip(record: LogRecord) {
   const parts = [`${t.value.colOrigin}: ${originName(record)}`];
-  if (record.source)
-    parts.push(`${t.value.sourceId}: ${record.source}`);
   if (record.category)
     parts.push(`${t.value.colMessage}: ${record.category}`);
   return parts.join("\n");
-}
-
-function attributeString(record: LogRecord, key: string) {
-  const value = record.attributes?.[key];
-  return typeof value === "string" && value.trim() ? value : null;
 }
 
 function readEnum<T extends string>(key: string, values: readonly T[], fallback: T) {
@@ -777,7 +758,7 @@ function readNoiseRules() {
               :class="['facet', { active: selectedSources.has(source.name) }]"
               @click="toggleSource(source.name)"
           >
-            <span>{{ source.displayName }}</span>
+            <span>{{ source.name }}</span>
             <strong>{{ source.count }}</strong>
           </button>
         </section>

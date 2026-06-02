@@ -47,6 +47,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageId Condition="'$(Sts2ApiCompat)' == '$(RitsuLibLatestApiCompat)'">STS2.RitsuLib</PackageId>
         <PackageId Condition="'$(Sts2ApiCompat)' != '$(RitsuLibLatestApiCompat)'">STS2.RitsuLib.Compat.$(Sts2ApiCompat)</PackageId>
+        <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackRitsuDebugLogViewerAssets</TargetsForTfmSpecificContentInPackage>
     </PropertyGroup>
 
     <Target Name="ValidateSts2ApiSignatures" BeforeTargets="ResolveAssemblyReferences">
@@ -149,6 +150,16 @@
         <Copy SourceFiles="@(RitsuDebugViewerDistFiles)"
               DestinationFiles="@(RitsuDebugViewerDistFiles->'$(TargetDir)viewer\%(RecursiveDir)%(Filename)%(Extension)')"
               SkipUnchangedFiles="true"/>
+    </Target>
+    <Target Name="PackRitsuDebugLogViewerAssets"
+            DependsOnTargets="BuildRitsuDebugLogViewer"
+            Condition="Exists('$(RitsuLibViewerDistDir)\index.html')">
+        <ItemGroup>
+            <TfmSpecificPackageFile Include="$(RitsuLibViewerDistDir)\**\*">
+                <PackagePath>contentFiles/any/any/viewer/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+                <BuildAction>None</BuildAction>
+            </TfmSpecificPackageFile>
+        </ItemGroup>
     </Target>
     <Target Name="Copy Mod" AfterTargets="Build" Condition="'$(Sts2ApiCompat)' == '$(RitsuLibLatestApiCompat)'">
         <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high"/>

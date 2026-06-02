@@ -5,6 +5,7 @@ import subprocess
 import zipfile
 from pathlib import Path
 
+from release_lib.artifact_validation import validate_github_zip_viewer
 from release_lib.repo_layout import (
     ARTIFACTS_GITHUB,
     GITHUB_BUNDLE_ZIP_SUFFIX,
@@ -84,4 +85,5 @@ def compose_bundle_zip(
                 arc = path.relative_to(bundle_staging_root).as_posix()
                 zf.write(path, arcname=arc)
 
+    validate_github_zip_viewer(zip_path)
     return zip_path

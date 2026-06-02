@@ -11,6 +11,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from release_lib.artifact_validation import validate_github_zip_viewer, validate_nuget_viewer
 from release_lib.msbuild_eval import get_csproj_property
 from release_lib.repo_layout import (
     ARTIFACTS_GITHUB,
@@ -342,6 +343,8 @@ def publish_nugets(
             compat_target=compat_target,
             output_dir=github_dir,
         )
+        validate_nuget_viewer(package)
+        validate_github_zip_viewer(zip_path)
         if bundle_staging_root is not None and latest_compat is not None:
             snapshot_bundle_variant_after_pack(
                 ritsulib_root,
@@ -409,6 +412,8 @@ def build_artifacts(
             compat_target=compat_target,
             output_dir=github_dir,
         )
+        validate_nuget_viewer(package)
+        validate_github_zip_viewer(zip_path)
         if bundle_staging_root is not None and latest_compat is not None:
             snapshot_bundle_variant_after_pack(
                 ritsulib_root,

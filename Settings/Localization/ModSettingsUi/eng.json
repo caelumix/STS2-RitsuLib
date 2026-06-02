@@ -220,7 +220,6 @@
   "ritsulib.debugLogViewer.autoOpen.label": "Open browser automatically",
   "ritsulib.debugLogViewer.autoOpen.description": "When enabled, RitsuLib waits 3 seconds after starting the viewer. If no browser page is listening, it opens one.",
   "ritsulib.debugLogViewer.port.label": "Viewer port",
-  "ritsulib.debugLogViewer.port.placeholder": "18742",
   "ritsulib.debugLogViewer.port.description": "Loopback HTTP port. If the port is busy, RitsuLib tries the following ports in order. Changes apply on next launch.",
   "ritsulib.debugLogViewer.openNow.label": "Open viewer",
   "ritsulib.debugLogViewer.openNow.button": "Open log viewer",

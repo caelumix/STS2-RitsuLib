@@ -15,7 +15,7 @@ namespace STS2RitsuLib.Settings
         public IModSettingsValueBinding<bool> DebugCompatLocTable { get; private init; } = null!;
         public IModSettingsValueBinding<bool> DebugCompatUnlockEpoch { get; private init; } = null!;
         public IModSettingsValueBinding<bool> DebugLogViewerAutoOpen { get; private init; } = null!;
-        public IModSettingsValueBinding<string> DebugLogViewerPort { get; private init; } = null!;
+        public IModSettingsValueBinding<int> DebugLogViewerPort { get; private init; } = null!;
 
         public IModSettingsValueBinding<bool> DebugCompatAncientArchitect { get; private init; } =
             null!;
@@ -153,16 +153,12 @@ namespace STS2RitsuLib.Settings
                         (settings, value) => settings.DebugLogViewerAutoOpen = value),
                     () => defaults.DebugLogViewerAutoOpen),
                 DebugLogViewerPort = ModSettingsBindings.WithDefault(
-                    ModSettingsBindings.Global<RitsuLibSettings, string>(
+                    ModSettingsBindings.Global<RitsuLibSettings, int>(
                         Const.ModId,
                         Const.SettingsKey,
-                        settings => Math.Clamp(settings.DebugLogViewerPort, 1, 65535).ToString(),
-                        (settings, value) =>
-                        {
-                            if (TryParsePort(value, out var port))
-                                settings.DebugLogViewerPort = port;
-                        }),
-                    () => defaults.DebugLogViewerPort.ToString()),
+                        settings => Math.Clamp(settings.DebugLogViewerPort, 1, 65535),
+                        (settings, value) => settings.DebugLogViewerPort = Math.Clamp(value, 1, 65535)),
+                    () => defaults.DebugLogViewerPort),
                 ModSourceHoverTipsEnabled = ModSettingsBindings.WithDefault(
                     ModSettingsBindings.Global<RitsuLibSettings, bool>(
                         Const.ModId,
@@ -515,9 +511,5 @@ namespace STS2RitsuLib.Settings
             };
         }
 
-        internal static bool TryParsePort(string? value, out int port)
-        {
-            return int.TryParse(value?.Trim(), out port) && port is >= 1 and <= 65535;
-        }
     }
 }

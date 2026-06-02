@@ -21,15 +21,16 @@ namespace STS2RitsuLib.Settings
                             ui.DebugLogViewerAutoOpen,
                             T("ritsulib.debugLogViewer.autoOpen.description",
                                 "When enabled, RitsuLib waits 3 seconds after starting the viewer. If no browser page is listening, it opens one."))
-                        .AddString(
+                        .AddIntSlider(
                             "debug_log_viewer_port",
                             T("ritsulib.debugLogViewer.port.label", "Viewer port"),
                             ui.DebugLogViewerPort,
-                            T("ritsulib.debugLogViewer.port.placeholder", "18742"),
-                            5,
+                            1,
+                            65535,
+                            1,
+                            value => value.ToString(),
                             T("ritsulib.debugLogViewer.port.description",
-                                "Loopback HTTP port. If the port is busy, RitsuLib tries the following ports in order. Changes apply on next launch."),
-                            value => RitsuLibModSettingsUiBindings.TryParsePort(value, out _))
+                                "Loopback HTTP port. If the port is busy, RitsuLib tries the following ports in order. Changes apply on next launch."))
                         .AddButton(
                             "debug_log_viewer_open_now",
                             T("ritsulib.debugLogViewer.openNow.label", "Open viewer"),

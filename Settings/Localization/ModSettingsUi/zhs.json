@@ -220,7 +220,6 @@
   "ritsulib.debugLogViewer.autoOpen.label": "自动打开浏览器",
   "ritsulib.debugLogViewer.autoOpen.description": "启用后，RitsuLib 会在查看器启动后等待 3 秒；如果没有浏览器页面正在监听，就自动打开一个页面。",
   "ritsulib.debugLogViewer.port.label": "查看器端口",
-  "ritsulib.debugLogViewer.port.placeholder": "18742",
   "ritsulib.debugLogViewer.port.description": "本机 HTTP 端口。如果端口被占用，RitsuLib 会按顺序尝试后续端口。修改会在下次启动时生效。",
   "ritsulib.debugLogViewer.openNow.label": "打开查看器",
   "ritsulib.debugLogViewer.openNow.button": "打开日志查看器",

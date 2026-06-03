@@ -198,6 +198,9 @@ namespace STS2RitsuLib.Settings
 
             void FitModalShieldToViewport()
             {
+                if (!GodotObject.IsInstanceValid(canvasLayer) || !GodotObject.IsInstanceValid(viewport))
+                    return;
+
                 if (canvasLayer.GetChildCount() == 0)
                     return;
                 var shield = canvasLayer.GetChild(0) as Control;

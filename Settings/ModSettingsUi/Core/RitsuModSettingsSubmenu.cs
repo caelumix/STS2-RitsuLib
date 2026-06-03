@@ -256,6 +256,8 @@ namespace STS2RitsuLib.Settings
         /// <inheritdoc />
         public override void _ExitTree()
         {
+            CancelPendingUiWork();
+
             var vp = GetViewport();
             if (vp != null && _guiFocusSignalConnected &&
                 vp.IsConnected(Viewport.SignalName.GuiFocusChanged, _modSettingsGuiFocusCallable))
@@ -304,7 +306,7 @@ namespace STS2RitsuLib.Settings
             ProcessMode = ProcessModeEnum.Disabled;
             _lastVisibleMirrorRefreshPageKey = null;
             StopShellThemeWatcher();
-            Callable.From(this.UpdateControllerNavEnabled).CallDeferred();
+            CallDeferredIfAlive(this.UpdateControllerNavEnabled);
             base.OnSubmenuClosed();
         }
 
@@ -316,7 +318,7 @@ namespace STS2RitsuLib.Settings
             PushPaneHotkeys();
             UpdatePaneHotkeyHintIcons();
             RequestMirrorVisibilitySyncRefreshIfNeeded();
-            Callable.From(RefreshContentLayout).CallDeferred();
+            CallDeferredIfAlive(RefreshContentLayout);
         }
 
         /// <inheritdoc />
@@ -330,7 +332,7 @@ namespace STS2RitsuLib.Settings
             ProcessMode = ProcessModeEnum.Disabled;
             _lastVisibleMirrorRefreshPageKey = null;
             StopShellThemeWatcher();
-            Callable.From(this.UpdateControllerNavEnabled).CallDeferred();
+            CallDeferredIfAlive(this.UpdateControllerNavEnabled);
             base.OnSubmenuHidden();
         }
 
@@ -402,7 +404,7 @@ namespace STS2RitsuLib.Settings
                 return;
 
             _shellThemeWatcherQueued = true;
-            Callable.From(FlushShellThemeWatcherReapply).CallDeferred();
+            CallDeferredIfAlive(FlushShellThemeWatcherReapply);
         }
 
         private void FlushShellThemeWatcherReapply()
@@ -589,6 +591,30 @@ namespace STS2RitsuLib.Settings
             _refreshDebounceTimer?.Stop();
         }
 
+        private void CancelPendingUiWork()
+        {
+            CancelDeferredRefreshFlush();
+            _focusNavigationRefreshScheduled = false;
+            _shellThemeWatcherQueued = false;
+            _suppressScrollSync = false;
+            _initialUiTask = null;
+
+            foreach (var cache in _pageContentCaches.Values)
+                cache.BuildCancellation?.Cancel();
+        }
+
+        private void CallDeferredIfAlive(Action action)
+        {
+            var owner = this;
+            Callable.From(() =>
+            {
+                if (!IsInstanceValid(owner))
+                    return;
+
+                action();
+            }).CallDeferred();
+        }
+
         private void FlushPendingRefreshActionsImmediate()
         {
             _refreshDebounceTimer?.Stop();
@@ -709,14 +735,14 @@ namespace STS2RitsuLib.Settings
             if (string.Equals(_selectedPageId, pageId, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(_selectedSectionId, sectionId, StringComparison.OrdinalIgnoreCase))
             {
-                Callable.From(ScrollToSelectedAnchor).CallDeferred();
+                CallDeferredIfAlive(ScrollToSelectedAnchor);
                 RefreshFocusNavigation();
-                Callable.From(() =>
+                CallDeferredIfAlive(() =>
                 {
                     var sectionKey = CreateSectionCacheKey(_selectedModId!, _selectedPageId!, _selectedSectionId!);
                     if (_sectionButtons.TryGetValue(sectionKey, out var btn) && btn.IsVisibleInTree())
                         btn.GrabFocus();
-                }).CallDeferred();
+                });
                 return;
             }
 
@@ -725,7 +751,7 @@ namespace STS2RitsuLib.Settings
             {
                 _selectedSectionId = sectionId;
                 RefreshSelectionState();
-                Callable.From(ScrollToSelectedAnchor).CallDeferred();
+                CallDeferredIfAlive(ScrollToSelectedAnchor);
                 RefreshFocusNavigation();
                 return;
             }
@@ -1736,7 +1762,7 @@ namespace STS2RitsuLib.Settings
             }
 
             RefreshFocusNavigation();
-            Callable.From(ScrollToSelectedAnchor).CallDeferred();
+            CallDeferredIfAlive(ScrollToSelectedAnchor);
             SweepPageContentCachePool(pageKey);
         }
 
@@ -2362,7 +2388,7 @@ namespace STS2RitsuLib.Settings
             FlushRefreshActionsImmediate();
             RefreshSelectionState();
             RefreshFocusNavigation();
-            Callable.From(ScrollToSelectedAnchor).CallDeferred();
+            CallDeferredIfAlive(ScrollToSelectedAnchor);
         }
 
         private ModSettingsPage? ResolveSelectedPage()
@@ -2392,7 +2418,7 @@ namespace STS2RitsuLib.Settings
             host.ResetSize();
             _contentList.ResetSize();
             _scrollContainer.QueueSort();
-            Callable.From(RefreshContentLayout).CallDeferred();
+            CallDeferredIfAlive(RefreshContentLayout);
             stagedContent.QueueFree();
         }
 
@@ -2540,12 +2566,12 @@ namespace STS2RitsuLib.Settings
                 if (TryFindSectionAnchorOnSelectedPage(_selectedSectionId, out var target))
                 {
                     AlignScrollToAnchor(target);
-                    Callable.From(() => _suppressScrollSync = false).CallDeferred();
+                    CallDeferredIfAlive(() => _suppressScrollSync = false);
                     return;
                 }
 
             _scrollContainer.ScrollVertical = 0;
-            Callable.From(() => _suppressScrollSync = false).CallDeferred();
+            CallDeferredIfAlive(() => _suppressScrollSync = false);
         }
 
         private void AlignScrollToAnchor(Control target)
@@ -2728,7 +2754,7 @@ namespace STS2RitsuLib.Settings
             if (_focusNavigationRefreshScheduled)
                 return;
             _focusNavigationRefreshScheduled = true;
-            Callable.From(FlushFocusNavigationDeferred).CallDeferred();
+            CallDeferredIfAlive(FlushFocusNavigationDeferred);
         }
 
         private void FlushFocusNavigationDeferred()
@@ -2899,7 +2925,13 @@ namespace STS2RitsuLib.Settings
                 }
 
                 if (ReferenceEquals(paneScroll, _scrollContainer))
-                    Callable.From(() => paneScroll.EnsureControlVisible(target)).CallDeferred();
+                    Callable.From(() =>
+                    {
+                        if (!IsInstanceValid(paneScroll) || !IsInstanceValid(target))
+                            return;
+
+                        paneScroll.EnsureControlVisible(target);
+                    }).CallDeferred();
                 else
                     paneScroll.EnsureControlVisible(target);
             }
@@ -3141,17 +3173,17 @@ namespace STS2RitsuLib.Settings
             _sidebarStructureDirty = true;
             _contentStructureDirty = true;
             _selectionDirty = true;
-            Callable.From(() => EnsureUiUpToDate(true, true)).CallDeferred();
+            CallDeferredIfAlive(() => EnsureUiUpToDate(true, true));
         }
 
         private void OnShellThemeChanged()
         {
-            Callable.From(() =>
+            CallDeferredIfAlive(() =>
             {
                 ResetUiCachesForShellThemeChange();
                 ApplyShellThemeToExistingChrome();
                 EnsureUiUpToDate(true, true);
-            }).CallDeferred();
+            });
         }
 
         private void ApplyShellThemeToExistingChrome()

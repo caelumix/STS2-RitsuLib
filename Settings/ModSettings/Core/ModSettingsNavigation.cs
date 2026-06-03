@@ -152,23 +152,32 @@ namespace STS2RitsuLib.Settings
             if (!TryOpenHost(out var submenu, out var hostError))
                 return ModSettingsOpenResult.Error("no-settings-host", hostError, location);
 
-            Callable.From(async () =>
-            {
-                try
-                {
-                    await submenu.OpenToAsync(location, new());
-                }
-                catch (Exception ex)
-                {
-                    RitsuLibFramework.Logger.Warn($"[Settings] Deferred navigation failed: {ex.Message}");
-                }
-            }).CallDeferred();
+            Callable.From(() => { _ = RunDeferredOpenAsync(submenu, location); }).CallDeferred();
 
             return ModSettingsOpenResult.Ok(
                 "requested",
                 $"Requested to open settings location '{FormatLocation(location)}'.",
                 location,
                 true);
+        }
+
+        private static async Task RunDeferredOpenAsync(RitsuModSettingsSubmenu submenu, ModSettingsLocation location)
+        {
+            try
+            {
+                if (!GodotObject.IsInstanceValid(submenu))
+                    return;
+
+                await submenu.OpenToAsync(location, new());
+            }
+            catch (OperationCanceledException)
+            {
+                // UI lifetime ended while the deferred navigation was waiting for layout.
+            }
+            catch (Exception ex)
+            {
+                RitsuLibFramework.Logger.Warn($"[Settings] Deferred navigation failed: {ex.Message}");
+            }
         }
 
         /// <summary>

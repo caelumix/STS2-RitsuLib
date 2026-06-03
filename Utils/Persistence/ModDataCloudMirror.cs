@@ -295,11 +295,7 @@ namespace STS2RitsuLib.Utils.Persistence
 
         internal static async Task WaitProcessFramesAsync(SceneTree tree, int count, CancellationToken ct = default)
         {
-            for (var i = 0; i < count; i++)
-            {
-                ct.ThrowIfCancellationRequested();
-                await tree.ToSignal(tree, SceneTree.SignalName.ProcessFrame);
-            }
+            await RitsuGodotAwaitSafety.AwaitProcessFramesAsync(tree, count, ct: ct);
         }
 
         internal static void ScheduleDeleteCloudModDataForProfile(int profileId)

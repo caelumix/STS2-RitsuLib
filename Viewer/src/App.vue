@@ -9,6 +9,7 @@ type LogRecord = {
   severityText: string;
   severityNumber: number;
   body: string;
+  bodySegments?: MessageSegment[];
   source?: string;
   category?: string;
   loggerName?: string;
@@ -38,6 +39,13 @@ type NoiseRule = {
   pattern: string;
   enabled: boolean;
   tipKey?: string;
+};
+type MessageSegment = {
+  text: string;
+  color?: string;
+  bold?: boolean;
+  dim?: boolean;
+  kind?: string;
 };
 
 const storagePrefix = "ritsulib-log-viewer:";
@@ -682,6 +690,18 @@ function formatRecordLine(record: LogRecord) {
   return `${formatTime(record.timestamp)} ${record.severityText}${origin} ${record.body}`;
 }
 
+function messageSegments(record: LogRecord) {
+  return record.bodySegments?.length ? record.bodySegments : [{text: record.body}];
+}
+
+function segmentStyle(segment: MessageSegment) {
+  return {
+    color: segment.color,
+    fontWeight: segment.bold ? "750" : undefined,
+    opacity: segment.dim ? 0.72 : undefined
+  };
+}
+
 function isMultilineRecord(record: LogRecord) {
   return record.body.includes("\n") || record.body.length > 140;
 }
@@ -1031,7 +1051,11 @@ function readNoiseRules() {
                   <span class="source">{{ originName(record) }}</span>
                   <span v-if="originSubtitle(record)" class="category">{{ originSubtitle(record) }}</span>
                 </span>
-                  <span v-if="visibleColumns.has('message')" class="message">{{ record.body }}</span>
+                  <span v-if="visibleColumns.has('message')" class="message"><span
+                      v-for="(segment, segmentIndex) in messageSegments(record)"
+                      :key="segmentIndex"
+                      :style="segmentStyle(segment)"
+                  >{{ segment.text }}</span></span>
                 </div>
               </div>
             </div>

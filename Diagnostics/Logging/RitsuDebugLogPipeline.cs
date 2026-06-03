@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using Godot;
 using MegaCrit.Sts2.Core.Logging;
+using STS2RitsuLib.Utils;
 using Environment = System.Environment;
 
 namespace STS2RitsuLib.Diagnostics.Logging
@@ -218,15 +219,22 @@ namespace STS2RitsuLib.Diagnostics.Logging
 
         private static RitsuDebugLogRecord CreateFromGodotLog(string text, bool error)
         {
-            var (logLevel, unwrappedText) = ParseLevelPrefix(text, error);
-            var (source, category, body) = ParseFormattedLogText(unwrappedText);
+            var plainText = RitsuAnsiText.StripControlSequences(text);
+            var (logLevel, unwrappedText, unwrappedTextStart) = ParseLevelPrefix(plainText, error);
+            var (source, category, body, bodyStartInUnwrappedText) = ParseFormattedLogText(unwrappedText);
             var severityText = logLevel.ToString().ToUpperInvariant();
             var severityNumber = MapSeverityNumber(logLevel);
+            var bodyStart = unwrappedTextStart + bodyStartInUnwrappedText;
             var attributes = new Dictionary<string, object?>
             {
                 ["log.record.original"] = text,
                 ["ritsulib.log.mirrored_from_godot"] = true,
             };
+            if (!string.Equals(plainText, text, StringComparison.Ordinal))
+            {
+                attributes["ritsulib.log.ansi_stripped"] = true;
+                attributes["ritsulib.log.plain_text"] = plainText;
+            }
 
             if (!string.IsNullOrWhiteSpace(source))
                 attributes["ritsulib.log.source"] = source;
@@ -240,6 +248,7 @@ namespace STS2RitsuLib.Diagnostics.Logging
                 SeverityText = severityText,
                 SeverityNumber = severityNumber,
                 Body = body,
+                BodySegments = BuildBodySegments(text, body, bodyStart),
                 Source = source,
                 Category = category,
                 LoggerName = source,
@@ -264,6 +273,9 @@ namespace STS2RitsuLib.Diagnostics.Logging
                 Id = id,
                 Timestamp = timestamp,
                 TimeUnixNano = ToUnixNanoString(timestamp),
+                BodySegments = record.BodySegments is { Count: > 0 }
+                    ? record.BodySegments
+                    : BuildPlainBodySegments(record.Body),
                 Resource = new Dictionary<string, object?>
                 {
                     ["service.name"] = Const.ModId,
@@ -278,49 +290,118 @@ namespace STS2RitsuLib.Diagnostics.Logging
             };
         }
 
-        private static (string? Source, string? Category, string Body) ParseFormattedLogText(string text)
+        private static (string? Source, string? Category, string Body, int BodyStart) ParseFormattedLogText(string text)
         {
             var remaining = text.TrimStart();
+            var remainingStart = text.Length - remaining.Length;
             if (!TryReadBracketPrefix(remaining, out var first, out remaining))
-                return (null, null, text);
+                return (null, null, text, 0);
 
             var source = first;
+            remainingStart += text[remainingStart..].Length - remaining.Length;
             remaining = remaining.TrimStart();
+            remainingStart += text[remainingStart..].Length - remaining.Length;
             string? category = null;
             if (!TryReadBracketPrefix(remaining, out var second, out var afterSecond))
-                return (source, category, remaining.Length == 0 ? text : remaining);
-            category = second;
-            remaining = afterSecond.TrimStart();
+                return remaining.Length == 0
+                    ? (source, category, text, 0)
+                    : (source, category, remaining, remainingStart);
 
-            return (source, category, remaining.Length == 0 ? text : remaining);
+            category = second;
+            remainingStart += remaining.Length - afterSecond.Length;
+            remaining = afterSecond.TrimStart();
+            remainingStart += afterSecond.Length - remaining.Length;
+
+            return remaining.Length == 0
+                ? (source, category, text, 0)
+                : (source, category, remaining, remainingStart);
         }
 
-        private static (LogLevel Level, string Text) ParseLevelPrefix(string text, bool error)
+        private static IReadOnlyList<RitsuTextSegment> BuildBodySegments(string rawText, string body, int bodyStart)
+        {
+            if (string.IsNullOrEmpty(body))
+                return [];
+
+            var segments = SliceVisibleSegments(RitsuAnsiText.ParseSegments(rawText), bodyStart, body.Length);
+            return segments.Count == 0 ? BuildPlainBodySegments(body) : segments;
+        }
+
+        private static IReadOnlyList<RitsuTextSegment> BuildPlainBodySegments(string body)
+        {
+            return string.IsNullOrEmpty(body) ? [] : [new() { Text = body }];
+        }
+
+        private static IReadOnlyList<RitsuTextSegment> SliceVisibleSegments(
+            IReadOnlyList<RitsuTextSegment> segments,
+            int start,
+            int length)
+        {
+            if (segments.Count == 0 || start < 0 || length <= 0)
+                return [];
+
+            var result = new List<RitsuTextSegment>();
+            var end = start + length;
+            var position = 0;
+            foreach (var segment in segments)
+            {
+                var nextPosition = position + segment.Text.Length;
+                if (nextPosition <= start)
+                {
+                    position = nextPosition;
+                    continue;
+                }
+
+                if (position >= end)
+                    break;
+
+                var segmentStart = Math.Max(0, start - position);
+                var segmentEnd = Math.Min(segment.Text.Length, end - position);
+                if (segmentEnd > segmentStart)
+                    result.Add(segment with { Text = segment.Text[segmentStart..segmentEnd] });
+
+                position = nextPosition;
+            }
+
+            return result;
+        }
+
+        private static (LogLevel Level, string Text, int TextStart) ParseLevelPrefix(string text, bool error)
         {
             if (error)
-                return (LogLevel.Error, StripKnownLevelPrefix(text));
+            {
+                var (strippedText, strippedTextStart) = StripKnownLevelPrefix(text);
+                return (LogLevel.Error, strippedText, strippedTextStart);
+            }
 
             var trimmed = text.TrimStart();
+            var trimmedStart = text.Length - trimmed.Length;
             if (TryReadBracketPrefix(trimmed, out var bracketLevel, out var afterBracket) &&
                 TryParseLogLevel(bracketLevel, out var level))
-                return (level, afterBracket.TrimStart());
+            {
+                var afterBracketStart = trimmedStart + trimmed.Length - afterBracket.Length;
+                var afterBracketTrimmed = afterBracket.TrimStart();
+                var afterBracketTrimmedStart = afterBracketStart + afterBracket.Length - afterBracketTrimmed.Length;
+                return (level, afterBracketTrimmed, afterBracketTrimmedStart);
+            }
 
             var colon = trimmed.IndexOf(':');
-            if (colon is > 0 and <= 10 &&
-                TryParseLogLevel(trimmed[..colon], out level))
-                return (level, trimmed[(colon + 1)..].TrimStart());
-
-            return (LogLevel.Info, text);
+            if (colon is <= 0 or > 10 ||
+                !TryParseLogLevel(trimmed[..colon], out level)) return (LogLevel.Info, text, 0);
+            var afterColon = trimmed[(colon + 1)..];
+            var afterColonTrimmed = afterColon.TrimStart();
+            var afterColonTrimmedStart = trimmedStart + colon + 1 + afterColon.Length - afterColonTrimmed.Length;
+            return (level, afterColonTrimmed, afterColonTrimmedStart);
         }
 
-        private static string StripKnownLevelPrefix(string text)
+        private static (string Text, int TextStart) StripKnownLevelPrefix(string text)
         {
             var trimmed = text.TrimStart();
-            if (TryReadBracketPrefix(trimmed, out var bracketLevel, out var afterBracket) &&
-                TryParseLogLevel(bracketLevel, out _))
-                return afterBracket.TrimStart();
-
-            return text;
+            var trimmedStart = text.Length - trimmed.Length;
+            if (!TryReadBracketPrefix(trimmed, out var bracketLevel, out var afterBracket) ||
+                !TryParseLogLevel(bracketLevel, out _)) return (text, 0);
+            var afterBracketStart = trimmedStart + trimmed.Length - afterBracket.Length;
+            var afterBracketTrimmed = afterBracket.TrimStart();
+            return (afterBracketTrimmed, afterBracketStart + afterBracket.Length - afterBracketTrimmed.Length);
         }
 
         private static bool TryParseLogLevel(string value, out LogLevel level)
@@ -345,7 +426,7 @@ namespace STS2RitsuLib.Diagnostics.Logging
             value = "";
             remaining = text;
 
-            if (!text.StartsWith("[", StringComparison.Ordinal))
+            if (!text.StartsWith('['))
                 return false;
 
             var end = text.IndexOf(']', 1);

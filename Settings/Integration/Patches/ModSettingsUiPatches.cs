@@ -217,13 +217,24 @@ namespace STS2RitsuLib.Settings.Patches
 
         private static void SchedulePrewarmStep(NSettingsScreen screen, int delayFrames)
         {
+            if (!GodotObject.IsInstanceValid(screen))
+                return;
+
             if (delayFrames <= 0)
             {
-                Callable.From(() => PrewarmStep(screen)).CallDeferred();
+                Callable.From(() =>
+                {
+                    if (GodotObject.IsInstanceValid(screen))
+                        PrewarmStep(screen);
+                }).CallDeferred();
                 return;
             }
 
-            Callable.From(() => SchedulePrewarmStep(screen, delayFrames - 1)).CallDeferred();
+            Callable.From(() =>
+            {
+                if (GodotObject.IsInstanceValid(screen))
+                    SchedulePrewarmStep(screen, delayFrames - 1);
+            }).CallDeferred();
         }
 
         private static void ScheduleInitialPrewarmStep(NSettingsScreen screen)
@@ -235,7 +246,11 @@ namespace STS2RitsuLib.Settings.Patches
             }
 
             var timer = tree.CreateTimer(PrewarmInitialDelaySeconds);
-            timer.Timeout += () => SchedulePrewarmStep(screen, 0);
+            timer.Timeout += () =>
+            {
+                if (GodotObject.IsInstanceValid(screen))
+                    SchedulePrewarmStep(screen, 0);
+            };
         }
 
         private static ModSettingsMirrorPrewarmSession CreatePrewarmSession(NSettingsScreen _)
@@ -324,7 +339,11 @@ namespace STS2RitsuLib.Settings.Patches
 
         private static void ScheduleRefreshGeneralSettingsPanelSize(NSettingsPanel panel)
         {
-            Callable.From(() => RefreshPanelSize(panel)).CallDeferred();
+            Callable.From(() =>
+            {
+                if (GodotObject.IsInstanceValid(panel))
+                    RefreshPanelSize(panel);
+            }).CallDeferred();
         }
 
         private static void RefreshState(MarginContainer line, NSettingsScreen screen)
@@ -348,7 +367,13 @@ namespace STS2RitsuLib.Settings.Patches
         {
             try
             {
+                if (!GodotObject.IsInstanceValid(panel))
+                    return;
+
                 var content = panel.Content;
+                if (!GodotObject.IsInstanceValid(content))
+                    return;
+
                 content.QueueSort();
 
                 var parent = panel.GetParent<Control>();
@@ -409,13 +434,23 @@ namespace STS2RitsuLib.Settings.Patches
         {
             Callable.From(() =>
             {
+                if (!GodotObject.IsInstanceValid(content))
+                    return;
+
                 TryRebuildEntireGeneralFocusChain(content);
-                Callable.From(() => TryRebuildEntireGeneralFocusChain(content)).CallDeferred();
+                Callable.From(() =>
+                {
+                    if (GodotObject.IsInstanceValid(content))
+                        TryRebuildEntireGeneralFocusChain(content);
+                }).CallDeferred();
             }).CallDeferred();
         }
 
         internal static void TryRebuildEntireGeneralFocusChain(VBoxContainer content)
         {
+            if (!GodotObject.IsInstanceValid(content))
+                return;
+
             if (SettingsScreenModSettingsButtonPatch.TryGetEntryLine(content) == null)
                 return;
 

@@ -3,7 +3,6 @@ using System.Runtime.Loader;
 using System.Security.Cryptography;
 using System.Text.Json;
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using STS2RitsuLib.Compat;

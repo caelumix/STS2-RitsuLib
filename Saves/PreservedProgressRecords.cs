@@ -331,19 +331,13 @@ namespace STS2RitsuLib.Saves
                 return false;
 
             var modelIds = GetPreservedModelIdStrings();
-            foreach (var id in modelIds)
-                if (error.Message.Contains(id, StringComparison.Ordinal))
-                    return true;
+            if (modelIds.Any(id => error.Message.Contains(id, StringComparison.Ordinal))) return true;
 
-            foreach (var epochId in _epochs.Select(static epoch => epoch.Id))
-                if (error.Message.Contains(epochId, StringComparison.Ordinal))
-                    return true;
+            if (_epochs.Select(static epoch => epoch.Id)
+                .Any(epochId => error.Message.Contains(epochId, StringComparison.Ordinal))) return true;
 
-            foreach (var achievement in _unlockedAchievements.Select(static item => item.Achievement))
-                if (error.Message.Contains('"' + achievement + '"', StringComparison.Ordinal))
-                    return true;
-
-            return false;
+            return _unlockedAchievements.Select(static item => item.Achievement).Any(achievement =>
+                error.Message.Contains('"' + achievement + '"', StringComparison.Ordinal));
         }
 
         private HashSet<string> GetPreservedModelIdStrings()
@@ -376,8 +370,8 @@ namespace STS2RitsuLib.Saves
         private static void AddIds(HashSet<string> target, IEnumerable<ModelId?> source)
         {
             foreach (var id in source)
-                if (id is { } modelId && modelId != ModelId.none)
-                    target.Add(modelId.ToString());
+                if (id != null && id != ModelId.none)
+                    target.Add(id.ToString());
         }
 
         private static bool IsUnknownModel<TModel>(ModelId? id)

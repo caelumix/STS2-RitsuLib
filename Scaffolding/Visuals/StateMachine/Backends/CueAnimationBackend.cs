@@ -233,6 +233,9 @@ namespace STS2RitsuLib.Scaffolding.Visuals.StateMachine.Backends
             var timer = tree.CreateTimer(0.0);
             timer.Timeout += () =>
             {
+                if (!GodotObject.IsInstanceValid(_root) || !GodotObject.IsInstanceValid(_sprite))
+                    return;
+
                 if (_currentId != id)
                     return;
 

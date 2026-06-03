@@ -259,6 +259,12 @@ namespace STS2RitsuLib.Settings
                             if (timer != null)
                                 timer.Timeout += () =>
                                 {
+                                    if (!GodotObject.IsInstanceValid(target))
+                                    {
+                                        activeLongPressToken = null;
+                                        return;
+                                    }
+
                                     if (!ReferenceEquals(activeLongPressToken, token))
                                         return;
                                     activeLongPressToken = null;

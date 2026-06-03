@@ -7,8 +7,10 @@
     "build": "vue-tsc --noEmit && vite build"
   },
   "dependencies": {
+    "@lucide/vue": "^1.17.0",
     "@tanstack/vue-virtual": "^3.13.28",
     "@vitejs/plugin-vue": "^6.0.3",
+    "@vueuse/core": "^14.3.0",
     "floating-vue": "^5.2.2",
     "typescript": "^5.9.3",
     "vite": "^7.2.6",

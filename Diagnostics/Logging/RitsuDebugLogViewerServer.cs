@@ -172,7 +172,11 @@ namespace STS2RitsuLib.Diagnostics.Logging
                     {
                         case "/":
                             if (!await TryWriteIndexAsync(stream).ConfigureAwait(false))
-                                await WriteHtmlResponseAsync(stream, RitsuDebugLogViewerStaticAssets.IndexHtml)
+                                await WriteTextResponseAsync(
+                                        stream,
+                                        503,
+                                        "Service Unavailable",
+                                        "RitsuLib debug log viewer assets are unavailable. Build and package Viewer/index.html.")
                                     .ConfigureAwait(false);
                             return;
                         case "/api/status":
@@ -296,11 +300,6 @@ namespace STS2RitsuLib.Diagnostics.Logging
                 select eq >= 0 ? pair[(eq + 1)..] : ""
                 into rawValue
                 select Uri.UnescapeDataString(rawValue.Replace("+", "%20", StringComparison.Ordinal))).FirstOrDefault();
-        }
-
-        private static Task WriteHtmlResponseAsync(Stream stream, string html)
-        {
-            return WriteResponseAsync(stream, 200, "OK", "text/html; charset=utf-8", html);
         }
 
         private static Task WriteJsonResponseAsync(Stream stream, object payload)

@@ -136,10 +136,10 @@ function estimateRecordHeight(record: LogRecord) {
   if (record.body.includes("\n") || record.body.length > 160) {
     const lineCount = record.body.split("\n").length;
     const wrappedLines = Math.floor(record.body.length / 180);
-    return Math.min(220, 38 + Math.max(lineCount - 1, wrappedLines) * 18);
+    return Math.min(220, 34 + Math.max(lineCount - 1, wrappedLines) * 18);
   }
 
-  return 36;
+  return 34;
 }
 
 function measureVirtualElement(element: Element | ComponentPublicInstance | null) {
@@ -147,7 +147,7 @@ function measureVirtualElement(element: Element | ComponentPublicInstance | null
     rowVirtualizer.value.measureElement(element);
 }
 
-function pinOffset(item: { start: number; size: number }) {
+function pinOffset(item: { start: number; size: number }, record: LogRecord) {
   if (compact.value)
     return 0;
 
@@ -155,7 +155,15 @@ function pinOffset(item: { start: number; size: number }) {
   if (distancePastTop <= 0)
     return 0;
 
-  return Math.min(distancePastTop, Math.max(0, item.size - 34));
+  return Math.min(distancePastTop, Math.max(0, item.size - pinBlockHeight(record)));
+}
+
+function pinBlockHeight(record: LogRecord) {
+  return originSubtitle(record) ? 33 : 34;
+}
+
+function isExpandedRecord(record: LogRecord) {
+  return !compact.value && (record.body.includes("\n") || record.body.length > 160);
 }
 
 function formatTime(timestamp: string) {
@@ -218,13 +226,14 @@ function segmentStyle(segment: MessageSegment) {
                 record.severityText,
                 {
                   compact,
+                  expanded: isExpandedRecord(record),
                   entering: enteringKeys.has(recordKey(record)),
                   focused: selectedRecord ? recordKey(selectedRecord) === recordKey(record) : false,
                   selected: selectedIds.has(recordKey(record))
                 }
               ]"
               :data-index="item.index"
-              :style="{gridTemplateColumns: gridTemplate, '--row-y': `${item.start}px`, '--pin-y': `${pinOffset(item)}px`}"
+              :style="{gridTemplateColumns: gridTemplate, '--row-y': `${item.start}px`, '--pin-y': `${pinOffset(item, record)}px`}"
               @click="emit('row-click', record, $event)"
               @dblclick="emit('open-payload', record)"
           >

@@ -626,11 +626,28 @@ pre::-webkit-scrollbar-thumb:hover {
 }
 
 .row-pin {
-    align-self: start;
+    align-self: center;
     position: relative;
     z-index: 1;
-    margin-top: 3px;
     transform: translateY(var(--pin-y, 0));
+}
+
+.message {
+    align-self: center;
+}
+
+.log-row.expanded .row-pin {
+    align-self: start;
+    transform: translateY(calc(var(--pin-y, 0px) + 3px));
+}
+
+.log-row.expanded .origin.row-pin {
+    transform: translateY(var(--pin-y, 0px));
+}
+
+.log-row.expanded .message {
+    align-self: start;
+    padding-top: 4px;
 }
 
 .id.row-pin,
@@ -641,11 +658,11 @@ pre::-webkit-scrollbar-thumb:hover {
 }
 
 .origin.row-pin {
-    margin-top: 0;
+    align-self: center;
 }
 
 .severity.row-pin {
-    margin-top: 2px;
+    align-self: center;
 }
 
 .log-row.entering {

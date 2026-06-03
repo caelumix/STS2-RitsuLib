@@ -1,9 +1,13 @@
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Multiplayer;
+using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Messages.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Replay;
 using MegaCrit.Sts2.Core.Multiplayer.Serialization;
+using MegaCrit.Sts2.Core.Multiplayer.Transport;
 using MegaCrit.Sts2.Core.Runs;
 using STS2RitsuLib.Patching.Models;
 
@@ -11,65 +15,171 @@ namespace STS2RitsuLib.Networking.ManagedActions.Patches
 {
     internal static class RitsuLibManagedNetActionMessagePatches
     {
-        internal sealed class MessageBusSerialize : IPatchMethod
+        private static readonly AccessTools.FieldRef<ActionQueueSynchronizer, ActionQueueSet> ActionQueueSetRef =
+            AccessTools.FieldRefAccess<ActionQueueSynchronizer, ActionQueueSet>("_actionQueueSet");
+
+        private static readonly AccessTools.FieldRef<ActionQueueSynchronizer, INetGameService> NetServiceRef =
+            AccessTools.FieldRefAccess<ActionQueueSynchronizer, INetGameService>("_netService");
+
+        private static readonly AccessTools.FieldRef<ActionQueueSynchronizer, RunLocationTargetedMessageBuffer>
+            MessageBufferRef =
+                AccessTools.FieldRefAccess<ActionQueueSynchronizer, RunLocationTargetedMessageBuffer>(
+                    "_messageBuffer");
+
+        private static readonly AccessTools.FieldRef<ActionQueueSynchronizer, List<GameAction>>
+            RequestedActionsWaitingForPlayerTurnRef =
+                AccessTools.FieldRefAccess<ActionQueueSynchronizer, List<GameAction>>(
+                    "_requestedActionsWaitingForPlayerTurn");
+
+        private static bool TrySendManagedClientRequest(ActionQueueSynchronizer synchronizer, GameAction action)
         {
-            public static string PatchId => "ritsulib_managed_net_action_message_bus_serialize";
+            if (action.ActionType == GameActionType.CombatPlayPhaseOnly &&
+                synchronizer.CombatState == ActionSynchronizerCombatState.NotPlayPhase)
+            {
+                RequestedActionsWaitingForPlayerTurnRef(synchronizer).Add(action);
+                return true;
+            }
+
+            if (NetServiceRef(synchronizer) is not NetClientGameService
+                    {
+                        IsConnected: true, NetClient: not null,
+                    }
+                    client)
+                return false;
+
+            if (action.ToNetAction() is not RitsuLibManagedNetAction netAction)
+                return false;
+
+            var message = new RequestEnqueueActionMessage
+            {
+                action = netAction,
+                location = MessageBufferRef(synchronizer).CurrentLocation,
+            };
+            SendManagedActionRequest(client, message);
+            return true;
+        }
+
+        private static bool TrySendManagedHostAnnouncement(
+            ActionQueueSynchronizer synchronizer,
+            GameAction action,
+            ulong actionOwnerId)
+        {
+            if (NetServiceRef(synchronizer) is not NetHostGameService { IsConnected: true, NetHost: not null } host)
+                return false;
+
+            if (action.ToNetAction() is not RitsuLibManagedNetAction netAction)
+                return false;
+
+            var message = new ActionEnqueuedMessage
+            {
+                playerId = actionOwnerId,
+                location = MessageBufferRef(synchronizer).CurrentLocation,
+                action = netAction,
+            };
+            SendManagedActionAnnouncement(host, message);
+            ActionQueueSetRef(synchronizer).EnqueueWithoutSynchronizing(action);
+            return true;
+        }
+
+        private static void SendManagedActionRequest(
+            NetClientGameService client,
+            RequestEnqueueActionMessage message)
+        {
+            var (bytes, length) = SerializeManagedActionMessage(client.NetId, message);
+            client.NetClient!.SendMessageToHost(bytes, length, message.Mode, message.Mode.ToChannelId());
+        }
+
+        private static void SendManagedActionAnnouncement(
+            NetHostGameService host,
+            ActionEnqueuedMessage message)
+        {
+            var (bytes, length) = SerializeManagedActionMessage(host.NetId, message);
+            foreach (var peer in host.ConnectedPeers)
+                if (peer.readyForBroadcasting)
+                    host.NetHost!.SendMessageToClient(
+                        peer.peerId,
+                        bytes,
+                        length,
+                        message.Mode,
+                        message.Mode.ToChannelId());
+        }
+
+        private static (byte[] Bytes, int Length) SerializeManagedActionMessage(
+            ulong senderId,
+            RequestEnqueueActionMessage message)
+        {
+            var writer = CreateMessageWriter(senderId, message);
+            writer.Write(message.location);
+            RitsuLibManagedNetActions.TryWriteNetAction(writer, message.action);
+            return (writer.Buffer, (int)Math.Ceiling(writer.BitPosition / 8f));
+        }
+
+        private static (byte[] Bytes, int Length) SerializeManagedActionMessage(
+            ulong senderId,
+            ActionEnqueuedMessage message)
+        {
+            var writer = CreateMessageWriter(senderId, message);
+            writer.WriteULong(message.playerId);
+            writer.Write(message.location);
+            RitsuLibManagedNetActions.TryWriteNetAction(writer, message.action);
+            return (writer.Buffer, (int)Math.Ceiling(writer.BitPosition / 8f));
+        }
+
+        private static PacketWriter CreateMessageWriter(ulong senderId, INetMessage message)
+        {
+            var writer = new PacketWriter();
+            writer.WriteByte((byte)message.ToId());
+            writer.WriteULong(senderId);
+            return writer;
+        }
+
+        internal sealed class RequestEnqueueManagedAction : IPatchMethod
+        {
+            public static string PatchId => "ritsulib_managed_net_action_request_enqueue_direct_send";
             public static bool IsCritical => true;
 
             public static string Description =>
-                "Serialize RitsuLib-managed action messages before vanilla action id lookup";
+                "Send client RitsuLib-managed action requests without vanilla action id lookup";
 
             public static ModPatchTarget[] GetTargets()
             {
                 return
                 [
-                    new(typeof(NetMessageBus), nameof(NetMessageBus.SerializeMessage)),
+                    new(typeof(ActionQueueSynchronizer),
+                        nameof(ActionQueueSynchronizer.RequestEnqueue),
+                        [typeof(GameAction)]),
                 ];
             }
 
-            public static bool Prefix<T>(
-                ulong senderId,
-                T message,
-                ref byte[] __result,
-                ref int length)
-                where T : INetMessage
+            // ReSharper disable once InconsistentNaming
+            public static bool Prefix(ActionQueueSynchronizer __instance, GameAction action)
             {
-                if (!TrySerializeManagedActionMessage(senderId, message, out var bytes, out var writtenLength))
-                    return true;
-
-                __result = bytes;
-                length = writtenLength;
-                return false;
+                return !TrySendManagedClientRequest(__instance, action);
             }
         }
 
-        internal sealed class MessageBusDeserialize : IPatchMethod
+        internal sealed class EnqueueManagedAction : IPatchMethod
         {
-            public static string PatchId => "ritsulib_managed_net_action_message_bus_deserialize";
+            public static string PatchId => "ritsulib_managed_net_action_host_enqueue_direct_send";
             public static bool IsCritical => true;
 
             public static string Description =>
-                "Deserialize action queue messages through RitsuLib-managed action reader";
+                "Broadcast host RitsuLib-managed action announcements without vanilla action id lookup";
 
             public static ModPatchTarget[] GetTargets()
             {
                 return
                 [
-                    new(typeof(NetMessageBus), nameof(NetMessageBus.TryDeserializeMessage)),
+                    new(typeof(ActionQueueSynchronizer),
+                        "EnqueueAction",
+                        [typeof(GameAction), typeof(ulong)]),
                 ];
             }
 
-            public static bool Prefix(
-                byte[] packetBytes,
-                ref bool __result,
-                out INetMessage? message,
-                out ulong? overrideSenderId)
+            // ReSharper disable once InconsistentNaming
+            public static bool Prefix(ActionQueueSynchronizer __instance, GameAction action, ulong actionOwnerId)
             {
-                if (!TryDeserializeManagedActionMessage(packetBytes, out message, out overrideSenderId))
-                    return true;
-
-                __result = true;
-                return false;
+                return !TrySendManagedHostAnnouncement(__instance, action, actionOwnerId);
             }
         }
 
@@ -286,83 +396,6 @@ namespace STS2RitsuLib.Networking.ManagedActions.Patches
 
                 return false;
             }
-        }
-
-        private static bool TrySerializeManagedActionMessage<T>(
-            ulong senderId,
-            T message,
-            out byte[] bytes,
-            out int length)
-            where T : INetMessage
-        {
-            bytes = [];
-            length = 0;
-
-            var writer = new PacketWriter();
-            switch (message)
-            {
-                case RequestEnqueueActionMessage request
-                    when request.action is RitsuLibManagedNetAction:
-                    writer.WriteByte((byte)request.ToId());
-                    writer.WriteULong(senderId);
-                    writer.Write(request.location);
-                    RitsuLibManagedNetActions.TryWriteNetAction(writer, request.action);
-                    break;
-
-                case ActionEnqueuedMessage announcement
-                    when announcement.action is RitsuLibManagedNetAction:
-                    writer.WriteByte((byte)announcement.ToId());
-                    writer.WriteULong(senderId);
-                    writer.WriteULong(announcement.playerId);
-                    writer.Write(announcement.location);
-                    RitsuLibManagedNetActions.TryWriteNetAction(writer, announcement.action);
-                    break;
-
-                default:
-                    return false;
-            }
-
-            length = (int)Math.Ceiling(writer.BitPosition / 8f);
-            bytes = writer.Buffer;
-            return true;
-        }
-
-        private static bool TryDeserializeManagedActionMessage(
-            byte[] packetBytes,
-            out INetMessage? message,
-            out ulong? overrideSenderId)
-        {
-            message = null;
-            overrideSenderId = null;
-
-            var reader = new PacketReader();
-            reader.Reset(packetBytes);
-            var messageId = reader.ReadByte();
-            if (!MessageTypes.TryGetMessageType(messageId, out var messageType))
-                return false;
-
-            if (messageType != typeof(RequestEnqueueActionMessage) &&
-                messageType != typeof(ActionEnqueuedMessage))
-                return false;
-
-            overrideSenderId = reader.ReadULong();
-            if (messageType == typeof(RequestEnqueueActionMessage))
-            {
-                message = new RequestEnqueueActionMessage
-                {
-                    location = reader.Read<RunLocation>(),
-                    action = RitsuLibManagedNetActions.ReadNetAction(reader),
-                };
-                return true;
-            }
-
-            message = new ActionEnqueuedMessage
-            {
-                playerId = reader.ReadULong(),
-                location = reader.Read<RunLocation>(),
-                action = RitsuLibManagedNetActions.ReadNetAction(reader),
-            };
-            return true;
         }
     }
 }

@@ -47,7 +47,12 @@ namespace STS2RitsuLib.Diagnostics.Logging
                     _ring = new(Math.Clamp(options.RingBufferCapacity, 512, 100000));
                     _cts = new();
 
-                    _server = new(options.AccessToken, Snapshot, BuildStatus, ResolveViewerAssetRoot());
+                    _server = new(
+                        options.AccessToken,
+                        options.LanAccessEnabled,
+                        Snapshot,
+                        BuildStatus,
+                        ResolveViewerAssetRoot());
                     _server.Start(options.Port, options.PortFallbackCount);
 
                     _worker = Task.Run(WorkerLoopAsync);
@@ -63,13 +68,12 @@ namespace STS2RitsuLib.Diagnostics.Logging
                     _initialized = true;
                     AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 
-                    RitsuLibFramework.Logger.Info(
-                        $"[DebugLogViewer] Local debug log viewer listening at {_server.Url}");
+                    RitsuLibFramework.Logger.Info(CreateViewerStartMessage(_server));
                 }
                 catch (Exception ex)
                 {
                     CleanupAfterFailedStart();
-                    RitsuLibFramework.Logger.Warn($"[DebugLogViewer] Failed to start local viewer: {ex.Message}");
+                    RitsuLibFramework.Logger.Warn($"[DebugLogViewer] Failed to start viewer: {ex.Message}");
                 }
             }
         }
@@ -104,6 +108,9 @@ namespace STS2RitsuLib.Diagnostics.Logging
                 sessionStartedAtUtc = SessionStartedAtUtc,
                 processId = Environment.ProcessId,
                 url = ViewerUrl,
+                accessMode = _server?.AccessMode ?? "loopback",
+                lanAccessEnabled = _server?.LanAccessEnabled ?? false,
+                lanUrls = _server?.LanUrls ?? [],
                 clients = _server?.ClientCount ?? 0,
                 bufferCount = _ring?.Count ?? 0,
                 bufferCapacity = _ring?.Capacity ?? 0,
@@ -133,6 +140,17 @@ namespace STS2RitsuLib.Diagnostics.Logging
             return error == Error.Ok
                 ? (true, $"Opened RitsuLib debug log viewer: {url}")
                 : (false, $"Error {error}: Could not open browser. URL: {url}");
+        }
+
+        private static string CreateViewerStartMessage(RitsuDebugLogViewerServer server)
+        {
+            if (!server.LanAccessEnabled)
+                return $"[DebugLogViewer] Local debug log viewer listening at {server.Url}";
+
+            var lanUrls = server.LanUrls;
+            return lanUrls.Count == 0
+                ? $"[DebugLogViewer] LAN debug log viewer listening at {server.Url}; no LAN IPv4 address was found."
+                : $"[DebugLogViewer] LAN debug log viewer listening at {server.Url}; LAN URLs: {string.Join(", ", lanUrls)}";
         }
 
         private static async Task WorkerLoopAsync()

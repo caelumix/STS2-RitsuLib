@@ -25,11 +25,13 @@ namespace STS2RitsuLib.Diagnostics.Logging
 
         public RitsuDebugLogViewerServer(
             string token,
+            bool lanAccessEnabled,
             Func<int, RitsuDebugLogRecord[]> historyProvider,
             Func<object> statusProvider,
             string? assetRoot)
         {
             _token = token;
+            LanAccessEnabled = lanAccessEnabled;
             _historyProvider = historyProvider;
             _statusProvider = statusProvider;
             _assetRoot = string.IsNullOrWhiteSpace(assetRoot) ? null : assetRoot;
@@ -39,7 +41,13 @@ namespace STS2RitsuLib.Diagnostics.Logging
 
         public int ClientCount => _clients.Count;
 
-        public string Url => $"http://127.0.0.1:{Port}/?token={Uri.EscapeDataString(_token)}";
+        public bool LanAccessEnabled { get; }
+
+        public string AccessMode => LanAccessEnabled ? "lan" : "loopback";
+
+        public string Url => BuildUrl("127.0.0.1");
+
+        public IReadOnlyList<string> LanUrls => LanAccessEnabled ? GetLanUrls() : [];
 
         public void Dispose()
         {
@@ -59,7 +67,7 @@ namespace STS2RitsuLib.Diagnostics.Logging
                 var port = firstPort + i;
                 try
                 {
-                    _listener = new(IPAddress.Loopback, port);
+                    _listener = new(LanAccessEnabled ? IPAddress.Any : IPAddress.Loopback, port);
                     _listener.Start();
                     break;
                 }
@@ -73,7 +81,7 @@ namespace STS2RitsuLib.Diagnostics.Logging
 
             if (_listener == null)
                 throw new InvalidOperationException(
-                    $"Could not bind local debug viewer port range {firstPort}-{firstPort + maxAttempts - 1}.",
+                    $"Could not bind debug viewer port range {firstPort}-{firstPort + maxAttempts - 1}.",
                     lastException);
 
             Port = ((IPEndPoint)_listener.LocalEndpoint).Port;
@@ -289,6 +297,40 @@ namespace STS2RitsuLib.Diagnostics.Logging
         private static int ParseLimit(string query)
         {
             return int.TryParse(GetQueryValue(query, "limit"), out var limit) ? Math.Clamp(limit, 1, 20000) : 5000;
+        }
+
+        private string BuildUrl(string host)
+        {
+            return $"http://{host}:{Port}/?token={Uri.EscapeDataString(_token)}";
+        }
+
+        private IReadOnlyList<string> GetLanUrls()
+        {
+            if (Port <= 0)
+                return [];
+
+            try
+            {
+                return Dns.GetHostAddresses(Dns.GetHostName())
+                    .Where(IsUsableLanAddress)
+                    .Select(address => BuildUrl(address.ToString()))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+            }
+            catch (Exception ex) when (ex is SocketException or InvalidOperationException)
+            {
+                RitsuDebugLogPipeline.ReportInternalWarning($"Could not enumerate LAN addresses: {ex.Message}");
+                return [];
+            }
+        }
+
+        private static bool IsUsableLanAddress(IPAddress address)
+        {
+            if (address.AddressFamily != AddressFamily.InterNetwork || IPAddress.IsLoopback(address))
+                return false;
+
+            var bytes = address.GetAddressBytes();
+            return bytes is not [0, 0, 0, 0] and not [169, 254, _, _];
         }
 
         private static string? GetQueryValue(string query, string key)

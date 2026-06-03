@@ -20,6 +20,9 @@ export type Status = {
     sessionStartedAtUtc?: string;
     processId?: number;
     url?: string;
+    accessMode?: "loopback" | "lan";
+    lanAccessEnabled?: boolean;
+    lanUrls?: string[];
     bufferCount: number;
     bufferCapacity: number;
     queueDepth: number;

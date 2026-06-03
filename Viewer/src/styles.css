@@ -147,6 +147,47 @@ summary:focus-visible {
     --purple: #744db6;
 }
 
+.filter-pane,
+.chip-grid,
+.log-list,
+pre {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--line-strong) 74%, transparent) transparent;
+}
+
+.filter-pane::-webkit-scrollbar,
+.chip-grid::-webkit-scrollbar,
+.log-list::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.filter-pane::-webkit-scrollbar-track,
+.chip-grid::-webkit-scrollbar-track,
+.log-list::-webkit-scrollbar-track,
+pre::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.filter-pane::-webkit-scrollbar-thumb,
+.chip-grid::-webkit-scrollbar-thumb,
+.log-list::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--line-strong) 58%, transparent);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background-clip: padding-box;
+}
+
+.filter-pane::-webkit-scrollbar-thumb:hover,
+.chip-grid::-webkit-scrollbar-thumb:hover,
+.log-list::-webkit-scrollbar-thumb:hover,
+pre::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--line-strong) 82%, transparent);
+    background-clip: padding-box;
+}
+
 .topbar {
     display: grid;
     grid-template-columns: minmax(150px, auto) minmax(0, 1fr) auto;
@@ -395,32 +436,32 @@ summary:focus-visible {
 
 .level-chip.INFO,
 .log-row.INFO {
-    --level-color: var(--blue);
+    --level-color: #76ff56;
 }
 
 .level-chip.WARN,
 .log-row.WARN {
-    --level-color: var(--yellow);
+    --level-color: #ffcb3d;
 }
 
 .level-chip.ERROR,
 .log-row.ERROR {
-    --level-color: var(--red);
+    --level-color: #ff4747;
 }
 
 .level-chip.DEBUG,
 .log-row.DEBUG {
-    --level-color: var(--green);
+    --level-color: #b180d3;
 }
 
 .level-chip.VERYDEBUG,
 .log-row.VERYDEBUG {
-    --level-color: var(--purple);
+    --level-color: #b180d3;
 }
 
 .level-chip.LOAD,
 .log-row.LOAD {
-    --level-color: var(--teal);
+    --level-color: #87ceeb;
 }
 
 .level-chip {

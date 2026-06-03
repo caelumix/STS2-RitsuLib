@@ -1,4 +1,4 @@
-import {computed, nextTick, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import type {ConnectionState, LogRecord, NoiseRule, Status, ThemeMode} from "../logTypes";
 import {type ColumnId, defaultNoiseRules, logLevels, storagePrefix} from "../viewerConfig";
 
@@ -31,6 +31,8 @@ export function useLogViewer() {
     const clearOnNewSession = ref(readBoolean("clearOnNewSession", true));
     const noiseRules = ref<NoiseRule[]>(readNoiseRules());
     let activeSessionId: string | null = null;
+    let events: EventSource | null = null;
+    let statusTimer: number | null = null;
 
     const api = (path: string) => {
         const join = path.includes("?") ? "&" : "?";
@@ -90,7 +92,16 @@ export function useLogViewer() {
         await loadStatus();
         await loadHistory();
         connectEvents();
-        setInterval(loadStatus, 2000);
+        statusTimer = window.setInterval(loadStatus, 2000);
+    });
+
+    onUnmounted(() => {
+        events?.close();
+        events = null;
+        if (statusTimer != null) {
+            window.clearInterval(statusTimer);
+            statusTimer = null;
+        }
     });
 
     watch(themeMode, (value) => saveValue("theme", value));
@@ -116,7 +127,8 @@ export function useLogViewer() {
     }
 
     function connectEvents() {
-        const events = new EventSource(api("/api/events"));
+        events?.close();
+        events = new EventSource(api("/api/events"));
         events.onopen = () => {
             connection.value = "connected";
         };

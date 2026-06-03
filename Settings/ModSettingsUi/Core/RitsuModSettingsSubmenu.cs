@@ -283,7 +283,7 @@ namespace STS2RitsuLib.Settings
             ModSettingsBindingWriteEvents.ValueWritten += _bindingWriteListener;
             base.OnSubmenuOpened();
             FocusMode = FocusModeEnum.None;
-            FocusBehaviorRecursive = FocusBehaviorRecursiveEnum.Enabled;
+            ApplySettingsFocusBehavior();
             ProcessMode = ProcessModeEnum.Inherit;
             _lastVisibleMirrorRefreshPageKey = null;
             TryStartShellThemeWatcher();
@@ -306,7 +306,7 @@ namespace STS2RitsuLib.Settings
             ProcessMode = ProcessModeEnum.Disabled;
             _lastVisibleMirrorRefreshPageKey = null;
             StopShellThemeWatcher();
-            CallDeferredIfAlive(this.UpdateControllerNavEnabled);
+            CallDeferredIfAlive(ApplySettingsFocusBehavior);
             base.OnSubmenuClosed();
         }
 
@@ -315,6 +315,7 @@ namespace STS2RitsuLib.Settings
         {
             base.OnSubmenuShown();
             SetProcessInput(true);
+            ApplySettingsFocusBehavior();
             PushPaneHotkeys();
             UpdatePaneHotkeyHintIcons();
             RequestMirrorVisibilitySyncRefreshIfNeeded();
@@ -332,7 +333,7 @@ namespace STS2RitsuLib.Settings
             ProcessMode = ProcessModeEnum.Disabled;
             _lastVisibleMirrorRefreshPageKey = null;
             StopShellThemeWatcher();
-            CallDeferredIfAlive(this.UpdateControllerNavEnabled);
+            CallDeferredIfAlive(ApplySettingsFocusBehavior);
             base.OnSubmenuHidden();
         }
 
@@ -2764,7 +2765,14 @@ namespace STS2RitsuLib.Settings
                 return;
 
             ApplySplitPaneFocusNavigation();
-            this.UpdateControllerNavEnabled();
+            ApplySettingsFocusBehavior();
+        }
+
+        private void ApplySettingsFocusBehavior()
+        {
+            FocusBehaviorRecursive = Visible && IsInsideTree()
+                ? FocusBehaviorRecursiveEnum.Enabled
+                : FocusBehaviorRecursiveEnum.Disabled;
         }
 
         private void RebuildFocusChainsOnly()

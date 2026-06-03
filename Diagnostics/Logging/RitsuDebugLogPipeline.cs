@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using Godot;
 using MegaCrit.Sts2.Core.Logging;
+using Environment = System.Environment;
 
 namespace STS2RitsuLib.Diagnostics.Logging
 {
@@ -12,6 +13,8 @@ namespace STS2RitsuLib.Diagnostics.Logging
         private static readonly SemaphoreSlim QueueSignal = new(0);
         private static readonly TimeSpan InternalWarningInterval = TimeSpan.FromSeconds(30);
         private static readonly TimeSpan AutoOpenDelay = TimeSpan.FromSeconds(3);
+        private static readonly string SessionId = Guid.NewGuid().ToString("N");
+        private static readonly DateTimeOffset SessionStartedAtUtc = DateTimeOffset.UtcNow;
 
         private static CancellationTokenSource? _cts;
         private static RitsuDebugLogRingBuffer? _ring;
@@ -96,6 +99,9 @@ namespace STS2RitsuLib.Diagnostics.Logging
             return new
             {
                 enabled = _initialized,
+                sessionId = SessionId,
+                sessionStartedAtUtc = SessionStartedAtUtc,
+                processId = Environment.ProcessId,
                 url = ViewerUrl,
                 clients = _server?.ClientCount ?? 0,
                 bufferCount = _ring?.Count ?? 0,

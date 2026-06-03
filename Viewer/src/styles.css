@@ -438,7 +438,7 @@ main {
 
 .search-toolbar {
     display: grid;
-    grid-template-columns: minmax(280px, 1fr) auto auto;
+    grid-template-columns: minmax(280px, 1fr) auto auto auto;
     align-items: center;
     gap: 8px;
     padding: 6px 12px;

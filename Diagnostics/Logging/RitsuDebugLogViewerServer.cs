@@ -218,20 +218,17 @@ namespace STS2RitsuLib.Diagnostics.Logging
                     "Connection: keep-alive\r\n" +
                     "X-Accel-Buffering: no\r\n\r\n").ConfigureAwait(false);
 
+                await WriteSseEventAsync(stream, "session", JsonSerializer.Serialize(_statusProvider(), JsonOptions))
+                    .ConfigureAwait(false);
+                await stream.FlushAsync(_cts.Token).ConfigureAwait(false);
+
                 while (!_cts.IsCancellationRequested)
                 {
                     var json = await client.DequeueAsync(TimeSpan.FromSeconds(15), _cts.Token).ConfigureAwait(false);
                     if (json == null)
-                    {
                         await WriteUtf8Async(stream, ": keepalive\n\n").ConfigureAwait(false);
-                    }
                     else
-                    {
-                        await WriteUtf8Async(stream, "event: log\n").ConfigureAwait(false);
-                        await WriteUtf8Async(stream, "data: ").ConfigureAwait(false);
-                        await WriteUtf8Async(stream, json).ConfigureAwait(false);
-                        await WriteUtf8Async(stream, "\n\n").ConfigureAwait(false);
-                    }
+                        await WriteSseEventAsync(stream, "log", json).ConfigureAwait(false);
 
                     await stream.FlushAsync(_cts.Token).ConfigureAwait(false);
                 }
@@ -377,6 +374,16 @@ namespace STS2RitsuLib.Diagnostics.Logging
         private static Task WriteUtf8Async(Stream stream, string text)
         {
             return stream.WriteAsync(Encoding.UTF8.GetBytes(text)).AsTask();
+        }
+
+        private static async Task WriteSseEventAsync(Stream stream, string eventName, string json)
+        {
+            await WriteUtf8Async(stream, "event: ").ConfigureAwait(false);
+            await WriteUtf8Async(stream, eventName).ConfigureAwait(false);
+            await WriteUtf8Async(stream, "\n").ConfigureAwait(false);
+            await WriteUtf8Async(stream, "data: ").ConfigureAwait(false);
+            await WriteUtf8Async(stream, json).ConfigureAwait(false);
+            await WriteUtf8Async(stream, "\n\n").ConfigureAwait(false);
         }
 
         private static bool IsClientDisconnect(Exception ex)

@@ -4,6 +4,7 @@ import {type ComponentPublicInstance, computed, nextTick, onMounted, ref, watch}
 
 type LogRecord = {
   id: number;
+  sessionId?: string;
   timestamp: string;
   severityText: string;
   severityNumber: number;
@@ -18,6 +19,9 @@ type LogRecord = {
 
 type Status = {
   enabled: boolean;
+  sessionId?: string;
+  sessionStartedAtUtc?: string;
+  processId?: number;
   url?: string;
   bufferCount: number;
   bufferCapacity: number;
@@ -73,8 +77,8 @@ const customNoiseText = ref("");
 const selectedLevels = ref(new Set(levels));
 const selectedSources = ref(new Set<string>());
 const selectedRecord = ref<LogRecord | null>(null);
-const selectedIds = ref(new Set<number>());
-const lastSelectedId = ref<number | null>(null);
+const selectedIds = ref(new Set<string>());
+const lastSelectedKey = ref<string | null>(null);
 const logList = ref<HTMLElement | null>(null);
 const logScrollLeft = ref(0);
 const payloadOpen = ref(false);
@@ -84,7 +88,9 @@ const themeMode = ref<ThemeMode>(
 const locale = ref<Locale>(readEnum("locale", ["zh", "en"], navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en"));
 const visibleColumns = ref(new Set(["time", "level", "origin", "message"]));
 const columnWidths = ref<ColumnWidths>(readColumnWidths());
+const clearOnNewSession = ref(readBoolean("clearOnNewSession", true));
 let programmaticScroll = false;
+let activeSessionId: string | null = null;
 
 const defaultNoiseRules: NoiseRule[] = [
   {pattern: "AtlasResourceLoader: Missing sprite", enabled: true, tipKey: "noiseAtlas"},
@@ -137,6 +143,7 @@ const messages = {
     clearSelection: "清除选择",
     export: "导出",
     clearView: "清空视图",
+    clearOnNewSession: "新进程清屏",
     close: "关闭",
     colId: "ID",
     colTime: "时间",
@@ -159,6 +166,7 @@ const messages = {
     tipClearSelection: "取消所有选中行。",
     tipExport: "导出当前筛选结果为 JSONL。",
     tipClearView: "只清空当前浏览器视图，不影响游戏日志源。",
+    tipClearOnNewSession: "检测到游戏进程重启时，自动清空当前浏览器里保留的旧日志。",
     tipColId: "日志管道分配的递增 ID。",
     tipColTime: "日志进入管道的本地时间。",
     tipColLevel: "OpenTelemetry severity text / 游戏日志等级。",
@@ -214,6 +222,7 @@ const messages = {
     clearSelection: "Clear selection",
     export: "Export",
     clearView: "Clear view",
+    clearOnNewSession: "Clear on new process",
     close: "Close",
     colId: "Id",
     colTime: "Time",
@@ -236,6 +245,7 @@ const messages = {
     tipClearSelection: "Clear all selected rows.",
     tipExport: "Export current filtered rows as JSONL.",
     tipClearView: "Clear only this browser view, not the game log source.",
+    tipClearOnNewSession: "Clear browser-held rows automatically when the game process changes.",
     tipColId: "Incremental id assigned by the log pipeline.",
     tipColTime: "Local time when the record entered the pipeline.",
     tipColLevel: "OpenTelemetry severity text / game log level.",
@@ -287,7 +297,7 @@ const rowVirtualizer = useVirtualizer(computed(() => ({
   count: visibleRecords.value.length,
   getScrollElement: () => logList.value,
   estimateSize: (index) => estimateRecordHeight(visibleRecords.value[index]),
-  getItemKey: (index) => visibleRecords.value[index]?.id ?? index,
+  getItemKey: (index) => visibleRecords.value[index] ? recordKey(visibleRecords.value[index]) : index,
   overscan: 14,
   useAnimationFrameWithResizeObserver: true
 })));
@@ -299,7 +309,7 @@ const virtualRows = computed(() => {
       }))
       .filter((row): row is { item: typeof row.item; record: LogRecord } => Boolean(row.record));
 });
-const selectedRecords = computed(() => visibleRecords.value.filter((record) => selectedIds.value.has(record.id)));
+const selectedRecords = computed(() => visibleRecords.value.filter((record) => selectedIds.value.has(recordKey(record))));
 const selectedRecordJson = computed(() => selectedRecord.value ? JSON.stringify(selectedRecord.value, null, 2) : "");
 
 const levelCounts = computed(() => {
@@ -345,9 +355,9 @@ const tableWidth = computed(() => {
 });
 
 onMounted(async () => {
+  await loadStatus();
   await loadHistory();
   connectEvents();
-  await loadStatus();
   setInterval(loadStatus, 2000);
 });
 
@@ -355,6 +365,7 @@ watch(themeMode, (value) => saveValue("theme", value));
 watch(locale, (value) => saveValue("locale", value));
 watch(columnWidths, (value) => saveValue("columnWidths", JSON.stringify(value)), {deep: true});
 watch(noiseRules, (value) => saveValue("noiseRules", JSON.stringify(value)), {deep: true});
+watch(clearOnNewSession, (value) => saveValue("clearOnNewSession", value ? "1" : "0"));
 watch(() => visibleRecords.value.length, async () => {
   await nextTick();
   if (follow.value)
@@ -362,8 +373,7 @@ watch(() => visibleRecords.value.length, async () => {
 });
 
 async function loadHistory() {
-  const response = await fetch(api("/api/history?limit=10000"));
-  records.value = await response.json();
+  records.value = await fetchHistory(activeSessionId);
   await nextTick();
   scrollToBottom();
 }
@@ -371,7 +381,7 @@ async function loadHistory() {
 async function loadStatus() {
   try {
     const response = await fetch(api("/api/status"));
-    status.value = await response.json();
+    applySessionStatus(await response.json() as Status);
   } catch {
     status.value = null;
   }
@@ -385,14 +395,97 @@ function connectEvents() {
   events.onerror = () => {
     connection.value = "reconnecting";
   };
+  events.addEventListener("session", (event) => {
+    applySessionStatus(JSON.parse((event as MessageEvent).data) as Status);
+  });
   events.addEventListener("log", (event) => {
     const record = JSON.parse((event as MessageEvent).data) as LogRecord;
-    records.value.push(record);
-    if (records.value.length > 20000)
-      records.value.splice(0, records.value.length - 20000);
+    appendRecord(record, activeSessionId);
     if (!paused.value && follow.value)
       nextTick().then(scrollToBottom);
   });
+}
+
+function applySessionStatus(nextStatus: Status) {
+  status.value = nextStatus;
+  const nextSessionId = nextStatus.sessionId ?? null;
+  if (!nextSessionId)
+    return;
+
+  if (!activeSessionId) {
+    activeSessionId = nextSessionId;
+    return;
+  }
+
+  if (activeSessionId === nextSessionId)
+    return;
+
+  activeSessionId = nextSessionId;
+  selectedRecord.value = null;
+  payloadOpen.value = false;
+  clearSelection();
+
+  if (clearOnNewSession.value)
+    records.value = [];
+
+  void replaceCurrentSessionHistory(nextSessionId);
+}
+
+async function fetchHistory(sessionId: string | null) {
+  const response = await fetch(api("/api/history?limit=10000"));
+  const history = await response.json() as LogRecord[];
+  return history.map((record) => ({
+    ...record,
+    sessionId: record.sessionId ?? sessionId ?? undefined
+  }));
+}
+
+async function replaceCurrentSessionHistory(sessionId: string) {
+  try {
+    const history = await fetchHistory(sessionId);
+    const currentSessionEvents = records.value.filter((record) => record.sessionId === sessionId);
+    const otherSessionRecords = clearOnNewSession.value
+        ? []
+        : records.value.filter((record) => record.sessionId !== sessionId);
+    records.value = trimRecordList(mergeRecords([...otherSessionRecords, ...history], currentSessionEvents));
+    await nextTick();
+    if (follow.value)
+      scrollToBottom();
+  } catch {
+    status.value = null;
+  }
+}
+
+function appendRecord(record: LogRecord, sessionId: string | null) {
+  const next = {
+    ...record,
+    sessionId: record.sessionId ?? sessionId ?? undefined
+  };
+  const key = recordKey(next);
+  if (records.value.some((existing) => recordKey(existing) === key))
+    return;
+
+  records.value.push(next);
+  records.value = trimRecordList(records.value);
+}
+
+function mergeRecords(base: LogRecord[], incoming: LogRecord[]) {
+  const seen = new Set(base.map(recordKey));
+  const result = [...base];
+  for (const record of incoming) {
+    const key = recordKey(record);
+    if (seen.has(key))
+      continue;
+
+    seen.add(key);
+    result.push(record);
+  }
+
+  return result;
+}
+
+function trimRecordList(items: LogRecord[]) {
+  return items.length > 20000 ? items.slice(items.length - 20000) : items;
 }
 
 function handleLogScroll() {
@@ -501,7 +594,7 @@ function clearView() {
 
 function clearSelection() {
   selectedIds.value = new Set();
-  lastSelectedId.value = null;
+  lastSelectedKey.value = null;
 }
 
 function handleRowClick(record: LogRecord, event: MouseEvent) {
@@ -520,23 +613,25 @@ function handleRowClick(record: LogRecord, event: MouseEvent) {
     return;
   }
 
-  selectedIds.value = new Set([record.id]);
-  lastSelectedId.value = record.id;
+  const key = recordKey(record);
+  selectedIds.value = new Set([key]);
+  lastSelectedKey.value = key;
 }
 
 function toggleRecordSelection(record: LogRecord) {
+  const key = recordKey(record);
   const next = new Set(selectedIds.value);
-  next.has(record.id) ? next.delete(record.id) : next.add(record.id);
+  next.has(key) ? next.delete(key) : next.add(key);
   selectedIds.value = next;
   selectedRecord.value = record;
-  lastSelectedId.value = record.id;
+  lastSelectedKey.value = key;
 }
 
 function selectRange(record: LogRecord) {
   const visible = visibleRecords.value;
-  const lastId = lastSelectedId.value;
-  const lastIndex = lastId == null ? -1 : visible.findIndex((item) => item.id === lastId);
-  const currentIndex = visible.findIndex((item) => item.id === record.id);
+  const lastKey = lastSelectedKey.value;
+  const lastIndex = lastKey == null ? -1 : visible.findIndex((item) => recordKey(item) === lastKey);
+  const currentIndex = visible.findIndex((item) => recordKey(item) === recordKey(record));
   if (lastIndex < 0 || currentIndex < 0) {
     toggleRecordSelection(record);
     return;
@@ -545,9 +640,13 @@ function selectRange(record: LogRecord) {
   const [start, end] = lastIndex < currentIndex ? [lastIndex, currentIndex] : [currentIndex, lastIndex];
   const next = new Set(selectedIds.value);
   for (const item of visible.slice(start, end + 1))
-    next.add(item.id);
+    next.add(recordKey(item));
   selectedIds.value = next;
   selectedRecord.value = record;
+}
+
+function recordKey(record: LogRecord) {
+  return `${record.sessionId ?? "unknown"}:${record.id}`;
 }
 
 async function copySelectedMessages() {
@@ -677,6 +776,14 @@ function originTooltip(record: LogRecord) {
 function readEnum<T extends string>(key: string, values: readonly T[], fallback: T) {
   const value = localStorage.getItem(storagePrefix + key);
   return values.includes(value as T) ? (value as T) : fallback;
+}
+
+function readBoolean(key: string, fallback: boolean) {
+  const value = localStorage.getItem(storagePrefix + key);
+  if (value == null)
+    return fallback;
+
+  return value === "1" || value.toLowerCase() === "true";
 }
 
 function saveValue(key: string, value: string) {
@@ -848,6 +955,10 @@ function readNoiseRules() {
             <input v-model="regexSearch" type="checkbox"/>
             <span>{{ t.regexMode }}</span>
           </label>
+          <label v-tooltip="t.tipClearOnNewSession" class="check-option">
+            <input v-model="clearOnNewSession" type="checkbox"/>
+            <span>{{ t.clearOnNewSession }}</span>
+          </label>
           <button class="ghost" @click="clearFilters">{{ t.reset }}</button>
         </div>
 
@@ -896,8 +1007,8 @@ function readNoiseRules() {
                   'log-row',
                   record.severityText,
                   {
-                    focused: selectedRecord?.id === record.id,
-                selected: selectedIds.has(record.id),
+                    focused: selectedRecord ? recordKey(selectedRecord) === recordKey(record) : false,
+                selected: selectedIds.has(recordKey(record)),
                 multiline: isMultilineRecord(record)
               }
             ]"
@@ -907,7 +1018,7 @@ function readNoiseRules() {
                 >
                   <label v-tooltip="t.tipSelect" class="select-cell">
                     <input
-                        :checked="selectedIds.has(record.id)"
+                        :checked="selectedIds.has(recordKey(record))"
                         type="checkbox"
                         @change="toggleRecordSelection(record)"
                         @click.stop

@@ -1,14 +1,20 @@
+using System.Collections;
+using System.Reflection;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Entities.Rngs;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Multiplayer.Messages.Game.Checksums;
+using MegaCrit.Sts2.Core.Saves.Runs;
 
 namespace STS2RitsuLib.Networking.StateDivergence
 {
     internal static class StateDivergenceDiagnosticReportBuilder
     {
+        private const int MaxNestedSavedCardDepth = 3;
+        private const string MinionLibComponentBlobPropertyName = "MinionLibComponentStateBlob";
+
         public static StateDivergenceDiagnosticReport Build(
             StateDivergenceTrackedState local,
             StateDivergenceMessage remoteMessage,
@@ -157,8 +163,7 @@ namespace STS2RitsuLib.Networking.StateDivergence
                 AddIfDifferent(rows, path + ".gold", l.gold, r.gold);
                 AddIfDifferent(rows, path + ".potions", Join(l.potions.Select(p => Format(p.id))),
                     Join(r.potions.Select(p => Format(p.id))));
-                AddIfDifferent(rows, path + ".relics", Join(l.relics.Select(FormatRelic)),
-                    Join(r.relics.Select(FormatRelic)));
+                CompareRelics(rows, path + ".relics", l.relics, r.relics);
                 AddIfDifferent(rows, path + ".orbs", Join(l.orbs.Select(FormatOrb)),
                     Join(r.orbs.Select(FormatOrb)));
                 ComparePiles(rows, path, l.piles, r.piles);
@@ -187,20 +192,43 @@ namespace STS2RitsuLib.Networking.StateDivergence
             {
                 var l = local.FirstOrDefault(p => EqualityComparer<object>.Default.Equals(p.pileType, pileType));
                 var r = remote.FirstOrDefault(p => EqualityComparer<object>.Default.Equals(p.pileType, pileType));
-                var lCards = (l.cards ?? []).Select(FormatCard).ToList();
-                var rCards = (r.cards ?? []).Select(FormatCard).ToList();
-                if (lCards.SequenceEqual(rCards))
+                var items = BuildCardListItems(l.cards ?? [], r.cards ?? []);
+                if (!HasVisibleModelListDifference(items))
                     continue;
 
                 rows.Add(new(
                     $"{playerPath}.piles.{pileType}",
-                    FormatPileCards(lCards),
-                    FormatPileCards(rCards),
+                    FormatModelListSide(items, true),
+                    FormatModelListSide(items, false),
                     F("detail.pileSummary", "Local: {0}; remote: {1}; first mismatch: {2}.",
-                        FormatCardCount(lCards.Count),
-                        FormatCardCount(rCards.Count),
-                        FormatFirstMismatch(lCards, rCards))));
+                        FormatCardCount(l.cards?.Count ?? 0),
+                        FormatCardCount(r.cards?.Count ?? 0),
+                        FormatFirstMismatch(items)),
+                    StateDivergenceDiagnosticRowKind.ModelList,
+                    items));
             }
+        }
+
+        private static void CompareRelics(
+            ICollection<StateDivergenceDiagnosticRow> rows,
+            string path,
+            IReadOnlyList<NetFullCombatState.RelicState> local,
+            IReadOnlyList<NetFullCombatState.RelicState> remote)
+        {
+            var items = BuildRelicListItems(local, remote);
+            if (!HasVisibleModelListDifference(items))
+                return;
+
+            rows.Add(new(
+                path,
+                FormatModelListSide(items, true),
+                FormatModelListSide(items, false),
+                F("detail.modelListSummary", "Local: {0}; remote: {1}; first mismatch: {2}.",
+                    FormatItemCount(local.Count),
+                    FormatItemCount(remote.Count),
+                    FormatFirstMismatch(items)),
+                StateDivergenceDiagnosticRowKind.ModelList,
+                items));
         }
 
         private static StateDivergenceDiagnosticSection BuildRng(
@@ -301,27 +329,306 @@ namespace STS2RitsuLib.Networking.StateDivergence
             return "<unknown>";
         }
 
-        private static string FormatCard(NetFullCombatState.CardState state)
+        private static IReadOnlyList<StateDivergenceDiagnosticModelListItem> BuildCardListItems(
+            IReadOnlyList<NetFullCombatState.CardState> local,
+            IReadOnlyList<NetFullCombatState.CardState> remote)
+        {
+            var items = new List<StateDivergenceDiagnosticModelListItem>();
+            var count = Math.Max(local.Count, remote.Count);
+            for (var i = 0; i < count; i++)
+            {
+                var hasLocal = i < local.Count;
+                var hasRemote = i < remote.Count;
+                var localSummary = hasLocal ? FormatCardSummary(local[i]) : L("value.missing", "Missing");
+                var remoteSummary = hasRemote ? FormatCardSummary(remote[i]) : L("value.missing", "Missing");
+                var differences = hasLocal && hasRemote && ModelIdsEqual(local[i].card.Id, remote[i].card.Id)
+                    ? CompareCardState(local[i], remote[i], "")
+                    : [];
+
+                items.Add(new(i.ToString("00"), localSummary, remoteSummary, differences));
+            }
+
+            return items;
+        }
+
+        private static IReadOnlyList<StateDivergenceDiagnosticModelListItem> BuildRelicListItems(
+            IReadOnlyList<NetFullCombatState.RelicState> local,
+            IReadOnlyList<NetFullCombatState.RelicState> remote)
+        {
+            var items = new List<StateDivergenceDiagnosticModelListItem>();
+            var count = Math.Max(local.Count, remote.Count);
+            for (var i = 0; i < count; i++)
+            {
+                var hasLocal = i < local.Count;
+                var hasRemote = i < remote.Count;
+                var localSummary = hasLocal ? FormatRelicSummary(local[i]) : L("value.missing", "Missing");
+                var remoteSummary = hasRemote ? FormatRelicSummary(remote[i]) : L("value.missing", "Missing");
+                var differences = hasLocal && hasRemote && ModelIdsEqual(local[i].relic.Id, remote[i].relic.Id)
+                    ? CompareRelicState(local[i], remote[i], "")
+                    : [];
+
+                items.Add(new(i.ToString("00"), localSummary, remoteSummary, differences));
+            }
+
+            return items;
+        }
+
+        private static bool HasVisibleModelListDifference(
+            IReadOnlyList<StateDivergenceDiagnosticModelListItem> items)
+        {
+            return items.Any(item =>
+                item.Differences.Count > 0 ||
+                !string.Equals(item.LocalSummary, item.RemoteSummary, StringComparison.Ordinal));
+        }
+
+        private static IReadOnlyList<StateDivergenceDiagnosticFieldDifference> CompareCardState(
+            NetFullCombatState.CardState local,
+            NetFullCombatState.CardState remote,
+            string prefix,
+            int savedPropertyDepth = 0)
+        {
+            var differences = new List<StateDivergenceDiagnosticFieldDifference>();
+            AddFieldIfDifferent(differences, prefix + "upgrade",
+                local.card.CurrentUpgradeLevel, remote.card.CurrentUpgradeLevel);
+            AddFieldIfDifferent(differences, prefix + "floor",
+                FormatNullableInt(local.card.FloorAddedToDeck), FormatNullableInt(remote.card.FloorAddedToDeck));
+            AddFieldIfDifferent(differences, prefix + "energyCost",
+                FormatNullableInt(local.energyCost), FormatNullableInt(remote.energyCost));
+            AddFieldIfDifferent(differences, prefix + "affliction.id",
+                Format(local.affliction), Format(remote.affliction));
+            AddFieldIfDifferent(differences, prefix + "affliction.count",
+                local.afflictionCount, remote.afflictionCount);
+            AddFieldIfDifferent(differences, prefix + "keywords",
+                Join(local.keywords), Join(remote.keywords));
+            CompareEnchantment(differences, prefix + "enchantment", local.card.Enchantment, remote.card.Enchantment);
+            CompareSavedProperties(differences, prefix + "props", local.card.Props, remote.card.Props,
+                savedPropertyDepth);
+            return differences;
+        }
+
+        private static IReadOnlyList<StateDivergenceDiagnosticFieldDifference> CompareRelicState(
+            NetFullCombatState.RelicState local,
+            NetFullCombatState.RelicState remote,
+            string prefix)
+        {
+            var differences = new List<StateDivergenceDiagnosticFieldDifference>();
+            AddFieldIfDifferent(differences, prefix + "floor",
+                FormatNullableInt(local.relic.FloorAddedToDeck), FormatNullableInt(remote.relic.FloorAddedToDeck));
+            CompareSavedProperties(differences, prefix + "props", local.relic.Props, remote.relic.Props, 0);
+            return differences;
+        }
+
+        private static void CompareEnchantment(
+            ICollection<StateDivergenceDiagnosticFieldDifference> differences,
+            string path,
+            SerializableEnchantment? local,
+            SerializableEnchantment? remote)
+        {
+            if (local == null || remote == null || !ModelIdsEqual(local.Id, remote.Id))
+            {
+                AddFieldIfDifferent(differences, path, FormatEnchantment(local), FormatEnchantment(remote));
+                return;
+            }
+
+            AddFieldIfDifferent(differences, path + ".amount", local.Amount, remote.Amount);
+            CompareSavedProperties(differences, path + ".props", local.Props, remote.Props, 0);
+        }
+
+        private static void CompareSavedProperties(
+            ICollection<StateDivergenceDiagnosticFieldDifference> differences,
+            string path,
+            SavedProperties? local,
+            SavedProperties? remote,
+            int depth)
+        {
+            if (local == null || remote == null)
+            {
+                AddFieldIfDifferent(differences, path, FormatSavedProperties(local), FormatSavedProperties(remote));
+                return;
+            }
+
+            CompareSavedPropertyBucket(differences, path, local.ints, remote.ints, value => Format(value));
+            CompareSavedPropertyBucket(differences, path, local.bools, remote.bools, value => Format(value));
+            CompareSavedPropertyBucket(differences, path, local.strings, remote.strings, Format);
+            CompareIntArrayProperties(differences, path, local.intArrays, remote.intArrays);
+            CompareSavedPropertyBucket(differences, path, local.modelIds, remote.modelIds, Format);
+            CompareSavedCardProperties(differences, path, local.cards, remote.cards, depth);
+            CompareSavedCardArrayProperties(differences, path, local.cardArrays, remote.cardArrays, depth);
+        }
+
+        private static void CompareSavedPropertyBucket<T>(
+            ICollection<StateDivergenceDiagnosticFieldDifference> differences,
+            string path,
+            IReadOnlyList<SavedProperties.SavedProperty<T>>? local,
+            IReadOnlyList<SavedProperties.SavedProperty<T>>? remote,
+            Func<T?, string> format)
+        {
+            var names = (local?.Select(p => p.name) ?? [])
+                .Concat(remote?.Select(p => p.name) ?? [])
+                .Distinct()
+                .OrderBy(name => name, StringComparer.Ordinal);
+
+            foreach (var name in names)
+            {
+                var hasLocal = TryGetSavedProperty(local, name, out var localValue);
+                var hasRemote = TryGetSavedProperty(remote, name, out var remoteValue);
+                AddFieldIfDifferent(differences, path + "." + name,
+                    hasLocal ? format(localValue) : L("value.missing", "Missing"),
+                    hasRemote ? format(remoteValue) : L("value.missing", "Missing"));
+            }
+        }
+
+        private static void CompareIntArrayProperties(
+            ICollection<StateDivergenceDiagnosticFieldDifference> differences,
+            string path,
+            IReadOnlyList<SavedProperties.SavedProperty<int[]>>? local,
+            IReadOnlyList<SavedProperties.SavedProperty<int[]>>? remote)
+        {
+            var names = (local?.Select(p => p.name) ?? [])
+                .Concat(remote?.Select(p => p.name) ?? [])
+                .Distinct()
+                .OrderBy(name => name, StringComparer.Ordinal);
+
+            foreach (var name in names)
+            {
+                var hasLocal = TryGetSavedProperty(local, name, out var localValue);
+                var hasRemote = TryGetSavedProperty(remote, name, out var remoteValue);
+                AddFieldIfDifferent(differences, path + "." + name,
+                    hasLocal ? FormatIntArrayProperty(name, localValue) : L("value.missing", "Missing"),
+                    hasRemote ? FormatIntArrayProperty(name, remoteValue) : L("value.missing", "Missing"));
+            }
+        }
+
+        private static void CompareSavedCardProperties(
+            ICollection<StateDivergenceDiagnosticFieldDifference> differences,
+            string path,
+            IReadOnlyList<SavedProperties.SavedProperty<SerializableCard>>? local,
+            IReadOnlyList<SavedProperties.SavedProperty<SerializableCard>>? remote,
+            int depth)
+        {
+            var names = (local?.Select(p => p.name) ?? [])
+                .Concat(remote?.Select(p => p.name) ?? [])
+                .Distinct()
+                .OrderBy(name => name, StringComparer.Ordinal);
+
+            foreach (var name in names)
+            {
+                var hasLocal = TryGetSavedProperty(local, name, out var localCard);
+                var hasRemote = TryGetSavedProperty(remote, name, out var remoteCard);
+                CompareSavedCard(differences, path + "." + name,
+                    hasLocal ? localCard : null,
+                    hasRemote ? remoteCard : null,
+                    depth);
+            }
+        }
+
+        private static void CompareSavedCardArrayProperties(
+            ICollection<StateDivergenceDiagnosticFieldDifference> differences,
+            string path,
+            IReadOnlyList<SavedProperties.SavedProperty<SerializableCard[]>>? local,
+            IReadOnlyList<SavedProperties.SavedProperty<SerializableCard[]>>? remote,
+            int depth)
+        {
+            var names = (local?.Select(p => p.name) ?? [])
+                .Concat(remote?.Select(p => p.name) ?? [])
+                .Distinct()
+                .OrderBy(name => name, StringComparer.Ordinal);
+
+            foreach (var name in names)
+            {
+                var hasLocal = TryGetSavedProperty(local, name, out var localCards);
+                var hasRemote = TryGetSavedProperty(remote, name, out var remoteCards);
+                var l = hasLocal ? localCards : [];
+                var r = hasRemote ? remoteCards : [];
+                var count = Math.Max(l.Length, r.Length);
+                for (var i = 0; i < count; i++)
+                    CompareSavedCard(differences, $"{path}.{name}[{i}]",
+                        i < l.Length ? l[i] : null,
+                        i < r.Length ? r[i] : null,
+                        depth);
+            }
+        }
+
+        private static void CompareSavedCard(
+            ICollection<StateDivergenceDiagnosticFieldDifference> differences,
+            string path,
+            SerializableCard? local,
+            SerializableCard? remote,
+            int depth)
+        {
+            if (local == null || remote == null || !ModelIdsEqual(local.Id, remote.Id) ||
+                depth >= MaxNestedSavedCardDepth)
+            {
+                AddFieldIfDifferent(differences, path, FormatSerializableCard(local), FormatSerializableCard(remote));
+                return;
+            }
+
+            var nestedLocal = new NetFullCombatState.CardState { card = local };
+            var nestedRemote = new NetFullCombatState.CardState { card = remote };
+            foreach (var difference in CompareCardState(nestedLocal, nestedRemote, path + ".", depth + 1)
+                         .Where(d => !d.Path.EndsWith(".energyCost", StringComparison.Ordinal) &&
+                                     !d.Path.Contains(".affliction.", StringComparison.Ordinal) &&
+                                     !d.Path.EndsWith(".keywords", StringComparison.Ordinal)))
+                differences.Add(difference);
+        }
+
+        private static bool TryGetSavedProperty<T>(
+            IReadOnlyList<SavedProperties.SavedProperty<T>>? properties,
+            string name,
+            out T value)
+        {
+            if (properties != null)
+                foreach (var property in properties)
+                {
+                    if (!string.Equals(property.name, name, StringComparison.Ordinal))
+                        continue;
+
+                    value = property.value;
+                    return true;
+                }
+
+            value = default!;
+            return false;
+        }
+
+        private static void AddFieldIfDifferent(
+            ICollection<StateDivergenceDiagnosticFieldDifference> differences,
+            string path,
+            object? local,
+            object? remote)
+        {
+            var l = Format(local);
+            var r = Format(remote);
+            if (!string.Equals(l, r, StringComparison.Ordinal))
+                differences.Add(new(path, l, r));
+        }
+
+        private static string FormatCardSummary(NetFullCombatState.CardState state)
         {
             var pieces = new List<string> { Format(state.card.Id) };
             if (state.card.CurrentUpgradeLevel != 0)
                 pieces.Add("+" + state.card.CurrentUpgradeLevel);
+            if (state.card.FloorAddedToDeck.HasValue)
+                pieces.Add("floor=" + state.card.FloorAddedToDeck.Value);
             if (state.energyCost.HasValue)
                 pieces.Add("cost=" + state.energyCost.Value);
             if (state.affliction != null)
                 pieces.Add("affliction=" + Format(state.affliction) + ":" + state.afflictionCount);
             if (state.keywords is { Count: > 0 })
                 pieces.Add("keywords=" + Join(state.keywords));
-            if (state.card.Props != null)
-                pieces.Add("props=" + state.card.Props);
+            if (state.card.Enchantment != null)
+                pieces.Add("enchant=" + FormatEnchantment(state.card.Enchantment));
             return string.Join(" ", pieces);
         }
 
-        private static string FormatPileCards(IReadOnlyList<string> cards)
+        private static string FormatModelListSide(
+            IReadOnlyList<StateDivergenceDiagnosticModelListItem> items,
+            bool local)
         {
-            return cards.Count == 0
+            return items.Count == 0
                 ? L("value.empty", "<empty>")
-                : string.Join(Environment.NewLine, cards.Select((card, i) => $"{i:00}  {card}"));
+                : string.Join(Environment.NewLine,
+                    items.Select(item => $"{item.Index}  {(local ? item.LocalSummary : item.RemoteSummary)}"));
         }
 
         private static string FormatCardCount(int count)
@@ -329,28 +636,170 @@ namespace STS2RitsuLib.Networking.StateDivergence
             return F("value.cardCount", "{0} card(s)", count);
         }
 
-        private static string FormatFirstMismatch(IReadOnlyList<string> local, IReadOnlyList<string> remote)
+        private static string FormatItemCount(int count)
         {
-            var count = Math.Max(local.Count, remote.Count);
-            for (var i = 0; i < count; i++)
-            {
-                var l = i < local.Count ? local[i] : null;
-                var r = i < remote.Count ? remote[i] : null;
-                if (!string.Equals(l, r, StringComparison.Ordinal))
-                    return F("value.cardIndex", "index {0}", i);
-            }
+            return F("value.itemCount", "{0} item(s)", count);
+        }
+
+        private static string FormatFirstMismatch(
+            IReadOnlyList<StateDivergenceDiagnosticModelListItem> items)
+        {
+            foreach (var item in items)
+                if (item.Differences.Count > 0 ||
+                    !string.Equals(item.LocalSummary, item.RemoteSummary, StringComparison.Ordinal))
+                    return F("value.cardIndex", "index {0}", item.Index);
 
             return L("value.none", "<none>");
         }
 
-        private static string FormatRelic(NetFullCombatState.RelicState state)
+        private static string FormatRelicSummary(NetFullCombatState.RelicState state)
         {
             var pieces = new List<string> { Format(state.relic.Id) };
             if (state.relic.FloorAddedToDeck.HasValue)
                 pieces.Add("floor=" + state.relic.FloorAddedToDeck.Value);
-            if (state.relic.Props != null)
-                pieces.Add("props=" + state.relic.Props);
             return string.Join(" ", pieces);
+        }
+
+        private static string FormatSerializableCard(SerializableCard? card)
+        {
+            return card == null ? L("value.missing", "Missing") : FormatCardSummary(new() { card = card });
+        }
+
+        private static string FormatEnchantment(SerializableEnchantment? enchantment)
+        {
+            return enchantment == null
+                ? L("value.none", "<none>")
+                : $"{Format(enchantment.Id)} amount={enchantment.Amount}";
+        }
+
+        private static string FormatSavedProperties(SavedProperties? properties)
+        {
+            return properties == null ? L("value.none", "<none>") : properties.ToString();
+        }
+
+        private static string FormatNullableInt(int? value)
+        {
+            return value.HasValue ? value.Value.ToString() : L("value.none", "<none>");
+        }
+
+        private static string FormatIntArrayProperty(int[]? value)
+        {
+            return FormatIntArrayProperty("", value);
+        }
+
+        private static string FormatIntArrayProperty(string name, int[]? value)
+        {
+            if (value == null)
+                return L("value.none", "<none>");
+
+            if (string.Equals(name, MinionLibComponentBlobPropertyName, StringComparison.Ordinal))
+                return TryFormatMinionLibComponents(value) ??
+                       $"MinionLib components blob len={value.Length} hash=0x{StableHash(value):X8} raw={FormatIntArray(value)}";
+
+            return FormatIntArray(value);
+        }
+
+        private static string FormatIntArray(int[] value)
+        {
+            return "[" + string.Join(", ", value) + "]";
+        }
+
+        private static string? TryFormatMinionLibComponents(int[] blob)
+        {
+            try
+            {
+                var serializerType = AppDomain.CurrentDomain.GetAssemblies()
+                    .Select(assembly => assembly.GetType("MinionLib.Component.Core.CardComponentStateSerializer"))
+                    .FirstOrDefault(type => type != null);
+                var deserialize = serializerType?.GetMethod("Deserialize",
+                    BindingFlags.Public | BindingFlags.Static);
+                if (deserialize == null)
+                    return null;
+
+                if (deserialize.Invoke(null, [blob, null]) is not IEnumerable components)
+                    return null;
+
+                var lines = new List<string> { "Components:" };
+                var count = 0;
+                foreach (var component in components)
+                {
+                    count++;
+                    lines.AddRange(FormatMinionLibComponent(component));
+                }
+
+                if (count == 0)
+                    lines.Add("  [Empty]");
+
+                return string.Join(Environment.NewLine, lines);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static IEnumerable<string> FormatMinionLibComponent(object component)
+        {
+            var type = component.GetType();
+            var componentId = type.GetProperty("ComponentId", BindingFlags.Instance | BindingFlags.Public)
+                ?.GetValue(component)
+                ?.ToString();
+            yield return "  - " + (string.IsNullOrWhiteSpace(componentId) ? type.Name : componentId);
+
+            var stateProperties = type
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(prop => prop.CanRead &&
+                               prop.GetIndexParameters().Length == 0 &&
+                               prop.GetCustomAttributes(true).Any(IsMinionLibComponentStateAttribute))
+                .OrderBy(prop => prop.Name, StringComparer.Ordinal);
+            foreach (var property in stateProperties)
+            {
+                object? value;
+                try
+                {
+                    value = property.GetValue(component);
+                }
+                catch
+                {
+                    value = "<unreadable>";
+                }
+
+                yield return $"    {property.Name}: {FormatReflectedValue(value)}";
+            }
+        }
+
+        private static bool IsMinionLibComponentStateAttribute(object attribute)
+        {
+            return attribute.GetType().FullName
+                ?.StartsWith("MinionLib.Component.Core.ComponentStateAttribute", StringComparison.Ordinal) == true;
+        }
+
+        private static string FormatReflectedValue(object? value)
+        {
+            return value switch
+            {
+                null => L("value.none", "<none>"),
+                string text => text,
+                IEnumerable enumerable => "[" +
+                                          string.Join(", ", enumerable.Cast<object?>().Select(FormatReflectedValue)) +
+                                          "]",
+                _ => value.ToString() ?? "",
+            };
+        }
+
+        private static uint StableHash(IEnumerable<int> values)
+        {
+            unchecked
+            {
+                var hash = 2166136261u;
+                foreach (var value in values)
+                {
+                    hash ^= (uint)value;
+                    hash *= 16777619u;
+                }
+
+                return hash;
+            }
         }
 
         private static string FormatOrb(NetFullCombatState.OrbState state)
@@ -383,6 +832,11 @@ namespace STS2RitsuLib.Networking.StateDivergence
                 PlayerRngType rng => rng.ToString(),
                 _ => value.ToString() ?? "",
             };
+        }
+
+        private static bool ModelIdsEqual(ModelId? local, ModelId? remote)
+        {
+            return string.Equals(local?.ToString(), remote?.ToString(), StringComparison.Ordinal);
         }
 
         private static string FormatModelId(ModelId id)

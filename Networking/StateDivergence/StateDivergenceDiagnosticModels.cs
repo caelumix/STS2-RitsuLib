@@ -21,11 +21,30 @@ namespace STS2RitsuLib.Networking.StateDivergence
         bool StartsCollapsed,
         IReadOnlyList<StateDivergenceDiagnosticRow> Rows);
 
+    internal enum StateDivergenceDiagnosticRowKind
+    {
+        Normal,
+        ModelList,
+    }
+
     internal sealed record StateDivergenceDiagnosticRow(
         string Path,
         string LocalValue,
         string RemoteValue,
-        string Detail = "");
+        string Detail = "",
+        StateDivergenceDiagnosticRowKind Kind = StateDivergenceDiagnosticRowKind.Normal,
+        IReadOnlyList<StateDivergenceDiagnosticModelListItem>? ModelItems = null);
+
+    internal sealed record StateDivergenceDiagnosticModelListItem(
+        string Index,
+        string LocalSummary,
+        string RemoteSummary,
+        IReadOnlyList<StateDivergenceDiagnosticFieldDifference> Differences);
+
+    internal sealed record StateDivergenceDiagnosticFieldDifference(
+        string Path,
+        string LocalValue,
+        string RemoteValue);
 
     internal readonly record struct StateDivergenceTrackedState(
         NetChecksumData Checksum,

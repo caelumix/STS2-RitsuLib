@@ -8,26 +8,25 @@ using STS2RitsuLib.Ui.Shell;
 using STS2RitsuLib.Ui.Shell.Theme;
 using STS2RitsuLib.Ui.Toast;
 
-namespace STS2RitsuLib.Networking.JoinDiagnostics
+namespace STS2RitsuLib.Networking.StateDivergence
 {
-    internal sealed partial class JoinFailureDiagnosticsPanel : Control, IScreenContext
+    internal sealed partial class StateDivergenceDiagnosticsPanel : Control, IScreenContext
     {
         private const int ControllerScrollStep = 72;
-        private const string FocusRefreshAttachedMeta = "ritsu_join_diagnostics_focus_refresh_attached";
+        private const string FocusRefreshAttachedMeta = "ritsu_state_divergence_focus_refresh_attached";
         private readonly List<Control> _focusChain = [];
-        private readonly JoinFailureDiagnosticReport _report = null!;
+        private readonly StateDivergenceDiagnosticReport _report = null!;
         private bool _focusRefreshScheduled;
-        private VBoxContainer? _issuesRoot;
         private ScrollContainer? _mainScroll;
 
-        public JoinFailureDiagnosticsPanel(JoinFailureDiagnosticReport report)
+        public StateDivergenceDiagnosticsPanel(StateDivergenceDiagnosticReport report)
         {
             _report = report;
-            Name = "RitsuJoinFailureDiagnosticsPanel";
+            Name = "RitsuStateDivergenceDiagnosticsPanel";
             MouseFilter = MouseFilterEnum.Stop;
         }
 
-        public JoinFailureDiagnosticsPanel()
+        public StateDivergenceDiagnosticsPanel()
         {
         }
 
@@ -107,7 +106,7 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             margin.AddChild(root);
 
             root.AddChild(BuildHeader());
-            root.AddChild(BuildIssues());
+            root.AddChild(BuildSections());
             root.AddChild(BuildFooter());
         }
 
@@ -142,11 +141,10 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             };
             row.AddChild(close);
             DefaultFocusedControl = close;
-
             return row;
         }
 
-        private Control BuildIssues()
+        private Control BuildSections()
         {
             var scroll = new ScrollContainer
             {
@@ -165,6 +163,7 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
                 MouseFilter = MouseFilterEnum.Ignore,
             };
             box.AddThemeConstantOverride("separation", 12);
+
             var scrollMargin = new MarginContainer
             {
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
@@ -174,11 +173,10 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
                 ModSettingsUiControlTheming.ResolveSettingsScrollContentRightGutter(scroll));
             scroll.AddChild(scrollMargin);
             scrollMargin.AddChild(box);
-            _issuesRoot = box;
 
             box.AddChild(BuildSummarySection());
-            foreach (var issue in _report.Issues)
-                box.AddChild(BuildIssue(issue));
+            foreach (var section in _report.Sections)
+                box.AddChild(BuildSection(section));
 
             return scroll;
         }
@@ -186,8 +184,8 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
         private Control BuildSummarySection()
         {
             return new ModSettingsCollapsibleSection(
-                T("section.summary", "Summary"),
-                "join_summary",
+                T("section.summary.title", "Summary"),
+                "state_divergence_summary",
                 _report.Summary,
                 false,
                 [BuildSummaryBody()]);
@@ -202,54 +200,11 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             };
             box.AddThemeConstantOverride("separation", 8);
             box.AddChild(CreateInfoCard(_report.Summary, RitsuShellTheme.Current.Text.RichBody));
-
-            if (_report.Host != null)
-                box.AddChild(BuildPeerSnapshotRow());
-
+            box.AddChild(BuildChecksumCards());
             return box;
         }
 
-        private Control BuildIssue(JoinFailureIssue issue)
-        {
-            return new ModSettingsCollapsibleSection(
-                issue.Title,
-                "join_issue_" + issue.Kind,
-                issue.Description,
-                ShouldStartCollapsed(issue),
-                [BuildIssueBody(issue)]);
-        }
-
-        private static bool ShouldStartCollapsed(JoinFailureIssue issue)
-        {
-            return issue.Kind is JoinFailureIssueKind.Network or JoinFailureIssueKind.Transport;
-        }
-
-        private Control BuildIssueBody(JoinFailureIssue issue)
-        {
-            var box = new VBoxContainer
-            {
-                SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                MouseFilter = MouseFilterEnum.Ignore,
-            };
-            box.AddThemeConstantOverride("separation", 10);
-
-            if (issue.Rows.Count == 0)
-            {
-                box.AddChild(CreateInfoCard(issue.Description, RitsuShellTheme.Current.Text.RichBody));
-                return box;
-            }
-
-            box.AddChild(BuildDetailRows(issue.Rows));
-
-            if (issue.Kind == JoinFailureIssueKind.ModOrder &&
-                _report.Host is { } host &&
-                host.GameplayMods.Count == _report.Local.GameplayMods.Count)
-                box.AddChild(BuildModOrderLists(host.GameplayMods, _report.Local.GameplayMods));
-
-            return box;
-        }
-
-        private Control BuildPeerSnapshotRow()
+        private Control BuildChecksumCards()
         {
             var row = new HBoxContainer
             {
@@ -257,21 +212,12 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
                 MouseFilter = MouseFilterEnum.Ignore,
             };
             row.AddThemeConstantOverride("separation", 10);
-
-            row.AddChild(CreateSnapshotCard(
-                T("column.host", "Host"),
-                _report.Host!.GameVersion,
-                _report.Host.ModelDbHash,
-                _report.Host.GameplayMods.Count));
-            row.AddChild(CreateSnapshotCard(
-                T("column.local", "Local"),
-                _report.Local.GameVersion,
-                _report.Local.ModelDbHash,
-                _report.Local.GameplayMods.Count));
+            row.AddChild(CreateChecksumCard(T("column.local", "Local"), _report.LocalChecksum));
+            row.AddChild(CreateChecksumCard(T("column.remote", "Remote"), _report.RemoteChecksum));
             return row;
         }
 
-        private Control CreateSnapshotCard(string title, string version, uint modelDbHash, int modCount)
+        private Control CreateChecksumCard(string title, StateDivergenceChecksumInfo info)
         {
             var panel = new PanelContainer
             {
@@ -282,23 +228,31 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
 
             var box = CreateInsetVBox(panel, 10, 7, 10, 7, 4);
             box.AddChild(CreateLabel(title, 16, RitsuShellTheme.Current.Text.RichTitle, true));
-            box.AddChild(CreateLabel(
-                F("snapshot.version", "Version: {0}", version),
-                14,
+            box.AddChild(CreateLabel(F("checksum.id", "ID: {0}", info.Id), 14,
                 RitsuShellTheme.Current.Text.RichBody));
-            box.AddChild(CreateLabel(
-                F("snapshot.modelDb", "ModelDb: {0}", modelDbHash),
-                14,
+            box.AddChild(CreateLabel(F("checksum.value", "Checksum: {0}", info.Checksum), 14,
                 RitsuShellTheme.Current.Text.RichBody));
-            box.AddChild(CreateLabel(
-                F("snapshot.mods", "Gameplay mods: {0}", modCount),
-                14,
+            box.AddChild(CreateLabel(F("checksum.context", "Context: {0}", info.Context), 14,
                 RitsuShellTheme.Current.Text.RichBody));
             return panel;
         }
 
-        private Control BuildDetailRows(IReadOnlyList<JoinFailureDetailRow> rows)
+        private Control BuildSection(StateDivergenceDiagnosticSection section)
         {
+            return new ModSettingsCollapsibleSection(
+                section.Title,
+                "state_divergence_" + section.Title.GetHashCode(),
+                section.Description,
+                section.StartsCollapsed,
+                [BuildSectionBody(section)]);
+        }
+
+        private Control BuildSectionBody(StateDivergenceDiagnosticSection section)
+        {
+            if (section.Rows.Count == 0)
+                return CreateInfoCard(T("value.noDifferences", "No visible differences in this section."),
+                    RitsuShellTheme.Current.Text.RichMuted);
+
             var panel = new PanelContainer
             {
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
@@ -308,7 +262,7 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
 
             var box = CreateInsetVBox(panel, 10, 8, 10, 8, 6);
             box.AddChild(BuildDetailHeaderRow());
-            foreach (var row in rows)
+            foreach (var row in section.Rows)
                 box.AddChild(BuildDetailRow(row));
 
             return panel;
@@ -322,22 +276,21 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
                 MouseFilter = MouseFilterEnum.Ignore,
             };
             row.AddThemeConstantOverride("separation", 10);
-            row.AddChild(CreateFixedHeaderLabel(T("column.item", "Item"), 250));
-            row.AddChild(CreateHeaderLabel(T("column.host", "Host")));
+            row.AddChild(CreateFixedHeaderLabel(T("column.path", "Path"), 310));
             row.AddChild(CreateHeaderLabel(T("column.local", "Local")));
+            row.AddChild(CreateHeaderLabel(T("column.remote", "Remote")));
             return row;
         }
 
-        private Control BuildDetailRow(JoinFailureDetailRow detail)
+        private Control BuildDetailRow(StateDivergenceDiagnosticRow detail)
         {
-            var differs = !string.Equals(detail.HostValue, detail.LocalValue, StringComparison.Ordinal);
             var panel = new PanelContainer
             {
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
                 CustomMinimumSize = new(0f, 44f),
                 MouseFilter = MouseFilterEnum.Ignore,
             };
-            panel.AddThemeStyleboxOverride("panel", ModSettingsUiFactory.CreateListItemCardStyle(differs));
+            panel.AddThemeStyleboxOverride("panel", ModSettingsUiFactory.CreateListItemCardStyle(true));
 
             var row = new HBoxContainer
             {
@@ -349,91 +302,9 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             row.AddThemeConstantOverride("separation", 10);
             panel.AddChild(row);
 
-            row.AddChild(CreateFixedValueLabel(detail.Label, 250, RitsuShellTheme.Current.Text.RichTitle, true));
-            row.AddChild(CreateValueLabel(detail.HostValue, ValueColor(detail.HostValue, differs)));
-            row.AddChild(CreateValueLabel(detail.LocalValue, ValueColor(detail.LocalValue, differs)));
-            return panel;
-        }
-
-        private Control BuildModOrderLists(
-            IReadOnlyList<JoinDiagnosticsModEntry> hostMods,
-            IReadOnlyList<JoinDiagnosticsModEntry> localMods)
-        {
-            var row = new HBoxContainer
-            {
-                SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                MouseFilter = MouseFilterEnum.Ignore,
-            };
-            row.AddThemeConstantOverride("separation", 14);
-            row.AddChild(BuildModOrderList(T("column.hostOrder", "Host order"), hostMods, localMods));
-            row.AddChild(BuildModOrderList(T("column.localOrder", "Local order"), localMods, hostMods));
-            return row;
-        }
-
-        private Control BuildModOrderList(
-            string title,
-            IReadOnlyList<JoinDiagnosticsModEntry> mods,
-            IReadOnlyList<JoinDiagnosticsModEntry> counterpart)
-        {
-            var panel = new PanelContainer
-            {
-                SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                MouseFilter = MouseFilterEnum.Ignore,
-            };
-            panel.AddThemeStyleboxOverride("panel", ModSettingsUiFactory.CreateListShellStyle());
-
-            var box = CreateInsetVBox(panel, 10, 8, 10, 8, 6);
-
-            box.AddChild(CreateLabel(title, 18, RitsuShellTheme.Current.Text.RichTitle, true));
-
-            var entries = new VBoxContainer
-            {
-                SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                MouseFilter = MouseFilterEnum.Ignore,
-            };
-            entries.AddThemeConstantOverride("separation", 6);
-            box.AddChild(entries);
-
-            for (var i = 0; i < mods.Count; i++)
-            {
-                var mod = mods[i];
-                var matches = i < counterpart.Count &&
-                              string.Equals(mod.Key, counterpart[i].Key, StringComparison.Ordinal);
-                entries.AddChild(BuildModOrderRow(i, mod, matches));
-            }
-
-            return panel;
-        }
-
-        private Control BuildModOrderRow(int index, JoinDiagnosticsModEntry mod, bool matches)
-        {
-            var panel = new PanelContainer
-            {
-                SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                CustomMinimumSize = new(0f, 38f),
-                MouseFilter = MouseFilterEnum.Ignore,
-            };
-            panel.AddThemeStyleboxOverride("panel", ModSettingsUiFactory.CreateListItemCardStyle(!matches));
-
-            var row = new HBoxContainer
-            {
-                SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                SizeFlagsVertical = SizeFlags.ExpandFill,
-                MouseFilter = MouseFilterEnum.Ignore,
-                Alignment = BoxContainer.AlignmentMode.Center,
-            };
-            row.AddThemeConstantOverride("separation", 8);
-            panel.AddChild(row);
-
-            row.AddChild(CreateFixedValueLabel("#" + (index + 1).ToString("00"), 46,
-                RitsuShellTheme.Current.Text.Number, false));
-            row.AddChild(CreateValueLabel(FormatModLine(mod),
-                matches ? RitsuShellTheme.Current.Text.RichBody : RitsuShellTheme.Current.Text.HoverHighlight));
-            row.AddChild(CreateFixedValueLabel(
-                matches ? T("value.same", "same") : T("value.differs", "differs"),
-                76,
-                matches ? RitsuShellTheme.Current.Text.RichMuted : RitsuShellTheme.Current.Text.HoverHighlight,
-                false));
+            row.AddChild(CreateFixedValueLabel(detail.Path, 310, RitsuShellTheme.Current.Text.RichTitle, true));
+            row.AddChild(CreateValueLabel(detail.LocalValue, RitsuShellTheme.Current.Text.RichBody));
+            row.AddChild(CreateValueLabel(detail.RemoteValue, RitsuShellTheme.Current.Text.HoverHighlight));
             return panel;
         }
 
@@ -445,12 +316,10 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
                 MouseFilter = MouseFilterEnum.Ignore,
             };
             row.AddThemeConstantOverride("separation", 10);
-
-            var reason = F("footer.networkReason", "Network reason: {0}", _report.NetworkReason);
-            if (!string.IsNullOrWhiteSpace(_report.NetworkInfo))
-                reason += "  " + F("footer.networkInfo", "Info: {0}", _report.NetworkInfo);
-
-            var label = CreateLabel(reason, 14, RitsuShellTheme.Current.Text.LabelSecondary);
+            var label = CreateLabel(
+                F("footer.context", "Role: {0}  Remote peer: {1}", _report.Role, _report.RemotePeerId),
+                14,
+                RitsuShellTheme.Current.Text.LabelSecondary);
             label.SizeFlagsHorizontal = SizeFlags.ExpandFill;
             row.AddChild(label);
             return row;
@@ -554,8 +423,8 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             DisplayServer.ClipboardSet(BuildExportReport());
             ModSettingsClipboardAccess.InvalidateCache();
             RitsuToastService.ShowInfo(
-                T("toast.reportCopied.body", "Join failure report copied to clipboard."),
-                T("toast.reportCopied.title", "Join diagnostics"));
+                T("toast.reportCopied.body", "State divergence report copied to clipboard."),
+                T("toast.reportCopied.title", "State divergence"));
         }
 
         private string BuildExportReport()
@@ -564,70 +433,37 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             builder.AppendLine(_report.Title);
             builder.AppendLine(new('=', _report.Title.Length));
             builder.AppendLine();
-            builder.AppendLine(T("section.summary", "Summary"));
             builder.AppendLine(_report.Summary);
+            builder.AppendLine(F("footer.context", "Role: {0}  Remote peer: {1}", _report.Role,
+                _report.RemotePeerId));
             builder.AppendLine();
-            builder.AppendLine(F("footer.networkReason", "Network reason: {0}", _report.NetworkReason));
-            if (!string.IsNullOrWhiteSpace(_report.NetworkInfo))
-                builder.AppendLine(F("footer.networkInfo", "Info: {0}", _report.NetworkInfo));
+            AppendChecksum(builder, T("column.local", "Local"), _report.LocalChecksum);
+            AppendChecksum(builder, T("column.remote", "Remote"), _report.RemoteChecksum);
 
-            builder.AppendLine();
-            AppendPeerSnapshot(builder, T("column.host", "Host"), _report.Host);
-            AppendPeerSnapshot(builder, T("column.local", "Local"), _report.Local);
-
-            foreach (var issue in _report.Issues)
+            foreach (var section in _report.Sections)
             {
                 builder.AppendLine();
-                builder.AppendLine(issue.Title);
-                builder.AppendLine(new('-', issue.Title.Length));
-                builder.AppendLine(issue.Description);
-
-                foreach (var row in issue.Rows)
-                    builder.AppendLine(
-                        $"{row.Label}: {T("column.host", "Host")}={row.HostValue}; {T("column.local", "Local")}={row.LocalValue}");
-
-                if (issue.Kind != JoinFailureIssueKind.ModOrder ||
-                    _report.Host is not { } host ||
-                    host.GameplayMods.Count != _report.Local.GameplayMods.Count) continue;
-                builder.AppendLine();
-                AppendModOrder(builder, T("column.hostOrder", "Host order"), host.GameplayMods,
-                    _report.Local.GameplayMods);
-                builder.AppendLine();
-                AppendModOrder(builder, T("column.localOrder", "Local order"), _report.Local.GameplayMods,
-                    host.GameplayMods);
+                builder.AppendLine(section.Title);
+                builder.AppendLine(new('-', section.Title.Length));
+                builder.AppendLine(section.Description);
+                foreach (var row in section.Rows)
+                    builder.AppendLine($"{row.Path}: local={row.LocalValue}; remote={row.RemoteValue}");
             }
 
+            builder.AppendLine();
+            builder.AppendLine("LOCAL STATE DUMP");
+            builder.AppendLine(_report.LocalStateDump);
+            builder.AppendLine("REMOTE STATE DUMP");
+            builder.AppendLine(_report.RemoteStateDump);
             return builder.ToString();
         }
 
-        private static void AppendPeerSnapshot(StringBuilder builder, string title, JoinPeerSnapshot? snapshot)
+        private static void AppendChecksum(StringBuilder builder, string title, StateDivergenceChecksumInfo info)
         {
             builder.AppendLine(title);
-            if (snapshot == null)
-            {
-                builder.AppendLine("  <unknown>");
-                return;
-            }
-
-            builder.AppendLine("  " + F("snapshot.version", "Version: {0}", snapshot.GameVersion));
-            builder.AppendLine("  " + F("snapshot.modelDb", "ModelDb: {0}", snapshot.ModelDbHash));
-            builder.AppendLine("  " + F("snapshot.mods", "Gameplay mods: {0}", snapshot.GameplayMods.Count));
-        }
-
-        private static void AppendModOrder(
-            StringBuilder builder,
-            string title,
-            IReadOnlyList<JoinDiagnosticsModEntry> mods,
-            IReadOnlyList<JoinDiagnosticsModEntry> counterpart)
-        {
-            builder.AppendLine(title);
-            for (var i = 0; i < mods.Count; i++)
-            {
-                var matches = i < counterpart.Count &&
-                              string.Equals(mods[i].Key, counterpart[i].Key, StringComparison.Ordinal);
-                builder.AppendLine(
-                    $"  #{i + 1:00} [{(matches ? T("value.same", "same") : T("value.differs", "differs"))}] {FormatModLine(mods[i])}");
-            }
+            builder.AppendLine("  " + F("checksum.id", "ID: {0}", info.Id));
+            builder.AppendLine("  " + F("checksum.value", "Checksum: {0}", info.Checksum));
+            builder.AppendLine("  " + F("checksum.context", "Context: {0}", info.Context));
         }
 
         private bool TryScrollFromInput(InputEvent @event)
@@ -722,37 +558,18 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             }
         }
 
-        private static Color ValueColor(string value, bool differs)
-        {
-            if (!differs)
-                return RitsuShellTheme.Current.Text.RichBody;
-
-            return string.Equals(value, T("value.missing", "Missing"), StringComparison.Ordinal)
-                ? RitsuShellTheme.Current.Text.HoverHighlight
-                : RitsuShellTheme.Current.Text.RichBody;
-        }
-
-        private static string FormatModLine(JoinDiagnosticsModEntry mod)
-        {
-            if (!string.IsNullOrWhiteSpace(mod.Name) &&
-                !string.Equals(mod.Name, mod.Id, StringComparison.Ordinal))
-                return mod.Name + " (" + mod.Key + ")";
-
-            return mod.Key;
-        }
-
         private static string T(string key, string fallback)
         {
-            return JoinFailureDiagnosticsLocalization.Get(key, fallback);
+            return StateDivergenceDiagnosticsLocalization.Get(key, fallback);
         }
 
         private static string F(string key, string fallback, params object?[] args)
         {
-            return JoinFailureDiagnosticsLocalization.Format(key, fallback, args);
+            return StateDivergenceDiagnosticsLocalization.Format(key, fallback, args);
         }
     }
 
-    internal static class JoinFailureDiagnosticsPanelExtensions
+    internal static class StateDivergenceDiagnosticsPanelExtensions
     {
         public static T Also<T>(this T value, Action<T> action)
         {

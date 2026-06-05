@@ -437,10 +437,10 @@ namespace STS2RitsuLib
 
         private static string GetCompatBranchLabel()
         {
-#if STS2_AT_LEAST_0_106_1
+#if STS2_AT_LEAST_0_107_0
+            return "0.107.0";
+#elif STS2_AT_LEAST_0_106_1
             return "0.106.1";
-#elif STS2_AT_LEAST_0_105_1
-            return "0.105.1";
 #elif STS2_AT_LEAST_0_103_2
             return "0.103.2";
 #else

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -9,13 +10,13 @@ namespace STS2RitsuLib.Keywords.Patches
 {
     /// <summary>
     ///     Seeds minted mod <see cref="CardKeyword" /> values onto every <see cref="ModCardTemplate" /> instance
-    ///     after vanilla <c>CardModel.get_Keywords</c> materializes the underlying <c>_keywords</c> set. Keeps
+    ///     after vanilla <c>CardModel.get_Keywords</c> materializes the underlying local keyword set. Keeps
     ///     <see cref="ModCardTemplate.RegisteredKeywordIds" /> as an independent channel from vanilla
     ///     <see cref="CardModel.CanonicalKeywords" /> so downstream mods can still override
     ///     <c>CanonicalKeywords</c> without dropping their mod keyword declarations. Seeding is tracked per
     ///     instance with a <see cref="ConditionalWeakTable{TKey,TValue}" /> marker so the postfix executes the
     ///     resolution loop exactly once per card lifetime (subsequent calls are an O(1) early-out).
-    ///     在原版 <c>CardModel.get_Keywords</c> 实体化底层 <c>_keywords</c> 集合后，将铸造的 mod <see cref="CardKeyword" /> 值种入每个
+    ///     在原版 <c>CardModel.get_Keywords</c> 实体化底层本地关键词集合后，将铸造的 mod <see cref="CardKeyword" /> 值种入每个
     ///     <see cref="ModCardTemplate" /> 实例。保持
     ///     <see cref="ModCardTemplate.RegisteredKeywordIds" /> 作为独立于原版
     ///     <see cref="CardModel.CanonicalKeywords" /> 的通道，使下游 mod 仍可覆盖
@@ -47,16 +48,13 @@ namespace STS2RitsuLib.Keywords.Patches
         /// <summary>
         ///     Unions the minted <see cref="CardKeyword" /> values of the card's
         ///     <see cref="ModCardTemplate.RegisteredKeywordIds" /> into the vanilla keyword set the first time the
-        ///     getter runs. The returned <c>IReadOnlySet&lt;CardKeyword&gt;</c> is physically the private
-        ///     <c>HashSet&lt;CardKeyword&gt;</c> field, so direct casts are safe and the writes flow into the real
-        ///     storage used by subsequent reads, <c>AddKeyword</c>/<c>RemoveKeyword</c>, and
-        ///     <c>DeepCloneFields</c>.
+        ///     getter runs. In combat, the getter can return a temporary all-sources set rather than the private
+        ///     local storage, so on APIs that expose keyword sources this writes through
+        ///     <c>KeywordSources.Local</c> and mirrors the values into the current result.
         ///     第一次运行 getter 时，将卡牌的
-        ///     <see cref="ModCardTemplate.RegisteredKeywordIds" /> 对应的铸造 <see cref="CardKeyword" /> 值并入原版关键词集合。返回的
-        ///     <c>IReadOnlySet&lt;CardKeyword&gt;</c> 实际上就是 private
-        ///     <c>HashSet&lt;CardKeyword&gt;</c> 字段，因此直接强转是安全的，写入也会流入后续读取、<c>AddKeyword</c>/<c>RemoveKeyword</c> 以及
-        ///     <c>DeepCloneFields</c> 使用的真实
-        ///     存储。
+        ///     <see cref="ModCardTemplate.RegisteredKeywordIds" /> 对应的铸造 <see cref="CardKeyword" /> 值并入原版关键词集合。
+        ///     战斗中 getter 可能返回临时全来源集合而不是私有本地存储，因此在暴露 keyword source 的 API 上，
+        ///     这里通过 <c>KeywordSources.Local</c> 写入，并把这些值同步到当前返回值。
         /// </summary>
         public static void Postfix(CardModel __instance, IReadOnlySet<CardKeyword> __result)
         {
@@ -66,19 +64,51 @@ namespace STS2RitsuLib.Keywords.Patches
             if (SeededCards.TryGetValue(__instance, out _))
                 return;
 
-            if (__result is not HashSet<CardKeyword> storage)
+            if (!TryGetMutableLocalKeywordSet(__instance, __result, out var storage))
                 return;
 
+            var seeded = new List<CardKeyword>();
             foreach (var id in template.EnumerateRegisteredKeywordIds())
             {
                 if (string.IsNullOrWhiteSpace(id))
                     continue;
 
                 if (ModKeywordRegistry.TryResolveCardKeyword(id, out var value))
+                {
                     storage.Add(value);
+                    seeded.Add(value);
+                }
+            }
+
+            if (__result is HashSet<CardKeyword> resultStorage && !ReferenceEquals(resultStorage, storage))
+            {
+                foreach (var value in seeded)
+                    resultStorage.Add(value);
             }
 
             SeededCards.Add(__instance, SeededMarker);
+        }
+
+        private static bool TryGetMutableLocalKeywordSet(
+            CardModel instance,
+            IReadOnlySet<CardKeyword> result,
+            out HashSet<CardKeyword> storage)
+        {
+#if STS2_AT_LEAST_0_107_0
+            if (instance.GetKeywordsWithSources(KeywordSources.Local) is HashSet<CardKeyword> localStorage)
+            {
+                storage = localStorage;
+                return true;
+            }
+#else
+            if (result is HashSet<CardKeyword> localStorage)
+            {
+                storage = localStorage;
+                return true;
+            }
+#endif
+            storage = null!;
+            return false;
         }
     }
 }

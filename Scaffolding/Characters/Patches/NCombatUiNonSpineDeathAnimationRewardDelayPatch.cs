@@ -19,8 +19,10 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
     /// </summary>
     public class NCombatUiNonSpineDeathAnimationRewardDelayPatch : IPatchMethod
     {
+#if STS2_AT_LEAST_0_105_0
         private static readonly AccessTools.FieldRef<NCombatUi, CancellationTokenSource> CtsRef =
             AccessTools.FieldRefAccess<NCombatUi, CancellationTokenSource>("_cts");
+#endif
 
         private static readonly FieldInfo? IsDebugSlowRewardsField =
             AccessTools.Field(typeof(NCombatUi), "_isDebugSlowRewards");
@@ -59,6 +61,8 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         private static async Task ShowRewards(NCombatUi ui, CombatRoom room)
         {
             var delaySeconds = GetRemovingCreatureRewardDelay();
+
+#if STS2_AT_LEAST_0_105_0
             var token = CtsRef(ui).Token;
 
             if (IsDebugSlowRewards())
@@ -67,6 +71,14 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
                 await Cmd.CustomScaledWait(delaySeconds * 0.5f, delaySeconds + 1f, false, token);
             else
                 await Cmd.CustomScaledWait(0.5f, delaySeconds + 1f, false, token);
+#else
+            if (IsDebugSlowRewards())
+                await Cmd.Wait(delaySeconds + 3f);
+            else if (room.RoomType == RoomType.Boss)
+                await Cmd.CustomScaledWait(delaySeconds * 0.5f, delaySeconds + 1f);
+            else
+                await Cmd.CustomScaledWait(0.5f, delaySeconds + 1f);
+#endif
 
             await OfferRoomEndRewards(ui, room);
         }

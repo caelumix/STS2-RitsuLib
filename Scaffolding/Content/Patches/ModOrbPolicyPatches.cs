@@ -1,9 +1,11 @@
+using System.Globalization;
 using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Orbs;
 using MegaCrit.Sts2.Core.Random;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Patching.Models;
 
 namespace STS2RitsuLib.Scaffolding.Content.Patches
@@ -108,8 +110,8 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
 
         public static void Apply(NOrb node, bool isEvoking)
         {
-            if (node.Model is not IModOrbValueDisplayPolicy policy ||
-                policy.ValueDisplayMode == ModOrbValueDisplayMode.Vanilla)
+            var model = node.Model;
+            if (model == null)
                 return;
 
             var passiveLabel = PassiveLabelField?.GetValue(node) as MegaLabel;
@@ -117,22 +119,50 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             if (passiveLabel == null || evokeLabel == null)
                 return;
 
-            var (showPassive, showEvoke) = policy.ValueDisplayMode switch
-            {
-                ModOrbValueDisplayMode.Hidden => (false, false),
-                ModOrbValueDisplayMode.Contextual => (!isEvoking, isEvoking),
-                ModOrbValueDisplayMode.SinglePassive => (true, false),
-                ModOrbValueDisplayMode.SingleEvoke => (false, true),
-                ModOrbValueDisplayMode.Both => (true, true),
-                _ => (passiveLabel.Visible, evokeLabel.Visible),
-            };
+            var defaultPassiveText = model.PassiveVal.ToString("0", CultureInfo.InvariantCulture);
+            var defaultEvokeText = model.EvokeVal.ToString("0", CultureInfo.InvariantCulture);
+            var baseState = model is IModOrbValueDisplayPolicy policy
+                ? new OrbValueDisplayState(
+                    policy.ValueDisplayMode,
+                    policy.PassiveValueDisplayText,
+                    policy.EvokeValueDisplayText)
+                : new OrbValueDisplayState(
+                    ModOrbValueDisplayMode.Vanilla,
+                    defaultPassiveText,
+                    defaultEvokeText);
 
-            passiveLabel.Visible = showPassive;
-            evokeLabel.Visible = showEvoke;
-            if (showPassive)
-                passiveLabel.SetTextAutoSize(policy.PassiveValueDisplayText);
-            if (showEvoke)
-                evokeLabel.SetTextAutoSize(policy.EvokeValueDisplayText);
+            var state = ModelCapabilityHost.ApplyOrbValueDisplay(new(
+                model,
+                isEvoking,
+                baseState.DisplayMode,
+                baseState.PassiveText,
+                baseState.EvokeText));
+
+            if (state.DisplayMode == ModOrbValueDisplayMode.Vanilla &&
+                string.Equals(state.PassiveText, defaultPassiveText, StringComparison.Ordinal) &&
+                string.Equals(state.EvokeText, defaultEvokeText, StringComparison.Ordinal))
+                return;
+
+            if (state.DisplayMode != ModOrbValueDisplayMode.Vanilla)
+            {
+                var (showPassive, showEvoke) = state.DisplayMode switch
+                {
+                    ModOrbValueDisplayMode.Hidden => (false, false),
+                    ModOrbValueDisplayMode.Contextual => (!isEvoking, isEvoking),
+                    ModOrbValueDisplayMode.SinglePassive => (true, false),
+                    ModOrbValueDisplayMode.SingleEvoke => (false, true),
+                    ModOrbValueDisplayMode.Both => (true, true),
+                    _ => (passiveLabel.Visible, evokeLabel.Visible),
+                };
+
+                passiveLabel.Visible = showPassive;
+                evokeLabel.Visible = showEvoke;
+            }
+
+            if (passiveLabel.Visible)
+                passiveLabel.SetTextAutoSize(state.PassiveText);
+            if (evokeLabel.Visible)
+                evokeLabel.SetTextAutoSize(state.EvokeText);
         }
     }
 

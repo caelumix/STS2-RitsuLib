@@ -346,6 +346,7 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
 
             public static void Postfix(OrbModel __instance, ref IEnumerable<IHoverTip> __result)
             {
+                ModelCapabilityHost.ApplyOrbHoverTipDescriptionFragments(__instance, ref __result);
                 AppendHoverTips(__instance, ref __result);
             }
         }

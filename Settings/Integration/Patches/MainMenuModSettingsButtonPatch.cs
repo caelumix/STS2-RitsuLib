@@ -21,10 +21,13 @@ namespace STS2RitsuLib.Settings.Patches
         private const string VersionLabelNodeName = "RitsuLibMainMenuModSettingsVersion";
 
         internal const float ButtonSize = 64f;
+        internal const float GearBadgeSize = 24f;
+        internal const float GearBadgeInset = -1f;
         private const float GapBelowPatchNotes = 8f;
-        private const float VersionLabelTop = 68f;
-        private const float VersionLabelHeight = 34f;
-        private const float VersionLabelHorizontalBleed = 28f;
+        private const float VersionLabelTop = 2f;
+        private const float VersionLabelHeight = 45f;
+        private const float VersionLabelLeft = -218f;
+        private const float VersionLabelRight = -6f;
 
         /// <inheritdoc />
         public static string PatchId => "ritsulib_main_menu_mod_settings_button";
@@ -76,6 +79,7 @@ namespace STS2RitsuLib.Settings.Patches
             if (mainMenu.GetNodeOrNull<Control>(GroupNodeName) is { } existing)
             {
                 SyncPlacement(existing, patchNotesButton);
+                ApplyReleaseInfoTypography(existing, mainMenu);
                 RefreshVersionLabel(existing);
                 return existing;
             }
@@ -85,7 +89,7 @@ namespace STS2RitsuLib.Settings.Patches
             {
                 Name = GroupNodeName,
                 MouseFilter = Control.MouseFilterEnum.Ignore,
-                CustomMinimumSize = new(ButtonSize, VersionLabelTop + VersionLabelHeight),
+                CustomMinimumSize = new(ButtonSize, ButtonSize),
             };
 
             var button = RitsuLibMainMenuModSettingsButton.Create();
@@ -98,6 +102,7 @@ namespace STS2RitsuLib.Settings.Patches
             group.AddChild(CreateVersionLabel());
             RitsuGodotTreeCompat.AddChildSafely(mainMenu, group);
             SyncPlacement(group, patchNotesButton);
+            ApplyReleaseInfoTypography(group, mainMenu);
             return group;
         }
 
@@ -112,7 +117,7 @@ namespace STS2RitsuLib.Settings.Patches
             group.OffsetLeft = patchNotesButton.OffsetLeft;
             group.OffsetRight = patchNotesButton.OffsetRight;
             group.OffsetTop = patchNotesButton.OffsetBottom + GapBelowPatchNotes;
-            group.OffsetBottom = group.OffsetTop + VersionLabelTop + VersionLabelHeight;
+            group.OffsetBottom = group.OffsetTop + ButtonSize;
 
             if (group.GetNodeOrNull<RitsuLibMainMenuModSettingsButton>(ButtonNodeName) is { } button)
             {
@@ -123,9 +128,9 @@ namespace STS2RitsuLib.Settings.Patches
             }
 
             if (group.GetNodeOrNull<Label>(VersionLabelNodeName) is not { } label) return;
-            label.OffsetLeft = -VersionLabelHorizontalBleed;
+            label.OffsetLeft = VersionLabelLeft;
             label.OffsetTop = VersionLabelTop;
-            label.OffsetRight = ButtonSize + VersionLabelHorizontalBleed;
+            label.OffsetRight = VersionLabelRight;
             label.OffsetBottom = VersionLabelTop + VersionLabelHeight;
         }
 
@@ -135,7 +140,7 @@ namespace STS2RitsuLib.Settings.Patches
             {
                 Name = VersionLabelNodeName,
                 MouseFilter = Control.MouseFilterEnum.Ignore,
-                HorizontalAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
                 AutowrapMode = TextServer.AutowrapMode.Off,
             };
@@ -143,9 +148,19 @@ namespace STS2RitsuLib.Settings.Patches
             label.AddThemeColorOverride("font_shadow_color", new(0f, 0f, 0f, 0.72f));
             label.AddThemeConstantOverride("shadow_offset_x", 2);
             label.AddThemeConstantOverride("shadow_offset_y", 2);
-            label.AddThemeFontSizeOverride("font_size", 12);
+            label.AddThemeFontSizeOverride("font_size", 16);
             RefreshVersionLabel(label);
             return label;
+        }
+
+        private static void ApplyReleaseInfoTypography(Control group, NMainMenu mainMenu)
+        {
+            if (group.GetNodeOrNull<Label>(VersionLabelNodeName) is not { } label ||
+                mainMenu.GetNodeOrNull<Label>("%ReleaseInfo") is not { } releaseInfo)
+                return;
+
+            label.AddThemeFontOverride("font", releaseInfo.GetThemeFont("font"));
+            label.AddThemeFontSizeOverride("font_size", releaseInfo.GetThemeFontSize("font_size"));
         }
 
         private static void RefreshVersionLabel(Control group)
@@ -184,7 +199,10 @@ namespace STS2RitsuLib.Settings.Patches
     internal sealed partial class RitsuLibMainMenuModSettingsButton : NButton
     {
         private const string HsvShaderPath = "res://shaders/hsv.gdshader";
+        private const string GearTexturePath = "res://images/atlases/ui_atlas.sprites/top_bar/top_bar_settings.tres";
         private static readonly StringName ShaderParamV = new("v");
+        private Control? _gear;
+        private ShaderMaterial? _gearHsv;
 
         private ShaderMaterial? _hsv;
         private Control? _icon;
@@ -217,6 +235,7 @@ namespace STS2RitsuLib.Settings.Patches
                 StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
             };
             button.AddChild(icon);
+            button.AddChild(CreateGearBadge());
             return button;
         }
 
@@ -225,22 +244,57 @@ namespace STS2RitsuLib.Settings.Patches
             ConnectSignals();
             _icon = GetNode<Control>("Icon");
             _hsv = _icon.Material as ShaderMaterial;
+            _gear = GetNodeOrNull<Control>("GearBadge");
+            _gearHsv = _gear?.Material as ShaderMaterial;
         }
 
         protected override void OnFocus()
         {
             base.OnFocus();
             _hsv?.SetShaderParameter(ShaderParamV, 1.2f);
+            _gearHsv?.SetShaderParameter(ShaderParamV, 1.2f);
             if (_icon != null)
                 _icon.RotationDegrees = 5f;
+            if (_gear != null)
+                _gear.RotationDegrees = 5f;
         }
 
         protected override void OnUnfocus()
         {
             base.OnUnfocus();
             _hsv?.SetShaderParameter(ShaderParamV, 1f);
+            _gearHsv?.SetShaderParameter(ShaderParamV, 1f);
             if (_icon != null)
                 _icon.RotationDegrees = 0f;
+            if (_gear != null)
+                _gear.RotationDegrees = 0f;
+        }
+
+        private static TextureRect CreateGearBadge()
+        {
+            const float size = MainMenuModSettingsButtonPatch.GearBadgeSize;
+            const float right = MainMenuModSettingsButtonPatch.ButtonSize -
+                                MainMenuModSettingsButtonPatch.GearBadgeInset;
+            const float bottom = MainMenuModSettingsButtonPatch.ButtonSize -
+                                 MainMenuModSettingsButtonPatch.GearBadgeInset;
+            return new()
+            {
+                Name = "GearBadge",
+                Material = CreateHsvMaterial(),
+                AnchorLeft = 0f,
+                AnchorTop = 0f,
+                AnchorRight = 0f,
+                AnchorBottom = 0f,
+                OffsetLeft = right - size,
+                OffsetTop = bottom - size,
+                OffsetRight = right,
+                OffsetBottom = bottom,
+                PivotOffset = new(size / 2f, size / 2f),
+                MouseFilter = MouseFilterEnum.Ignore,
+                Texture = ResourceLoader.Load<Texture2D>(GearTexturePath),
+                ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+            };
         }
 
         private static ShaderMaterial CreateHsvMaterial()

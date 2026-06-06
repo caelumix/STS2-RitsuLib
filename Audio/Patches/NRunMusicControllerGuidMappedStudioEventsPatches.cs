@@ -1,4 +1,5 @@
 using Godot;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Audio;
 using MegaCrit.Sts2.Core.Random;
@@ -104,6 +105,7 @@ namespace STS2RitsuLib.Audio.Patches
             ///     Mirrors vanilla track selection and bank loading, then skips the vanilla proxy for mapped tracks.
             ///     复现原版曲目选择和 bank 加载，然后对映射曲目跳过原版 proxy。
             /// </summary>
+            [HarmonyPriority(Priority.Last)]
             public static bool Prefix(
                 NRunMusicController __instance,
                 IRunState ____runState,
@@ -115,6 +117,12 @@ namespace STS2RitsuLib.Audio.Patches
 
                 var bgMusicOptions = ____runState.Act.BgMusicOptions;
                 var musicBankPaths = ____runState.Act.MusicBankPaths;
+                if (bgMusicOptions.Length == 0 || musicBankPaths.Length < bgMusicOptions.Length)
+                {
+                    GuidMappedNaudioStudioProxy.ReleaseMappedRunMusic();
+                    return true;
+                }
+
                 var index = new Rng(____runState.Rng.Seed).NextInt(0, bgMusicOptions.Length);
                 var track = bgMusicOptions[index];
                 if (!GuidMappedNaudioStudioProxy.IsMappedPath(track))

@@ -19,9 +19,6 @@ var charge = resources.Register("charge", new SecondaryResourceDefinition(
     baseMaxAmount: 3,
     turnStartPolicy: SecondaryResourceTurnStartPolicy.ResetToMax,
     persistencePolicy: SecondaryResourcePersistencePolicy.Combat,
-    locTable: "my_mod_resources",
-    titleKey: "my_mod.charge.title",
-    descriptionKey: "my_mod.charge.description",
     smallIconPath: "res://MyMod/assets/ui/charge_small.png",
     largeIconPath: "res://MyMod/assets/ui/charge_large.png"));
 ```
@@ -29,6 +26,14 @@ var charge = resources.Register("charge", new SecondaryResourceDefinition(
 The registry expands the local id into a stable compound id. Use that returned `charge.Id` when you need a concrete resource id later.
 
 `baseMaxAmount` is optional. Leave it `null` for resources without a max concept.
+
+With the default layout, one resource stays on one predictable path:
+
+- loc table: `static_hover_tips`
+- title key: `{resourceId}.title`
+- description key: `{resourceId}.description`
+
+Only pass `locTable`, `titleKey`, or `descriptionKey` when you are intentionally overriding that layout.
 
 :::
 
@@ -46,9 +51,6 @@ var charge = resources.Register("charge", new SecondaryResourceDefinition(
     baseMaxAmount: 3,
     turnStartPolicy: SecondaryResourceTurnStartPolicy.ResetToMax,
     persistencePolicy: SecondaryResourcePersistencePolicy.Combat,
-    locTable: "my_mod_resources",
-    titleKey: "my_mod.charge.title",
-    descriptionKey: "my_mod.charge.description",
     smallIconPath: "res://MyMod/assets/ui/charge_small.png",
     largeIconPath: "res://MyMod/assets/ui/charge_large.png"));
 ```
@@ -56,6 +58,14 @@ var charge = resources.Register("charge", new SecondaryResourceDefinition(
 注册器会把本地 id 扩展成稳定的 compound id。后续需要具体资源 id 时，直接使用返回定义上的 `charge.Id`。
 
 `baseMaxAmount` 是可选的。没有上限概念的资源保持 `null` 即可。
+
+按默认约定，一个资源会稳定落在同一套路径上：
+
+- loc table：`static_hover_tips`
+- title key：`{resourceId}.title`
+- description key：`{resourceId}.description`
+
+只有在你明确要覆盖这套路径时，再传 `locTable`、`titleKey`、`descriptionKey`。
 
 :::
 
@@ -129,7 +139,7 @@ await SecondaryResourceCmd.Reset(player, charge.Id, toMax: true);
 | --- | --- |
 | `None` | 仅运行时存在 |
 | `Combat` | 随当前战斗恢复 |
-| `Run` | 在同一跑局中跨战斗保留 |
+| `Run` | 在同一游戏中跨战斗保留 |
 
 :::
 

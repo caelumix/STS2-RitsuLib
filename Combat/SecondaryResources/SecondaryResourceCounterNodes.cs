@@ -282,8 +282,7 @@ namespace STS2RitsuLib.Combat.SecondaryResources
             _amountLabel.SetTextAutoSize(_style.Format(amount, maxAmount));
             _amountLabel.AddThemeColorOverride(ThemeConstants.Label.FontColor,
                 amount <= 0 ? _style.ZeroColor : _style.PositiveColor);
-            if (_icon != null)
-                _icon.SetAmount(_amount, _maxAmount);
+            _icon?.SetAmount(_amount, _maxAmount);
         }
 
         /// <summary>
@@ -408,11 +407,9 @@ namespace STS2RitsuLib.Combat.SecondaryResources
             CustomMinimumSize = _style.Size;
             Size = _style.Size;
 
-            if (IsNodeReady())
-            {
-                ApplyStyleAndDefinition();
-                RefreshHoverTipBinding();
-            }
+            if (!IsNodeReady()) return;
+            ApplyStyleAndDefinition();
+            RefreshHoverTipBinding();
         }
 
         /// <summary>

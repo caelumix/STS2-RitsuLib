@@ -304,6 +304,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<NCombatUiDeactivateSecondaryResourcesPatch>();
             patcher.RegisterPatch<NMultiplayerPlayerStateCombatSetUpSecondaryResourcesPatch>();
             patcher.RegisterPatch<NMultiplayerPlayerStateCombatEndedSecondaryResourcesPatch>();
+            patcher.RegisterPatch<NCardUpdateVisualsSecondaryResourceCardUiPatch>();
             patcher.RegisterPatch<OrbModelCapabilityPatches.OrbQueueBeforeTurnEndPatch>();
             patcher.RegisterPatch<OrbModelCapabilityPatches.OrbQueueAfterTurnStartPatch>();
             patcher.RegisterPatch<OrbModelCapabilityPatches.OrbCmdPassivePatch>();

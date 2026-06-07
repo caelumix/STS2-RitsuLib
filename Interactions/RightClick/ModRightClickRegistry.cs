@@ -330,12 +330,12 @@ namespace STS2RitsuLib.Interactions.RightClick
                 payload.Trigger,
                 playerChoiceContext,
                 action);
-            var executed = false;
+            var completed = false;
             foreach (var bindingId in payload.BindingIds)
                 try
                 {
                     if (await TryExecuteBinding(bindingId, model, executionContext))
-                        executed = true;
+                        completed = true;
                 }
                 catch (Exception ex)
                 {
@@ -344,7 +344,7 @@ namespace STS2RitsuLib.Interactions.RightClick
                         $"ModelId='{model.Id}' OwnerType='{model.GetType().FullName}' Error='{ex.Message}'");
                 }
 
-            if (executed)
+            if (completed)
                 model.InvokeExecutionFinished();
         }
 
@@ -410,8 +410,10 @@ namespace STS2RitsuLib.Interactions.RightClick
             {
                 if (model is not IModRightClickableModel rightClickable)
                     return false;
-                if (!TryCanExecuteRightClickable(rightClickable, context))
+                if (!TryCanExecuteRightClickable(rightClickable, context, out var interfaceCanExecute))
                     return false;
+                if (!interfaceCanExecute)
+                    return true;
 
                 await rightClickable.OnRightClick(context);
                 return true;
@@ -423,8 +425,10 @@ namespace STS2RitsuLib.Interactions.RightClick
             var binding = TryGetBinding(bindingId);
             if (binding == null || !binding.ModelType.IsInstanceOfType(model))
                 return false;
-            if (!TryCanExecute(binding, context))
+            if (!TryCanExecute(binding, context, out var canExecute))
                 return false;
+            if (!canExecute)
+                return true;
 
             await binding.Execute(context);
             return true;
@@ -432,11 +436,14 @@ namespace STS2RitsuLib.Interactions.RightClick
 
         private static bool TryCanExecuteRightClickable(
             IModRightClickableModel rightClickable,
-            ModRightClickExecutionContext context)
+            ModRightClickExecutionContext context,
+            out bool canExecute)
         {
+            canExecute = false;
             try
             {
-                return rightClickable.CanExecuteRightClick(context);
+                canExecute = rightClickable.CanExecuteRightClick(context);
+                return true;
             }
             catch (Exception ex)
             {
@@ -450,14 +457,17 @@ namespace STS2RitsuLib.Interactions.RightClick
 
         private static bool TryCanExecute(
             RegisteredRightClickBinding binding,
-            ModRightClickExecutionContext context)
+            ModRightClickExecutionContext context,
+            out bool canExecute)
         {
+            canExecute = true;
             if (binding.CanExecute == null)
                 return true;
 
             try
             {
-                return binding.CanExecute(context);
+                canExecute = binding.CanExecute(context);
+                return true;
             }
             catch (Exception ex)
             {
@@ -474,13 +484,18 @@ namespace STS2RitsuLib.Interactions.RightClick
             ModRightClickExecutionContext context)
         {
             var localContext = new ModRightClickContext(context.Player, model, context.Trigger);
-            var executed = false;
+            var completed = false;
             foreach (var capability in GetRightClickCapabilities(model))
             {
                 if (!TryCanHandleCapability(capability, localContext))
                     continue;
-                if (!TryCanExecuteCapability(capability, context))
+                if (!TryCanExecuteCapability(capability, context, out var canExecute))
                     continue;
+                if (!canExecute)
+                {
+                    completed = true;
+                    continue;
+                }
 
                 try
                 {
@@ -492,12 +507,12 @@ namespace STS2RitsuLib.Interactions.RightClick
                     continue;
                 }
 
-                executed = true;
+                completed = true;
                 if (capability.RightClickRunMode == ModelRightClickCapabilityRunMode.Exclusive)
                     break;
             }
 
-            return executed;
+            return completed;
         }
 
         private static IReadOnlyList<IModelRightClickCapability> GetRightClickCapabilities(AbstractModel model)
@@ -529,11 +544,14 @@ namespace STS2RitsuLib.Interactions.RightClick
 
         private static bool TryCanExecuteCapability(
             IModelRightClickCapability capability,
-            ModRightClickExecutionContext context)
+            ModRightClickExecutionContext context,
+            out bool canExecute)
         {
+            canExecute = false;
             try
             {
-                return capability.CanExecuteRightClick(context);
+                canExecute = capability.CanExecuteRightClick(context);
+                return true;
             }
             catch (Exception ex)
             {

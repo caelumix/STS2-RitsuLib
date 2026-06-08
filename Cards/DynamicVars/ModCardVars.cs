@@ -33,6 +33,60 @@ namespace STS2RitsuLib.Cards.DynamicVars
         }
 
         /// <summary>
+        ///     Creates the default energy icon variable.
+        ///     创建默认能量图标变量。
+        /// </summary>
+        public static EnergyVar Energy(int amount)
+        {
+            return new(amount);
+        }
+
+        /// <summary>
+        ///     Creates a named energy icon variable.
+        ///     创建具名能量图标变量。
+        /// </summary>
+        public static EnergyVar Energy(string name, int amount)
+        {
+            return new(name, amount);
+        }
+
+        /// <summary>
+        ///     Creates the default star icon variable.
+        ///     创建默认星星图标变量。
+        /// </summary>
+        public static StarsVar Stars(int amount)
+        {
+            return new(amount);
+        }
+
+        /// <summary>
+        ///     Creates a named star icon variable.
+        ///     创建具名星星图标变量。
+        /// </summary>
+        public static StarsVar Stars(string name, int amount)
+        {
+            return new(name, amount);
+        }
+
+        /// <summary>
+        ///     Creates a power amount variable named after <typeparamref name="T" />.
+        ///     创建以 <typeparamref name="T" /> 命名的能力层数变量。
+        /// </summary>
+        public static PowerVar<T> Power<T>(decimal amount) where T : PowerModel
+        {
+            return new(amount);
+        }
+
+        /// <summary>
+        ///     Creates a named power amount variable.
+        ///     创建具名能力层数变量。
+        /// </summary>
+        public static PowerVar<T> Power<T>(string name, decimal amount) where T : PowerModel
+        {
+            return new(name, amount);
+        }
+
+        /// <summary>
         ///     Creates a <see cref="ComputedDynamicVar" /> with optional preview-specific computation.
         ///     创建带可选预览专用计算的 <see cref="ComputedDynamicVar" />。
         /// </summary>
@@ -56,6 +110,112 @@ namespace STS2RitsuLib.Cards.DynamicVars
             Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewValueFactory = null)
         {
             return new(name, baseValue, currentValueFactory, previewValueFactory);
+        }
+
+        /// <summary>
+        ///     Creates a computed energy icon variable compatible with the game's <c>energyIcons</c> formatter.
+        ///     创建兼容游戏 <c>energyIcons</c> formatter 的计算型能量图标变量。
+        /// </summary>
+        public static ComputedEnergyVar ComputedEnergy(
+            string name,
+            decimal baseValue,
+            Func<CardModel?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewValueFactory = null)
+        {
+            return new(name, baseValue, currentValueFactory, previewValueFactory);
+        }
+
+        /// <summary>
+        ///     Creates a target-aware computed energy icon variable.
+        ///     创建支持目标感知求值的计算型能量图标变量。
+        /// </summary>
+        public static ComputedEnergyVar ComputedEnergy(
+            string name,
+            decimal baseValue,
+            Func<CardModel?, Creature?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewValueFactory = null)
+        {
+            return new(name, baseValue, currentValueFactory, previewValueFactory);
+        }
+
+        /// <summary>
+        ///     Creates a computed star icon variable compatible with the game's <c>starIcons</c> formatter.
+        ///     创建兼容游戏 <c>starIcons</c> formatter 的计算型星星图标变量。
+        /// </summary>
+        public static ComputedStarsVar ComputedStars(
+            string name,
+            decimal baseValue,
+            Func<CardModel?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewValueFactory = null)
+        {
+            return new(name, baseValue, currentValueFactory, previewValueFactory);
+        }
+
+        /// <summary>
+        ///     Creates a target-aware computed star icon variable.
+        ///     创建支持目标感知求值的计算型星星图标变量。
+        /// </summary>
+        public static ComputedStarsVar ComputedStars(
+            string name,
+            decimal baseValue,
+            Func<CardModel?, Creature?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewValueFactory = null)
+        {
+            return new(name, baseValue, currentValueFactory, previewValueFactory);
+        }
+
+        /// <summary>
+        ///     Creates a computed power amount variable named after <typeparamref name="T" />.
+        ///     创建以 <typeparamref name="T" /> 命名的计算型能力层数变量。
+        /// </summary>
+        public static ComputedPowerVar<T> ComputedPower<T>(
+            decimal baseValue,
+            Func<CardModel?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewBaseValueFactory = null)
+            where T : PowerModel
+        {
+            return new(baseValue, currentValueFactory, previewBaseValueFactory);
+        }
+
+        /// <summary>
+        ///     Creates a named computed power amount variable.
+        ///     创建具名计算型能力层数变量。
+        /// </summary>
+        public static ComputedPowerVar<T> ComputedPower<T>(
+            string name,
+            decimal baseValue,
+            Func<CardModel?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewBaseValueFactory = null)
+            where T : PowerModel
+        {
+            return new(name, baseValue, currentValueFactory, previewBaseValueFactory);
+        }
+
+        /// <summary>
+        ///     Creates a target-aware computed power amount variable named after <typeparamref name="T" />.
+        ///     创建以 <typeparamref name="T" /> 命名、支持目标感知求值的计算型能力层数变量。
+        /// </summary>
+        public static ComputedPowerVar<T> ComputedPower<T>(
+            decimal baseValue,
+            Func<CardModel?, Creature?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewBaseValueFactory = null)
+            where T : PowerModel
+        {
+            return new(baseValue, currentValueFactory, previewBaseValueFactory);
+        }
+
+        /// <summary>
+        ///     Creates a target-aware named computed power amount variable.
+        ///     创建支持目标感知求值的具名计算型能力层数变量。
+        /// </summary>
+        public static ComputedPowerVar<T> ComputedPower<T>(
+            string name,
+            decimal baseValue,
+            Func<CardModel?, Creature?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewBaseValueFactory = null)
+            where T : PowerModel
+        {
+            return new(name, baseValue, currentValueFactory, previewBaseValueFactory);
         }
 
         /// <summary>

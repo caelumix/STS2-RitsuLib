@@ -125,6 +125,72 @@ ModCardVars.ComputedDamage(
 
 :::
 
+## Energy, Star, And Power Icon Counts{lang="en"}
+
+::: en
+
+Use the concrete icon variable helpers when a description needs a dynamic amount rendered through the game's icon formatters:
+
+```csharp
+public override DynamicVarSet DynamicVars => new()
+{
+    ModCardVars.ComputedEnergy("EnergyGain", 1, card => ResolveEnergyGain(card)),
+    ModCardVars.ComputedStars("StarGain", 1, card => ResolveStarGain(card)),
+    ModCardVars.ComputedPower<StrengthPower>("StrengthPower", 2, card => ResolveStrength(card)),
+};
+```
+
+Then keep the formatter in localization:
+
+```json
+{
+  "MY_CARD.description": "Gain {EnergyGain:energyIcons()}.\nGain {StarGain:starIcons()}.\nGain {StrengthPower:diff()} Strength."
+}
+```
+
+For a literal single energy icon that follows the card pool color, use the vanilla extra argument:
+
+```json
+{
+  "MY_CARD.description": "The next card costs 0{energyPrefix:energyIcons(1)}."
+}
+```
+
+:::
+
+## 能量、星星与能力层数图标数量{lang="zh-CN"}
+
+::: zh-CN
+
+当描述中需要通过游戏原生图标 formatter 显示动态数量时，使用具体图标变量辅助方法：
+
+```csharp
+public override DynamicVarSet DynamicVars => new()
+{
+    ModCardVars.ComputedEnergy("EnergyGain", 1, card => ResolveEnergyGain(card)),
+    ModCardVars.ComputedStars("StarGain", 1, card => ResolveStarGain(card)),
+    ModCardVars.ComputedPower<StrengthPower>("StrengthPower", 2, card => ResolveStrength(card)),
+};
+```
+
+本地化里继续保留 formatter：
+
+```json
+{
+  "MY_CARD.description": "获得{EnergyGain:energyIcons()}。\n获得{StarGain:starIcons()}。\n获得{StrengthPower:diff()}点力量。"
+}
+```
+
+如果只是需要一个跟随卡池颜色的固定单个能量图标，使用原版额外参数：
+
+```json
+{
+  "MY_CARD.description": "下一张牌耗能变为0{energyPrefix:energyIcons(1)}。"
+}
+```
+
+:::
+
 ## Add A Tooltip{lang="en"}
 
 ::: en

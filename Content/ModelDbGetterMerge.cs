@@ -3,21 +3,24 @@ using MegaCrit.Sts2.Core.Models;
 namespace STS2RitsuLib.Content
 {
     /// <summary>
-    /// <para xml:lang="en">Snapshots lazy patched <see cref="ModelDb" /> getter output once; nested getter calls pass through unchanged.</para>
-    /// <para xml:lang="zh-CN">对 lazy patched <see cref="ModelDb" /> getter 输出做一次快照；嵌套 getter 调用原样透传。</para>
+    ///     <para xml:lang="en">
+    ///         Snapshots lazy patched <see cref="ModelDb" /> getter output once; nested getter calls pass
+    ///         through unchanged.
+    ///     </para>
+    ///     <para xml:lang="zh-CN">对 lazy patched <see cref="ModelDb" /> getter 输出做一次快照；嵌套 getter 调用原样透传。</para>
     /// </summary>
     internal static class ModelDbGetterMerge
     {
-        static int _depth;
+        [ThreadStatic] private static int _depth;
 
         internal static IEnumerable<TModel> MergeEnumerable<TModel>(
             IEnumerable<TModel> source,
             Func<IEnumerable<TModel>, IEnumerable<TModel>> append)
             where TModel : AbstractModel
         {
-            if (Interlocked.Increment(ref _depth) > 1)
+            if (++_depth > 1)
             {
-                Interlocked.Decrement(ref _depth);
+                --_depth;
                 return source;
             }
 
@@ -28,7 +31,7 @@ namespace STS2RitsuLib.Content
             }
             finally
             {
-                Interlocked.Decrement(ref _depth);
+                --_depth;
             }
         }
 
@@ -36,9 +39,9 @@ namespace STS2RitsuLib.Content
             IReadOnlyList<TItem> source,
             Func<IReadOnlyList<TItem>, IReadOnlyList<TItem>> append)
         {
-            if (Interlocked.Increment(ref _depth) > 1)
+            if (++_depth > 1)
             {
-                Interlocked.Decrement(ref _depth);
+                --_depth;
                 return source;
             }
 
@@ -49,7 +52,7 @@ namespace STS2RitsuLib.Content
             }
             finally
             {
-                Interlocked.Decrement(ref _depth);
+                --_depth;
             }
         }
     }

@@ -3,8 +3,11 @@ using MegaCrit.Sts2.Core.Models;
 namespace STS2RitsuLib.Content
 {
     /// <summary>
-    /// <para xml:lang="en">Merge strategies for combining vanilla <see cref="ModelDb" /> getter output with resolved mod models.</para>
-    /// <para xml:lang="zh-CN">将原版 <see cref="ModelDb" /> getter 输出与已解析 mod 模型合并的策略。</para>
+    ///     <para xml:lang="en">
+    ///         Merge strategies for combining vanilla <see cref="ModelDb" /> getter output with resolved mod
+    ///         models.
+    ///     </para>
+    ///     <para xml:lang="zh-CN">将原版 <see cref="ModelDb" /> getter 输出与已解析 mod 模型合并的策略。</para>
     /// </summary>
     internal interface IContentEnumerableMergeStrategy<TModel>
         where TModel : AbstractModel
@@ -13,8 +16,8 @@ namespace STS2RitsuLib.Content
     }
 
     /// <summary>
-    /// <para xml:lang="en">Merge strategy for <see cref="IReadOnlyList{T}" /> getter output.</para>
-    /// <para xml:lang="zh-CN">用于 <see cref="IReadOnlyList{T}" /> getter 输出的合并策略。</para>
+    ///     <para xml:lang="en">Merge strategy for <see cref="IReadOnlyList{T}" /> getter output.</para>
+    ///     <para xml:lang="zh-CN">用于 <see cref="IReadOnlyList{T}" /> getter 输出的合并策略。</para>
     /// </summary>
     internal interface IContentListMergeStrategy<TModel>
         where TModel : AbstractModel
@@ -41,8 +44,11 @@ namespace STS2RitsuLib.Content
         }
 
         /// <summary>
-        /// <para xml:lang="en">Appends items whose <see cref="AbstractModel.Id" /> is not already in <paramref name="destination" />.</para>
-        /// <para xml:lang="zh-CN">追加 Id 尚未出现在 <paramref name="destination" /> 中的项。</para>
+        ///     <para xml:lang="en">
+        ///         Appends items whose <see cref="AbstractModel.Id" /> is not already in
+        ///         <paramref name="destination" />.
+        ///     </para>
+        ///     <para xml:lang="zh-CN">追加 Id 尚未出现在 <paramref name="destination" /> 中的项。</para>
         /// </summary>
         internal static void AppendDistinctById<TModel>(List<TModel> destination, IEnumerable<TModel> items)
             where TModel : AbstractModel
@@ -51,11 +57,7 @@ namespace STS2RitsuLib.Content
                 ? []
                 : destination.Select(static model => model.Id).ToHashSet();
 
-            foreach (var item in items)
-            {
-                if (known.Add(item.Id))
-                    destination.Add(item);
-            }
+            destination.AddRange(items.Where(item => known.Add(item.Id)));
         }
     }
 

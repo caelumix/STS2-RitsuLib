@@ -246,13 +246,9 @@ namespace STS2RitsuLib.Models.Capabilities
         public TCapability? AddUpgrade<TCapability>(bool allowMerge = true)
             where TCapability : class, IModelCapability
         {
-            var capabilityId = ModelCapabilityRegistry.GetCapabilityId<TCapability>();
-            if (capabilityId == null)
-                throw new InvalidOperationException(
-                    $"Model capability type is not registered: {typeof(TCapability).FullName}");
-
-            return Apply(ModelCapabilityRegistry.Create(capabilityId),
-                ApplyModelCapabilityOptions.Upgrade(allowMerge)) as TCapability;
+            return Apply(
+                ModelCapabilityRegistry.Create<TCapability>(),
+                ApplyModelCapabilityOptions.Upgrade(allowMerge));
         }
 
         /// <summary>
@@ -528,14 +524,10 @@ namespace STS2RitsuLib.Models.Capabilities
             if (existing != null)
                 return existing;
 
-            var capabilityId = ModelCapabilityRegistry.GetCapabilityId<TCapability>();
-            if (capabilityId == null)
-                throw new InvalidOperationException(
-                    $"Model capability type is not registered: {typeof(TCapability).FullName}");
-
-            var capability = Apply(ModelCapabilityRegistry.Create(capabilityId), options) as TCapability;
+            var created = ModelCapabilityRegistry.Create<TCapability>();
+            var capability = Apply(created, options);
             return capability ?? throw new InvalidOperationException(
-                $"Registered capability '{capabilityId}' is not a '{typeof(TCapability).FullName}'.");
+                $"Applying capability '{created.CapabilityId}' did not produce a '{typeof(TCapability).FullName}'.");
         }
 
         /// <summary>

@@ -1,15 +1,13 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 
 namespace STS2RitsuLib.Cards.DynamicVars
 {
     /// <summary>
-    ///     <see cref="PowerVar{T}" /> whose base amount is produced by delegates while preserving
-    ///     power-amount preview hooks.
-    ///     由委托生成基础层数、并保留能力层数预览 hook 的 <see cref="PowerVar{T}" />。
+    ///     <see cref="PowerVar{T}" /> whose displayed amount is produced by delegates.
+    ///     由委托生成显示层数的 <see cref="PowerVar{T}" />。
     /// </summary>
     public sealed class ComputedPowerVar<T> : PowerVar<T> where T : PowerModel
     {
@@ -100,16 +98,7 @@ namespace STS2RitsuLib.Cards.DynamicVars
             var value = _previewBaseValueFactory?.Invoke(card, previewMode, target, runGlobalHooks)
                         ?? _currentValueFactory(card, target);
 
-            PreviewValue = runGlobalHooks && card.CombatState != null
-                ? Hook.ModifyPowerAmountGiven(
-                    card.CombatState,
-                    ModelDb.Power<T>(),
-                    card.Owner.Creature,
-                    value,
-                    target,
-                    card,
-                    out _)
-                : value;
+            PreviewValue = value;
         }
 
         /// <inheritdoc />

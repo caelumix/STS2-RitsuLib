@@ -140,6 +140,8 @@ public override DynamicVarSet DynamicVars => new()
 };
 ```
 
+`ComputedPower<T>` keeps the typed `PowerVar<T>` shape for naming and display, and does not run power-amount hooks by default. For a computed amount that represents power being applied by the card and should use the same preview hook path as vanilla `PowerVar<T>`, use `ComputedPowerAmountGiven<T>`.
+
 Then keep the formatter in localization:
 
 ```json
@@ -172,6 +174,8 @@ public override DynamicVarSet DynamicVars => new()
     ModCardVars.ComputedPower<StrengthPower>("StrengthPower", 2, card => ResolveStrength(card)),
 };
 ```
+
+`ComputedPower<T>` 保留类型化的 `PowerVar<T>` 形状，用于命名和显示，默认不跑能力层数 hook。如果这个计算值表示卡牌将要施加的能力层数，并且需要走和原版 `PowerVar<T>` 相同的预览修正路径，使用 `ComputedPowerAmountGiven<T>`。
 
 本地化里继续保留 formatter：
 

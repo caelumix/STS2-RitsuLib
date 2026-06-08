@@ -219,6 +219,64 @@ namespace STS2RitsuLib.Cards.DynamicVars
         }
 
         /// <summary>
+        ///     Creates a computed power amount variable whose card preview is processed through
+        ///     <see cref="Hook.ModifyPowerAmountGiven" /> when global hooks are enabled.
+        ///     创建计算型能力层数变量；启用全局 hook 的卡牌预览会经过 <see cref="Hook.ModifyPowerAmountGiven" />。
+        /// </summary>
+        public static ComputedPowerVar<T> ComputedPowerAmountGiven<T>(
+            decimal baseValue,
+            Func<CardModel?, Creature?, decimal> currentValueFactory)
+            where T : PowerModel
+        {
+            return ComputedPowerAmountGivenCore<T>(typeof(T).Name, baseValue, currentValueFactory, null);
+        }
+
+        /// <summary>
+        ///     Creates a named computed power amount variable whose card preview is processed through
+        ///     <see cref="Hook.ModifyPowerAmountGiven" /> when global hooks are enabled.
+        ///     创建具名计算型能力层数变量；启用全局 hook 的卡牌预览会经过 <see cref="Hook.ModifyPowerAmountGiven" />。
+        /// </summary>
+        public static ComputedPowerVar<T> ComputedPowerAmountGiven<T>(
+            string name,
+            decimal baseValue,
+            Func<CardModel?, Creature?, decimal> currentValueFactory)
+            where T : PowerModel
+        {
+            return ComputedPowerAmountGivenCore<T>(name, baseValue, currentValueFactory, null);
+        }
+
+        /// <summary>
+        ///     Creates a computed power amount variable with preview-specific base-value computation.
+        ///     创建支持预览专用基础值计算的计算型能力层数变量。
+        /// </summary>
+        public static ComputedPowerVar<T> ComputedPowerAmountGiven<T>(
+            decimal baseValue,
+            Func<CardModel?, Creature?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal> previewBaseValueFactory)
+            where T : PowerModel
+        {
+            return ComputedPowerAmountGivenCore<T>(
+                typeof(T).Name,
+                baseValue,
+                currentValueFactory,
+                previewBaseValueFactory);
+        }
+
+        /// <summary>
+        ///     Creates a named computed power amount variable with preview-specific base-value computation.
+        ///     创建支持预览专用基础值计算的具名计算型能力层数变量。
+        /// </summary>
+        public static ComputedPowerVar<T> ComputedPowerAmountGiven<T>(
+            string name,
+            decimal baseValue,
+            Func<CardModel?, Creature?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal> previewBaseValueFactory)
+            where T : PowerModel
+        {
+            return ComputedPowerAmountGivenCore<T>(name, baseValue, currentValueFactory, previewBaseValueFactory);
+        }
+
+        /// <summary>
         ///     Creates a computed damage variable whose card preview is processed through
         ///     <see cref="Hook.ModifyDamage" /> when global hooks are enabled.
         ///     创建计算型伤害变量；启用全局 hook 的卡牌预览会经过 <see cref="Hook.ModifyDamage" />。
@@ -445,6 +503,28 @@ namespace STS2RitsuLib.Cards.DynamicVars
                     props));
         }
 
+        private static ComputedPowerVar<T> ComputedPowerAmountGivenCore<T>(
+            string name,
+            decimal baseValue,
+            Func<CardModel?, Creature?, decimal> currentValueFactory,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal>? previewBaseValueFactory)
+            where T : PowerModel
+        {
+            ArgumentNullException.ThrowIfNull(currentValueFactory);
+
+            return new(
+                name,
+                baseValue,
+                currentValueFactory,
+                (card, previewMode, target, runGlobalHooks) => CalculatePowerAmountGivenPreview<T>(
+                    card,
+                    previewMode,
+                    target,
+                    runGlobalHooks,
+                    previewBaseValueFactory ?? ((previewCard, _, previewTarget, _) =>
+                        currentValueFactory(previewCard, previewTarget))));
+        }
+
         private static ComputedDynamicVar ComputedBlockCore(
             string name,
             decimal baseValue,
@@ -506,6 +586,29 @@ namespace STS2RitsuLib.Cards.DynamicVars
             value *= enchantment.EnchantDamageMultiplicative(value, props);
 
             return Math.Max(value, 0m);
+        }
+
+        private static decimal CalculatePowerAmountGivenPreview<T>(
+            CardModel? card,
+            CardPreviewMode previewMode,
+            Creature? target,
+            bool runGlobalHooks,
+            Func<CardModel?, CardPreviewMode, Creature?, bool, decimal> previewBaseValueFactory)
+            where T : PowerModel
+        {
+            var value = previewBaseValueFactory(card, previewMode, target, runGlobalHooks);
+            if (card is null) return value;
+
+            return runGlobalHooks && card.CombatState is { } combatState
+                ? Hook.ModifyPowerAmountGiven(
+                    combatState,
+                    ModelDb.Power<T>(),
+                    card.Owner.Creature,
+                    value,
+                    target,
+                    card,
+                    out _)
+                : value;
         }
 
         private static decimal CalculateBlockPreview(

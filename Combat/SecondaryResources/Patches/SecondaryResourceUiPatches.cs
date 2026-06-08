@@ -1,5 +1,7 @@
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Context;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Multiplayer;
 using MegaCrit.Sts2.Core.Rooms;
@@ -111,6 +113,27 @@ namespace STS2RitsuLib.Combat.SecondaryResources.Patches
         {
             if (ModSecondaryResourceRegistry.HasAny)
                 SecondaryResourceUiRuntime.SetMultiplayerPlayerStateCombatActive(__instance, false);
+        }
+    }
+
+    internal sealed class NCardUpdateVisualsSecondaryResourceCardUiPatch : IPatchMethod
+    {
+        public static string PatchId => "ritsulib_secondary_resource_card_ui_update";
+        public static string Description => "Refresh secondary-resource card UI alongside NCard.UpdateVisuals";
+        public static bool IsCritical => false;
+
+        public static ModPatchTarget[] GetTargets()
+        {
+            return [new(typeof(NCard), nameof(NCard.UpdateVisuals), [typeof(PileType), typeof(CardPreviewMode)])];
+        }
+
+        public static void Postfix(NCard __instance)
+        {
+            if (!ModSecondaryResourceRegistry.HasAny ||
+                __instance.Model == null)
+                return;
+
+            SecondaryResourceUiRuntime.UpdateCardUi(__instance, __instance.Model);
         }
     }
 }

@@ -130,14 +130,11 @@ namespace STS2RitsuLib.Models.Capabilities
         private static TCapability CreateFromRegistry<TCapability>(string? capabilityId = null)
             where TCapability : class, IModelCapability
         {
-            capabilityId ??= ModelCapabilityRegistry.GetCapabilityId<TCapability>();
-            if (capabilityId == null)
-                throw new InvalidOperationException(
-                    $"Model capability type is not registered: {typeof(TCapability).FullName}");
-
-            var capability = ModelCapabilityRegistry.Create(capabilityId) as TCapability;
-            return capability ?? throw new InvalidOperationException(
-                $"Registered capability '{capabilityId}' is not a '{typeof(TCapability).FullName}'.");
+            return capabilityId == null
+                ? ModelCapabilityRegistry.Create<TCapability>()
+                : ModelCapabilityRegistry.Create(capabilityId) as TCapability ??
+                  throw new InvalidOperationException(
+                      $"Registered capability '{capabilityId}' is not a '{typeof(TCapability).FullName}'.");
         }
 
         /// <summary>

@@ -1,6 +1,8 @@
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Cards;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Multiplayer;
 using STS2RitsuLib.Scaffolding.Godot.NodeAttachments;
 using STS2RitsuLib.Utils;
@@ -222,6 +224,20 @@ namespace STS2RitsuLib.Combat.SecondaryResources
     public sealed partial class ModSecondaryResourceRegistry
     {
         /// <summary>
+        ///     Registers a NodeAttachment-backed combat UI node and update route on <see cref="NCombatUi" />.
+        ///     在 <see cref="NCombatUi" /> 上注册一个基于 NodeAttachment 的战斗 UI 节点及其更新路由。
+        /// </summary>
+        public NodeAttachmentDefinition RegisterCombatUi<TNode>(
+            string localId,
+            Func<NCombatUi, TNode> factory,
+            Action<SecondaryResourceCombatUiContext<NCombatUi, TNode>> update,
+            NodeAttachmentOptions? options = null)
+            where TNode : Node
+        {
+            return RegisterCombatUi<NCombatUi, TNode>(localId, factory, update, options);
+        }
+
+        /// <summary>
         ///     Registers a NodeAttachment-backed combat UI node and update route.
         ///     注册一个基于 NodeAttachment 的战斗 UI 节点及其更新路由。
         /// </summary>
@@ -245,6 +261,20 @@ namespace STS2RitsuLib.Combat.SecondaryResources
                     SecondaryResourceUiRuntime.HideCombatUi(parent);
                 },
                 options);
+        }
+
+        /// <summary>
+        ///     Registers a NodeAttachment-backed card UI node and update route on <see cref="NCard" />.
+        ///     在 <see cref="NCard" /> 上注册一个基于 NodeAttachment 的卡牌 UI 节点及其更新路由。
+        /// </summary>
+        public NodeAttachmentDefinition RegisterCardUi<TNode>(
+            string localId,
+            Func<NCard, TNode> factory,
+            Action<SecondaryResourceCardUiContext<NCard, TNode>> update,
+            NodeAttachmentOptions? options = null)
+            where TNode : Node
+        {
+            return RegisterCardUi<NCard, TNode>(localId, factory, update, WithDefaultCardUiOptions(options));
         }
 
         /// <summary>
@@ -296,6 +326,26 @@ namespace STS2RitsuLib.Combat.SecondaryResources
                 WithDefaultMultiplayerPlayerStateOptions(options));
         }
 
+        private static NodeAttachmentOptions WithDefaultCardUiOptions(NodeAttachmentOptions? options)
+        {
+            var source = options ?? NodeAttachmentOptions.Default;
+            return new()
+            {
+                Name = source.Name,
+                Order = source.Order,
+                UniqueNameInOwner = source.UniqueNameInOwner,
+                IncludeDerivedParentTypes = source.IncludeDerivedParentTypes,
+                DuplicatePolicy = source.DuplicatePolicy,
+                AddMode = source.AddMode,
+                AttachParentSelector = source.AttachParentSelector ?? ResolveCardUiAttachParent,
+                SetupTiming = source.SetupTiming,
+                ChildIndex = source.ChildIndex,
+                InsertBeforeName = source.InsertBeforeName,
+                InsertAfterName = source.InsertAfterName,
+                QueueFreeReplacedNode = source.QueueFreeReplacedNode,
+            };
+        }
+
         private static NodeAttachmentOptions WithDefaultMultiplayerPlayerStateOptions(NodeAttachmentOptions? options)
         {
             var source = options ?? NodeAttachmentOptions.Default;
@@ -314,6 +364,11 @@ namespace STS2RitsuLib.Combat.SecondaryResources
                 InsertAfterName = source.InsertAfterName,
                 QueueFreeReplacedNode = source.QueueFreeReplacedNode,
             };
+        }
+
+        private static Node ResolveCardUiAttachParent(Node parent)
+        {
+            return parent is NCard { Body: { } body } ? body : parent;
         }
 
         private static Node ResolveMultiplayerPlayerStateAttachParent(Node parent)

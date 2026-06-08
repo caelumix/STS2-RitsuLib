@@ -89,6 +89,26 @@ namespace STS2RitsuLib.Models.Capabilities
         }
 
         /// <summary>
+        ///     Creates a capability by registered type, if a matching factory exists.
+        ///     按已注册类型创建能力（如果存在匹配工厂）。
+        /// </summary>
+        public static bool TryCreate<TCapability>(out TCapability capability)
+            where TCapability : class, IModelCapability
+        {
+            var capabilityId = GetCapabilityId<TCapability>();
+            if (capabilityId == null ||
+                !TryCreate(capabilityId, out var created) ||
+                created is not TCapability typed)
+            {
+                capability = null!;
+                return false;
+            }
+
+            capability = typed;
+            return true;
+        }
+
+        /// <summary>
         ///     Creates a capability by id or throws when no factory is registered.
         ///     通过 ID 创建能力；未注册工厂时抛出异常。
         /// </summary>
@@ -97,6 +117,23 @@ namespace STS2RitsuLib.Models.Capabilities
             return TryCreate(capabilityId, out var capability)
                 ? capability
                 : throw new InvalidOperationException($"Model capability id is not registered: {capabilityId}");
+        }
+
+        /// <summary>
+        ///     Creates a capability by registered type or throws when no matching factory is registered.
+        ///     按已注册类型创建能力；未注册匹配工厂时抛出异常。
+        /// </summary>
+        public static TCapability Create<TCapability>()
+            where TCapability : class, IModelCapability
+        {
+            var capabilityId = GetCapabilityId<TCapability>();
+            if (capabilityId == null)
+                throw new InvalidOperationException(
+                    $"Model capability type is not registered: {typeof(TCapability).FullName}");
+
+            var capability = Create(capabilityId) as TCapability;
+            return capability ?? throw new InvalidOperationException(
+                $"Registered capability '{capabilityId}' is not a '{typeof(TCapability).FullName}'.");
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace STS2RitsuLib.Combat.SecondaryResources
     /// </summary>
     public sealed record SecondaryResourcePlayLedger(
         CardModel Card,
-        Player Player,
+        Player? Player,
         bool IsFree,
         IReadOnlyDictionary<string, SecondaryResourcePlayLedgerLine> Lines)
     {
@@ -25,7 +25,7 @@ namespace STS2RitsuLib.Combat.SecondaryResources
         ///     Empty ledger with no lines.
         ///     没有资源行的空 ledger。
         /// </summary>
-        public static SecondaryResourcePlayLedger Empty(CardModel card, Player player, bool isFree = false)
+        public static SecondaryResourcePlayLedger Empty(CardModel card, Player? player, bool isFree = false)
         {
             return new(card, player, isFree,
                 new Dictionary<string, SecondaryResourcePlayLedgerLine>(StringComparer.OrdinalIgnoreCase));
@@ -75,7 +75,7 @@ namespace STS2RitsuLib.Combat.SecondaryResources
 
     internal sealed class SecondaryResourcePlayLedgerBuilder(
         CardModel card,
-        Player player,
+        Player? player,
         bool isFree)
     {
         private readonly Dictionary<string, SecondaryResourcePlayLedgerLine> _lines =

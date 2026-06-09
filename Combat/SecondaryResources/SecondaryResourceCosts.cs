@@ -331,7 +331,13 @@ namespace STS2RitsuLib.Combat.SecondaryResources
         ///     True when the player has enough resource for this line.
         ///     玩家拥有足够资源支付该行时为 true。
         /// </summary>
-        public bool IsAffordable => IsFree || AmountAvailable >= AmountToSpend;
+        public bool IsAffordable => IsPreview || IsFree || AmountAvailable >= AmountToSpend;
+
+        /// <summary>
+        ///     True when the line was resolved without a player/combat owner and is only suitable for display.
+        ///     没有玩家/战斗 owner 时解析出的展示用行；只适合用于 UI 展示。
+        /// </summary>
+        public bool IsPreview { get; init; }
     }
 
     /// <summary>
@@ -340,7 +346,7 @@ namespace STS2RitsuLib.Combat.SecondaryResources
     /// </summary>
     public sealed record SecondaryResourcePaymentPlan(
         CardModel Card,
-        Player Player,
+        Player? Player,
         bool IsFree,
         IReadOnlyList<SecondaryResourcePaymentLine> Lines)
     {
@@ -357,10 +363,16 @@ namespace STS2RitsuLib.Combat.SecondaryResources
         public bool HasLines => Lines.Count > 0;
 
         /// <summary>
+        ///     True when the plan was resolved without a player/combat owner and must not be committed.
+        ///     没有玩家/战斗 owner 时解析出的展示用计划；不能提交消耗。
+        /// </summary>
+        public bool IsPreview => Player == null;
+
+        /// <summary>
         ///     Empty plan with no secondary-resource work.
         ///     没有次级资源工作的空计划。
         /// </summary>
-        public static SecondaryResourcePaymentPlan Empty(CardModel card, Player player, bool isFree = false)
+        public static SecondaryResourcePaymentPlan Empty(CardModel card, Player? player, bool isFree = false)
         {
             return new(card, player, isFree, []);
         }
@@ -382,13 +394,15 @@ namespace STS2RitsuLib.Combat.SecondaryResources
 
             var player = card.Owner;
             if (!ModSecondaryResourceRegistry.HasAny ||
-                player == null ||
                 !card.TryGetSecondaryCosts(out var costs))
-                return SecondaryResourcePaymentPlan.Empty(card, player!, isFree);
+                return SecondaryResourcePaymentPlan.Empty(card, player, isFree);
+
+            if (player == null)
+                return PlanPreview(card, costs, isFree);
 
             var combatState = card.CombatState ?? player.Creature?.CombatState;
             if (combatState == null)
-                return SecondaryResourcePaymentPlan.Empty(card, player, isFree);
+                return PlanPreview(card, costs, isFree);
 
             var lines = new List<SecondaryResourcePaymentLine>();
             foreach (var pair in costs.Snapshot())
@@ -420,6 +434,17 @@ namespace STS2RitsuLib.Combat.SecondaryResources
             AbstractModel? source = null)
         {
             ArgumentNullException.ThrowIfNull(plan);
+
+            if (plan.Player == null)
+            {
+                if (plan.HasLines)
+                    throw new InvalidOperationException(
+                        $"Cannot commit secondary resource payments for {plan.Card.Id.Entry} without a player owner.");
+
+                var empty = SecondaryResourcePlayLedger.Empty(plan.Card, null, plan.IsFree);
+                SecondaryResourcePlayLedgerRuntime.SetPending(plan.Card, empty);
+                return empty;
+            }
 
             var builder = new SecondaryResourcePlayLedgerBuilder(plan.Card, plan.Player, plan.IsFree);
             foreach (var line in plan.Lines)
@@ -460,6 +485,41 @@ namespace STS2RitsuLib.Combat.SecondaryResources
             var ledger = builder.Build();
             SecondaryResourcePlayLedgerRuntime.SetPending(plan.Card, ledger);
             return ledger;
+        }
+
+        private static SecondaryResourcePaymentPlan PlanPreview(
+            CardModel card,
+            SecondaryResourceCostSet costs,
+            bool isFree)
+        {
+            var lines = new List<SecondaryResourcePaymentLine>();
+            foreach (var pair in costs.Snapshot())
+            {
+                if (!ModSecondaryResourceRegistry.TryGet(pair.Key, out var definition))
+                    continue;
+
+                lines.Add(ResolvePreviewLine(definition, pair.Value, isFree));
+            }
+
+            return new(card, null, isFree, lines);
+        }
+
+        private static SecondaryResourcePaymentLine ResolvePreviewLine(
+            SecondaryResourceDefinition definition,
+            SecondaryResourceCost cost,
+            bool isFree)
+        {
+            var fixedCost = Math.Max(0, cost.Amount);
+            if (!cost.CostsX)
+                return new(definition.Id, definition, fixedCost, 0, isFree ? 0 : fixedCost, fixedCost, false, isFree)
+                {
+                    IsPreview = true,
+                };
+
+            return new(definition.Id, definition, fixedCost, 0, 0, 0, true, isFree)
+            {
+                IsPreview = true,
+            };
         }
 
         private static SecondaryResourcePaymentLine ResolveLine(

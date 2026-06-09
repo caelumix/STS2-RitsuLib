@@ -338,6 +338,8 @@ namespace STS2RitsuLib.Interactions.RightClick
                 {
                     if (await TryExecuteBinding(bindingId, model, executionContext))
                         completed = true;
+                    if (!IsModelStillInState(model))
+                        break;
                 }
                 catch (Exception ex)
                 {
@@ -348,6 +350,28 @@ namespace STS2RitsuLib.Interactions.RightClick
 
             if (completed)
                 model.InvokeExecutionFinished();
+        }
+
+        private static bool IsModelStillInState(AbstractModel model)
+        {
+            try
+            {
+                return model switch
+                {
+                    CardModel card => !card.HasBeenRemovedFromState,
+                    RelicModel relic => !relic.HasBeenRemovedFromState && relic.Owner.Relics.Contains(relic),
+                    PowerModel power => power.Owner.Powers.Contains(power),
+                    PotionModel potion => !potion.HasBeenRemovedFromState && potion.Owner.Potions.Contains(potion),
+                    _ => true,
+                };
+            }
+            catch (Exception ex)
+            {
+                RitsuLibFramework.Logger.Warn(
+                    $"[RightClick] Failed to check model state before ExecutionFinished. " +
+                    $"ModelId='{model.Id}' OwnerType='{model.GetType().FullName}' Error='{ex.Message}'");
+                return false;
+            }
         }
 
         private static bool TryGetPlayer(ulong ownerNetId, out Player player)

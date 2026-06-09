@@ -101,7 +101,7 @@ Persistence is separate:
 | Policy | Saved scope |
 | --- | --- |
 | `None` | Runtime only |
-| `Combat` | Restore with the current combat |
+| `Combat` | Currently mostly equivalent to `None`; normal run saves do not restore in-progress combat state |
 | `Run` | Persist across combats in the same run |
 
 :::
@@ -138,7 +138,7 @@ await SecondaryResourceCmd.Reset(player, charge.Id, toMax: true);
 | 策略 | 存储范围 |
 | --- | --- |
 | `None` | 仅运行时存在 |
-| `Combat` | 随当前战斗恢复 |
+| `Combat` | 目前基本等同于 `None`；普通跑局存档不会恢复进行中的战斗状态 |
 | `Run` | 在同一游戏中跨战斗保留 |
 
 :::

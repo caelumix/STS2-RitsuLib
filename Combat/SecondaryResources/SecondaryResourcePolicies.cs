@@ -14,7 +14,11 @@ namespace STS2RitsuLib.Combat.SecondaryResources
 
         /// <summary>
         ///     The resource should be restored while the current combat is restored.
+        ///     Currently, normal run saves do not restore an in-progress combat, so this behaves mostly like
+        ///     <see cref="None" /> unless a separate combat-state persistence path captures it.
         ///     该资源应随当前战斗恢复。
+        ///     目前普通跑局存档不会恢复进行中的战斗；除非另有战斗状态持久化路径捕获它，否则它基本等同于
+        ///     <see cref="None" />。
         /// </summary>
         Combat = 1,
 

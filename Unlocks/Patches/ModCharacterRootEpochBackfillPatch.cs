@@ -2,7 +2,6 @@ using System.Reflection;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Timeline;
-using STS2RitsuLib.Content;
 using STS2RitsuLib.Patching.Models;
 using STS2RitsuLib.Scaffolding.Characters;
 using STS2RitsuLib.Timeline.Scaffolding;
@@ -100,9 +99,9 @@ namespace STS2RitsuLib.Unlocks.Patches
                     continue;
                 }
 
-                if (!ModContentRegistry.TryGetOwnerModId(character.GetType(), out _))
+                if (!ModCharacterTimelinePolicy.IsOwnedOrUsesTimelinePolicy(character))
                     continue;
-                if (character is IModCharacterEpochTimelineRequirement { RequiresEpochAndTimeline: false })
+                if (ModCharacterTimelinePolicy.DoesNotRequireEpochAndTimeline(character))
                     continue;
                 if (character is not IModCharacterUnlockPrerequisite { UnlocksAfterRunAsType: { } prerequisiteType })
                     continue;

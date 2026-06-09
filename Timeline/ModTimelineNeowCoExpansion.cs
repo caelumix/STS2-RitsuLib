@@ -289,12 +289,8 @@ namespace STS2RitsuLib.Timeline
                 return false;
             }
 
-            switch (character)
-            {
-                case null:
-                case IModCharacterEpochTimelineRequirement { RequiresEpochAndTimeline: false }:
-                    return false;
-            }
+            if (character == null || ModCharacterTimelinePolicy.DoesNotRequireEpochAndTimeline(character))
+                return false;
 
             if (character is not IModCharacterUnlockPrerequisite { UnlocksAfterRunAsType: { } prerequisiteType })
                 return false;

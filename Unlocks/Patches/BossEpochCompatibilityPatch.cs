@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Saves.Managers;
 using MegaCrit.Sts2.Core.Timeline;
-using STS2RitsuLib.Content;
 using STS2RitsuLib.Patching.Models;
 using STS2RitsuLib.Scaffolding.Characters;
 
@@ -36,12 +35,12 @@ namespace STS2RitsuLib.Unlocks.Patches
             ArgumentNullException.ThrowIfNull(localPlayer);
 
             var character = localPlayer.Character;
-            if (!ModContentRegistry.TryGetOwnerModId(character.GetType(), out _))
+            if (!ModCharacterTimelinePolicy.IsOwnedOrUsesTimelinePolicy(character))
                 return true;
 
             if (!ModUnlockRegistry.TryGetBossEpochRule(character.Id, out var rule))
             {
-                if (character is IModCharacterEpochTimelineRequirement { RequiresEpochAndTimeline: false })
+                if (ModCharacterTimelinePolicy.DoesNotRequireEpochAndTimeline(character))
                     return false;
 
                 ModUnlockMissingRuleWarnings.WarnOnce(

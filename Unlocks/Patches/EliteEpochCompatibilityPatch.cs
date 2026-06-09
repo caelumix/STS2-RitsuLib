@@ -1,7 +1,7 @@
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Saves.Managers;
-using STS2RitsuLib.Content;
 using STS2RitsuLib.Patching.Models;
+using STS2RitsuLib.Scaffolding.Characters;
 
 namespace STS2RitsuLib.Unlocks.Patches
 {
@@ -34,7 +34,7 @@ namespace STS2RitsuLib.Unlocks.Patches
             ArgumentNullException.ThrowIfNull(__instance);
             ArgumentNullException.ThrowIfNull(localPlayer);
 
-            if (!ModContentRegistry.TryGetOwnerModId(localPlayer.Character.GetType(), out _))
+            if (!ModCharacterTimelinePolicy.IsOwnedOrUsesTimelinePolicy(localPlayer.Character))
                 return true;
 
             EliteEpochModHandling.TryHandleModEliteEpoch(__instance, localPlayer);

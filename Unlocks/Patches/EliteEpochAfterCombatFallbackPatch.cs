@@ -1,8 +1,8 @@
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves.Managers;
-using STS2RitsuLib.Content;
 using STS2RitsuLib.Patching.Models;
+using STS2RitsuLib.Scaffolding.Characters;
 
 namespace STS2RitsuLib.Unlocks.Patches
 {
@@ -42,7 +42,7 @@ namespace STS2RitsuLib.Unlocks.Patches
             if (room.RoomType != RoomType.Elite)
                 return;
 
-            if (!ModContentRegistry.TryGetOwnerModId(localPlayer.Character.GetType(), out _))
+            if (!ModCharacterTimelinePolicy.IsOwnedOrUsesTimelinePolicy(localPlayer.Character))
                 return;
 
             EliteEpochModHandling.TryHandleModEliteEpoch(__instance, localPlayer);
@@ -58,7 +58,7 @@ namespace STS2RitsuLib.Unlocks.Patches
                 return null;
 
             if (EliteEpochModHandling.HasDedicatedEliteEpochCheckMethod || room.RoomType != RoomType.Elite ||
-                !ModContentRegistry.TryGetOwnerModId(localPlayer.Character.GetType(), out _) ||
+                !ModCharacterTimelinePolicy.IsOwnedOrUsesTimelinePolicy(localPlayer.Character) ||
                 __exception is not ArgumentOutOfRangeException { ParamName: "character" })
                 return __exception;
 

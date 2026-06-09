@@ -28,6 +28,7 @@ namespace STS2RitsuLib.Content.Patches
         public static void Postfix(ref IEnumerable<CharacterModel> __result)
         {
             ModelDbContentPatchHelper.Append(ref __result, ModContentRegistry.AppendCharacters);
+            __result = CharacterTimelineDiagnostics.LogTimelinePolicy(__result);
         }
     }
 

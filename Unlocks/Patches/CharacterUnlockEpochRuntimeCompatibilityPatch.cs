@@ -1,7 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Saves.Managers;
 using MegaCrit.Sts2.Core.Timeline;
-using STS2RitsuLib.Content;
 using STS2RitsuLib.Patching.Models;
 using STS2RitsuLib.Scaffolding.Characters;
 
@@ -35,7 +34,7 @@ namespace STS2RitsuLib.Unlocks.Patches
             ArgumentNullException.ThrowIfNull(localPlayer);
 
             var character = localPlayer.Character;
-            if (!ModContentRegistry.TryGetOwnerModId(character.GetType(), out _))
+            if (!ModCharacterTimelinePolicy.IsOwnedOrUsesTimelinePolicy(character))
                 return true;
 
             var expectedEpochId = act switch
@@ -49,7 +48,7 @@ namespace STS2RitsuLib.Unlocks.Patches
             if (expectedEpochId == null)
                 return true;
 
-            if (character is IModCharacterEpochTimelineRequirement { RequiresEpochAndTimeline: false } &&
+            if (ModCharacterTimelinePolicy.DoesNotRequireEpochAndTimeline(character) &&
                 !EpochModel.IsValid(expectedEpochId))
                 return false;
 

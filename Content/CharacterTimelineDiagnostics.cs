@@ -20,7 +20,7 @@ namespace STS2RitsuLib.Content
         private static void TryLogTimelinePolicy(CharacterModel character)
         {
             var characterType = character.GetType();
-            if (!ModContentRegistry.TryGetOwnerModId(characterType, out _))
+            if (!ModCharacterTimelinePolicy.IsOwnedOrUsesTimelinePolicy(character))
                 return;
 
             lock (Gate)
@@ -29,8 +29,8 @@ namespace STS2RitsuLib.Content
                     return;
             }
 
-            var value = character is IModCharacterEpochTimelineRequirement requirement
-                ? requirement.RequiresEpochAndTimeline.ToString()
+            var value = ModCharacterTimelinePolicy.TryGetRequiresEpochAndTimeline(character, out var requires)
+                ? requires.ToString()
                 : "<not implemented>";
 
             RitsuLibFramework.Logger.Info(

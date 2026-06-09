@@ -9,7 +9,6 @@ using MegaCrit.Sts2.Core.Saves.Managers;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MegaCrit.Sts2.Core.Timeline;
 using STS2RitsuLib.Compat;
-using STS2RitsuLib.Content;
 using STS2RitsuLib.Patching.Models;
 using STS2RitsuLib.Scaffolding.Characters;
 using STS2RitsuLib.Timeline;
@@ -50,7 +49,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
             ArgumentNullException.ThrowIfNull(serializablePlayer.CharacterId);
             var character = ModelDb.GetById<CharacterModel>(serializablePlayer.CharacterId);
-            if (!ModContentRegistry.TryGetOwnerModId(character.GetType(), out _))
+            if (!ModCharacterTimelinePolicy.IsOwnedOrUsesTimelinePolicy(character))
                 return true;
 
             if (!Sts2RunGameModeCompat.IsStandardSerializableRunForEpochUnlocks(serializableRun))
@@ -58,7 +57,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
             if (!ModUnlockRegistry.TryGetAscensionOneEpoch(character.Id, out var epochId))
             {
-                if (character is IModCharacterEpochTimelineRequirement { RequiresEpochAndTimeline: false })
+                if (ModCharacterTimelinePolicy.DoesNotRequireEpochAndTimeline(character))
                     return false;
 
                 ModUnlockMissingRuleWarnings.WarnOnce(
@@ -118,7 +117,7 @@ namespace STS2RitsuLib.Unlocks.Patches
 
             ArgumentNullException.ThrowIfNull(serializablePlayer.CharacterId);
             var character = ModelDb.GetById<CharacterModel>(serializablePlayer.CharacterId);
-            var isModCharacter = ModContentRegistry.TryGetOwnerModId(character.GetType(), out _);
+            var isModCharacter = ModCharacterTimelinePolicy.IsOwnedOrUsesTimelinePolicy(character);
 
             if (!Sts2RunGameModeCompat.IsStandardSerializableRunForEpochUnlocks(serializableRun))
                 return true;
@@ -135,7 +134,7 @@ namespace STS2RitsuLib.Unlocks.Patches
                 if (!isModCharacter)
                     return true;
 
-                if (character is IModCharacterEpochTimelineRequirement { RequiresEpochAndTimeline: false })
+                if (ModCharacterTimelinePolicy.DoesNotRequireEpochAndTimeline(character))
                     return false;
 
                 ModUnlockMissingRuleWarnings.WarnOnce(
@@ -191,10 +190,8 @@ namespace STS2RitsuLib.Unlocks.Patches
             var character = ModelDb.GetById<CharacterModel>(characterId);
             if (!ModUnlockRegistry.TryGetAscensionRevealEpoch(characterId, out var epochId))
             {
-                if (character is not IModCharacterEpochTimelineRequirement
-                    {
-                        RequiresEpochAndTimeline: false,
-                    }) return true;
+                if (!ModCharacterTimelinePolicy.DoesNotRequireEpochAndTimeline(character))
+                    return true;
                 __result = true;
                 return false;
             }

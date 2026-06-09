@@ -5323,6 +5323,7 @@ namespace STS2RitsuLib.Settings
         private bool _applyingSelectedState;
         private Label? _arrowLabel;
         private bool _contentEnabled = true;
+        private Vector2 _dynamicMinimumSize;
         private BoxEdges _headerPadding;
         private int _headerSeparation;
         private bool _selected;
@@ -5455,7 +5456,9 @@ namespace STS2RitsuLib.Settings
 
         public override Vector2 _GetMinimumSize()
         {
-            return CustomMinimumSize;
+            return new(
+                Math.Max(CustomMinimumSize.X, _dynamicMinimumSize.X),
+                Math.Max(CustomMinimumSize.Y, _dynamicMinimumSize.Y));
         }
 
         public override void _Ready()
@@ -5541,6 +5544,18 @@ namespace STS2RitsuLib.Settings
             LayoutLabels();
         }
 
+        private void RequestAncestorLayout()
+        {
+            if (GetParent() is Control parent)
+            {
+                parent.UpdateMinimumSize();
+                if (parent is Container container && container.IsInsideTree())
+                    container.QueueSort();
+            }
+
+            ModSettingsUiFactory.FastVerticalStack.RequestAncestorLayouts(this);
+        }
+
         private void RefreshLayoutTokens()
         {
             var headerPadding = RitsuShellThemeLayoutResolver.ResolveEdges(
@@ -5576,12 +5591,22 @@ namespace STS2RitsuLib.Settings
 
             var textX = contentX + arrowMin.X + _headerSeparation;
             var textWidth = Math.Max(0f, contentX + contentWidth - textX);
-            var titleMin = _titleLabel?.GetCombinedMinimumSize() ?? Vector2.Zero;
+            var titleMin = GetWrappedLabelMinSize(_titleLabel, textWidth);
             var subtitleVisible = _subtitleLabel is { Visible: true };
-            var subtitleMin = subtitleVisible ? _subtitleLabel!.GetCombinedMinimumSize() : Vector2.Zero;
+            var subtitleMin = subtitleVisible ? GetWrappedLabelMinSize(_subtitleLabel, textWidth) : Vector2.Zero;
             var textHeight = titleMin.Y;
             if (subtitleVisible)
                 textHeight += _textSeparation + subtitleMin.Y;
+
+            var nextDynamicMin = new Vector2(
+                0f,
+                _headerPadding.Top + _headerPadding.Bottom + Math.Max(arrowMin.Y, textHeight));
+            if (_dynamicMinimumSize.DistanceSquaredTo(nextDynamicMin) > 0.01f)
+            {
+                _dynamicMinimumSize = nextDynamicMin;
+                UpdateMinimumSize();
+                RequestAncestorLayout();
+            }
 
             var y = contentY + Math.Max(0f, (contentHeight - textHeight) * 0.5f);
             if (_titleLabel is { Visible: true })
@@ -5596,6 +5621,16 @@ namespace STS2RitsuLib.Settings
             y += _textSeparation;
             _subtitleLabel!.Position = new(textX, y);
             _subtitleLabel.Size = new(textWidth, subtitleMin.Y);
+        }
+
+        private static Vector2 GetWrappedLabelMinSize(Label? label, float width)
+        {
+            if (label is not { Visible: true })
+                return Vector2.Zero;
+
+            label.Size = new(Math.Max(1f, width), label.Size.Y);
+            label.UpdateMinimumSize();
+            return label.GetCombinedMinimumSize();
         }
 
         private static StyleBoxFlat CreateHeaderStyle(bool selected, bool hovered, bool contentEnabled)

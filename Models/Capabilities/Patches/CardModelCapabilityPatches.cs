@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using STS2RitsuLib.Cards;
 using STS2RitsuLib.Patching.Models;
 
 namespace STS2RitsuLib.Models.Capabilities.Patches
@@ -43,16 +44,10 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         /// </summary>
         internal sealed class UpdateDynamicVarPreviewPatch : IPatchMethod
         {
-            /// <inheritdoc />
             public static string PatchId => "ritsulib_card_capability_dynamic_vars";
-
-            /// <inheritdoc />
             public static string Description => "Update model-capability card dynamic vars through CardModel preview";
-
-            /// <inheritdoc />
             public static bool IsCritical => true;
 
-            /// <inheritdoc />
             public static ModPatchTarget[] GetTargets()
             {
                 return
@@ -449,62 +444,27 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         ///     Applies capability description modifiers to normal card description rendering.
         ///     将能力描述修改器应用到常规卡牌描述渲染。
         /// </summary>
-        internal sealed class DescriptionForPilePatch : IPatchMethod
+        internal sealed class DescriptionPatch : IPatchMethod
         {
-            /// <inheritdoc />
-            public static string PatchId => "ritsulib_card_capability_description_for_pile";
-
-            /// <inheritdoc />
+            public static string PatchId => "ritsulib_card_capability_description";
             public static string Description => "Apply model-capability card description modifiers";
-
-            /// <inheritdoc />
             public static bool IsCritical => false;
 
-            /// <inheritdoc />
             public static ModPatchTarget[] GetTargets()
             {
-                return
-                [
-                    new(typeof(CardModel), nameof(CardModel.GetDescriptionForPile),
-                        [typeof(PileType), typeof(Creature)]),
-                ];
+                return [CardDescriptionPatchTarget.Create()];
             }
 
             public static void Postfix(
                 CardModel __instance,
-                PileType pileType,
-                Creature? target,
+                object[] __args,
                 ref string __result)
             {
-                var context = new CardDescriptionContext(__instance, pileType, target, false);
-                CardModelCapabilityHost.ApplyDescriptionFragments(context, ref __result);
-            }
-        }
-
-        /// <summary>
-        ///     Applies capability description modifiers to upgrade-preview text.
-        ///     将能力描述修改器应用到升级预览文本。
-        /// </summary>
-        internal sealed class DescriptionForUpgradePreviewPatch : IPatchMethod
-        {
-            /// <inheritdoc />
-            public static string PatchId => "ritsulib_card_capability_description_for_upgrade_preview";
-
-            /// <inheritdoc />
-            public static string Description => "Apply model-capability card description modifiers to upgrade previews";
-
-            /// <inheritdoc />
-            public static bool IsCritical => false;
-
-            /// <inheritdoc />
-            public static ModPatchTarget[] GetTargets()
-            {
-                return [new(typeof(CardModel), nameof(CardModel.GetDescriptionForUpgradePreview), Type.EmptyTypes)];
-            }
-
-            public static void Postfix(CardModel __instance, ref string __result)
-            {
-                var context = new CardDescriptionContext(__instance, PileType.None, null, true);
+                var pileType = __args is [{ } first, ..] ? (PileType)first : PileType.None;
+                var previewType = __args is [_, var second, ..] ? second : null;
+                var target = __args is [_, _, Creature creature, ..] ? creature : null;
+                var isUpgradePreview = CardDescriptionPatchTarget.IsUpgradePreview(previewType);
+                var context = new CardDescriptionContext(__instance, pileType, target, isUpgradePreview);
                 CardModelCapabilityHost.ApplyDescriptionFragments(context, ref __result);
             }
         }
@@ -515,16 +475,10 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         /// </summary>
         internal sealed class HoverTipsPatch : IPatchMethod
         {
-            /// <inheritdoc />
             public static string PatchId => "ritsulib_card_capability_hover_tips";
-
-            /// <inheritdoc />
             public static string Description => "Append model-capability card hover tips";
-
-            /// <inheritdoc />
             public static bool IsCritical => false;
 
-            /// <inheritdoc />
             public static ModPatchTarget[] GetTargets()
             {
                 return [new(typeof(CardModel), "HoverTips", MethodType.Getter)];
@@ -546,16 +500,10 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         /// </summary>
         internal sealed class ShouldGlowGoldPatch : IPatchMethod
         {
-            /// <inheritdoc />
             public static string PatchId => "ritsulib_card_capability_should_glow_gold";
-
-            /// <inheritdoc />
             public static string Description => "Merge model-capability gold glow predicates";
-
-            /// <inheritdoc />
             public static bool IsCritical => false;
 
-            /// <inheritdoc />
             public static ModPatchTarget[] GetTargets()
             {
                 return [new(typeof(CardModel), "ShouldGlowGold", MethodType.Getter)];
@@ -574,16 +522,10 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
         /// </summary>
         internal sealed class ShouldGlowRedPatch : IPatchMethod
         {
-            /// <inheritdoc />
             public static string PatchId => "ritsulib_card_capability_should_glow_red";
-
-            /// <inheritdoc />
             public static string Description => "Merge model-capability red glow predicates";
-
-            /// <inheritdoc />
             public static bool IsCritical => false;
 
-            /// <inheritdoc />
             public static ModPatchTarget[] GetTargets()
             {
                 return [new(typeof(CardModel), "ShouldGlowRed", MethodType.Getter)];

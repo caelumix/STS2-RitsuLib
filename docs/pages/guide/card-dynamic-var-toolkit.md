@@ -125,6 +125,76 @@ ModCardVars.ComputedDamage(
 
 :::
 
+## Energy, Star, And Power Icon Counts{lang="en"}
+
+::: en
+
+Use the concrete icon variable helpers when a description needs a dynamic amount rendered through the game's icon formatters:
+
+```csharp
+public override DynamicVarSet DynamicVars => new()
+{
+    ModCardVars.ComputedEnergy("EnergyGain", 1, card => ResolveEnergyGain(card)),
+    ModCardVars.ComputedStars("StarGain", 1, card => ResolveStarGain(card)),
+    ModCardVars.ComputedPower<StrengthPower>("StrengthPower", 2, card => ResolveStrength(card)),
+};
+```
+
+`ComputedPower<T>` keeps the typed `PowerVar<T>` shape for naming and display, and does not run power-amount hooks by default. For a computed amount that represents power being applied by the card and should use the same preview hook path as vanilla `PowerVar<T>`, use `ComputedPowerAmountGiven<T>`.
+
+Then keep the formatter in localization:
+
+```json
+{
+  "MY_CARD.description": "Gain {EnergyGain:energyIcons()}.\nGain {StarGain:starIcons()}.\nGain {StrengthPower:diff()} Strength."
+}
+```
+
+For a literal single energy icon that follows the card pool color, use the vanilla extra argument:
+
+```json
+{
+  "MY_CARD.description": "The next card costs 0{energyPrefix:energyIcons(1)}."
+}
+```
+
+:::
+
+## 能量、星星与能力层数图标数量{lang="zh-CN"}
+
+::: zh-CN
+
+当描述中需要通过游戏原生图标 formatter 显示动态数量时，使用具体图标变量辅助方法：
+
+```csharp
+public override DynamicVarSet DynamicVars => new()
+{
+    ModCardVars.ComputedEnergy("EnergyGain", 1, card => ResolveEnergyGain(card)),
+    ModCardVars.ComputedStars("StarGain", 1, card => ResolveStarGain(card)),
+    ModCardVars.ComputedPower<StrengthPower>("StrengthPower", 2, card => ResolveStrength(card)),
+};
+```
+
+`ComputedPower<T>` 保留类型化的 `PowerVar<T>` 形状，用于命名和显示，默认不跑能力层数 hook。如果这个计算值表示卡牌将要施加的能力层数，并且需要走和原版 `PowerVar<T>` 相同的预览修正路径，使用 `ComputedPowerAmountGiven<T>`。
+
+本地化里继续保留 formatter：
+
+```json
+{
+  "MY_CARD.description": "获得{EnergyGain:energyIcons()}。\n获得{StarGain:starIcons()}。\n获得{StrengthPower:diff()}点力量。"
+}
+```
+
+如果只是需要一个跟随卡池颜色的固定单个能量图标，使用原版额外参数：
+
+```json
+{
+  "MY_CARD.description": "下一张牌耗能变为0{energyPrefix:energyIcons(1)}。"
+}
+```
+
+:::
+
 ## Add A Tooltip{lang="en"}
 
 ::: en

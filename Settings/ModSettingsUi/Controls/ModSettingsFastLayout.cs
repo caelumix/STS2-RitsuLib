@@ -325,7 +325,7 @@ namespace STS2RitsuLib.Settings
             public override void _Draw()
             {
                 DrawStyleBox(_surfaceStyle, GetSurfaceRect());
-                DrawPlainText(_drawnLabelText, _drawnLabelRect, RitsuShellTheme.Current.Font.BodyBold,
+                DrawPlainText(_drawnLabelText, _drawnLabelRect, RitsuShellTheme.Current.Font.Body,
                     RitsuShellTheme.Current.Metric.FontSize.SettingLineTitle,
                     RitsuShellTheme.Current.Text.RichTitle);
                 DrawPlainText(_drawnDescriptionText, _drawnDescriptionRect, RitsuShellTheme.Current.Font.Body, 16,
@@ -390,7 +390,7 @@ namespace STS2RitsuLib.Settings
                     RemoveRichLabel(ref _label);
                     _drawsLabelText = true;
                     _drawnLabelText = displayText;
-                    _drawnLabelMinSize = MeasurePlainText(displayText, RitsuShellTheme.Current.Font.BodyBold,
+                    _drawnLabelMinSize = MeasurePlainText(displayText, RitsuShellTheme.Current.Font.Body,
                         RitsuShellTheme.Current.Metric.FontSize.SettingLineTitle);
                 }
                 else
@@ -493,7 +493,7 @@ namespace STS2RitsuLib.Settings
             private void RefreshDrawnTextMetrics()
             {
                 if (_drawsLabelText)
-                    _drawnLabelMinSize = MeasurePlainText(_drawnLabelText, RitsuShellTheme.Current.Font.BodyBold,
+                    _drawnLabelMinSize = MeasurePlainText(_drawnLabelText, RitsuShellTheme.Current.Font.Body,
                         RitsuShellTheme.Current.Metric.FontSize.SettingLineTitle);
                 if (_drawsDescriptionText)
                     _drawnDescriptionMinSize = MeasurePlainText(_drawnDescriptionText,

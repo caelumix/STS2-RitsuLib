@@ -345,10 +345,7 @@ namespace STS2RitsuLib.Combat.SecondaryResources
         /// <inheritdoc />
         public override void _Process(double delta)
         {
-            if (AutoRefresh && _boundPlayer != null)
-            {
-                Refresh(_boundPlayer);
-            }
+            if (AutoRefresh && _boundPlayer != null) Refresh(_boundPlayer);
         }
 
         private Vector2 GetIconPosition()
@@ -791,10 +788,8 @@ namespace STS2RitsuLib.Combat.SecondaryResources
                 return;
 
             foreach (var definition in _boundDefinitions)
-            {
                 if (_counters.TryGetValue(definition.Id, out var counter))
                     counter.Refresh(_boundPlayer);
-            }
         }
 
         private NSecondaryResourceCounter GetOrCreateCounter(SecondaryResourceDefinition definition)
@@ -834,12 +829,19 @@ namespace STS2RitsuLib.Combat.SecondaryResources
             ArgumentNullException.ThrowIfNull(definition);
 
             var icon = LoadIcon(definition);
-            var title = ResolveTitle(definition);
-            var description = ResolveDescription(definition);
-            var amountText = maxAmount.HasValue ? $"{amount}/{maxAmount.Value}" : amount.ToString();
-            description += $"\nAmount: {amountText}";
-
-            return CreateRaw(definition.Id, title, description, icon);
+            var title = SecondaryResourceText.GetTitle(definition, amount, maxAmount);
+            var description = SecondaryResourceText.GetDescription(definition, amount, maxAmount);
+            var tip = (title, description) switch
+            {
+                ({ } titleLoc, { } descriptionLoc) => new(titleLoc, descriptionLoc, icon),
+                ({ } titleLoc, null) => CreateRaw(definition.Id, titleLoc.GetFormattedText(),
+                    ResolveDescription(definition), icon),
+                (null, { } descriptionLoc) => CreateRaw(definition.Id, ResolveTitle(definition),
+                    descriptionLoc.GetFormattedText(), icon),
+                _ => CreateRaw(definition.Id, ResolveTitle(definition), ResolveDescription(definition), icon),
+            };
+            tip.Id = definition.Id;
+            return tip;
         }
 
         /// <summary>

@@ -274,6 +274,7 @@ For combat presentation:
 - `AlwaysShowInCombatUi(...)` and `AlwaysShowInCombatUiForCharacter(...)` keep a resource visible before it is gained
 - `RegisterCombatUi(...)`, `RegisterCardUi(...)`, and `RegisterMultiplayerPlayerStateUi(...)` attach custom Godot nodes through the node-attachment runtime
 - `NSecondaryResourceCardCostUi` is a simple single-resource card-cost wrapper node for `RegisterCardUi(...)`; bind one resource id per node and place each node yourself
+- Built-in `NSecondaryResourceIcon` / `NSecondaryResourceCounter` hover tips always use the resource title and description. Pass a `SecondaryResourceIconStyle` with `HoverTip = SecondaryResourceHoverTipStyle.Default with { ResolveGlobalPosition = ... }` when you need custom placement. Hover-tip title and description receive `Amount`, `HasMaxAmount`, and `MaxAmount` LocString variables so localization can decide how to show dynamic amounts.
 
 For text:
 
@@ -300,6 +301,7 @@ For text:
 - `AlwaysShowInCombatUi(...)` 和 `AlwaysShowInCombatUiForCharacter(...)` 可以让资源在尚未获得前也显示出来
 - `RegisterCombatUi(...)`、`RegisterCardUi(...)`、`RegisterMultiplayerPlayerStateUi(...)` 可以借助 node attachment 体系挂接自定义 Godot 节点
 - `NSecondaryResourceCardCostUi` 是用于 `RegisterCardUi(...)` 的单资源简易卡牌费用包装节点；每个节点绑定一个 resource id，并由注册方分别指定位置
+- 内建 `NSecondaryResourceIcon` / `NSecondaryResourceCounter` 的 hover tip 始终使用资源的 title 和 description。需要自定义位置时，传入带 `HoverTip = SecondaryResourceHoverTipStyle.Default with { ResolveGlobalPosition = ... }` 的 `SecondaryResourceIconStyle`。hover-tip title 和 description 会收到 `Amount`、`HasMaxAmount` 和 `MaxAmount` 这些 LocString 变量，由本地化文本决定如何显示动态数量。
 
 对于文本表现：
 

@@ -210,6 +210,20 @@ namespace STS2RitsuLib.Combat.SecondaryResources
         }
 
         /// <summary>
+        ///     Returns a title LocString with secondary-resource amount variables when the effective key exists.
+        ///     当资源的实际标题 key 存在时，返回带次级资源数量变量的标题 LocString。
+        /// </summary>
+        public static LocString? GetTitle(
+            SecondaryResourceDefinition definition,
+            int amount,
+            int? maxAmount = null)
+        {
+            var title = GetTitle(definition);
+            AddAmountVariables(title, amount, maxAmount);
+            return title;
+        }
+
+        /// <summary>
         ///     Returns the formatted resource title, falling back to a readable local id.
         ///     返回格式化后的资源标题；缺失时回退为可读的本地 id。
         /// </summary>
@@ -227,6 +241,20 @@ namespace STS2RitsuLib.Combat.SecondaryResources
         {
             ArgumentNullException.ThrowIfNull(definition);
             return TryGetLocString(definition.EffectiveLocTable, definition.EffectiveDescriptionKey);
+        }
+
+        /// <summary>
+        ///     Returns a description LocString with secondary-resource amount variables when the effective key exists.
+        ///     当资源的实际描述 key 存在时，返回带次级资源数量变量的描述 LocString。
+        /// </summary>
+        public static LocString? GetDescription(
+            SecondaryResourceDefinition definition,
+            int amount,
+            int? maxAmount = null)
+        {
+            var description = GetDescription(definition);
+            AddAmountVariables(description, amount, maxAmount);
+            return description;
         }
 
         /// <summary>
@@ -270,6 +298,17 @@ namespace STS2RitsuLib.Combat.SecondaryResources
             {
                 return null;
             }
+        }
+
+        private static void AddAmountVariables(LocString? locString, int amount, int? maxAmount)
+        {
+            if (locString == null)
+                return;
+
+            locString.Add("Amount", amount);
+            locString.Add("HasMaxAmount", maxAmount.HasValue);
+            if (maxAmount.HasValue)
+                locString.Add("MaxAmount", maxAmount.Value);
         }
     }
 

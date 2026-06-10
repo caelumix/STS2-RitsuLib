@@ -429,7 +429,7 @@ namespace STS2RitsuLib.Combat.SecondaryResources
         {
             ArgumentNullException.ThrowIfNull(card);
 
-            var player = card.Owner;
+            var player = TryGetOwner(card);
             if (!ModSecondaryResourceRegistry.HasAny)
                 return SecondaryResourcePaymentPlan.Empty(card, player, isFree);
 
@@ -463,6 +463,11 @@ namespace STS2RitsuLib.Combat.SecondaryResources
             }
 
             return new(card, player, isFree, lines);
+        }
+
+        private static Player? TryGetOwner(CardModel card)
+        {
+            return card.IsCanonical ? null : card.Owner;
         }
 
         /// <summary>

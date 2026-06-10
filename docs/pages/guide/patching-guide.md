@@ -64,6 +64,18 @@ public sealed class MyCombatPatch : IPatchMethod
 
 Use `new ModPatchTarget(type, methodName, parameterTypes)` when overloads need disambiguation. Use `ignoreIfMissing: true` only for optional compatibility targets.
 
+For common targets, use `PatchTarget` factory helpers to make the intent explicit:
+
+```csharp
+public static ModPatchTarget[] GetTargets() =>
+[
+    PatchTarget.Method<CombatRoom>("OnEnter"),
+    PatchTarget.Method<SaveManager>(nameof(SaveManager.SaveRun), typeof(AbstractRoom), typeof(bool)),
+    PatchTarget.Getter<Player>(nameof(Player.Piles)),
+    PatchTarget.OptionalGetter<PowerModel>("PackedIconPath"),
+];
+```
+
 :::
 
 ## 编写 Patch 类{lang="zh-CN"}
@@ -92,6 +104,64 @@ public sealed class MyCombatPatch : IPatchMethod
 ```
 
 目标方法有重载时，使用 `new ModPatchTarget(type, methodName, parameterTypes)`。只有可选兼容目标才使用 `ignoreIfMissing: true`。
+
+常见目标可以使用 `PatchTarget` 工厂辅助方法，让意图更明确：
+
+```csharp
+public static ModPatchTarget[] GetTargets() =>
+[
+    PatchTarget.Method<CombatRoom>("OnEnter"),
+    PatchTarget.Method<SaveManager>(nameof(SaveManager.SaveRun), typeof(AbstractRoom), typeof(bool)),
+    PatchTarget.Getter<Player>(nameof(Player.Piles)),
+    PatchTarget.OptionalGetter<PowerModel>("PackedIconPath"),
+];
+```
+
+:::
+
+## Private Member Access{lang="en"}
+
+::: en
+
+Use `PrivateAccess` when a patch must call private game methods or read private fields. It wraps `AccessTools` with required-member checks, so missing members fail with clearer errors during patch initialization.
+
+```csharp
+private static readonly AccessTools.FieldRef<NCombatUi, CombatState> StateRef =
+    PrivateAccess.FieldRef<NCombatUi, CombatState>("_state");
+
+private static readonly Func<NCardPlay, CardModel?> GetCard =
+    PrivateAccess.DeclaredGetterDelegate<NCardPlay, Func<NCardPlay, CardModel?>>("Card");
+
+private static readonly Action<NCardPlay, bool> Cleanup =
+    PrivateAccess.DeclaredMethodDelegate<NCardPlay, Action<NCardPlay, bool>>(
+        "Cleanup",
+        typeof(bool));
+```
+
+Prefer declared-member helpers when the target is a known private implementation detail on that exact type. Use inherited-member helpers only when the patch intentionally accepts members from a base type.
+
+:::
+
+## 私有成员访问{lang="zh-CN"}
+
+::: zh-CN
+
+patch 必须调用私有游戏方法或读取私有字段时，使用 `PrivateAccess`。它包装了 `AccessTools` 并做必需成员检查，因此成员缺失会在 patch 初始化阶段给出更清晰的错误。
+
+```csharp
+private static readonly AccessTools.FieldRef<NCombatUi, CombatState> StateRef =
+    PrivateAccess.FieldRef<NCombatUi, CombatState>("_state");
+
+private static readonly Func<NCardPlay, CardModel?> GetCard =
+    PrivateAccess.DeclaredGetterDelegate<NCardPlay, Func<NCardPlay, CardModel?>>("Card");
+
+private static readonly Action<NCardPlay, bool> Cleanup =
+    PrivateAccess.DeclaredMethodDelegate<NCardPlay, Action<NCardPlay, bool>>(
+        "Cleanup",
+        typeof(bool));
+```
+
+目标是确切类型上的私有实现细节时，优先使用 declared-member helper。只有 patch 有意接受基类成员时，才使用 inherited-member helper。
 
 :::
 

@@ -267,6 +267,8 @@ Implement `ISecondaryResourceHookListener` on models or capabilities when the re
 - Use `ModifySecondaryResourceCostLate(...)` when a cost modifier should run after normal secondary cost modifiers,
   mirroring the game's late energy-cost pass
 - Veto gain, spend, or built-in reset steps
+- `ShouldSpendSecondaryResource(...)` blocks `CanPlay` for required card costs; optional spend lines simply become
+  inactive when vetoed
 - React after change, spend, or reset
 
 For process-wide behavior, register a global listener through `SecondaryResourceHook.RegisterGlobalListener(...)`.
@@ -297,6 +299,7 @@ For text:
 - 如果某个费用修正应在普通次级费用修正之后执行，使用 `ModifySecondaryResourceCostLate(...)`，对应游戏的 late
   energy-cost pass
 - 阻止 gain、spend 或内建 reset
+- `ShouldSpendSecondaryResource(...)` 会让必需卡牌费用在 `CanPlay` 阶段被阻止；可选支付行被阻止时只会变为未激活
 - 在 change、spend、reset 之后执行附加逻辑
 
 进程级行为可通过 `SecondaryResourceHook.RegisterGlobalListener(...)` 注册全局监听器。

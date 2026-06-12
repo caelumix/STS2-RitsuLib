@@ -186,7 +186,7 @@ namespace STS2RitsuLib.Combat.SecondaryResources
                     node,
                     player,
                     definitions,
-                    SecondaryResourceVisibility.GetCombatUiDefinitions(player)));
+                    SecondaryResourceVisibility.GetCombatUiDefinitions(player, true)));
             });
         }
 

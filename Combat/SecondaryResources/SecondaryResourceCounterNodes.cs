@@ -281,7 +281,7 @@ namespace STS2RitsuLib.Combat.SecondaryResources
                 return;
             }
 
-            Visible = true;
+            Visible = _definition.IsVisibleInCombatUi(player);
             SetAmount(
                 SecondaryResourceCmd.Get(player, _definition.Id),
                 SecondaryResourceCmd.GetMax(player, _definition.Id));

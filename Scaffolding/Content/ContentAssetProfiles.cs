@@ -102,6 +102,18 @@ namespace STS2RitsuLib.Scaffolding.Content
     ///     Direct ancient card text background material override.
     ///     直接覆盖 Ancient 卡牌文本背景材质。
     /// </param>
+    /// <param name="AncientBannerPath">
+    ///     Ancient card title banner texture path.
+    ///     Ancient 卡牌卡名横幅贴图路径。
+    /// </param>
+    /// <param name="AncientBannerMaterialPath">
+    ///     Material path for ancient card title banner rendering.
+    ///     Ancient 卡牌卡名横幅渲染使用的材质路径。
+    /// </param>
+    /// <param name="AncientBannerMaterial">
+    ///     Direct ancient card title banner material override.
+    ///     直接覆盖 Ancient 卡牌卡名横幅材质。
+    /// </param>
     public sealed record CardAssetProfile(
         string? PortraitPath = null,
         string? BetaPortraitPath = null,
@@ -125,7 +137,10 @@ namespace STS2RitsuLib.Scaffolding.Content
         string? AncientBorderMaterialPath = null,
         Material? AncientBorderMaterial = null,
         string? AncientTextBgMaterialPath = null,
-        Material? AncientTextBgMaterial = null)
+        Material? AncientTextBgMaterial = null,
+        string? AncientBannerPath = null,
+        string? AncientBannerMaterialPath = null,
+        Material? AncientBannerMaterial = null)
     {
         /// <summary>
         ///     Backward-compatible constructor preserving the original parameter list.
@@ -219,6 +234,62 @@ namespace STS2RitsuLib.Scaffolding.Content
                 BannerMaterial,
                 PortraitMaterialPath,
                 PortraitMaterial,
+                null)
+        {
+        }
+
+        /// <summary>
+        ///     Backward-compatible constructor preserving the ancient texture/material parameter list.
+        ///     保留 ancient 贴图/材质参数列表的向后兼容构造函数。
+        /// </summary>
+        public CardAssetProfile(
+            string? PortraitPath,
+            string? BetaPortraitPath,
+            string? FramePath,
+            string? PortraitBorderPath,
+            string? EnergyIconPath,
+            string? FrameMaterialPath,
+            string? OverlayScenePath,
+            string? BannerTexturePath,
+            string? BannerMaterialPath,
+            Material? FrameMaterial,
+            Material? BannerMaterial,
+            string? PortraitMaterialPath,
+            Material? PortraitMaterial,
+            string? AncientBorderPath,
+            string? AncientTextBgPath,
+            string? PortraitBorderMaterialPath,
+            Material? PortraitBorderMaterial,
+            string? EnergyIconMaterialPath,
+            Material? EnergyIconMaterial,
+            string? AncientBorderMaterialPath,
+            Material? AncientBorderMaterial,
+            string? AncientTextBgMaterialPath,
+            Material? AncientTextBgMaterial)
+            : this(
+                PortraitPath,
+                BetaPortraitPath,
+                FramePath,
+                PortraitBorderPath,
+                EnergyIconPath,
+                FrameMaterialPath,
+                OverlayScenePath,
+                BannerTexturePath,
+                BannerMaterialPath,
+                FrameMaterial,
+                BannerMaterial,
+                PortraitMaterialPath,
+                PortraitMaterial,
+                AncientBorderPath,
+                AncientTextBgPath,
+                PortraitBorderMaterialPath,
+                PortraitBorderMaterial,
+                EnergyIconMaterialPath,
+                EnergyIconMaterial,
+                AncientBorderMaterialPath,
+                AncientBorderMaterial,
+                AncientTextBgMaterialPath,
+                AncientTextBgMaterial,
                 null)
         {
         }
@@ -656,8 +727,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         }
 
         /// <summary>
-        ///     Builds default portrait, overlay, ancient border, and ancient text background paths for an ancient card.
-        ///     为 ancient 卡牌构建默认肖像、覆盖层、ancient 边框和 ancient 文本背景路径。
+        ///     Builds default portrait, overlay, ancient border, ancient title banner, and ancient text background paths
+        ///     for an ancient card.
+        ///     为 ancient 卡牌构建默认肖像、覆盖层、ancient 边框、ancient 卡名横幅和 ancient 文本背景路径。
         /// </summary>
         public static CardAssetProfile AncientCard(string poolEntry, string cardEntry, CardType cardType)
         {
@@ -674,7 +746,8 @@ namespace STS2RitsuLib.Scaffolding.Content
                 AncientBorderPath: ImageHelper.GetImagePath(
                     "atlases/compressed_atlas.sprites/ancient_card_border.png.tres"),
                 AncientTextBgPath: ImageHelper.GetImagePath(
-                    $"atlases/compressed_atlas.sprites/ancient_text_bg_{normalizedType}.png.tres"));
+                    $"atlases/compressed_atlas.sprites/ancient_text_bg_{normalizedType}.png.tres"),
+                AncientBannerPath: ImageHelper.GetImagePath("atlases/ui_atlas.sprites/card/ancient_banner.tres"));
         }
 
         /// <summary>

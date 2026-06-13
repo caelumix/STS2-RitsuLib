@@ -373,7 +373,10 @@ namespace STS2RitsuLib.Scaffolding.Characters
                 profile.AncientBorderMaterialPath ?? fallback.AncientBorderMaterialPath,
                 profile.AncientBorderMaterial ?? fallback.AncientBorderMaterial,
                 profile.AncientTextBgMaterialPath ?? fallback.AncientTextBgMaterialPath,
-                profile.AncientTextBgMaterial ?? fallback.AncientTextBgMaterial);
+                profile.AncientTextBgMaterial ?? fallback.AncientTextBgMaterial,
+                profile.AncientBannerPath ?? fallback.AncientBannerPath,
+                profile.AncientBannerMaterialPath ?? fallback.AncientBannerMaterialPath,
+                profile.AncientBannerMaterial ?? fallback.AncientBannerMaterial);
         }
 
         internal static CardAssetProfile? MergeCardAssetProfilesPreferSecond(CardAssetProfile? fallback,

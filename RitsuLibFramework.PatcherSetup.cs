@@ -456,9 +456,14 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<CardTextureOverridePatch>();
             patcher.RegisterPatch<CardPortraitBorderTexturePatch>();
             patcher.RegisterPatch<CardEnergyIconTexturePatch>();
+#if STS2_AT_LEAST_0_105_0
+            patcher.RegisterPatch<CardAncientBorderTexturePatch>();
+#endif
+            patcher.RegisterPatch<CardAncientTextBgTexturePatch>();
             patcher.RegisterPatch<CardFrameMaterialPatch>();
             patcher.RegisterPatch<CardPoolFrameMaterialPatch>();
             patcher.RegisterPatch<CardPortraitMaterialPatch>();
+            patcher.RegisterPatch<CardNodeMaterialPatch>();
             patcher.RegisterPatch<CardAllPortraitPathsPatch>();
             patcher.RegisterPatch<CardOverlayPathPatch>();
             patcher.RegisterPatch<CardOverlayAvailabilityPatch>();

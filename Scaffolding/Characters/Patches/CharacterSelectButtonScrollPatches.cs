@@ -40,7 +40,8 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             660f,
             167f,
             -177f,
-            -10f);
+            -10f,
+            true);
 
         public static string PatchId => "custom_run_character_select_button_scroll";
 
@@ -58,9 +59,15 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         [HarmonyPriority(Priority.Last)]
         public static void Postfix(NCustomRunScreen __instance)
         {
-            var root = __instance.GetNodeOrNull<Control>("LeftContainer/CharSelectButtons/ButtonScrollContainer") ??
-                       __instance.GetNodeOrNull<Control>("LeftContainer/CharSelectButtons");
-            NCharacterButtonStripScroller.Install(root, Options);
+            var root = __instance.GetNodeOrNull<Control>("LeftContainer/CharSelectButtons/ButtonScrollContainer");
+            if (root != null)
+            {
+                NCharacterButtonStripScroller.Install(root, Options);
+                return;
+            }
+
+            var host = __instance.GetNodeOrNull<Control>("LeftContainer/CharSelectButtons");
+            NCharacterButtonStripScroller.InstallNested(host, "ButtonScrollContainer", Options);
         }
     }
 }

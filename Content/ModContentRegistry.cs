@@ -770,6 +770,7 @@ namespace STS2RitsuLib.Content
         {
             EnsureMutable($"register model capability '{capabilityType.Name}'");
             EnsureModelType(capabilityType, typeof(ModelCapability), nameof(capabilityType));
+            ModelCapabilities.EnsureInitialized();
             PrimeOwnedType(capabilityType);
             ApplyFixedPublicEntryForModel(capabilityType, publicEntry);
             RegistrationConflictDetector.ThrowIfModelIdConflicts(capabilityType);
@@ -803,6 +804,7 @@ namespace STS2RitsuLib.Content
         {
             EnsureMutable($"configure default model capabilities '{modelType.Name}/{modifierId}'");
             EnsureModelFamilyType(modelType, nameof(modelType));
+            ModelCapabilities.EnsureInitialized();
             ModelCapabilityDefaults.Modify(ModId, modifierId, modelType, modifier, order);
             _logger.Info($"[Content] Registered default model capability modifier: {modelType.Name}/{modifierId}");
         }
@@ -818,6 +820,7 @@ namespace STS2RitsuLib.Content
             where TModel : AbstractModel
         {
             EnsureMutable($"configure default model capabilities '{typeof(TModel).Name}/{modifierId}'");
+            ModelCapabilities.EnsureInitialized();
             ModelCapabilityDefaults.Modify(ModId, modifierId, modifier, order);
             _logger.Info(
                 $"[Content] Registered default model capability modifier: {typeof(TModel).Name}/{modifierId}");

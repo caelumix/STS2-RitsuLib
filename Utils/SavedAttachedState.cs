@@ -251,8 +251,10 @@ namespace STS2RitsuLib.Utils
 
             public bool Export(object model, SavedProperties props)
             {
-                return owner.TryGetValue((TSavedKey)model, out var value) &&
-                       SavedAttachedStateRegistry.AddToProperties(props, Name, value);
+                return SavedAttachedStateRegistry.AddToProperties(
+                    props,
+                    Name,
+                    owner.GetOrCreate((TSavedKey)model));
             }
 
             public void Import(object model, SavedProperties props)
@@ -277,6 +279,7 @@ namespace STS2RitsuLib.Utils
         private static readonly Lock SyncRoot = new();
         private static readonly List<ISavedAttachedState> RegisteredStates = [];
         private static readonly HashSet<string> RegisteredNames = [];
+        private static bool _propertyNamesFinalized;
 
         private static readonly HashSet<Type> SupportedTypes =
         [
@@ -296,6 +299,7 @@ namespace STS2RitsuLib.Utils
 
             lock (SyncRoot)
             {
+                ThrowIfPropertyNamesFinalized(state.Name);
                 if (!RegisteredNames.Add(state.Name))
                     throw new InvalidOperationException($"SavedAttachedState name is not unique: {state.Name}");
 
@@ -305,7 +309,6 @@ namespace STS2RitsuLib.Utils
                     var orderCompare = a.Order.CompareTo(b.Order);
                     return orderCompare != 0 ? orderCompare : string.CompareOrdinal(a.Name, b.Name);
                 });
-                InjectNameIntoBaseGameCache(state.Name);
             }
         }
 
@@ -315,11 +318,27 @@ namespace STS2RitsuLib.Utils
 
             lock (SyncRoot)
             {
-                if (!RegisteredNames.Add(name))
+                ThrowIfPropertyNamesFinalized(name);
+                RegisteredNames.Add(name);
+            }
+        }
+
+        internal static void FinalizePropertyNameRegistration()
+        {
+            string[] names;
+            lock (SyncRoot)
+            {
+                if (_propertyNamesFinalized)
                     return;
 
-                InjectNameIntoBaseGameCache(name);
+                _propertyNamesFinalized = true;
+                names = RegisteredNames
+                    .OrderBy(static name => name, StringComparer.Ordinal)
+                    .ToArray();
             }
+
+            foreach (var name in names)
+                InjectNameIntoBaseGameCache(name);
         }
 
         internal static IReadOnlyList<ISavedAttachedState> GetStatesForModel(object model)
@@ -486,6 +505,14 @@ namespace STS2RitsuLib.Utils
             var newBitSize = (int)Math.Ceiling(Math.Log2(idToProperty.Count));
             AccessTools.Property(typeof(SavedPropertiesTypeCache), nameof(SavedPropertiesTypeCache.NetIdBitSize))
                 ?.SetValue(null, newBitSize);
+        }
+
+        private static void ThrowIfPropertyNamesFinalized(string name)
+        {
+            if (_propertyNamesFinalized)
+                throw new InvalidOperationException(
+                    $"SavedProperties extension property name '{name}' was registered after SavedPropertiesTypeCache finalization. " +
+                    "Register SavedAttachedState and ModelSavedData during mod type discovery or mod initialization.");
         }
     }
 }

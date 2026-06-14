@@ -6,7 +6,9 @@ using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Patching.Models;
+using STS2RitsuLib.Utils;
 
 namespace STS2RitsuLib.Interop.Patches
 {
@@ -48,9 +50,6 @@ namespace STS2RitsuLib.Interop.Patches
             }
 
             var modelTypes = GetModModelTypesWithSavedProperties().ToArray();
-            if (modelTypes.Length == 0)
-                return;
-
             var beforeCount = GetPropertyNameCount();
             var injectedTypes = 0;
 
@@ -63,6 +62,8 @@ namespace STS2RitsuLib.Interop.Patches
                 injectedTypes++;
             }
 
+            ModelSavedDataRegistry.FinalizeRegistration();
+            SavedAttachedStateRegistry.FinalizePropertyNameRegistration();
             RefreshNetIdBitSize();
 
             var afterCount = GetPropertyNameCount();

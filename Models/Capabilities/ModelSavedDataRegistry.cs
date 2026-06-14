@@ -8,30 +8,52 @@ namespace STS2RitsuLib.Models.Capabilities
         private static readonly Lock SyncRoot = new();
         private static readonly Dictionary<ModelSavedDataSlotKey, IModelSavedDataSlot> Slots = [];
         private static bool _propertyNameRegistered;
+        private static bool _registrationFinalized;
 
         public static void EnsureInitialized()
         {
             lock (SyncRoot)
             {
-                if (_propertyNameRegistered)
-                    return;
-
-                SavedAttachedStateRegistry.RegisterPropertyName(ModelSavedDataRuntime.SavedPropertiesName);
-                _propertyNameRegistered = true;
+                EnsureInitializedLocked();
             }
         }
 
         public static void Register(IModelSavedDataSlot slot)
         {
             ArgumentNullException.ThrowIfNull(slot);
-            EnsureInitialized();
 
             lock (SyncRoot)
             {
+                if (_registrationFinalized)
+                    throw new InvalidOperationException(
+                        $"ModelSavedData slot '{slot.ModId}'::'{slot.Key}' was registered after model saved data registration finalization. Register ModelSavedData slots during mod initialization.");
+
+                EnsureInitializedLocked();
                 if (!Slots.TryAdd(slot.SlotKey, slot))
                     throw new InvalidOperationException(
                         $"ModelSavedData slot is already registered: {slot.ModId}::{slot.Key}");
             }
+        }
+
+        public static void FinalizeRegistration()
+        {
+            lock (SyncRoot)
+            {
+                _registrationFinalized = true;
+            }
+        }
+
+        private static void EnsureInitializedLocked()
+        {
+            if (_propertyNameRegistered)
+                return;
+
+            if (_registrationFinalized)
+                throw new InvalidOperationException(
+                    "ModelSavedData was initialized after model saved data registration finalization. Register ModelSavedData slots during mod initialization.");
+
+            SavedAttachedStateRegistry.RegisterPropertyName(ModelSavedDataRuntime.SavedPropertiesName);
+            _propertyNameRegistered = true;
         }
 
         public static void EnsureImported(AbstractModel model, ModelSavedDataBag bag)

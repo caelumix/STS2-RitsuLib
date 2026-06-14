@@ -31,7 +31,8 @@ namespace STS2RitsuLib.Scaffolding.Content
         : CardModel(baseCost, type, rarity, target, showInCardLibrary), IModCardAssetOverrides,
             IModCardPortraitMaterialOverride, IModCardFrameMaterialOverride, IModCardBannerMaterialOverride,
             IModCardPortraitBorderMaterialOverride, IModCardEnergyIconMaterialOverride,
-            IModCardAncientBorderMaterialOverride, IModCardAncientTextBgMaterialOverride
+            IModCardAncientBorderMaterialOverride, IModCardAncientTextBgMaterialOverride,
+            IModCardAncientBannerMaterialOverride
     {
         /// <summary>
         ///     Legacy constructor overload; <paramref name="autoAdd" /> is ignored.
@@ -85,6 +86,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         protected sealed override IEnumerable<IHoverTip> ExtraHoverTips => AdditionalHoverTips.ToArray();
 
         /// <inheritdoc />
+        public virtual Material? CustomAncientBannerMaterial => AssetProfile.AncientBannerMaterial;
+
+        /// <inheritdoc />
         public virtual Material? CustomAncientBorderMaterial => AssetProfile.AncientBorderMaterial;
 
         /// <inheritdoc />
@@ -118,6 +122,9 @@ namespace STS2RitsuLib.Scaffolding.Content
         public virtual string? CustomAncientTextBgPath => AssetProfile.AncientTextBgPath;
 
         /// <inheritdoc />
+        public virtual string? CustomAncientBannerPath => AssetProfile.AncientBannerPath;
+
+        /// <inheritdoc />
         public virtual string? CustomFrameMaterialPath => AssetProfile.FrameMaterialPath;
 
         /// <inheritdoc />
@@ -131,6 +138,9 @@ namespace STS2RitsuLib.Scaffolding.Content
 
         /// <inheritdoc />
         public virtual string? CustomAncientTextBgMaterialPath => AssetProfile.AncientTextBgMaterialPath;
+
+        /// <inheritdoc />
+        public virtual string? CustomAncientBannerMaterialPath => AssetProfile.AncientBannerMaterialPath;
 
         /// <inheritdoc />
         public virtual string? CustomOverlayScenePath => AssetProfile.OverlayScenePath;

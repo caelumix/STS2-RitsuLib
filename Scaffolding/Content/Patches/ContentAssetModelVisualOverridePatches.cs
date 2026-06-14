@@ -528,15 +528,15 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
     }
 
     /// <summary>
-    ///     Applies custom <see cref="Material" /> overrides for card subnodes that do not expose model material getters.
-    ///     为没有 model 材质 getter 的卡牌子节点应用自定义 <see cref="Material" /> 覆盖。
+    ///     Applies custom visual overrides for card subnodes that do not expose model getters.
+    ///     为没有 model getter 的卡牌子节点应用自定义视觉覆盖。
     /// </summary>
     internal class CardNodeMaterialPatch : IPatchMethod
     {
         public static string PatchId => "content_asset_override_card_node_material";
 
         public static string Description =>
-            "Allow mod cards to override portrait border, energy icon, and ancient node materials";
+            "Allow mod cards to override portrait border, energy icon, and ancient node visuals";
 
         public static bool IsCritical => false;
 
@@ -550,6 +550,22 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             var model = __instance.Model;
             if (model == null || __instance.Visibility != ModelVisibility.Visible)
                 return;
+
+            ApplyTexture(
+                __instance,
+                model,
+                "%AncientBorder",
+                static o => o.CustomAncientBorderPath,
+                nameof(IModCardAssetOverrides.CustomAncientBorderPath),
+                ModCharacterOwnedVisualOverrideHelper.TryCardAncientBorderTexture);
+
+            ApplyTexture(
+                __instance,
+                model,
+                "%AncientBanner",
+                static o => o.CustomAncientBannerPath,
+                nameof(IModCardAssetOverrides.CustomAncientBannerPath),
+                ModCharacterOwnedVisualOverrideHelper.TryCardAncientBannerTexture);
 
             ApplyMaterial<IModCardPortraitBorderMaterialOverride>(
                 __instance,
@@ -586,6 +602,33 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
                 static o => o.CustomAncientTextBgMaterialPath,
                 nameof(IModCardAssetOverrides.CustomAncientTextBgMaterialPath),
                 ModCharacterOwnedVisualOverrideHelper.TryCardAncientTextBgMaterial);
+
+            ApplyMaterial<IModCardAncientBannerMaterialOverride>(
+                __instance,
+                model,
+                "%AncientBanner",
+                static o => o.CustomAncientBannerMaterial,
+                static o => o.CustomAncientBannerMaterialPath,
+                nameof(IModCardAssetOverrides.CustomAncientBannerMaterialPath),
+                ModCharacterOwnedVisualOverrideHelper.TryCardAncientBannerMaterial);
+        }
+
+        private static void ApplyTexture(
+            NCard card,
+            CardModel model,
+            NodePath nodePath,
+            Func<IModCardAssetOverrides, string?> pathSelector,
+            string memberName,
+            TryCharacterOwnedTextureOverride tryCharacterOwned)
+        {
+            if (!TryGetTexture(model, pathSelector, memberName, tryCharacterOwned, out var texture))
+                return;
+
+            var node = card.GetNodeOrNull<TextureRect>(nodePath);
+            if (node == null)
+                return;
+
+            node.Texture = texture;
         }
 
         private static void ApplyMaterial<TDirectOverride>(
@@ -632,7 +675,27 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
                 memberName);
         }
 
+        private static bool TryGetTexture(
+            CardModel model,
+            Func<IModCardAssetOverrides, string?> pathSelector,
+            string memberName,
+            TryCharacterOwnedTextureOverride tryCharacterOwned,
+            out Texture2D texture)
+        {
+            texture = null!;
+            if (!tryCharacterOwned(model, ref texture))
+                return true;
+
+            return !ContentAssetOverridePatchHelper.TryUseTextureOverride(
+                model,
+                ref texture,
+                pathSelector,
+                memberName);
+        }
+
         private delegate bool TryCharacterOwnedMaterialOverride(CardModel model, ref Material material);
+
+        private delegate bool TryCharacterOwnedTextureOverride(CardModel model, ref Texture2D texture);
     }
 
     /// <summary>

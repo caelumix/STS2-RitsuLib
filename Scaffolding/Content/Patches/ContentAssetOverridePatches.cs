@@ -430,6 +430,12 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         string? CustomAncientTextBgPath => AssetProfile.AncientTextBgPath;
 
         /// <summary>
+        ///     Override for ancient card title banner texture path.
+        ///     Ancient 卡牌卡名横幅纹理路径覆盖。
+        /// </summary>
+        string? CustomAncientBannerPath => AssetProfile.AncientBannerPath;
+
+        /// <summary>
         ///     Override for frame <see cref="Material" /> resource path.
         ///     边框 <see cref="Material" /> 资源路径覆盖。
         /// </summary>
@@ -458,6 +464,12 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         ///     Ancient 卡牌文本背景 <see cref="Material" /> 资源路径覆盖。
         /// </summary>
         string? CustomAncientTextBgMaterialPath => AssetProfile.AncientTextBgMaterialPath;
+
+        /// <summary>
+        ///     Override for ancient card title banner <see cref="Material" /> resource path.
+        ///     Ancient 卡牌卡名横幅 <see cref="Material" /> 资源路径覆盖。
+        /// </summary>
+        string? CustomAncientBannerMaterialPath => AssetProfile.AncientBannerMaterialPath;
 
         /// <summary>
         ///     Override for built-in overlay packed scene path.
@@ -572,6 +584,21 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
         ///     返回 <c>null</c> 以继续使用其它覆盖层。
         /// </summary>
         Material? CustomAncientTextBgMaterial => null;
+    }
+
+    /// <summary>
+    ///     Optional direct ancient card title banner <see cref="Material" /> override for cards.
+    ///     用于 ancient 卡牌的可选直接卡名横幅 <see cref="Material" /> 覆盖。
+    /// </summary>
+    public interface IModCardAncientBannerMaterialOverride
+    {
+        /// <summary>
+        ///     Direct ancient card title banner material override.
+        ///     Return <c>null</c> to continue with other override layers.
+        ///     直接的 ancient 卡牌卡名横幅材质覆盖。
+        ///     返回 <c>null</c> 以继续使用其它覆盖层。
+        /// </summary>
+        Material? CustomAncientBannerMaterial => null;
     }
 
     /// <summary>

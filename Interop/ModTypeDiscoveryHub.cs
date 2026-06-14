@@ -84,6 +84,7 @@ namespace STS2RitsuLib.Interop
                 if (_builtInsRegistered)
                     return;
                 Contributors.Add(new ModInteropTypeDiscoveryContributor());
+                Contributors.Add(new SavedAttachedStateTypeDiscoveryContributor());
                 Contributors.Add(new AttributeAutoRegistrationTypeDiscoveryContributor());
                 _builtInsRegistered = true;
             }

@@ -12,7 +12,8 @@ namespace STS2RitsuLib.Models.Capabilities
         private const string SavedDataKey = "model_capabilities";
         private static readonly ModelSavedDataSlotKey SavedDataSlotKey = new(Const.ModId, SavedDataKey);
         private static readonly ConditionalWeakTable<AbstractModel, ModelCapabilitySet> Collections = [];
-        private static bool _initialized;
+
+        internal static bool IsInitialized { get; private set; }
 
         /// <summary>
         ///     Initializes the built-in persistence slot for model capabilities.
@@ -20,10 +21,10 @@ namespace STS2RitsuLib.Models.Capabilities
         /// </summary>
         public static void EnsureInitialized()
         {
-            if (_initialized)
+            if (IsInitialized)
                 return;
 
-            _initialized = true;
+            IsInitialized = true;
             ModelSavedDataStore.For(Const.ModId).RegisterComputed<AbstractModel, ModelCapabilitySaveDocument>(
                 SavedDataKey,
                 Export,
@@ -43,7 +44,6 @@ namespace STS2RitsuLib.Models.Capabilities
         public static ModelCapabilitySet Get(AbstractModel model)
         {
             ArgumentNullException.ThrowIfNull(model);
-            EnsureInitialized();
             return Collections.GetValue(model, CreateCollection);
         }
 
@@ -54,7 +54,6 @@ namespace STS2RitsuLib.Models.Capabilities
         public static bool TryGet(AbstractModel model, out ModelCapabilitySet collection)
         {
             ArgumentNullException.ThrowIfNull(model);
-            EnsureInitialized();
             return Collections.TryGetValue(model, out collection!);
         }
 
@@ -68,6 +67,10 @@ namespace STS2RitsuLib.Models.Capabilities
 
         internal static void MarkSavedDataDirty(AbstractModel model)
         {
+            if (!IsInitialized)
+                throw new InvalidOperationException(
+                    "ModelCapabilities persistence has not been registered. Register a model capability or default capability modifier during mod initialization before mutating model capabilities.");
+
             ModelSavedDataRuntime.GetBag(model).Set(SavedDataSlotKey, new ModelCapabilitySaveDocument());
         }
 
@@ -84,7 +87,8 @@ namespace STS2RitsuLib.Models.Capabilities
         {
             var collection = new ModelCapabilitySet(model);
             collection.Load(null);
-            ModelSavedDataRuntime.GetBag(model).Set(SavedDataSlotKey, new ModelCapabilitySaveDocument(), false);
+            if (IsInitialized)
+                ModelSavedDataRuntime.GetBag(model).Set(SavedDataSlotKey, new ModelCapabilitySaveDocument(), false);
             return collection;
         }
 

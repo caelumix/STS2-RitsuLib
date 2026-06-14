@@ -71,6 +71,32 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             return true;
         }
 
+        public static bool InstallNested(Control? host, string scrollerName, CharacterButtonStripScrollOptions options)
+        {
+            if (host == null)
+                return false;
+
+            var existingScroller = host.GetNodeOrNull<Control>(scrollerName);
+            if (existingScroller != null)
+                return Install(existingScroller, options);
+
+            var contents = host.GetNodeOrNull<Control>("ButtonContainer");
+            if (contents == null || CountVisibleButtons(contents) <= options.VisibleButtons)
+                return false;
+
+            var index = contents.GetIndex();
+            host.RemoveChild(contents);
+
+            var scroller = new NCharacterButtonStripScroller { Name = scrollerName };
+            ApplyNestedViewportLayout(scroller, options);
+            host.AddChild(scroller);
+            scroller.Owner = host.Owner;
+            host.MoveChild(scroller, index);
+            scroller.AddChild(contents);
+            scroller.Configure(contents, options);
+            return true;
+        }
+
         public override void _EnterTree()
         {
             base._EnterTree();
@@ -142,7 +168,8 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             MouseFilter = MouseFilterEnum.Stop;
             ClipContents = true;
 
-            ApplyViewportLayout();
+            if (!options.PreserveRootLayout)
+                ApplyViewportLayout();
             PrepareContents();
             EnsureArrows();
             RefreshLayout();
@@ -244,6 +271,21 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             ClipContents = true;
         }
 
+        private static void ApplyNestedViewportLayout(Control target, CharacterButtonStripScrollOptions options)
+        {
+            target.AnchorLeft = 0.5f;
+            target.AnchorRight = 0.5f;
+            target.AnchorTop = 0.5f;
+            target.AnchorBottom = 0.5f;
+            target.OffsetLeft = -options.ViewportWidth / 2f;
+            target.OffsetRight = options.ViewportWidth / 2f;
+            target.OffsetTop = options.OffsetTop;
+            target.OffsetBottom = options.OffsetBottom;
+            target.GrowHorizontal = GrowDirection.Both;
+            target.GrowVertical = GrowDirection.Both;
+            target.ClipContents = true;
+        }
+
         private void PrepareContents()
         {
             if (_contents == null)
@@ -314,7 +356,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             if (Mathf.Abs(next - targetPosition) < SnapThreshold)
                 next = targetPosition;
 
-            var centeredY = Mathf.Max(0f, (Size.Y - _contentHeight) / 2f);
+            var centeredY = Mathf.Max(0f, (_options.ViewportHeight - _contentHeight) / 2f);
             _contents.Position = new(next, centeredY);
             RefreshArrows();
         }
@@ -406,12 +448,12 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
                 return;
             }
 
-            LayoutArrow(_leftArrow, -_options.ViewportWidth / 2f - ArrowGap - ArrowContainerWidth);
+            LayoutArrow(_leftArrow, OffsetLeft - ArrowGap - ArrowContainerWidth);
             var canScrollLeft = _targetX < -SnapThreshold;
             _leftArrow.Visible = canScrollLeft;
             _leftArrow.SetEnabled(canScrollLeft);
 
-            LayoutArrow(_rightArrow, _options.ViewportWidth / 2f + ArrowGap);
+            LayoutArrow(_rightArrow, OffsetRight + ArrowGap);
             var canScrollRight = _targetX > ScrollLimit + SnapThreshold;
             _rightArrow.Visible = canScrollRight;
             _rightArrow.SetEnabled(canScrollRight);
@@ -419,13 +461,13 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
         private void LayoutArrow(NGoldArrowButton arrow, float leftOffset)
         {
-            arrow.AnchorLeft = 0.5f;
-            arrow.AnchorRight = 0.5f;
-            arrow.AnchorTop = 1f;
-            arrow.AnchorBottom = 1f;
+            arrow.AnchorLeft = AnchorLeft;
+            arrow.AnchorRight = AnchorLeft;
+            arrow.AnchorTop = AnchorTop;
+            arrow.AnchorBottom = AnchorTop;
             arrow.OffsetLeft = leftOffset;
             arrow.OffsetRight = leftOffset + ArrowContainerWidth;
-            arrow.OffsetTop = _options.OffsetTop + (_options.ViewportHeight - ArrowButtonHeight) / 2f;
+            arrow.OffsetTop = OffsetTop + (_options.ViewportHeight - ArrowButtonHeight) / 2f;
             arrow.OffsetBottom = arrow.OffsetTop + ArrowButtonHeight;
             arrow.Size = new(ArrowContainerWidth, ArrowButtonHeight);
             arrow.CustomMinimumSize = arrow.Size;
@@ -467,5 +509,6 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         float ViewportWidth,
         float ViewportHeight,
         float OffsetTop,
-        float OffsetBottom);
+        float OffsetBottom,
+        bool PreserveRootLayout = false);
 }

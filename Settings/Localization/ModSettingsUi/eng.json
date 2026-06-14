@@ -163,6 +163,8 @@
   "ritsulib.updateCheck.toast.availableTitle": "RitsuLib update available",
   "ritsulib.updateCheck.toast.availableBody": "Version {0} of RitsuLib is available. Click to open the release page.",
   "ritsulib.updateCheck.toast.upToDateBody": "RitsuLib is up to date ({0}).",
+  "ritsulib.updateCheck.toast.devBuildTitle": "RitsuLib dev build",
+  "ritsulib.updateCheck.toast.devBuildBody": "This is a RitsuLib dev build ({0}). Stable release update checks are skipped.",
   "ritsulib.updateCheck.toast.failed": "Update check failed: {0}",
   "ritsulib.section.steamCloudModData.title": "Steam Cloud (mod data)",
   "ritsulib.section.steamCloudModData.description": "Manage syncing mod data with Steam Cloud here.",

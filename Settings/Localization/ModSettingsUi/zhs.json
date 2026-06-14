@@ -163,6 +163,8 @@
   "ritsulib.updateCheck.toast.availableTitle": "RitsuLib 有可用更新",
   "ritsulib.updateCheck.toast.availableBody": "RitsuLib {0} 已发布。点击打开发布页。",
   "ritsulib.updateCheck.toast.upToDateBody": "RitsuLib 已是最新版本（{0}）。",
+  "ritsulib.updateCheck.toast.devBuildTitle": "RitsuLib dev build",
+  "ritsulib.updateCheck.toast.devBuildBody": "当前加载的是 RitsuLib dev build（{0}），已跳过稳定版更新检查。",
   "ritsulib.updateCheck.toast.failed": "更新检查失败：{0}",
   "ritsulib.section.steamCloudModData.title": "Steam 云（模组数据）",
   "ritsulib.section.steamCloudModData.description": "在此管理模组数据与 Steam 云的同步。",

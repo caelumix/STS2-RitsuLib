@@ -734,28 +734,21 @@ namespace STS2RitsuLib.Diagnostics
                 box.AddChild(new ModSettingsCollapsibleSection(
                     T("ritsulib.runtimeDetourCompat.dialog.summary", "Summary"),
                     "runtime_detour_compat_summary",
-                    summary,
+                    null,
                     false,
                     [CreateInfoCard(summary, RitsuShellTheme.Current.Text.RichBody)]));
 
                 box.AddChild(new ModSettingsCollapsibleSection(
                     T("ritsulib.runtimeDetourCompat.dialog.problemMods", "Problem mods"),
                     "runtime_detour_compat_problem_mods",
-                    L("ritsulib.runtimeDetourCompat.dialog.problemModsDescription",
-                        "{0} loaded mod(s) reference MonoMod.RuntimeDetour.",
-                        _riskMods.Count),
+                    null,
                     false,
                     [BuildProblemModsBody(_riskMods)]));
 
                 box.AddChild(new ModSettingsCollapsibleSection(
                     T("ritsulib.runtimeDetourCompat.dialog.affectedPatches", "Affected Harmony patches"),
                     "runtime_detour_compat_affected_patches",
-                    _conflicts.Count > 0
-                        ? L("ritsulib.runtimeDetourCompat.dialog.affectedPatchesDescription",
-                            "{0} Harmony-patched method(s) currently overlap RuntimeDetour hooks.",
-                            _conflicts.Count)
-                        : T("ritsulib.runtimeDetourCompat.dialog.affectedPatchesNoOverlapDescription",
-                            "No RuntimeDetour hook currently overlaps a Harmony-patched method."),
+                    null,
                     _conflicts.Count == 0,
                     [BuildAffectedPatchesBody(_conflicts, _queryUnavailable)]));
 

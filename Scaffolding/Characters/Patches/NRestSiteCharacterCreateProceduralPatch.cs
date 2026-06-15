@@ -1,11 +1,9 @@
 using Godot;
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Nodes.RestSite;
 using STS2RitsuLib.Patching.Models;
 using STS2RitsuLib.Scaffolding.Characters.Visuals;
-using STS2RitsuLib.Scaffolding.Godot;
 
 namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
@@ -41,8 +39,10 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
                 return false;
             }
 
-            var scene = PreloadManager.Cache.GetScene(player.Character.RestSiteAnimPath);
-            __result = RitsuGodotNodeFactories.CreateFromScene<NRestSiteCharacter>(scene,
+            __result = CharacterWorldScenePathFactoryHelper.CreateFromSceneOrTexture<NRestSiteCharacter>(
+                player.Character,
+                player.Character.RestSiteAnimPath,
+                nameof(IModCharacterAssetOverrides.CustomRestSiteAnimPath),
                 PackedScene.GenEditState.Disabled);
             __result.Player = player;
             RestSiteCharacterIndexRef(__result) = characterIndex;

@@ -4,6 +4,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Patching.Models;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 using STS2RitsuLib.Scaffolding.Godot;
 
 namespace STS2RitsuLib.Scaffolding.Characters.Patches
@@ -37,18 +38,32 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         [HarmonyPriority(Priority.First)]
         public static bool Prefix(Player player, ref NEnergyCounter? __result)
         {
-            if (player.Character is not IModCharacterAssetOverrides { CustomEnergyCounterPath: { } energyCounterPath })
+            if (!CharacterAssetOverridePatchHelper.TryResolveOverridePath(
+                    player.Character,
+                    static o => o.CustomEnergyCounterPath,
+                    nameof(IModCharacterAssetOverrides.CustomEnergyCounterPath),
+                    out var energyCounterPath))
                 return true;
 
-            if (!ResourceLoader.Exists(energyCounterPath))
+            var scene = ContentAssetOverridePatchHelper.ResolveScene(energyCounterPath);
+            if (scene == null)
                 return true;
 
-            var created = RitsuGodotNodeFactories.CreateFromScenePath<NEnergyCounter>(
-                energyCounterPath,
-                PackedScene.GenEditState.Disabled);
-            PlayerField.SetValue(created, player);
-            __result = created;
-            return false;
+            try
+            {
+                var created = RitsuGodotNodeFactories.CreateFromScene<NEnergyCounter>(
+                    scene,
+                    PackedScene.GenEditState.Disabled);
+                PlayerField.SetValue(created, player);
+                __result = created;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                RitsuLibFramework.Logger.Warn(
+                    $"[Godot] Failed to auto-convert energy counter '{energyCounterPath}' for character {player.Character.Id.Entry}: {ex.Message}. Falling back.");
+                return true;
+            }
         }
     }
 }

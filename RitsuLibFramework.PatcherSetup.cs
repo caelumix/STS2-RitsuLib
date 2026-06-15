@@ -589,7 +589,9 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<CharacterRestSiteAnimPathPatch>();
             patcher.RegisterPatch<CharacterIconTexturePathPatch>();
             patcher.RegisterPatch<CharacterIconPathPatch>();
+            patcher.RegisterPatch<ModModelRuntimeGodotFactoryPatches.CharacterIconRuntimeFactoryPatch>();
             patcher.RegisterPatch<CharacterSelectBgPathPatch>();
+            patcher.RegisterPatch<CharacterSelectBackgroundRuntimeFactoryPatch>();
             patcher.RegisterPatch<CharacterSelectIconPathPatch>();
             patcher.RegisterPatch<CharacterSelectLockedIconPathPatch>();
             patcher.RegisterPatch<CharacterSelectTransitionPathPatch>();

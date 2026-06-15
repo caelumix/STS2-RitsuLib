@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Patching.Models;
+using STS2RitsuLib.Scaffolding.Characters;
+using STS2RitsuLib.Scaffolding.Characters.Patches;
 using STS2RitsuLib.Scaffolding.Godot;
 using STS2RitsuLib.Utils;
 
@@ -18,6 +20,270 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
     /// </summary>
     internal static class ModModelRuntimeGodotFactoryPatches
     {
+        private static bool TryCreateCharacterResourceVisuals(CharacterModel character,
+            out NCreatureVisuals created)
+        {
+            created = null!;
+
+            if (!CharacterAssetOverridePatchHelper.TryResolveOverridePath(
+                    character,
+                    static o => o.CustomVisualsPath,
+                    nameof(IModCharacterAssetOverrides.CustomVisualsPath),
+                    out var path))
+                return false;
+
+            return TryCreateCreatureVisualsFromSceneOrTexture(
+                character,
+                path,
+                nameof(IModCharacterAssetOverrides.CustomVisualsPath),
+                out created) || TryCreateFallbackCharacterVisuals(character, out created);
+        }
+
+        private static bool TryCreateCreatureVisualsFromSceneOrTexture(
+            CharacterModel character,
+            string path,
+            string memberName,
+            out NCreatureVisuals created)
+        {
+            created = null!;
+
+            try
+            {
+                var scene = ContentAssetOverridePatchHelper.ResolveScene(path);
+                if (scene != null)
+                {
+                    created = RitsuGodotNodeFactories.CreateFromScene<NCreatureVisuals>(
+                        scene,
+                        PackedScene.GenEditState.Disabled);
+                    return true;
+                }
+
+                var texture = ContentAssetOverridePatchHelper.ResolveTexture2D(path);
+                if (texture != null)
+                {
+                    created = RitsuGodotNodeFactories.CreateFromResource<NCreatureVisuals>(texture);
+                    return true;
+                }
+
+                ContentAssetOverridePatchHelper.WarnOverrideUnavailable(
+                    character,
+                    memberName,
+                    path,
+                    $"{nameof(PackedScene)} or {nameof(Texture2D)}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogFactoryConversionFailure(character, memberName, path, nameof(NCreatureVisuals), ex);
+                return false;
+            }
+        }
+
+        private static bool TryCreateCharacterIconFromSceneOrTexture(
+            CharacterModel character,
+            string path,
+            string memberName,
+            out Control created)
+        {
+            created = null!;
+
+            try
+            {
+                var scene = ContentAssetOverridePatchHelper.ResolveScene(path);
+                if (scene != null)
+                {
+                    created = RitsuGodotNodeFactories.CreateFromScene<Control>(
+                        scene,
+                        PackedScene.GenEditState.Disabled);
+                    return true;
+                }
+
+                var texture = ContentAssetOverridePatchHelper.ResolveTexture2D(path);
+                if (texture != null)
+                {
+                    created = CreateCharacterIconFromTexture(texture);
+                    return true;
+                }
+
+                ContentAssetOverridePatchHelper.WarnOverrideUnavailable(
+                    character,
+                    memberName,
+                    path,
+                    $"{nameof(PackedScene)} or {nameof(Texture2D)}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogFactoryConversionFailure(character, memberName, path, nameof(Control), ex);
+                return false;
+            }
+        }
+
+        private static bool TryCreateFallbackCharacterVisuals(CharacterModel character, out NCreatureVisuals created)
+        {
+            created = null!;
+            foreach (var path in EnumerateFallbackCharacterAssetPaths(
+                         character,
+                         static profile => profile.Scenes?.VisualsPath))
+            {
+                var scene = ContentAssetOverridePatchHelper.ResolveScene(path);
+                if (scene == null)
+                    continue;
+
+                try
+                {
+                    created = RitsuGodotNodeFactories.CreateFromScene<NCreatureVisuals>(
+                        scene,
+                        PackedScene.GenEditState.Disabled);
+                    RitsuLibFramework.Logger.Warn(
+                        $"[Godot] Falling back to character visuals scene '{path}' for {DescribeCharacter(character)}.");
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    LogFactoryConversionFailure(
+                        character,
+                        nameof(IModCharacterAssetOverrides.CustomVisualsPath),
+                        path,
+                        nameof(NCreatureVisuals),
+                        ex);
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryCreateFallbackCharacterIcon(CharacterModel character, out Control created)
+        {
+            created = null!;
+            foreach (var path in EnumerateFallbackCharacterAssetPaths(
+                         character,
+                         static profile => profile.Ui?.IconPath))
+                try
+                {
+                    var scene = ContentAssetOverridePatchHelper.ResolveScene(path);
+                    if (scene != null)
+                    {
+                        created = RitsuGodotNodeFactories.CreateFromScene<Control>(
+                            scene,
+                            PackedScene.GenEditState.Disabled);
+                        RitsuLibFramework.Logger.Warn(
+                            $"[Godot] Falling back to character icon scene '{path}' for {DescribeCharacter(character)}.");
+                        return true;
+                    }
+
+                    var texture = ContentAssetOverridePatchHelper.ResolveTexture2D(path);
+                    if (texture == null)
+                        continue;
+
+                    created = CreateCharacterIconFromTexture(texture);
+                    RitsuLibFramework.Logger.Warn(
+                        $"[Godot] Falling back to character icon texture '{path}' for {DescribeCharacter(character)}.");
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    LogFactoryConversionFailure(
+                        character,
+                        nameof(IModCharacterAssetOverrides.CustomIconPath),
+                        path,
+                        nameof(Control),
+                        ex);
+                }
+
+            return false;
+        }
+
+        private static TextureRect CreateCharacterIconFromTexture(Texture2D texture)
+        {
+            return new()
+            {
+                Name = StableTextureRectNodeName(texture.ResourcePath, "CharacterIcon"),
+                AnchorRight = 1f,
+                AnchorBottom = 1f,
+                GrowHorizontal = Control.GrowDirection.Both,
+                GrowVertical = Control.GrowDirection.Both,
+                MouseFilter = Control.MouseFilterEnum.Ignore,
+                Texture = texture,
+                ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+            };
+        }
+
+        private static string StableTextureRectNodeName(string? resourcePath, string fallback)
+        {
+            if (string.IsNullOrEmpty(resourcePath))
+                return fallback;
+
+            var s = resourcePath.AsSpan();
+            var slash = s.LastIndexOf('/');
+            if (slash >= 0)
+                s = s[(slash + 1)..];
+
+            var dot = s.LastIndexOf('.');
+            if (dot > 0)
+                s = s[..dot];
+
+            if (s.IsEmpty)
+                return fallback;
+
+            Span<char> buf = stackalloc char[s.Length];
+            for (var i = 0; i < s.Length; i++)
+            {
+                var c = s[i];
+                buf[i] = char.IsAsciiLetterOrDigit(c) || c == '_' ? c : '_';
+            }
+
+            return new(buf);
+        }
+
+        private static IEnumerable<string> EnumerateFallbackCharacterAssetPaths(
+            CharacterModel character,
+            Func<CharacterAssetProfile, string?> selector)
+        {
+            var entry = character.Id.Entry;
+            if (!string.IsNullOrWhiteSpace(entry))
+            {
+                var path = selector(CharacterAssetProfiles.FromCharacterId(entry));
+                if (!string.IsNullOrWhiteSpace(path))
+                    yield return path;
+            }
+
+            if (string.Equals(
+                    entry,
+                    CharacterAssetProfiles.DefaultPlaceholderCharacterId,
+                    StringComparison.OrdinalIgnoreCase))
+                yield break;
+
+            var placeholder = selector(
+                CharacterAssetProfiles.FromCharacterId(CharacterAssetProfiles.DefaultPlaceholderCharacterId));
+            if (!string.IsNullOrWhiteSpace(placeholder))
+                yield return placeholder;
+        }
+
+        private static void LogFactoryConversionFailure(
+            CharacterModel character,
+            string memberName,
+            string path,
+            string targetType,
+            Exception ex)
+        {
+            RitsuLibFramework.Logger.Warn(
+                $"[Godot] Failed to auto-convert {DescribeCharacter(character)}.{memberName} '{path}' to {targetType}: {ex.Message}. Falling back.");
+        }
+
+        private static string DescribeCharacter(CharacterModel character)
+        {
+            try
+            {
+                return $"{character.GetType().Name}<{character.Id.Entry}>";
+            }
+            catch
+            {
+                return character.GetType().Name;
+            }
+        }
+
         /// <summary>
         ///     Patches <see cref="MonsterModel.CreateVisuals" /> for <see cref="IModCreatureVisualsFactory" />.
         ///     为 <see cref="IModCreatureVisualsFactory" /> 修补<see cref="MonsterModel.CreateVisuals" />。
@@ -71,7 +337,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             public static bool IsCritical => false;
 
             public static string Description =>
-                "Allow mod characters to supply NCreatureVisuals from code before VisualsPath load";
+                "Allow mod characters to supply or auto-convert NCreatureVisuals before VisualsPath load";
 
             public static ModPatchTarget[] GetTargets()
             {
@@ -96,10 +362,47 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
                     created = legacyFactory.TryCreateCreatureVisuals();
 #pragma warning restore CS0618
 
-                if (created == null)
+                if (created == null && !TryCreateCharacterResourceVisuals(__instance, out created)) return true;
+                __result = created;
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///     Patches <see cref="CharacterModel.Icon" /> so <see cref="CharacterAssetProfile" /><c>.Ui.IconPath</c> may
+        ///     be either the vanilla <see cref="PackedScene" /> or a plain <see cref="Texture2D" />.
+        ///     修补 <see cref="CharacterModel.Icon" />，让 <see cref="CharacterAssetProfile" /><c>.Ui.IconPath</c>
+        ///     可以是原版 <see cref="PackedScene" />，也可以是普通 <see cref="Texture2D" />。
+        /// </summary>
+        internal class CharacterIconRuntimeFactoryPatch : IPatchMethod
+        {
+            public static string PatchId => "runtime_godot_factory_character_icon";
+            public static bool IsCritical => false;
+
+            public static string Description =>
+                "Allow character IconPath to load PackedScene or auto-convert Texture2D into a Control icon";
+
+            public static ModPatchTarget[] GetTargets()
+            {
+                return [new(typeof(CharacterModel), nameof(CharacterModel.Icon), MethodType.Getter)];
+            }
+
+            [HarmonyPriority(Priority.First)]
+            public static bool Prefix(CharacterModel __instance, ref Control __result)
+            {
+                if (!CharacterAssetOverridePatchHelper.TryResolveOverridePath(
+                        __instance,
+                        static o => o.CustomIconPath,
+                        nameof(IModCharacterAssetOverrides.CustomIconPath),
+                        out var path))
                     return true;
 
-                __result = created;
+                if (!TryCreateCharacterIconFromSceneOrTexture(
+                        __instance,
+                        path,
+                        nameof(IModCharacterAssetOverrides.CustomIconPath),
+                        out var icon) && !TryCreateFallbackCharacterIcon(__instance, out icon)) return true;
+                __result = icon;
                 return false;
             }
         }

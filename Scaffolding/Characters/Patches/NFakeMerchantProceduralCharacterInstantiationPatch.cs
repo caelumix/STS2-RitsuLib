@@ -77,8 +77,11 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
                     var player = players[num3];
                     var nMerchantCharacter =
                         ModWorldSceneVisualNodeFactory.TryInstantiateMerchantCharacter(player.Character)
-                        ?? RitsuGodotNodeFactories.CreateFromScenePath<NMerchantCharacter>(
-                            player.Character.MerchantAnimPath, PackedScene.GenEditState.Disabled);
+                        ?? CharacterWorldScenePathFactoryHelper.CreateFromSceneOrTexture<NMerchantCharacter>(
+                            player.Character,
+                            player.Character.MerchantAnimPath,
+                            nameof(IModCharacterAssetOverrides.CustomMerchantAnimPath),
+                            PackedScene.GenEditState.Disabled);
 
                     RitsuGodotTreeCompat.AddChildSafely(characterContainer, nMerchantCharacter);
                     RitsuGodotTreeCompat.MoveChildSafely(characterContainer, nMerchantCharacter, 0);

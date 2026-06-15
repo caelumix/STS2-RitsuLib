@@ -27,6 +27,7 @@ namespace STS2RitsuLib.Scaffolding.Godot
             _ = new RitsuNode2DSceneRootFactory();
             _ = new RitsuTextureRectControlNodeFactory();
             _ = new RitsuNEnergyCounterNodeFactory();
+            _ = new RitsuNCardTrailVfxNodeFactory();
             RitsuLibFramework.Logger.Info("[Godot] RitsuGodot node factories initialized.");
         }
     }

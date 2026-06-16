@@ -203,6 +203,8 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             };
             box.AddThemeConstantOverride("separation", 8);
             box.AddChild(CreateInfoCard(_report.Summary, RitsuShellTheme.Current.Text.RichBody));
+            box.AddChild(CreateInfoCard(RuntimeFrameworkVersionSummary.BuildUiText(false),
+                RitsuShellTheme.Current.Text.RichMuted));
 
             if (_report.Host != null)
                 box.AddChild(BuildPeerSnapshotRow());
@@ -673,6 +675,8 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             builder.AppendLine(T("section.summary", "Summary"));
             builder.AppendLine(_report.Summary);
             builder.AppendLine();
+            AppendRuntimeFrameworkVersions(builder);
+            builder.AppendLine();
             builder.AppendLine(F("footer.networkReason", "Network reason: {0}", _report.NetworkReason));
             if (!string.IsNullOrWhiteSpace(_report.NetworkInfo))
                 builder.AppendLine(F("footer.networkInfo", "Info: {0}", _report.NetworkInfo));
@@ -720,6 +724,13 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             }
 
             return builder.ToString();
+        }
+
+        private static void AppendRuntimeFrameworkVersions(StringBuilder builder)
+        {
+            builder.AppendLine(T("section.frameworkVersions", "Framework versions"));
+            foreach (var line in RuntimeFrameworkVersionSummary.BuildDisplayLines(false))
+                builder.AppendLine("  " + line);
         }
 
         private static void AppendPeerSnapshot(StringBuilder builder, string title, JoinPeerSnapshot? snapshot)

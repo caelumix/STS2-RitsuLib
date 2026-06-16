@@ -201,6 +201,8 @@ namespace STS2RitsuLib.Networking.StateDivergence
             };
             box.AddThemeConstantOverride("separation", 8);
             box.AddChild(CreateInfoCard(_report.Summary, RitsuShellTheme.Current.Text.RichBody));
+            box.AddChild(CreateInfoCard(RuntimeFrameworkVersionSummary.BuildUiText(false),
+                RitsuShellTheme.Current.Text.RichMuted));
             box.AddChild(BuildChecksumCards());
             return box;
         }
@@ -697,6 +699,8 @@ namespace STS2RitsuLib.Networking.StateDivergence
             builder.AppendLine(F("footer.context", "Role: {0}  Remote peer: {1}", _report.Role,
                 _report.RemotePeerId));
             builder.AppendLine();
+            AppendRuntimeFrameworkVersions(builder);
+            builder.AppendLine();
             AppendChecksum(builder, T("column.local", "Local"), _report.LocalChecksum);
             AppendChecksum(builder, T("column.remote", "Remote"), _report.RemoteChecksum);
             AppendContentMods(builder, T("column.local", "Local"), _report.LocalContentMods, true);
@@ -721,6 +725,13 @@ namespace STS2RitsuLib.Networking.StateDivergence
             builder.AppendLine("REMOTE STATE DUMP");
             builder.AppendLine(_report.RemoteStateDump);
             return builder.ToString();
+        }
+
+        private static void AppendRuntimeFrameworkVersions(StringBuilder builder)
+        {
+            builder.AppendLine(T("section.frameworkVersions", "Framework versions"));
+            foreach (var line in RuntimeFrameworkVersionSummary.BuildDisplayLines(false))
+                builder.AppendLine("  " + line);
         }
 
         private static void AppendChecksum(StringBuilder builder, string title, StateDivergenceChecksumInfo info)

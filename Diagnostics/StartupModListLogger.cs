@@ -75,7 +75,12 @@ namespace STS2RitsuLib.Diagnostics
                     .AppendLine()
                     .AppendLine("=== RitsuLib Mod Debug Information ===")
                     .AppendLine($"Host Version: {hostVersion}")
-                    .AppendLine($"RitsuLib {RitsuLibFramework.BuildVersionLogText()}")
+                    .AppendLine($"RitsuLib {RitsuLibFramework.BuildVersionLogText()}");
+
+                if (RuntimeFrameworkVersionSummary.TryBuildBaseLibDisplayLine(out var baseLibLine))
+                    text.AppendLine(baseLibLine);
+
+                text
                     .AppendLine($"Loaded Mods: {loadedMods.Count}")
                     .AppendLine($"Registered Mods: {registeredMods.Count}")
                     .AppendLine("Mod List:");

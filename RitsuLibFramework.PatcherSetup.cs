@@ -79,6 +79,7 @@ namespace STS2RitsuLib
         private static void RegisterLifecyclePatches()
         {
             var patcher = CreatePatcher(Const.ModId, "framework-core", "framework core");
+            patcher.RegisterPatch<ReflectionHelperModTypeCachePostModLoadPatch>();
             patcher.RegisterPatch<ModTypeDiscoveryPatch>();
             patcher.RegisterPatch<NAudioManagerGuidMappedStudioEventsPatches.PlayOneShot>();
             patcher.RegisterPatch<NAudioManagerGuidMappedStudioEventsPatches.PlayLoop>();

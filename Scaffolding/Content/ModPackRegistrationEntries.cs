@@ -88,7 +88,7 @@ namespace STS2RitsuLib.Scaffolding.Content
             var epochId = ModTimelineRegistry.GetEpochId(epochType);
             foreach (var t in ModContentRegistry.GetRegisteredModelsInPool(context.ModId, poolType))
                 if (typeof(CardModel).IsAssignableFrom(t))
-                    context.Unlocks.RequireEpoch(t, epochId);
+                    context.Unlocks.RequireEpochIfUnset(t, epochId);
         }
 
         internal static void ApplyRequireAllPoolRelics<TEpoch, TPool>(ModContentPackContext context)
@@ -103,7 +103,7 @@ namespace STS2RitsuLib.Scaffolding.Content
             var epochId = ModTimelineRegistry.GetEpochId(epochType);
             foreach (var t in ModContentRegistry.GetRegisteredModelsInPool(context.ModId, poolType))
                 if (typeof(RelicModel).IsAssignableFrom(t))
-                    context.Unlocks.RequireEpoch(t, epochId);
+                    context.Unlocks.RequireEpochIfUnset(t, epochId);
         }
 
         internal static void ApplyRequireAllPoolPotions<TEpoch, TPool>(ModContentPackContext context)
@@ -118,7 +118,7 @@ namespace STS2RitsuLib.Scaffolding.Content
             var epochId = ModTimelineRegistry.GetEpochId(epochType);
             foreach (var t in ModContentRegistry.GetRegisteredModelsInPool(context.ModId, poolType))
                 if (typeof(PotionModel).IsAssignableFrom(t))
-                    context.Unlocks.RequireEpoch(t, epochId);
+                    context.Unlocks.RequireEpochIfUnset(t, epochId);
         }
 
         internal static void ApplyExplicitPotions<TEpoch>(ModContentPackContext context, IReadOnlyList<Type> types)

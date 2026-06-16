@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MegaCrit.Sts2.Core.Timeline;
 using MegaCrit.Sts2.Core.Unlocks;
+using STS2RitsuLib.Compat;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Diagnostics;
 using STS2RitsuLib.Timeline;
@@ -112,6 +113,42 @@ namespace STS2RitsuLib.Unlocks
             }
         }
 
+        internal static string[] GetObtainedRequiredEpochIds(ProgressState progress)
+        {
+            ArgumentNullException.ThrowIfNull(progress);
+
+            string[] epochIds;
+            lock (SyncRoot)
+            {
+                epochIds = [.. RequiredEpochsByModelId.Values.Distinct(StringComparer.Ordinal)];
+            }
+
+            return epochIds
+                .Where(progress.IsEpochObtained)
+                .ToArray();
+        }
+
+        internal static UnlockState IncludeObtainedRequiredEpochs(UnlockState unlockState, ProgressState progress)
+        {
+            ArgumentNullException.ThrowIfNull(unlockState);
+            ArgumentNullException.ThrowIfNull(progress);
+
+            var obtainedRequiredEpochIds = GetObtainedRequiredEpochIds(progress);
+            if (obtainedRequiredEpochIds.Length == 0)
+                return unlockState;
+
+            var serializable = unlockState.ToSerializable();
+            var unlockedEpochs = serializable.UnlockedEpochs.ToHashSet(StringComparer.Ordinal);
+            var changed = false;
+
+            foreach (var epochId in obtainedRequiredEpochIds)
+                changed |= unlockedEpochs.Add(epochId);
+
+            return changed
+                ? new(unlockedEpochs, serializable.EncountersSeen, serializable.NumberOfRuns)
+                : unlockState;
+        }
+
         /// <summary>
         ///     Requires <typeparamref name="TModel" /> content to remain locked until <typeparamref name="TEpoch" />
         ///     is obtained or revealed.
@@ -144,6 +181,16 @@ namespace STS2RitsuLib.Unlocks
         /// </summary>
         public void RequireEpoch(Type modelType, string epochId)
         {
+            RequireEpochCore(modelType, epochId, true);
+        }
+
+        internal void RequireEpochIfUnset(Type modelType, string epochId)
+        {
+            RequireEpochCore(modelType, epochId, false);
+        }
+
+        private void RequireEpochCore(Type modelType, string epochId, bool overwrite)
+        {
             EnsureMutable($"register unlock requirement for '{modelType.Name}'");
             ArgumentNullException.ThrowIfNull(modelType);
             ArgumentException.ThrowIfNullOrWhiteSpace(epochId);
@@ -153,6 +200,9 @@ namespace STS2RitsuLib.Unlocks
 
             lock (SyncRoot)
             {
+                if (!overwrite && RequiredEpochsByModelId.ContainsKey(modelId))
+                    return;
+
                 RequiredEpochsByModelId[modelId] = epochId;
             }
         }
@@ -557,18 +607,14 @@ namespace STS2RitsuLib.Unlocks
 
         /// <summary>
         ///     Whether <paramref name="model" /> passes epoch gating for <paramref name="unlockState" />.
-        ///     Vanilla <see cref="UnlockState" /> built from progress only lists <see cref="EpochState.Revealed" /> epochs in
-        ///     <c>UnlockedEpochs</c>, while <see cref="SaveManager.ObtainEpoch" /> sets <see cref="EpochState.Obtained" /> /
-        ///     <see cref="EpochState.ObtainedNoSlot" /> until the timeline reveals the slot. Mod unlock rules call
-        ///     <c>ObtainEpoch</c>, so we also treat <see cref="ProgressState.IsEpochObtained" /> as satisfying
-        ///     <see cref="RequireEpoch(Type,string)" />.
+        ///     Content generation can run from multiplayer-merged <see cref="UnlockState" /> values, so this method must
+        ///     not read the local profile directly. <see cref="Patches.ModRequiredEpochUnlockStatePatch" /> projects
+        ///     obtained-but-not-revealed requirement epochs into the serialized unlock state before lobby sync.
         ///     <see cref="RequireEpoch(Type,string)" />。
         ///     <paramref name="model" /> 是否通过 <paramref name="unlockState" /> 的纪元门控。
-        ///     从进度构建的原版 <see cref="UnlockState" /> 只会在 <c>UnlockedEpochs</c> 中列出 <see cref="EpochState.Revealed" /> 纪元，
-        ///     而 <see cref="SaveManager.ObtainEpoch" /> 会设置 <see cref="EpochState.Obtained" /> /
-        ///     <see cref="EpochState.ObtainedNoSlot" />，直到时间线显示该槽位。mod 解锁规则会调用
-        ///     <c>ObtainEpoch</c>，因此也将 <see cref="ProgressState.IsEpochObtained" /> 视为满足
-        ///     <see cref="RequireEpoch(Type,string)" />。
+        ///     内容生成可能使用多人合并后的 <see cref="UnlockState" />，因此这里不能直接读取本机档案。
+        ///     <see cref="Patches.ModRequiredEpochUnlockStatePatch" /> 会在大厅同步前把已获得但未 reveal 的需求纪元投影进序列化
+        ///     unlock state。
         ///     <see cref="RequireEpoch(Type,string)" />。
         /// </summary>
         internal static bool IsUnlocked(AbstractModel model, UnlockState unlockState)
@@ -583,11 +629,7 @@ namespace STS2RitsuLib.Unlocks
                     ModIdsIgnoringEpochRequirements.Contains(modOwner))
                     return true;
 
-                if (unlockState.ToSerializable().UnlockedEpochs.Contains(epochId))
-                    return true;
-
-                var save = SaveManager.Instance;
-                return save != null && save.Progress.IsEpochObtained(epochId);
+                return unlockState.ToSerializable().UnlockedEpochs.Contains(epochId);
             }
         }
 
@@ -661,6 +703,9 @@ namespace STS2RitsuLib.Unlocks
             ArgumentNullException.ThrowIfNull(runManager);
             ArgumentNullException.ThrowIfNull(serializableRun);
 
+            if (!Sts2RunGameModeCompat.IsStandardSerializableRunForEpochUnlocks(serializableRun))
+                return;
+
             var localPlayer = LocalContext.GetMe(serializableRun);
             if (localPlayer == null)
                 return;
@@ -685,6 +730,7 @@ namespace STS2RitsuLib.Unlocks
                 localPlayer.CharacterId,
                 serializableRun.Ascension);
 
+            var obtainedAnyEpoch = false;
             foreach (var rule in rules)
             {
                 if (SaveManager.Instance.Progress.IsEpochObtained(rule.EpochId))
@@ -698,6 +744,7 @@ namespace STS2RitsuLib.Unlocks
                         $"post-run epoch rule '{rule.Description}'"))
                     continue;
 
+                obtainedAnyEpoch = true;
                 SaveManager.Instance.ObtainEpoch(rule.EpochId);
                 NGame.Instance?.AddChildSafely(NGainEpochVfx.Create(EpochModel.Get(rule.EpochId)));
                 if (!localPlayer.DiscoveredEpochs.Contains(rule.EpochId, StringComparer.Ordinal))
@@ -710,6 +757,9 @@ namespace STS2RitsuLib.Unlocks
                 RitsuLibFramework.Logger.Info(
                     $"[Unlocks] Obtained epoch '{rule.EpochId}' via post-run rule: {rule.Description}");
             }
+
+            if (obtainedAnyEpoch)
+                SaveManager.Instance.SaveProgressFile();
         }
 
         private void EnsureMutable(string operation)

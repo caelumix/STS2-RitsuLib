@@ -1,5 +1,7 @@
 using System.Reflection;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Serialization;
@@ -95,9 +97,6 @@ namespace STS2RitsuLib.Lifecycle.Patches
     /// </summary>
     internal class ModelRegistryLifecyclePatch : IPatchMethod
     {
-        private static readonly FieldInfo? ReflectionHelperModTypesField =
-            typeof(ReflectionHelper).GetField("_modTypes", BindingFlags.Static | BindingFlags.NonPublic);
-
         public static string PatchId => "model_registry_lifecycle";
         public static string Description => "Publish lifecycle events around ModelDb initialization phases";
         public static bool IsCritical => false;
@@ -127,7 +126,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
                     ModUnlockRegistry.FreezeRegistrations(nameof(ModelDb.Init));
                     RitsuLibStartupAudit.Measure("modelDb.validateCollisions",
                         RegistrationConflictDetector.ValidateAndLogModelIdCollisions);
-                    RefreshModTypeCache();
+                    ReflectionHelperModTypeCache.Refresh("ModelDb.Init");
                     RitsuLibStartupAudit.Measure("modelDb.injectDynamicModels",
                         ModContentRegistry.InjectDynamicRegisteredModels);
                     RitsuLibFramework.PublishLifecycleEvent(
@@ -137,7 +136,7 @@ namespace STS2RitsuLib.Lifecycle.Patches
                     break;
                 case ({ } declaringType, nameof(ModelIdSerializationCache.Init))
                     when declaringType == typeof(ModelIdSerializationCache):
-                    RefreshModTypeCache();
+                    ReflectionHelperModTypeCache.Refresh("ModelIdSerializationCache.Init");
                     break;
                 case ({ } declaringType, nameof(ModelDb.InitIds)) when declaringType == typeof(ModelDb):
                     RitsuLibFramework.PublishLifecycleEvent(
@@ -183,11 +182,6 @@ namespace STS2RitsuLib.Lifecycle.Patches
             }
         }
 
-        private static void RefreshModTypeCache()
-        {
-            ReflectionHelperModTypesField?.SetValue(null, null);
-        }
-
         private static void ValidateFrozenRegistrations(string reason)
         {
             RegistrationFreezeDiagnostics.WarnRecordedFailures(reason);
@@ -195,6 +189,57 @@ namespace STS2RitsuLib.Lifecycle.Patches
             ModEpochGatedContentRegistry.ValidateFrozenModelReferences();
             ModUnlockRegistry.ValidateFrozenModelReferences();
             OrobasAncientUpgradeRegistry.ValidateFrozenRegistrations();
+        }
+    }
+
+    /// <summary>
+    ///     <para xml:lang="en">
+    ///         Clears the vanilla mod-type cache at the first post-mod-load game initialization point, before other mods
+    ///         such as BaseLib consume <see cref="ReflectionHelper.ModTypes" />.
+    ///     </para>
+    ///     <para xml:lang="zh-CN">
+    ///         在第一个 mod 加载后游戏初始化点清理原版 mod type 缓存，早于 BaseLib 等其它 mod 消费
+    ///         <see cref="ReflectionHelper.ModTypes" />。
+    ///     </para>
+    /// </summary>
+    internal sealed class ReflectionHelperModTypeCachePostModLoadPatch : IPatchMethod
+    {
+        public static string PatchId => "reflection_helper_mod_type_cache_post_mod_load_refresh";
+
+        public static string Description =>
+            "Refresh ReflectionHelper.ModTypes before post-mod-load initialization consumes it";
+
+        public static bool IsCritical => false;
+
+        public static ModPatchTarget[] GetTargets()
+        {
+            return [new(typeof(LocManager), nameof(LocManager.Initialize))];
+        }
+
+        [HarmonyPriority(Priority.First)]
+        public static void Prefix()
+        {
+            ReflectionHelperModTypeCache.Refresh("LocManager.Initialize", true);
+        }
+    }
+
+    internal static class ReflectionHelperModTypeCache
+    {
+        private static readonly FieldInfo? ModTypesField =
+            typeof(ReflectionHelper).GetField("_modTypes", BindingFlags.Static | BindingFlags.NonPublic);
+
+        public static void Refresh(string phase, bool warnIfCached = false)
+        {
+            if (ModTypesField is null)
+                return;
+
+            if (warnIfCached && ModTypesField.GetValue(null) is Type[] cachedTypes)
+                RitsuLibFramework.Logger.Warn(
+                    $"[ModelDb] ReflectionHelper.ModTypes was already cached before {phase} ({cachedTypes.Length} types). " +
+                    "Clearing the cache so post-mod-load scans include all loaded mod types; another mod likely accessed " +
+                    "ReflectionHelper.ModTypes before mod loading completed.");
+
+            ModTypesField.SetValue(null, null);
         }
     }
 

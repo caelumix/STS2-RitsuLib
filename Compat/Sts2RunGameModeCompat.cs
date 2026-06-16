@@ -12,13 +12,13 @@ namespace STS2RitsuLib.Compat
     {
         internal static bool IsStandardSerializableRunForEpochUnlocks(SerializableRun run)
         {
-            return run.GameMode == GameMode.Standard;
+            return !run.GameMode.AreAchievementsAndEpochsLocked();
         }
 
         internal static bool AreMidRunEpochsLockedFor(Player localPlayer)
         {
             ArgumentNullException.ThrowIfNull(localPlayer);
-            return localPlayer.RunState.GameMode != GameMode.Standard;
+            return localPlayer.RunState.GameMode.AreAchievementsAndEpochsLocked();
         }
     }
 }

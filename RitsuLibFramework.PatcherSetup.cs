@@ -4,6 +4,7 @@ using STS2RitsuLib.Cards.FreePlay.Patches;
 using STS2RitsuLib.Cards.Patches;
 using STS2RitsuLib.Cards.Transforms.Patches;
 using STS2RitsuLib.CardTags.Patches;
+using STS2RitsuLib.Combat.AttackHits.Patches;
 using STS2RitsuLib.Combat.CardTargeting.Patches;
 using STS2RitsuLib.Combat.HealthBars.Patches;
 using STS2RitsuLib.Combat.Rewards.Patches;
@@ -79,6 +80,7 @@ namespace STS2RitsuLib
         private static void RegisterLifecyclePatches()
         {
             var patcher = CreatePatcher(Const.ModId, "framework-core", "framework core");
+            patcher.RegisterPatch<ReflectionHelperModTypeCachePostModLoadPatch>();
             patcher.RegisterPatch<ModTypeDiscoveryPatch>();
             patcher.RegisterPatch<NAudioManagerGuidMappedStudioEventsPatches.PlayOneShot>();
             patcher.RegisterPatch<NAudioManagerGuidMappedStudioEventsPatches.PlayLoop>();
@@ -249,6 +251,7 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<BeforeRoomEnteredLifecyclePatch>();
             patcher.RegisterPatch<AfterRoomEnteredLifecyclePatch>();
             patcher.RegisterPatch<ActHookLifecyclePatch>();
+            patcher.RegisterPatch<AttackCommandExecuteHitHookPatch>();
             patcher.RegisterPatch<BeforeAttackLifecyclePatch>();
             patcher.RegisterPatch<AfterAttackLifecyclePatch>();
             patcher.RegisterPatch<AfterBlockBrokenLifecyclePatch>();
@@ -589,7 +592,9 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<CharacterRestSiteAnimPathPatch>();
             patcher.RegisterPatch<CharacterIconTexturePathPatch>();
             patcher.RegisterPatch<CharacterIconPathPatch>();
+            patcher.RegisterPatch<ModModelRuntimeGodotFactoryPatches.CharacterIconRuntimeFactoryPatch>();
             patcher.RegisterPatch<CharacterSelectBgPathPatch>();
+            patcher.RegisterPatch<CharacterSelectBackgroundRuntimeFactoryPatch>();
             patcher.RegisterPatch<CharacterSelectIconPathPatch>();
             patcher.RegisterPatch<CharacterSelectLockedIconPathPatch>();
             patcher.RegisterPatch<CharacterSelectTransitionPathPatch>();
@@ -684,6 +689,8 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<PostRunCharacterUnlockEpochCompatibilityPatch>();
             patcher.RegisterPatch<AscensionEpochRevealCompatibilityPatch>();
             patcher.RegisterPatch<ModCharacterRootEpochBackfillPatch>();
+            patcher.RegisterPatch<ModRequiredEpochUnlockStatePatch>();
+            patcher.RegisterPatch<StartRunLobbyLocalHostUnlockStatePatch>();
             patcher.RegisterPatch<ProgressSaveManagerGetRevealableEpochsModTemplatePatch>();
             patcher.RegisterPatch<QueueTimelineExpansionSyncEpochIdListPatch>();
             patcher.RegisterPatch<NeowEpochQueueUnlocksCoExpansionScopePatch>();

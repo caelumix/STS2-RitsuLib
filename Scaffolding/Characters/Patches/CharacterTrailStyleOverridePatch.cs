@@ -1,7 +1,10 @@
 using Godot;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using STS2RitsuLib.Patching.Models;
+using STS2RitsuLib.Scaffolding.Content.Patches;
+using STS2RitsuLib.Scaffolding.Godot;
 
 namespace STS2RitsuLib.Scaffolding.Characters.Patches
 {
@@ -13,6 +16,9 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
     /// </summary>
     internal class CharacterTrailStyleOverridePatch : IPatchMethod
     {
+        private static readonly AccessTools.FieldRef<NCardTrailVfx, Control> NodeToFollowRef =
+            AccessTools.FieldRefAccess<NCardTrailVfx, Control>("_nodeToFollow");
+
         public static string PatchId => "character_trail_style_override";
 
         public static string Description =>
@@ -23,6 +29,30 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
         public static ModPatchTarget[] GetTargets()
         {
             return [new(typeof(NCardTrailVfx), nameof(NCardTrailVfx.Create), [typeof(Control), typeof(string)])];
+        }
+
+        [HarmonyPriority(Priority.First)]
+        public static bool Prefix(Control card, string characterTrailPath, ref NCardTrailVfx? __result)
+        {
+            var scene = ContentAssetOverridePatchHelper.ResolveScene(characterTrailPath);
+            if (scene == null)
+                return true;
+
+            try
+            {
+                var created = RitsuGodotNodeFactories.CreateFromScene<NCardTrailVfx>(
+                    scene,
+                    PackedScene.GenEditState.Disabled);
+                NodeToFollowRef(created) = card;
+                __result = created;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                RitsuLibFramework.Logger.Warn(
+                    $"[Godot] Failed to auto-convert card trail scene '{characterTrailPath}' to {nameof(NCardTrailVfx)}: {ex.Message}. Falling back.");
+                return true;
+            }
         }
 
         public static void Postfix(Control card, ref NCardTrailVfx? __result)

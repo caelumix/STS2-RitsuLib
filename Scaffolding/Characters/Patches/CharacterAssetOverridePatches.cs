@@ -1,7 +1,9 @@
+using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Patching.Models;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 using STS2RitsuLib.Utils;
 
 namespace STS2RitsuLib.Scaffolding.Characters.Patches
@@ -19,14 +21,20 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             if (string.IsNullOrWhiteSpace(overrideValue))
                 return true;
 
-            if (requireExistingResource && !GodotResourcePath.ResourceExists(overrideValue))
-            {
-                AssetPathDiagnostics.WarnModCharacterAssetOverrideMissing(instance, memberName, overrideValue);
-                return true;
-            }
+            if (requireExistingResource && !IsCompatibleResource(instance, memberName, overrideValue)) return true;
 
             __result = overrideValue;
             return false;
+        }
+
+        internal static bool TryResolveOverridePath(
+            CharacterModel instance,
+            Func<IModCharacterAssetOverrides, string?> selector,
+            string memberName,
+            out string path)
+        {
+            path = ResolveOverride(instance, selector, memberName) ?? string.Empty;
+            return !string.IsNullOrWhiteSpace(path);
         }
 
         internal static string? ResolveCombatSpineSkeletonDataPath(CharacterModel instance)
@@ -89,6 +97,85 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
             if (instance is not IModCharacterAssetOverrides overrides) return null;
             var direct = selector(overrides);
             return !string.IsNullOrWhiteSpace(direct) ? direct : null;
+        }
+
+        private static bool IsCompatibleResource(CharacterModel instance, string memberName, string path)
+        {
+            // ReSharper disable once InvertIf
+            if (!GodotResourcePath.ResourceExists(path))
+            {
+                AssetPathDiagnostics.WarnModCharacterAssetOverrideMissing(instance, memberName, path);
+                return false;
+            }
+
+            return memberName switch
+            {
+                nameof(IModCharacterAssetOverrides.CustomVisualsPath) =>
+                    IsLoadableAsAny(instance, memberName, path, nameof(PackedScene), typeof(PackedScene),
+                        typeof(Texture2D)),
+                nameof(IModCharacterAssetOverrides.CustomIconPath) =>
+                    IsLoadableAsAny(instance, memberName, path, nameof(PackedScene), typeof(PackedScene),
+                        typeof(Texture2D)),
+                nameof(IModCharacterAssetOverrides.CustomEnergyCounterPath) =>
+                    IsLoadable<PackedScene>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomMerchantAnimPath) =>
+                    IsLoadableAsAny(instance, memberName, path, nameof(PackedScene), typeof(PackedScene),
+                        typeof(Texture2D)),
+                nameof(IModCharacterAssetOverrides.CustomRestSiteAnimPath) =>
+                    IsLoadableAsAny(instance, memberName, path, nameof(PackedScene), typeof(PackedScene),
+                        typeof(Texture2D)),
+                nameof(IModCharacterAssetOverrides.CustomCharacterSelectBgPath) =>
+                    IsLoadableAsAny(instance, memberName, path, nameof(PackedScene), typeof(PackedScene),
+                        typeof(Texture2D)),
+                nameof(IModCharacterAssetOverrides.CustomTrailPath) =>
+                    IsLoadable<PackedScene>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomIconTexturePath) =>
+                    IsLoadable<Texture2D>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomIconOutlineTexturePath) =>
+                    IsLoadable<Texture2D>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomCharacterSelectIconPath) =>
+                    IsLoadable<Texture2D>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomCharacterSelectLockedIconPath) =>
+                    IsLoadable<Texture2D>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomMapMarkerPath) =>
+                    IsLoadable<Texture2D>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomArmPointingTexturePath) =>
+                    IsLoadable<Texture2D>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomArmRockTexturePath) =>
+                    IsLoadable<Texture2D>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomArmPaperTexturePath) =>
+                    IsLoadable<Texture2D>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomArmScissorsTexturePath) =>
+                    IsLoadable<Texture2D>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomCharacterSelectTransitionPath) =>
+                    IsLoadable<Material>(instance, memberName, path),
+                nameof(IModCharacterAssetOverrides.CustomCombatSpineSkeletonDataPath) =>
+                    IsLoadable<Resource>(instance, memberName, path),
+                _ => true,
+            };
+        }
+
+        private static bool IsLoadable<T>(CharacterModel instance, string memberName, string path)
+            where T : class
+        {
+            if (GodotResourcePath.TryLoad<T>(path, out _))
+                return true;
+
+            ContentAssetOverridePatchHelper.LogLoadFailure(instance, memberName, path, typeof(T).Name);
+            return false;
+        }
+
+        private static bool IsLoadableAsAny(CharacterModel instance, string memberName, string path,
+            string expectedTypeLabel, params Type[] allowedTypes)
+        {
+            if ((from candidate in GodotResourcePath.EnumerateCandidatePaths(path)
+                    where ResourceLoader.Exists(candidate)
+                    select ResourceLoader.Load(candidate))
+                .Any(resource => allowedTypes.Any(type => type.IsInstanceOfType(resource)))) return true;
+
+            ContentAssetOverridePatchHelper.LogLoadFailure(instance, memberName, path,
+                $"{expectedTypeLabel} or {nameof(Texture2D)}");
+            return false;
         }
 
         private static bool TryResolveRegisteredProfile(CharacterModel instance, out CharacterAssetProfile profile)

@@ -234,8 +234,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
                 if (!ResourceLoader.Exists(candidate))
                     continue;
 
-                var cached = PreloadManager.Cache.GetScene(candidate);
-                if (cached != null)
+                if (TryGetCachedResource<PackedScene>(candidate, out var cached))
                     return cached;
 
                 if (ResourceLoader.Load(candidate) is PackedScene scene)
@@ -258,8 +257,7 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
                 if (!ResourceLoader.Exists(candidate))
                     continue;
 
-                var cached = PreloadManager.Cache.GetTexture2D(candidate);
-                if (cached != null)
+                if (TryGetCachedResource<Texture2D>(candidate, out var cached))
                     return cached;
 
                 if (ResourceLoader.Load(candidate) is Texture2D texture)
@@ -267,6 +265,31 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
             }
 
             return null;
+        }
+
+        private static bool TryGetCachedResource<TResource>(string path, out TResource resource)
+            where TResource : Resource
+        {
+            resource = null!;
+
+            try
+            {
+                var cached = typeof(TResource) == typeof(PackedScene)
+                    ? PreloadManager.Cache.GetScene(path)
+                    : typeof(TResource) == typeof(Texture2D)
+                        ? PreloadManager.Cache.GetTexture2D(path)
+                        : ResourceLoader.Load(path);
+
+                if (cached is not TResource typed)
+                    return false;
+
+                resource = typed;
+                return true;
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
         }
 
         /// <summary>

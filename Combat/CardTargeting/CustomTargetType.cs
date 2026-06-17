@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Utils;
 
@@ -139,6 +140,31 @@ namespace STS2RitsuLib.Combat.CardTargeting
             string localStem,
             Func<Creature, bool> canTarget)
         {
+            ArgumentNullException.ThrowIfNull(canTarget);
+            return RegisterSingleTargetType(modId, localStem, (creature, _) => canTarget(creature));
+        }
+
+        /// <summary>
+        ///     Registers a mod-scoped single-target <see cref="TargetType" /> with a player-aware predicate.
+        ///     注册一个使用出牌玩家上下文的 mod 作用域单体目标 <see cref="TargetType" />。
+        /// </summary>
+        /// <param name="modId">
+        ///     Owning mod id.
+        ///     所属 mod ID。
+        /// </param>
+        /// <param name="localStem">
+        ///     Stable local id stem, normalized into <c>MODID_TARGETTYPE_STEM</c>.
+        ///     稳定的本地 ID 词干，会规范化为 <c>MODID_TARGETTYPE_STEM</c>。
+        /// </param>
+        /// <param name="canTarget">
+        ///     Predicate used by mouse/controller targeting and card validation for candidate creatures.
+        ///     鼠标 / 手柄选目标与卡牌目标校验使用的候选生物谓词。
+        /// </param>
+        public static TargetType RegisterSingleTargetType(
+            string modId,
+            string localStem,
+            Func<Creature, Player, bool> canTarget)
+        {
             ArgumentException.ThrowIfNullOrWhiteSpace(modId);
             ArgumentException.ThrowIfNullOrWhiteSpace(localStem);
             ArgumentNullException.ThrowIfNull(canTarget);
@@ -172,6 +198,31 @@ namespace STS2RitsuLib.Combat.CardTargeting
             string modId,
             string localStem,
             Func<Creature, bool> includeTarget)
+        {
+            ArgumentNullException.ThrowIfNull(includeTarget);
+            return RegisterMultiTargetType(modId, localStem, (creature, _) => includeTarget(creature));
+        }
+
+        /// <summary>
+        ///     Registers a mod-scoped multi-target <see cref="TargetType" /> with a player-aware predicate.
+        ///     注册一个使用出牌玩家上下文的 mod 作用域群体目标 <see cref="TargetType" />。
+        /// </summary>
+        /// <param name="modId">
+        ///     Owning mod id.
+        ///     所属 mod ID。
+        /// </param>
+        /// <param name="localStem">
+        ///     Stable local id stem, normalized into <c>MODID_TARGETTYPE_STEM</c>.
+        ///     稳定的本地 ID 词干，会规范化为 <c>MODID_TARGETTYPE_STEM</c>。
+        /// </param>
+        /// <param name="includeTarget">
+        ///     Predicate used for multi-target reticles and target resolution.
+        ///     群体目标指示器与目标解析使用的谓词。
+        /// </param>
+        public static TargetType RegisterMultiTargetType(
+            string modId,
+            string localStem,
+            Func<Creature, Player, bool> includeTarget)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(modId);
             ArgumentException.ThrowIfNullOrWhiteSpace(localStem);

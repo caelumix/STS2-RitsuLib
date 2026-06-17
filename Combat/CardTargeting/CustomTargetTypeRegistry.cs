@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 
 namespace STS2RitsuLib.Combat.CardTargeting
 {
@@ -15,13 +16,13 @@ namespace STS2RitsuLib.Combat.CardTargeting
         ///     Predicate map for custom single-target types.
         ///     自定义单体目标类型的谓词映射。
         /// </summary>
-        private static readonly Dictionary<TargetType, Func<Creature, bool>> SingleTargetPredicates = [];
+        private static readonly Dictionary<TargetType, Func<Creature, Player, bool>> SingleTargetPredicates = [];
 
         /// <summary>
         ///     Predicate map for custom multi-target types.
         ///     自定义群体目标类型的谓词映射。
         /// </summary>
-        private static readonly Dictionary<TargetType, Func<Creature, bool>> MultiTargetPredicates = [];
+        private static readonly Dictionary<TargetType, Func<Creature, Player, bool>> MultiTargetPredicates = [];
 
         private static readonly Dictionary<TargetType, CustomTargetTypeRegistration> Registrations = [];
 
@@ -65,9 +66,10 @@ namespace STS2RitsuLib.Combat.CardTargeting
         ///     Resolves and evaluates the predicate for a custom single-target type.
         ///     解析并执行自定义单体目标类型对应的筛选谓词。
         /// </summary>
-        internal static bool TryIsAllowedSingleTarget(TargetType type, Creature creature, out bool allowed)
+        internal static bool TryIsAllowedSingleTarget(TargetType type, Creature creature, Player player,
+            out bool allowed)
         {
-            Func<Creature, bool>? predicate;
+            Func<Creature, Player, bool>? predicate;
             lock (SyncRoot)
             {
                 SingleTargetPredicates.TryGetValue(type, out predicate);
@@ -79,7 +81,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
                 return false;
             }
 
-            allowed = predicate(creature);
+            allowed = predicate(creature, player);
             return true;
         }
 
@@ -87,9 +89,10 @@ namespace STS2RitsuLib.Combat.CardTargeting
         ///     Resolves and evaluates the predicate for a custom multi-target type.
         ///     解析并执行自定义群体目标类型对应的筛选谓词。
         /// </summary>
-        internal static bool TryShouldIncludeMultiTarget(TargetType type, Creature creature, out bool include)
+        internal static bool TryShouldIncludeMultiTarget(TargetType type, Creature creature, Player player,
+            out bool include)
         {
-            Func<Creature, bool>? predicate;
+            Func<Creature, Player, bool>? predicate;
             lock (SyncRoot)
             {
                 MultiTargetPredicates.TryGetValue(type, out predicate);
@@ -101,7 +104,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
                 return false;
             }
 
-            include = predicate(creature);
+            include = predicate(creature, player);
             return true;
         }
 
@@ -110,6 +113,16 @@ namespace STS2RitsuLib.Combat.CardTargeting
         ///     注册或替换一个自定义单体目标谓词。
         /// </summary>
         internal static void RegisterSingleTargetType(TargetType type, Func<Creature, bool> predicate)
+        {
+            ArgumentNullException.ThrowIfNull(predicate);
+            RegisterSingleTargetType(type, (creature, _) => predicate(creature));
+        }
+
+        /// <summary>
+        ///     Registers or replaces a player-aware custom single-target predicate.
+        ///     注册或替换一个感知出牌玩家的自定义单体目标谓词。
+        /// </summary>
+        internal static void RegisterSingleTargetType(TargetType type, Func<Creature, Player, bool> predicate)
         {
             Register(type, null, CustomTargetTypeKind.Single, predicate);
         }
@@ -121,6 +134,20 @@ namespace STS2RitsuLib.Combat.CardTargeting
         internal static void RegisterSingleTargetType(TargetType type, string id, Func<Creature, bool> predicate)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(id);
+            ArgumentNullException.ThrowIfNull(predicate);
+            RegisterSingleTargetType(type, id, (creature, _) => predicate(creature));
+        }
+
+        /// <summary>
+        ///     Registers or replaces a player-aware custom single-target predicate with a diagnostic id.
+        ///     使用诊断 ID 注册或替换一个感知出牌玩家的自定义单体目标谓词。
+        /// </summary>
+        internal static void RegisterSingleTargetType(
+            TargetType type,
+            string id,
+            Func<Creature, Player, bool> predicate)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(id);
             Register(type, id, CustomTargetTypeKind.Single, predicate);
         }
 
@@ -130,6 +157,16 @@ namespace STS2RitsuLib.Combat.CardTargeting
         /// </summary>
         internal static void RegisterMultiTargetType(TargetType type, Func<Creature, bool> predicate)
         {
+            ArgumentNullException.ThrowIfNull(predicate);
+            RegisterMultiTargetType(type, (creature, _) => predicate(creature));
+        }
+
+        /// <summary>
+        ///     Registers or replaces a player-aware custom multi-target predicate.
+        ///     注册或替换一个感知出牌玩家的自定义群体目标谓词。
+        /// </summary>
+        internal static void RegisterMultiTargetType(TargetType type, Func<Creature, Player, bool> predicate)
+        {
             Register(type, null, CustomTargetTypeKind.Multi, predicate);
         }
 
@@ -138,6 +175,20 @@ namespace STS2RitsuLib.Combat.CardTargeting
         ///     使用诊断 ID 注册或替换一个自定义群体目标谓词。
         /// </summary>
         internal static void RegisterMultiTargetType(TargetType type, string id, Func<Creature, bool> predicate)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(id);
+            ArgumentNullException.ThrowIfNull(predicate);
+            RegisterMultiTargetType(type, id, (creature, _) => predicate(creature));
+        }
+
+        /// <summary>
+        ///     Registers or replaces a player-aware custom multi-target predicate with a diagnostic id.
+        ///     使用诊断 ID 注册或替换一个感知出牌玩家的自定义群体目标谓词。
+        /// </summary>
+        internal static void RegisterMultiTargetType(
+            TargetType type,
+            string id,
+            Func<Creature, Player, bool> predicate)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(id);
             Register(type, id, CustomTargetTypeKind.Multi, predicate);
@@ -206,7 +257,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
             TargetType type,
             string? id,
             CustomTargetTypeKind kind,
-            Func<Creature, bool> predicate)
+            Func<Creature, Player, bool> predicate)
         {
             ArgumentNullException.ThrowIfNull(predicate);
 

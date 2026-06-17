@@ -1,6 +1,7 @@
 using System.Reflection;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using STS2RitsuLib.Compat;
 
 namespace STS2RitsuLib.Combat.CardTargeting
@@ -14,8 +15,8 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
         private static readonly Lock Gate = new();
 
-        private static IReadOnlyDictionary<TargetType, Func<Creature, bool>>? _singleTargeting;
-        private static IReadOnlyDictionary<TargetType, Func<Creature, bool>>? _multiTargeting;
+        private static IReadOnlyDictionary<TargetType, TargetPredicate>? _singleTargeting;
+        private static IReadOnlyDictionary<TargetType, TargetPredicate>? _multiTargeting;
         private static bool _loggedMissingType;
         private static bool _loggedMissingFields;
 
@@ -29,7 +30,11 @@ namespace STS2RitsuLib.Combat.CardTargeting
             return TryGetMultiTargeting(out var multiTargeting) && multiTargeting.ContainsKey(targetType);
         }
 
-        internal static bool TryIsAllowedSingleTarget(TargetType targetType, Creature creature, out bool allowed)
+        internal static bool TryIsAllowedSingleTarget(
+            TargetType targetType,
+            Creature creature,
+            Player player,
+            out bool allowed)
         {
             allowed = false;
             if (!TryGetSingleTargeting(out var singleTargeting) ||
@@ -38,7 +43,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
             try
             {
-                allowed = predicate(creature);
+                allowed = predicate(creature, player);
                 return true;
             }
             catch (Exception ex)
@@ -49,7 +54,11 @@ namespace STS2RitsuLib.Combat.CardTargeting
             }
         }
 
-        internal static bool TryShouldIncludeMultiTarget(TargetType targetType, Creature creature, out bool include)
+        internal static bool TryShouldIncludeMultiTarget(
+            TargetType targetType,
+            Creature creature,
+            Player player,
+            out bool include)
         {
             include = false;
             if (!TryGetMultiTargeting(out var multiTargeting) ||
@@ -58,7 +67,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
 
             try
             {
-                include = predicate(creature);
+                include = predicate(creature, player);
                 return true;
             }
             catch (Exception ex)
@@ -70,7 +79,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
         }
 
         private static bool TryGetSingleTargeting(
-            out IReadOnlyDictionary<TargetType, Func<Creature, bool>> singleTargeting)
+            out IReadOnlyDictionary<TargetType, TargetPredicate> singleTargeting)
         {
             EnsureResolved();
             singleTargeting = _singleTargeting!;
@@ -78,7 +87,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
         }
 
         private static bool TryGetMultiTargeting(
-            out IReadOnlyDictionary<TargetType, Func<Creature, bool>> multiTargeting)
+            out IReadOnlyDictionary<TargetType, TargetPredicate> multiTargeting)
         {
             EnsureResolved();
             multiTargeting = _multiTargeting!;
@@ -147,12 +156,23 @@ namespace STS2RitsuLib.Combat.CardTargeting
             return null;
         }
 
-        private static IReadOnlyDictionary<TargetType, Func<Creature, bool>>? ReadPredicateMap(
+        private static IReadOnlyDictionary<TargetType, TargetPredicate>? ReadPredicateMap(
             Type type,
             string fieldName)
         {
             var field = type.GetField(fieldName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-            return field?.GetValue(null) as IReadOnlyDictionary<TargetType, Func<Creature, bool>>;
+            var value = field?.GetValue(null);
+
+            return value switch
+            {
+                IReadOnlyDictionary<TargetType, Func<Creature, Player, bool>> playerAware => playerAware.ToDictionary(
+                    pair => pair.Key, pair => (TargetPredicate)((creature, player) => pair.Value(creature, player))),
+                IReadOnlyDictionary<TargetType, Func<Creature, bool>> legacy => legacy.ToDictionary(pair => pair.Key,
+                    pair => (TargetPredicate)((creature, _) => pair.Value(creature))),
+                _ => null,
+            };
         }
+
+        private delegate bool TargetPredicate(Creature creature, Player player);
     }
 }

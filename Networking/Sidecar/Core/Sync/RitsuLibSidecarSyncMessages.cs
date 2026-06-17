@@ -249,6 +249,9 @@ namespace STS2RitsuLib.Networking.Sidecar
             RitsuLibSidecarSyncMessageDescriptor<T> descriptor,
             T message)
         {
+            if (!descriptor.ShouldBroadcast)
+                return false;
+
             return SendToHostCore(netService, descriptor, message,
                 RitsuLibSidecarSyncMessageRoute.ClientToHostAndBroadcast);
         }
@@ -391,8 +394,7 @@ namespace STS2RitsuLib.Networking.Sidecar
                 if (!Registrations.TryGetValue(packet.DescriptorOpcode, out var registration))
                     return false;
 
-                shouldRelay = packet.Route == RitsuLibSidecarSyncMessageRoute.ClientToHostAndBroadcast ||
-                              registration.ShouldBroadcast;
+                shouldRelay = registration.ShouldBroadcast;
                 scope = registration.BroadcastScope;
                 failurePolicy = registration.FailurePolicy;
                 return true;
@@ -508,8 +510,7 @@ namespace STS2RitsuLib.Networking.Sidecar
                 return;
 
             if (context.IsHostIngest &&
-                (packet.Route == RitsuLibSidecarSyncMessageRoute.ClientToHostAndBroadcast ||
-                 registration.ShouldBroadcast) &&
+                registration.ShouldBroadcast &&
                 RunManager.Instance?.NetService is NetHostGameService host)
                 if (!RitsuLibSidecarSync.TryBroadcastToPeers(
                         host,

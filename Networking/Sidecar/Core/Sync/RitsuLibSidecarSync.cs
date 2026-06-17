@@ -211,6 +211,14 @@ namespace STS2RitsuLib.Networking.Sidecar
                     WaitingForNetBus[bus] = waiting;
                 }
 
+                if (!CanBufferMore_NoLock(context.Payload.Length))
+                {
+                    RitsuLibSidecarRepeatedWarningLog.Warn(
+                        "sync-netbus-buffer-budget",
+                        "[SidecarSync] Buffered sync message suppressed by buffer budget.");
+                    return true;
+                }
+
                 waiting.Add(new(vanillaMessages.Count, bufferedContext));
             }
 
@@ -276,6 +284,14 @@ namespace STS2RitsuLib.Networking.Sidecar
                 {
                     VisitedLocations.Add(location);
                     return false;
+                }
+
+                if (!CanBufferMore_NoLock(context.Payload.Length))
+                {
+                    RitsuLibSidecarRepeatedWarningLog.Warn(
+                        "sync-location-buffer-budget",
+                        "[SidecarSync] Location-targeted sync message suppressed by buffer budget.");
+                    return true;
                 }
 
                 WaitingForLocation.Add(new(location, GetLocationWaitingCount(), context.WithOwnedEnvelopeMemory()));
@@ -702,6 +718,9 @@ namespace STS2RitsuLib.Networking.Sidecar
             originalSenderNetId = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(offset, NetIdSize));
             offset += NetIdSize;
             route = (RitsuLibSidecarSyncMessageRoute)span[offset++];
+            if (!Enum.IsDefined(route))
+                return false;
+
             locationTargeted = span[offset++] != FalseByte;
             if (!locationTargeted)
                 return TryReadBytes(span, ref offset, out var skipped) && skipped.Length == EmptyLength;
@@ -758,6 +777,17 @@ namespace STS2RitsuLib.Networking.Sidecar
             bytes = span.Slice(offset, length);
             offset += length;
             return true;
+        }
+
+        private static bool CanBufferMore_NoLock(int nextPayloadBytes)
+        {
+            var contextCount = WaitingForLocation.Count + WaitingForNetBus.Values.Sum(static v => v.Count);
+            if (contextCount >= RitsuLibSidecarResourcePolicy.MaxBufferedSyncContexts)
+                return false;
+
+            var bytes = WaitingForLocation.Sum(static c => c.Context.Payload.Length) +
+                        WaitingForNetBus.Values.Sum(static v => v.Sum(static c => c.Context.Payload.Length));
+            return bytes + nextPayloadBytes <= RitsuLibSidecarResourcePolicy.MaxBufferedSyncBytes;
         }
 
         private readonly record struct BufferedSyncContext(

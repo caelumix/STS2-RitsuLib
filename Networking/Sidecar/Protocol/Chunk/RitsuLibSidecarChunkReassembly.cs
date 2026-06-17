@@ -32,12 +32,22 @@ namespace STS2RitsuLib.Networking.Sidecar
                 if (!_streams.TryGetValue(key, out var st))
                 {
                     if (count == 0 || totalPayloadSize == 0 ||
+                        count > RitsuLibSidecarResourcePolicy.MaxChunkReassemblyPartCount ||
+                        totalPayloadSize > RitsuLibSidecarWire.MaxPayloadBytes ||
                         index >= count ||
                         segment.Length > totalPayloadSize)
                     {
                         RitsuLibSidecarRepeatedWarningLog.Warn(
                             $"chunk-invalid-opening:sender={sender}:op={userOpcode}",
                             "[Sidecar] Chunk rejected (invalid opening frame).");
+                        return false;
+                    }
+
+                    if (IsReceiveBudgetExceeded_NoLock(sender, totalPayloadSize))
+                    {
+                        RitsuLibSidecarRepeatedWarningLog.Warn(
+                            $"chunk-receive-budget:sender={sender}:op={userOpcode}",
+                            "[Sidecar] Chunk rejected by receive budget.");
                         return false;
                     }
 
@@ -193,6 +203,24 @@ namespace STS2RitsuLib.Networking.Sidecar
                     $"chunk-stale-evicted:sender={k.Sender}",
                     $"[Sidecar] Chunk stream stale evicted ({k}).");
             }
+        }
+
+        private bool IsReceiveBudgetExceeded_NoLock(ulong sender, uint totalPayloadSize)
+        {
+            var globalStreams = _streams.Count;
+            var senderStreams = _streams.Keys.Count(k => k.Sender == sender);
+            if (globalStreams >= RitsuLibSidecarResourcePolicy.MaxChunkReassemblyStreamsGlobal ||
+                senderStreams >= RitsuLibSidecarResourcePolicy.MaxChunkReassemblyStreamsPerSender)
+                return true;
+
+            var globalBytes = _streams.Values.Sum(static s => (long)s.TotalLogicalSize);
+            var senderBytes = _streams
+                .Where(kv => kv.Key.Sender == sender)
+                .Sum(static kv => (long)kv.Value.TotalLogicalSize);
+            return globalBytes + totalPayloadSize >
+                   RitsuLibSidecarResourcePolicy.MaxChunkReassemblyLogicalBytesGlobal ||
+                   senderBytes + totalPayloadSize >
+                   RitsuLibSidecarResourcePolicy.MaxChunkReassemblyLogicalBytesPerSender;
         }
 
         private sealed class StreamState

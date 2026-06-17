@@ -2258,7 +2258,7 @@ namespace STS2RitsuLib.Settings
                     return Task.CompletedTask;
                 case PageBuildState.Building when cache.BuildTask != null:
                 {
-                    if (showOverlay && string.Equals(_selectedPageId, page.Id, StringComparison.OrdinalIgnoreCase))
+                    if (showOverlay && IsPageCurrentlySelected(cache))
                         ShowContentBuildOverlay(ModSettingsLocalization.Get("entry.loading", "Loading settings…"));
                     return cache.BuildTask;
                 }
@@ -2288,8 +2288,7 @@ namespace STS2RitsuLib.Settings
 
             try
             {
-                if (showOverlay && Visible &&
-                    string.Equals(_selectedPageId, page.Id, StringComparison.OrdinalIgnoreCase))
+                if (showOverlay && Visible && IsPageCurrentlySelected(cache))
                 {
                     cache.Root.Visible = true;
                     cache.Root.Modulate = Colors.White;
@@ -2338,8 +2337,7 @@ namespace STS2RitsuLib.Settings
                         item.AfterAdded?.Invoke(item.Control);
                         if (!item.YieldAfter || Time.GetTicksMsec() - lastYieldMsec < PageBuildFrameBudgetMsec)
                             continue;
-                        if (showOverlay && Visible && string.Equals(_selectedPageId, page.Id,
-                                StringComparison.OrdinalIgnoreCase))
+                        if (showOverlay && Visible && IsPageCurrentlySelected(cache))
                             ShowContentBuildOverlay(ModSettingsLocalization.Get("entry.loading", "Loading settings…"));
                         layoutScope.Dispose();
                         RefreshPageHostLayout(cache);
@@ -2355,8 +2353,16 @@ namespace STS2RitsuLib.Settings
 
                 if (buildVersion != cache.BuildVersion || !IsInstanceValid(cache.Root)) return;
 
-                cache.Root.Visible = true;
-                cache.Root.Modulate = Colors.White;
+                if (IsPageCurrentlySelected(cache))
+                {
+                    cache.Root.Visible = true;
+                    cache.Root.Modulate = Colors.White;
+                }
+                else
+                {
+                    cache.Root.Visible = false;
+                }
+
                 RefreshPageHostLayout(cache);
                 CompletePageBuild(page, cache);
             }
@@ -2375,7 +2381,7 @@ namespace STS2RitsuLib.Settings
                     ModSettingsLocalization.Get("page.failed.title", "Page failed to load"),
                     string.Format(ModSettingsLocalization.Get("page.failed.body", "Failed to build page '{0}'."),
                         page.Id)));
-                if (string.Equals(_selectedPageId, page.Id, StringComparison.OrdinalIgnoreCase))
+                if (IsPageCurrentlySelected(cache))
                 {
                     cache.Root.Visible = true;
                     cache.Root.Modulate = Colors.White;
@@ -2386,6 +2392,8 @@ namespace STS2RitsuLib.Settings
                 }
                 else
                 {
+                    if (IsInstanceValid(cache.Root))
+                        cache.Root.Visible = false;
                     RefreshPageHostLayout(cache);
                 }
             }
@@ -2452,7 +2460,7 @@ namespace STS2RitsuLib.Settings
                 }, ModSettingsUiRefreshSpec.Always, cache.PageKey);
             }
 
-            if (!string.Equals(_selectedPageId, page.Id, StringComparison.OrdinalIgnoreCase))
+            if (!IsPageCurrentlySelected(cache))
                 return;
 
             HideContentBuildOverlay();
@@ -2539,6 +2547,13 @@ namespace STS2RitsuLib.Settings
                    string.IsNullOrWhiteSpace(_selectedSectionId)
                 ? null
                 : CreateSectionCacheKey(_selectedModId, _selectedPageId, _selectedSectionId);
+        }
+
+        private bool IsPageCurrentlySelected(PageContentCache cache)
+        {
+            var selectedPageKey = GetSelectedPageKey();
+            return !string.IsNullOrWhiteSpace(selectedPageKey) &&
+                   string.Equals(cache.PageKey, selectedPageKey, StringComparison.OrdinalIgnoreCase);
         }
 
         private static string CreatePageCacheKey(string modId, string pageId)

@@ -510,8 +510,19 @@ namespace STS2RitsuLib.Models.Capabilities
             }
         }
 
-        internal static void ApplyDescriptionFragments(CardDescriptionContext context, ref string description)
+        internal static void ApplyDescriptionFragments(
+            CardModel card,
+            PileType pileType,
+            object? previewType,
+            Creature? target,
+            List<string> lines)
         {
+            var context = new CardDescriptionContext(
+                card,
+                pileType,
+                target,
+                string.Equals(previewType?.ToString(), "Upgrade", StringComparison.Ordinal));
+
             List<OrderedDescriptionFragment> beforeFragments = [];
             List<OrderedDescriptionFragment> afterFragments = [];
             var capabilityIndex = 0;
@@ -550,18 +561,25 @@ namespace STS2RitsuLib.Models.Capabilities
             if (beforeFragments.Count == 0 && afterFragments.Count == 0)
                 return;
 
-            var parts = beforeFragments
+            var beforeText = beforeFragments
                 .OrderBy(static fragment => fragment.Order)
                 .ThenBy(static fragment => fragment.SourceIndex)
                 .Select(static fragment => fragment.Text)
-                .Concat(string.IsNullOrWhiteSpace(description) ? [] : [description])
-                .Concat(afterFragments
-                    .OrderBy(static fragment => fragment.Order)
-                    .ThenBy(static fragment => fragment.SourceIndex)
-                    .Select(static fragment => fragment.Text))
+                .ToArray();
+            var afterText = afterFragments
+                .OrderBy(static fragment => fragment.Order)
+                .ThenBy(static fragment => fragment.SourceIndex)
+                .Select(static fragment => fragment.Text)
                 .ToArray();
 
-            description = string.Join('\n', parts);
+            if (beforeText.Length > 0)
+                lines.InsertRange(0, beforeText);
+
+            if (afterText.Length <= 0)
+                return;
+
+            var afterBaseIndex = lines.Count == 0 ? 0 : beforeText.Length + 1;
+            lines.InsertRange(Math.Min(afterBaseIndex, lines.Count), afterText);
         }
 
         internal static void AfterOwnerCardUpgraded(CardModel card)

@@ -225,7 +225,8 @@ namespace STS2RitsuLib.Networking.Sidecar
             }
             catch (Exception ex)
             {
-                RitsuLibFramework.Logger.Warn(
+                RitsuLibSidecarRepeatedWarningLog.Warn(
+                    $"typed-deserialize:opcode={opcode}:sender={context.SenderNetId}:{ex.GetType().FullName}:{ex.Message}",
                     $"[Sidecar] Typed message deserialize failed opcode={opcode}: {ex.Message}");
                 return;
             }

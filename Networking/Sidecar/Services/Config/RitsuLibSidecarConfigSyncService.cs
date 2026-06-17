@@ -96,7 +96,8 @@ namespace STS2RitsuLib.Networking.Sidecar
                         }
                         catch (Exception ex)
                         {
-                            RitsuLibFramework.Logger.Warn(
+                            RitsuLibSidecarRepeatedWarningLog.Warn(
+                                $"config-can-client-request:topic={topic}:sender={sender}:{ex.GetType().FullName}:{ex.Message}",
                                 $"[Sidecar] Config canClientRequest failed topic={topic}, sender={sender}: {ex.Message}");
                             return false;
                         }
@@ -112,7 +113,8 @@ namespace STS2RitsuLib.Networking.Sidecar
                         }
                         catch (Exception ex)
                         {
-                            RitsuLibFramework.Logger.Warn(
+                            RitsuLibSidecarRepeatedWarningLog.Warn(
+                                $"config-apply-delta:topic={topic}:{ex.GetType().FullName}:{ex.Message}",
                                 $"[Sidecar] Config applyDelta failed topic={topic}: {ex.Message}");
                             return stateJson;
                         }
@@ -281,7 +283,8 @@ namespace STS2RitsuLib.Networking.Sidecar
         {
             if (!ctx.Message.Approved)
             {
-                RitsuLibFramework.Logger.Warn(
+                RitsuLibSidecarRepeatedWarningLog.Warn(
+                    $"config-rejected:topic={ctx.Message.Topic}:reason={ctx.Message.Reason}",
                     $"[Sidecar] Config change rejected topic={ctx.Message.Topic}, request={ctx.Message.RequestId}, reason={ctx.Message.Reason}");
                 return;
             }

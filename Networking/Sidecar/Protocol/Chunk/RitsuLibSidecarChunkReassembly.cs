@@ -35,7 +35,9 @@ namespace STS2RitsuLib.Networking.Sidecar
                         index >= count ||
                         segment.Length > totalPayloadSize)
                     {
-                        RitsuLibFramework.Logger.Warn("[Sidecar] Chunk rejected (invalid opening frame).");
+                        RitsuLibSidecarRepeatedWarningLog.Warn(
+                            $"chunk-invalid-opening:sender={sender}:op={userOpcode}",
+                            "[Sidecar] Chunk rejected (invalid opening frame).");
                         return false;
                     }
 
@@ -55,14 +57,18 @@ namespace STS2RitsuLib.Networking.Sidecar
                          st.ExpectedCount != (int)count ||
                          st.TotalLogicalSize != (int)totalPayloadSize)
                 {
-                    RitsuLibFramework.Logger.Warn("[Sidecar] Chunk metadata mismatch; dropping partial stream.");
+                    RitsuLibSidecarRepeatedWarningLog.Warn(
+                        $"chunk-metadata-mismatch:sender={sender}:op={userOpcode}",
+                        "[Sidecar] Chunk metadata mismatch; dropping partial stream.");
                     _streams.Remove(key);
                     return false;
                 }
 
                 if (index >= (uint)st.Parts!.Length)
                 {
-                    RitsuLibFramework.Logger.Warn("[Sidecar] Chunk index overflow; dropping stream.");
+                    RitsuLibSidecarRepeatedWarningLog.Warn(
+                        $"chunk-index-overflow:sender={sender}:op={userOpcode}",
+                        "[Sidecar] Chunk index overflow; dropping stream.");
                     _streams.Remove(key);
                     return false;
                 }
@@ -153,7 +159,9 @@ namespace STS2RitsuLib.Networking.Sidecar
 
             if (o != merged.Length)
             {
-                RitsuLibFramework.Logger.Warn("[Sidecar] Chunk merged length mismatch.");
+                RitsuLibSidecarRepeatedWarningLog.Warn(
+                    $"chunk-merged-length-mismatch:sender={key.Item1}",
+                    "[Sidecar] Chunk merged length mismatch.");
                 _streams.Remove(key);
                 return false;
             }
@@ -181,7 +189,9 @@ namespace STS2RitsuLib.Networking.Sidecar
             foreach (var k in dead)
             {
                 _streams.Remove(k);
-                RitsuLibFramework.Logger.Warn($"[Sidecar] Chunk stream stale evicted ({k}).");
+                RitsuLibSidecarRepeatedWarningLog.Warn(
+                    $"chunk-stale-evicted:sender={k.Sender}",
+                    $"[Sidecar] Chunk stream stale evicted ({k}).");
             }
         }
 

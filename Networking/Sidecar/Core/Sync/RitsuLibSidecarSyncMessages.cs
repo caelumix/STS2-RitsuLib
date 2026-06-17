@@ -476,7 +476,9 @@ namespace STS2RitsuLib.Networking.Sidecar
         {
             if (!RitsuLibSidecarSync.TryReadMessagePacket(context.Payload.Span, out var packet))
             {
-                RitsuLibFramework.Logger.Warn("[SidecarSync] Rejected malformed sync message packet.");
+                RitsuLibSidecarRepeatedWarningLog.Warn(
+                    $"sync-malformed-packet:sender={context.SenderNetId}:ch={context.Channel}",
+                    "[SidecarSync] Rejected malformed sync message packet.");
                 return;
             }
 
@@ -488,14 +490,16 @@ namespace STS2RitsuLib.Networking.Sidecar
 
             if (registration == null)
             {
-                RitsuLibFramework.Logger.Warn(
+                RitsuLibSidecarRepeatedWarningLog.Warn(
+                    $"sync-missing-descriptor:opcode={packet.DescriptorOpcode}:sender={context.SenderNetId}",
                     $"[SidecarSync] No sync message descriptor registered for opcode {packet.DescriptorOpcode}.");
                 return;
             }
 
             if (registration.LocationTargeted && !packet.LocationTargeted)
             {
-                RitsuLibFramework.Logger.Warn(
+                RitsuLibSidecarRepeatedWarningLog.Warn(
+                    $"sync-missing-location:opcode={packet.DescriptorOpcode}:sender={context.SenderNetId}",
                     $"[SidecarSync] Sync message opcode {packet.DescriptorOpcode} missing required location.");
                 return;
             }
@@ -650,7 +654,8 @@ namespace STS2RitsuLib.Networking.Sidecar
                 }
                 catch (Exception ex)
                 {
-                    RitsuLibFramework.Logger.Warn(
+                    RitsuLibSidecarRepeatedWarningLog.Warn(
+                        $"sync-deserialize:{ModuleId}/{MessageKey}:{ex.GetType().FullName}:{ex.Message}",
                         $"[SidecarSync] Failed to deserialize sync message {ModuleId}/{MessageKey}: {ex.Message}");
                     return;
                 }

@@ -119,8 +119,24 @@ namespace STS2RitsuLib.Lifecycle.Patches
         private static bool TryReadRunHistory(string json, out RunHistory history, out string error)
         {
             var root = TryParseJsonObject(json);
+            if (root == null)
+            {
+                history = null!;
+                error = "File is not a JSON object.";
+                return false;
+            }
+
             var serializableFirst = LooksLikeSerializableRun(root);
+            var looksLikeRunHistory = LooksLikeRunHistory(root);
+            if (!serializableFirst && !looksLikeRunHistory)
+            {
+                history = null!;
+                error = "File is not a RunHistory or SerializableRun save.";
+                return false;
+            }
+
             var serializableRunError = "";
+            var runHistoryError = "";
 
             if (serializableFirst)
                 if (TryReadSerializableRun(json, root, out history, out serializableRunError))
@@ -129,7 +145,8 @@ namespace STS2RitsuLib.Lifecycle.Patches
                     return true;
                 }
 
-            if (TryReadVanillaRunHistory(json, out history, out var runHistoryError) || (!serializableFirst &&
+            if ((looksLikeRunHistory &&
+                 TryReadVanillaRunHistory(json, out history, out runHistoryError)) || (!serializableFirst &&
                     TryReadSerializableRun(json, root, out history, out serializableRunError)))
             {
                 error = "";
@@ -154,14 +171,17 @@ namespace STS2RitsuLib.Lifecycle.Patches
             }
 
             history = result.SaveData;
-            if (history.Players.Count > 0)
+            if (history.Players is { Count: > 0 } &&
+                // ReSharper disable RedundantAlwaysMatchSubpattern
+                history is { MapPointHistory: not null, Acts: not null, Modifiers: not null })
+                // ReSharper restore RedundantAlwaysMatchSubpattern
             {
                 error = "";
                 return true;
             }
 
             history = null!;
-            error = "RunHistory has no players.";
+            error = "RunHistory is missing required history fields.";
             return false;
         }
 
@@ -281,6 +301,17 @@ namespace STS2RitsuLib.Lifecycle.Patches
                     root.ContainsKey("save_time") ||
                     root.ContainsKey("win_time") ||
                     root.ContainsKey("rng"));
+        }
+
+        private static bool LooksLikeRunHistory(JsonObject root)
+        {
+            return root.ContainsKey("win") &&
+                   root.ContainsKey("players") &&
+                   root.ContainsKey("map_point_history") &&
+                   (root.ContainsKey("build_id") ||
+                    root.ContainsKey("killed_by_encounter") ||
+                    root.ContainsKey("killed_by_event") ||
+                    root.ContainsKey("was_abandoned"));
         }
 
         private static bool? ReadBool(JsonObject? root, params string[] keys)

@@ -335,11 +335,11 @@ namespace STS2RitsuLib.Models.Capabilities
                 }
 
                 foreach (var (locString, placement, order) in fragments)
-                    TryRun(capability, context.Card, TitleSurface, () =>
+                    try
                     {
                         PrepareTitleFragment(context, locString, capability);
                         var text = locString.GetFormattedText();
-                        if (text.Length == 0) return;
+                        if (text.Length == 0) continue;
 
                         var orderedFragment = new OrderedTitleFragment(
                             text,
@@ -373,7 +373,11 @@ namespace STS2RitsuLib.Models.Capabilities
                                 afterBaseFragments.Add(orderedFragment);
                                 break;
                         }
-                    });
+                    }
+                    catch (Exception ex)
+                    {
+                        LogFailure(capability, context.Card, TitleSurface, ex);
+                    }
             }
 
             if (beforeFragments.Count == 0 &&
@@ -541,12 +545,12 @@ namespace STS2RitsuLib.Models.Capabilities
                 }
 
                 foreach (var (locString, cardDescriptionFragmentPlacement, order) in fragments)
-                    TryRun(capability, context.Card, DescriptionSurface, () =>
+                    try
                     {
                         PrepareDescriptionFragment(context, locString, capability);
 
                         var text = locString.GetFormattedText();
-                        if (string.IsNullOrWhiteSpace(text)) return;
+                        if (string.IsNullOrWhiteSpace(text)) continue;
                         var orderedFragment = new OrderedDescriptionFragment(
                             text,
                             order,
@@ -555,7 +559,11 @@ namespace STS2RitsuLib.Models.Capabilities
                             beforeFragments.Add(orderedFragment);
                         else
                             afterFragments.Add(orderedFragment);
-                    });
+                    }
+                    catch (Exception ex)
+                    {
+                        LogFailure(capability, context.Card, DescriptionSurface, ex);
+                    }
             }
 
             if (beforeFragments.Count == 0 && afterFragments.Count == 0)

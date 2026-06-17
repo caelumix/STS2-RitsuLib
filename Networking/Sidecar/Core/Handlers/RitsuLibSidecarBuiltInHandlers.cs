@@ -85,34 +85,33 @@ namespace STS2RitsuLib.Networking.Sidecar
         {
             if (!ctx.IsHostIngest)
                 return;
+            if (!RitsuLibSidecarSessionManager.CanSendToPeer(ctx.SenderNetId))
+                return;
+            if (!RitsuLibSidecarDiagnosticRelayGate.TryValidateRequest(ctx.SenderNetId))
+                return;
+
             RitsuLibFramework.Logger.Debug(
                 $"[Sidecar] Diagnostic relay request sender={ctx.SenderNetId}, opcode={ctx.Opcode}, payloadLen={ctx.Payload.Length}");
-
-            RitsuLibSidecarChecksumDiagnostics.TryLogLocalCombatDump(
-                $"Sidecar relay dump (request peer={ctx.SenderNetId})",
-                RitsuLibSidecarDiagnosticPolicy.DivergenceRelayTag);
-
-            var rm = RunManager.Instance;
-            var payload = RitsuLibSidecarDiagnosticPayload.BuildFanoutPayload(
-                ctx.SenderNetId,
-                RitsuLibSidecarDiagnosticPolicy.DivergenceRelayTag);
-            RitsuLibSidecarHighLevelSend.TrySendAsHostBroadcast(
-                rm,
-                RitsuLibSidecarControlOpcodes.DiagnosticRelayDumpFanout,
-                payload,
-                RitsuLibSidecarDeliverySemantics.StableSync);
         }
 
         private static void OnRelayDumpFanout(RitsuLibSidecarDispatchContext ctx)
         {
-            if (!RitsuLibSidecarDiagnosticPayload.TryParseFanout(ctx.Payload.Span, out var origin, out var tag))
+            if (ctx.IsHostIngest)
                 return;
+            if (!RitsuLibSidecarDiagnosticPayload.TryParseFanout(ctx.Payload.Span, out var session))
+                return;
+            if (!RitsuLibSidecarDiagnosticRelayGate.TryValidateFanout(
+                    RunManager.Instance?.NetService,
+                    ctx.SenderNetId,
+                    session))
+                return;
+
             RitsuLibFramework.Logger.Debug(
-                $"[Sidecar] Diagnostic relay fanout sender={ctx.SenderNetId}, originPeer={origin}, tag={tag}, payloadLen={ctx.Payload.Length}");
+                $"[Sidecar] Diagnostic relay fanout sender={ctx.SenderNetId}, originPeer={session.OriginatingSenderNetId}, checksum={session.ChecksumId}, tag={session.Tag}, payloadLen={ctx.Payload.Length}");
 
             RitsuLibSidecarChecksumDiagnostics.TryLogLocalCombatDump(
-                $"Sidecar coordinated dump via host broadcast (originPeer={origin})",
-                tag);
+                $"Sidecar coordinated dump via host broadcast (originPeer={session.OriginatingSenderNetId})",
+                session);
         }
 
         private static void OnHandshake(RitsuLibSidecarDispatchContext ctx)

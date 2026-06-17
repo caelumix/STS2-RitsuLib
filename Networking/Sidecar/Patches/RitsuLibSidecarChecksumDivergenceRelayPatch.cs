@@ -14,6 +14,9 @@ namespace STS2RitsuLib.Networking.Sidecar.Patches
         private static readonly FieldInfo? NetChecksumDataChecksumField =
             typeof(NetChecksumData).GetField("checksum");
 
+        private static readonly FieldInfo? NetChecksumDataIdField =
+            typeof(NetChecksumData).GetField("id");
+
         private static readonly FieldInfo? TrackedChecksumDataField =
             typeof(ChecksumTracker).GetNestedType("TrackedChecksum", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?.GetField("data");
@@ -34,15 +37,15 @@ namespace STS2RitsuLib.Networking.Sidecar.Patches
         {
             if (!TryReadChecksum(localChecksum, out var local) || !TryReadChecksum(remoteChecksum, out var remote))
                 return;
-            if (local == remote)
+            if (local.Id != remote.Id || local.Checksum == remote.Checksum)
                 return;
 
-            RitsuLibSidecarChecksumDiagnostics.TryTriggerHostCoordinatedDump(remoteId);
+            RitsuLibSidecarChecksumDiagnostics.TryTriggerHostCoordinatedDump(remoteId, local.Id);
         }
 
-        private static bool TryReadChecksum(object source, out uint checksum)
+        private static bool TryReadChecksum(object source, out ChecksumSnapshot checksum)
         {
-            checksum = 0;
+            checksum = default;
             if (source == null)
                 return false;
 
@@ -50,23 +53,29 @@ namespace STS2RitsuLib.Networking.Sidecar.Patches
             if (t.Name == "TrackedChecksum" && TrackedChecksumDataField != null)
             {
                 var data = TrackedChecksumDataField.GetValue(source);
-                if (data == null || NetChecksumDataChecksumField == null)
-                    return false;
-                var v = NetChecksumDataChecksumField.GetValue(data);
-                if (v is not uint u)
-                    return false;
-                checksum = u;
-                return true;
+                return data != null && TryReadNetChecksumData(data, out checksum);
             }
 
-            if (NetChecksumDataChecksumField == null ||
+            if (NetChecksumDataChecksumField == null || NetChecksumDataIdField == null ||
                 !NetChecksumDataChecksumField.DeclaringType!.IsInstanceOfType(source))
                 return false;
-            var raw = NetChecksumDataChecksumField.GetValue(source);
-            if (raw is not uint value)
+            return TryReadNetChecksumData(source, out checksum);
+        }
+
+        private static bool TryReadNetChecksumData(object source, out ChecksumSnapshot checksum)
+        {
+            checksum = default;
+            if (NetChecksumDataChecksumField == null || NetChecksumDataIdField == null)
                 return false;
-            checksum = value;
+
+            var rawChecksum = NetChecksumDataChecksumField.GetValue(source);
+            var rawId = NetChecksumDataIdField.GetValue(source);
+            if (rawChecksum is not uint checksumValue || rawId is not uint id)
+                return false;
+            checksum = new(id, checksumValue);
             return true;
         }
+
+        private readonly record struct ChecksumSnapshot(uint Id, uint Checksum);
     }
 }

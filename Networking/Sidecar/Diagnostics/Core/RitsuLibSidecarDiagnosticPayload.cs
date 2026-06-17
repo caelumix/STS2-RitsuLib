@@ -6,38 +6,65 @@ namespace STS2RitsuLib.Networking.Sidecar
     {
         internal const int FanoutPayloadSize = RitsuLibSidecarDiagnosticRelayLayout.FanoutPayloadSize;
 
-        internal static byte[] BuildFanoutPayload(ulong originatingSenderNetId, ushort tag)
+        internal static byte[] BuildFanoutPayload(RitsuLibSidecarDiagnosticRelaySession session)
         {
             var buf = new byte[FanoutPayloadSize];
             BinaryPrimitives.WriteUInt64BigEndian(
                 buf.AsSpan(
                     RitsuLibSidecarDiagnosticRelayLayout.OriginatingSenderNetIdOffset,
                     RitsuLibSidecarDiagnosticRelayLayout.OriginatingSenderNetIdSize),
-                originatingSenderNetId);
+                session.OriginatingSenderNetId);
             BinaryPrimitives.WriteUInt16BigEndian(
                 buf.AsSpan(
                     RitsuLibSidecarDiagnosticRelayLayout.TagOffset,
                     RitsuLibSidecarDiagnosticRelayLayout.TagSize),
-                tag);
+                session.Tag);
+            BinaryPrimitives.WriteUInt32BigEndian(
+                buf.AsSpan(
+                    RitsuLibSidecarDiagnosticRelayLayout.ChecksumIdOffset,
+                    RitsuLibSidecarDiagnosticRelayLayout.ChecksumIdSize),
+                session.ChecksumId);
+            BinaryPrimitives.WriteUInt64BigEndian(
+                buf.AsSpan(
+                    RitsuLibSidecarDiagnosticRelayLayout.NonceOffset,
+                    RitsuLibSidecarDiagnosticRelayLayout.NonceSize),
+                session.Nonce);
+            BinaryPrimitives.WriteInt64BigEndian(
+                buf.AsSpan(
+                    RitsuLibSidecarDiagnosticRelayLayout.IssuedUnixMillisecondsOffset,
+                    RitsuLibSidecarDiagnosticRelayLayout.IssuedUnixMillisecondsSize),
+                session.IssuedUnixMilliseconds);
             return buf;
         }
 
-        internal static bool TryParseFanout(ReadOnlySpan<byte> payload, out ulong originatingSenderNetId,
-            out ushort tag)
+        internal static bool TryParseFanout(ReadOnlySpan<byte> payload,
+            out RitsuLibSidecarDiagnosticRelaySession session)
         {
-            originatingSenderNetId = 0;
-            tag = 0;
-            if (payload.Length < FanoutPayloadSize)
+            session = default;
+            if (payload.Length != FanoutPayloadSize)
                 return false;
 
-            originatingSenderNetId = BinaryPrimitives.ReadUInt64BigEndian(
+            var originatingSenderNetId = BinaryPrimitives.ReadUInt64BigEndian(
                 payload.Slice(
                     RitsuLibSidecarDiagnosticRelayLayout.OriginatingSenderNetIdOffset,
                     RitsuLibSidecarDiagnosticRelayLayout.OriginatingSenderNetIdSize));
-            tag = BinaryPrimitives.ReadUInt16BigEndian(
+            var tag = BinaryPrimitives.ReadUInt16BigEndian(
                 payload.Slice(
                     RitsuLibSidecarDiagnosticRelayLayout.TagOffset,
                     RitsuLibSidecarDiagnosticRelayLayout.TagSize));
+            var checksumId = BinaryPrimitives.ReadUInt32BigEndian(
+                payload.Slice(
+                    RitsuLibSidecarDiagnosticRelayLayout.ChecksumIdOffset,
+                    RitsuLibSidecarDiagnosticRelayLayout.ChecksumIdSize));
+            var nonce = BinaryPrimitives.ReadUInt64BigEndian(
+                payload.Slice(
+                    RitsuLibSidecarDiagnosticRelayLayout.NonceOffset,
+                    RitsuLibSidecarDiagnosticRelayLayout.NonceSize));
+            var issuedUnixMilliseconds = BinaryPrimitives.ReadInt64BigEndian(
+                payload.Slice(
+                    RitsuLibSidecarDiagnosticRelayLayout.IssuedUnixMillisecondsOffset,
+                    RitsuLibSidecarDiagnosticRelayLayout.IssuedUnixMillisecondsSize));
+            session = new(originatingSenderNetId, checksumId, tag, nonce, issuedUnixMilliseconds);
             return true;
         }
     }

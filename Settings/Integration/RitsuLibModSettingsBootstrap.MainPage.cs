@@ -150,10 +150,10 @@ namespace STS2RitsuLib.Settings
                     .Collapsible()
                     .AddToggle(
                         "steam_workshop_auto_update_check_enabled",
-                        T("ritsulib.steamWorkshop.autoUpdateCheck.label", "Auto-check stale Workshop items"),
+                        T("ritsulib.steamWorkshop.autoUpdateCheck.label", "Auto-check Workshop updates"),
                         ui.SteamWorkshopAutoUpdateCheckEnabled,
                         T("ritsulib.steamWorkshop.autoUpdateCheck.description",
-                            "Once after the first main menu load, asks Steam to download subscribed Workshop items that Steam still marks as needing an update."))
+                            "Once after the first main menu load, checks subscribed Workshop items and asks Steam to download any items with available updates."))
                     .AddButton(
                         "steam_workshop_check_now",
                         T("ritsulib.steamWorkshop.checkNow.label", "Check Workshop updates now"),
@@ -161,7 +161,7 @@ namespace STS2RitsuLib.Settings
                         SteamWorkshopUpdateCoordinator.CheckNowFromSettings,
                         ModSettingsButtonTone.Normal,
                         T("ritsulib.steamWorkshop.checkNow.description",
-                            "Checks subscribed Workshop item states immediately and asks Steam to download any stale installed items.")))
+                            "Checks subscribed Workshop item states immediately and asks Steam to download any items with available updates.")))
                 .AddSection("dev_debug_tools", section => section
                     .WithTitle(T("ritsulib.section.devDebugTools.title", "Developer debug tools"))
                     .Collapsible()

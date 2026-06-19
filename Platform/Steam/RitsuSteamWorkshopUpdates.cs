@@ -85,8 +85,7 @@ namespace STS2RitsuLib.Platform.Steam
                 }
 
                 var flags = ResolveItemStateFlags(steamworksAssembly);
-                RitsuLibFramework.Logger.Info(
-                    $"[SteamWorkshopUpdate] Steamworks Workshop binding initialized. Flags: NeedsUpdate={flags.NeedsUpdate}, Downloading={flags.Downloading}, DownloadPending={flags.DownloadPending}.");
+                RitsuLibFramework.Logger.Info("[SteamWorkshopUpdate] Steamworks Workshop binding initialized.");
 
                 return new(
                     publishedFileIdType,

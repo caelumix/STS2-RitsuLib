@@ -383,7 +383,8 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             var version = string.IsNullOrWhiteSpace(mod.Version)
                 ? T("value.noVersion", "No version")
                 : mod.Version;
-            return "#" + (mod.Index + 1) + "  " + mod.Key + "  " + version;
+            var id = string.IsNullOrWhiteSpace(mod.Id) ? mod.Key : mod.Id;
+            return "#" + (mod.Index + 1) + "  " + id + "  version=" + version;
         }
 
         private static string FormatContentModLabel(ContentModInventoryEntry mod)
@@ -400,7 +401,7 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             var version = string.IsNullOrWhiteSpace(mod.Version)
                 ? T("value.noVersion", "No version")
                 : mod.Version;
-            return "#" + (mod.Index + 1) + "  " + mod.Id + "-" + version;
+            return "#" + (mod.Index + 1) + "  " + mod.Id + "  version=" + version;
         }
 
         private static string ContentModKey(ContentModInventoryEntry mod)

@@ -188,9 +188,9 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     )
     p.add_argument(
         "--workshop-visibility",
-        default=os.environ.get("RITSLIB_WORKSHOP_VISIBILITY", "private"),
+        default=os.environ.get("RITSLIB_WORKSHOP_VISIBILITY", "public"),
         choices=("private", "public", "unlisted", "friends_only"),
-        help="Workshop visibility written to workshop.json (default: private).",
+        help="Workshop visibility written to workshop.json (default: public).",
     )
     p.add_argument(
         "--workshop-title",

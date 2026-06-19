@@ -152,6 +152,9 @@ namespace STS2RitsuLib
             patcher.RegisterPatch<NContinueRunInfoShowInfoModelNotFoundPatch>();
             patcher.RegisterPatch<NRunHistoryRefreshAndSelectRunSuppressRethrowPatch>();
             patcher.RegisterPatch<SentryDiagnosticsTelemetryPatch>();
+#if STS2_AT_LEAST_0_107_1
+            patcher.RegisterPatch<SentryGdExtensionShutdown1071WorkaroundPatch>();
+#endif
             patcher.RegisterPatch<RunHistoryMissingModelDbGetByIdTranspilerPatch>();
 #if STS2_AT_LEAST_0_106_1
             patcher.RegisterPatch<NRunHistoryDroppedFilePreviewPatch>();

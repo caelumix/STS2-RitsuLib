@@ -52,6 +52,9 @@ namespace STS2RitsuLib.Scaffolding.Content.Patches
                 return rewriter.InstructionsChecked(operation);
             }
 
+            if (!rewriter.Contains(IsActListErrorString) && rewriter.Contains(IsModelDbActsCall))
+                return rewriter.InstructionsChecked(operation);
+
             RitsuLibFramework.Logger.Warn(
                 "[RelicCollection] Could not find vanilla act-list validation pattern; runtime act list patch skipped.");
 

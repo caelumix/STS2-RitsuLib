@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using STS2RitsuLib.Cards;
 using STS2RitsuLib.Patching.Models;
+using STS2RitsuLib.Utils.HarmonyIl;
 
 namespace STS2RitsuLib.Models.Capabilities.Patches
 {
@@ -497,17 +498,46 @@ namespace STS2RitsuLib.Models.Capabilities.Patches
                 return [CardDescriptionPatchTarget.Create()];
             }
 
-            public static void Postfix(
-                CardModel __instance,
-                object[] __args,
-                ref string __result)
+            public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                var pileType = __args is [{ } first, ..] ? (PileType)first : PileType.None;
-                var previewType = __args is [_, var second, ..] ? second : null;
-                var target = __args is [_, _, Creature creature, ..] ? creature : null;
-                var isUpgradePreview = CardDescriptionPatchTarget.IsUpgradePreview(previewType);
-                var context = new CardDescriptionContext(__instance, pileType, target, isUpgradePreview);
-                CardModelCapabilityHost.ApplyDescriptionFragments(context, ref __result);
+                var enchantmentGetter = AccessTools.PropertyGetter(typeof(CardModel), nameof(CardModel.Enchantment));
+                var applyMethod = AccessTools.Method(
+                    typeof(CardModelCapabilityHost),
+                    nameof(CardModelCapabilityHost.ApplyDescriptionFragments),
+                    [typeof(CardModel), typeof(PileType), typeof(object), typeof(Creature), typeof(List<string>)]);
+                var previewType = CardDescriptionPatchTarget.GetDescriptionPreviewType();
+
+                var code = instructions.ToList();
+                if (enchantmentGetter == null || applyMethod == null)
+                    return code;
+
+                for (var i = 1; i < code.Count - 1; i++)
+                {
+                    if (!HarmonyIl.IsLdarg(0)(code[i]) || !code[i + 1].Calls(enchantmentGetter))
+                        continue;
+
+                    if (!HarmonyIl.TryGetLocalStore(code[i - 1], out var descriptionLinesLocal))
+                        continue;
+
+                    var injected = new List<CodeInstruction>
+                    {
+                        CodeInstruction.LoadArgument(0),
+                        CodeInstruction.LoadArgument(1),
+                        CodeInstruction.LoadArgument(2),
+                        new(OpCodes.Box, previewType),
+                        CodeInstruction.LoadArgument(3),
+                        descriptionLinesLocal.Load(),
+                        new(OpCodes.Call, applyMethod),
+                    };
+
+                    injected[0].labels.AddRange(code[i].labels);
+                    code[i].labels.Clear();
+                    code.InsertRange(i, injected);
+                    return code;
+                }
+
+                RitsuLibFramework.Logger.Warn($"{MissingLifecyclePatchWarning} Patch={PatchId}");
+                return code;
             }
         }
 

@@ -26,7 +26,7 @@ namespace STS2RitsuLib.Cards
                 StringComparison.Ordinal);
         }
 
-        private static Type GetDescriptionPreviewType()
+        internal static Type GetDescriptionPreviewType()
         {
             return typeof(CardModel).GetNestedType(DescriptionPreviewTypeName, BindingFlags.NonPublic)
                    ?? throw new MissingMemberException(

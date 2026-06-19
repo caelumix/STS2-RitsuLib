@@ -40,7 +40,7 @@ namespace STS2RitsuLib.Telemetry
 
             if (!TelemetryConsentStore.IsRequestGranted(applicant, request))
             {
-                RitsuLibFramework.Logger.Info(
+                RitsuLibFramework.Logger.Debug(
                     $"[Telemetry] Dropped event '{eventName}' for applicant '{ApplicantId}': request '{requestId}' is not authorized.");
                 return;
             }

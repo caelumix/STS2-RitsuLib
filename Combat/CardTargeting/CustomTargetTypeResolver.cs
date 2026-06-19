@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 
 namespace STS2RitsuLib.Combat.CardTargeting
 {
@@ -20,16 +21,18 @@ namespace STS2RitsuLib.Combat.CardTargeting
                    || BaseLibTargetTypeBridge.IsCustomMultiTargetType(type);
         }
 
-        internal static bool TryIsAllowedSingleTarget(TargetType type, Creature creature, out bool allowed)
+        internal static bool TryIsAllowedSingleTarget(TargetType type, Creature creature, Player player,
+            out bool allowed)
         {
-            return CustomTargetTypeRegistry.TryIsAllowedSingleTarget(type, creature, out allowed) ||
-                   BaseLibTargetTypeBridge.TryIsAllowedSingleTarget(type, creature, out allowed);
+            return CustomTargetTypeRegistry.TryIsAllowedSingleTarget(type, creature, player, out allowed) ||
+                   BaseLibTargetTypeBridge.TryIsAllowedSingleTarget(type, creature, player, out allowed);
         }
 
-        internal static bool TryShouldIncludeMultiTarget(TargetType type, Creature creature, out bool include)
+        internal static bool TryShouldIncludeMultiTarget(TargetType type, Creature creature, Player player,
+            out bool include)
         {
-            return CustomTargetTypeRegistry.TryShouldIncludeMultiTarget(type, creature, out include) ||
-                   BaseLibTargetTypeBridge.TryShouldIncludeMultiTarget(type, creature, out include);
+            return CustomTargetTypeRegistry.TryShouldIncludeMultiTarget(type, creature, player, out include) ||
+                   BaseLibTargetTypeBridge.TryShouldIncludeMultiTarget(type, creature, player, out include);
         }
     }
 }

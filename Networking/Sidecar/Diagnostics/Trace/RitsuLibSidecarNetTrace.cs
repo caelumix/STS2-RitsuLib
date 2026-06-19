@@ -22,7 +22,10 @@ namespace STS2RitsuLib.Networking.Sidecar
         internal static void WarnEnvelopeRejected(RitsuLibSidecarEnvelope.ParseOutcome outcome, int wireLen,
             int channel)
         {
-            Logger.Warn($"[Sidecar] Magic matched but envelope rejected ({outcome}), len={wireLen}, ch={channel}");
+            RitsuLibSidecarRepeatedWarningLog.Warn(
+                Logger,
+                $"envelope-rejected:{outcome}:ch={channel}",
+                $"[Sidecar] Magic matched but envelope rejected ({outcome}), len={wireLen}, ch={channel}");
         }
 
         internal static void TraceOutbound(

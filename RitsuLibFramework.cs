@@ -452,7 +452,9 @@ namespace STS2RitsuLib
 
         internal static string GetCompatBranchLabel()
         {
-#if STS2_AT_LEAST_0_107_0
+#if STS2_AT_LEAST_0_107_1
+            return "0.107.1";
+#elif STS2_AT_LEAST_0_107_0
             return "0.107.0";
 #elif STS2_AT_LEAST_0_106_1
             return "0.106.1";
@@ -652,6 +654,19 @@ namespace STS2RitsuLib
         }
 
         /// <summary>
+        ///     Registers a mod-scoped player-aware single-target <see cref="TargetType" /> and returns its deterministic
+        ///     enum value.
+        ///     注册一个感知出牌玩家的 mod 作用域单体目标 <see cref="TargetType" />，并返回其确定性的枚举值。
+        /// </summary>
+        public static TargetType RegisterSingleTargetType(
+            string modId,
+            string localStem,
+            Func<Creature, Player, bool> canTarget)
+        {
+            return CustomTargetType.RegisterSingleTargetType(modId, localStem, canTarget);
+        }
+
+        /// <summary>
         ///     Registers a mod-scoped multi-target <see cref="TargetType" /> and returns its deterministic enum value.
         ///     注册一个 mod 作用域的群体目标 <see cref="TargetType" />，并返回其确定性的枚举值。
         /// </summary>
@@ -659,6 +674,19 @@ namespace STS2RitsuLib
             string modId,
             string localStem,
             Func<Creature, bool> includeTarget)
+        {
+            return CustomTargetType.RegisterMultiTargetType(modId, localStem, includeTarget);
+        }
+
+        /// <summary>
+        ///     Registers a mod-scoped player-aware multi-target <see cref="TargetType" /> and returns its deterministic
+        ///     enum value.
+        ///     注册一个感知出牌玩家的 mod 作用域群体目标 <see cref="TargetType" />，并返回其确定性的枚举值。
+        /// </summary>
+        public static TargetType RegisterMultiTargetType(
+            string modId,
+            string localStem,
+            Func<Creature, Player, bool> includeTarget)
         {
             return CustomTargetType.RegisterMultiTargetType(modId, localStem, includeTarget);
         }

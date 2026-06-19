@@ -1,6 +1,7 @@
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Audio.Debug;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Helpers;
@@ -51,6 +52,7 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
             foreach (var creatureNode in room.CreatureNodes)
                 if (CustomTargetTypeResolver.TryShouldIncludeMultiTarget(targetType, creatureNode.Entity,
+                        __instance.Card.Owner,
                         out var include) &&
                     include)
                     creatureNode.ShowMultiselectReticle();
@@ -101,7 +103,12 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
         public static bool Prefix(NTargetManager __instance, Creature creature, ref bool __result)
         {
+            var player = LocalContext.GetMe(creature.CombatState);
+            if (player == null)
+                return true;
+
             if (!CustomTargetTypeResolver.TryIsAllowedSingleTarget(__instance._validTargetsType, creature,
+                    player,
                     out var allowed))
                 return true;
 
@@ -130,7 +137,8 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
             if (target == null)
                 return true;
 
-            if (!CustomTargetTypeResolver.TryIsAllowedSingleTarget(__instance.TargetType, target, out var allowed))
+            if (!CustomTargetTypeResolver.TryIsAllowedSingleTarget(__instance.TargetType, target, __instance.Owner,
+                    out var allowed))
                 return true;
 
             __result = allowed;
@@ -158,7 +166,8 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
             if (target == null)
                 return true;
 
-            if (!CustomTargetTypeResolver.TryIsAllowedSingleTarget(__instance.TargetType, target, out var allowed))
+            if (!CustomTargetTypeResolver.TryIsAllowedSingleTarget(__instance.TargetType, target, __instance.Owner,
+                    out var allowed))
                 return true;
 
             __result = allowed;
@@ -367,7 +376,8 @@ namespace STS2RitsuLib.Combat.CardTargeting.Patches
 
             var nodes = room.CreatureNodes
                 .Where(n =>
-                    CustomTargetTypeResolver.TryIsAllowedSingleTarget(targetType, n.Entity, out var allowed) &&
+                    CustomTargetTypeResolver.TryIsAllowedSingleTarget(targetType, n.Entity, card.Owner,
+                        out var allowed) &&
                     allowed)
                 .ToList();
 

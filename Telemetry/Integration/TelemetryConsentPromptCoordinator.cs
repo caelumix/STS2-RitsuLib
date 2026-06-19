@@ -33,7 +33,7 @@ namespace STS2RitsuLib.Telemetry.Integration
 
             if (pending.Length == 0)
             {
-                RitsuLibFramework.Logger.Info(
+                RitsuLibFramework.Logger.Debug(
                     "[Telemetry] No pending first-run consent prompt; flushing authorized startup telemetry.");
                 TelemetryTaskRunner.Forget(TelemetryQueue.FlushAllAsync(), "flush_all_after_startup");
                 return;
@@ -47,7 +47,7 @@ namespace STS2RitsuLib.Telemetry.Integration
                 return;
             }
 
-            RitsuLibFramework.Logger.Info(
+            RitsuLibFramework.Logger.Debug(
                 $"[Telemetry] Showing persistent consent toast for {pending.Length} applicant(s).");
             ShowPendingConsentToast();
         }
@@ -87,7 +87,7 @@ namespace STS2RitsuLib.Telemetry.Integration
                 return;
             }
 
-            RitsuLibFramework.Logger.Info(
+            RitsuLibFramework.Logger.Debug(
                 $"[Telemetry] Showing consent prompt for applicant '{applicant.ApplicantId}'.");
             ModSettingsUiFactory.ShowStyledConfirm(
                 host,

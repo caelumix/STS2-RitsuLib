@@ -18,7 +18,7 @@ namespace STS2RitsuLib.Telemetry
                 if (doc.Events.Count > MaxEventsPerApplicant)
                     doc.Events.RemoveRange(0, doc.Events.Count - MaxEventsPerApplicant);
                 WriteQueue(envelope.ApplicantId, doc);
-                RitsuLibFramework.Logger.Info(
+                RitsuLibFramework.Logger.Debug(
                     $"[Telemetry] Queued event '{envelope.EventName}' for applicant '{envelope.ApplicantId}'. Queue size: {doc.Events.Count}.");
             }
         }
@@ -37,7 +37,7 @@ namespace STS2RitsuLib.Telemetry
 
                 if (!FlushingApplicants.Add(applicantId))
                 {
-                    RitsuLibFramework.Logger.Info(
+                    RitsuLibFramework.Logger.Debug(
                         $"[Telemetry] Flush skipped for '{applicantId}': another send is already in progress.");
                     return;
                 }
@@ -53,7 +53,7 @@ namespace STS2RitsuLib.Telemetry
                     if (batch.Length == 0)
                         return;
 
-                    RitsuLibFramework.Logger.Info(
+                    RitsuLibFramework.Logger.Debug(
                         $"[Telemetry] Sending {batch.Length} queued event(s) for applicant '{applicantId}' via {applicant.Adapter.AdapterId}.");
 
                     TelemetrySendResult result;
@@ -128,7 +128,7 @@ namespace STS2RitsuLib.Telemetry
                 }
 
                 if (doc.Events.Count != 0) return [.. doc.Events.Take(MaxEventsPerFlush)];
-                RitsuLibFramework.Logger.Info(
+                RitsuLibFramework.Logger.Debug(
                     $"[Telemetry] Flush skipped for '{applicantId}': queue is empty.");
                 return [];
             }
@@ -162,7 +162,7 @@ namespace STS2RitsuLib.Telemetry
 
                     state.LastError = null;
                     state.FailureCount = 0;
-                    RitsuLibFramework.Logger.Info(
+                    RitsuLibFramework.Logger.Debug(
                         $"[Telemetry] Sent {batch.Count} event(s) for applicant '{applicantId}'. Remaining queue size: {remainingCount}.");
                     WriteState(applicantId, state);
                     return true;

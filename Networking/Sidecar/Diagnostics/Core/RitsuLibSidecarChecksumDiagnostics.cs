@@ -32,16 +32,19 @@ namespace STS2RitsuLib.Networking.Sidecar
             _tracker = null;
         }
 
-        internal static void TryLogLocalCombatDump(string reason, ushort tag)
+        internal static void TryLogLocalCombatDump(string reason, RitsuLibSidecarDiagnosticRelaySession session)
         {
             try
             {
                 var rm = RunManager.Instance;
                 if (rm?.State == null)
                     return;
+                if (!RitsuLibSidecarDiagnosticRelayGate.TryConsumeLocalDump(session))
+                    return;
 
                 var snapshot = NetFullCombatState.FromRun(rm.State, null);
-                RitsuLibFramework.Logger.ErrorNoTrace($"[Sidecar diagnostic dump tag={tag}] {reason}\n{snapshot}");
+                RitsuLibFramework.Logger.ErrorNoTrace(
+                    $"[Sidecar diagnostic dump tag={session.Tag}, checksum={session.ChecksumId}, nonce={session.Nonce}] {reason}\n{snapshot}");
             }
             catch (Exception ex)
             {
@@ -49,20 +52,24 @@ namespace STS2RitsuLib.Networking.Sidecar
             }
         }
 
-        internal static void TryTriggerHostCoordinatedDump(ulong divergentPeerId)
+        internal static void TryTriggerHostCoordinatedDump(ulong divergentPeerId, uint checksumId)
         {
             try
             {
                 var rm = RunManager.Instance;
                 if (rm?.NetService is not NetHostGameService)
                     return;
+                if (!RitsuLibSidecarDiagnosticRelayGate.TryBeginHostSession(
+                        divergentPeerId,
+                        checksumId,
+                        RitsuLibSidecarDiagnosticPolicy.DivergenceRelayTag,
+                        out var session))
+                    return;
 
                 TryLogLocalCombatDump(
                     $"Sidecar host divergence dump trigger (peer={divergentPeerId})",
-                    RitsuLibSidecarDiagnosticPolicy.DivergenceRelayTag);
-                var payload = RitsuLibSidecarDiagnosticPayload.BuildFanoutPayload(
-                    divergentPeerId,
-                    RitsuLibSidecarDiagnosticPolicy.DivergenceRelayTag);
+                    session);
+                var payload = RitsuLibSidecarDiagnosticPayload.BuildFanoutPayload(session);
                 RitsuLibSidecarHighLevelSend.TrySendAsHostBroadcast(
                     rm,
                     RitsuLibSidecarControlOpcodes.DiagnosticRelayDumpFanout,
@@ -80,12 +87,6 @@ namespace STS2RitsuLib.Networking.Sidecar
             try
             {
                 RitsuLibSidecarProtocol.EnsureDefaultHandlers();
-                var rm = RunManager.Instance;
-                RitsuLibSidecarHighLevelSend.TrySendAsClient(
-                    rm,
-                    RitsuLibSidecarControlOpcodes.DiagnosticRelayDumpRequest,
-                    ReadOnlySpan<byte>.Empty,
-                    RitsuLibSidecarDeliverySemantics.StableSync);
             }
             catch (Exception ex)
             {

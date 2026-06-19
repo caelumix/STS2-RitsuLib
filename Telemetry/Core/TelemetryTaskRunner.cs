@@ -16,7 +16,7 @@ namespace STS2RitsuLib.Telemetry
             }
             catch (OperationCanceledException ex)
             {
-                RitsuLibFramework.Logger.Info(
+                RitsuLibFramework.Logger.Debug(
                     $"[Telemetry] Background task '{operation}' was canceled: {ex.Message}");
             }
             catch (Exception ex)

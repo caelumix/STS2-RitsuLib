@@ -492,8 +492,9 @@ namespace STS2RitsuLib.Settings
             _globalDynamicVisibilityTargets.Add((control, predicate));
         }
 
-        private static void ApplyDynamicVisibilityTargets(IEnumerable<(Control Control, Func<bool> Predicate)> targets)
+        private static bool ApplyDynamicVisibilityTargets(IEnumerable<(Control Control, Func<bool> Predicate)> targets)
         {
+            var changed = false;
             foreach (var (control, predicate) in targets)
             {
                 if (!IsInstanceValid(control))
@@ -505,13 +506,21 @@ namespace STS2RitsuLib.Settings
                         continue;
                     control.Visible = visible;
                     ModSettingsUiFactory.FastVerticalStack.RequestAncestorLayouts(control);
+                    changed = true;
                 }
                 catch
                 {
-                    control.Visible = true;
+                    if (!control.Visible)
+                    {
+                        control.Visible = true;
+                        changed = true;
+                    }
+
                     ModSettingsUiFactory.FastVerticalStack.RequestAncestorLayouts(control);
                 }
             }
+
+            return changed;
         }
 
         internal void ShowPasteFailure(ModSettingsPasteFailureReason reason)
@@ -679,6 +688,8 @@ namespace STS2RitsuLib.Settings
             _refreshNextFlushAsFullPass = false;
             var treatAsFullPass = includeAllPages || _refreshBindingTriggers.Count == 0 || forceFullPass;
             var dirtySnapshot = _refreshBindingTriggers.ToHashSet();
+            var selectedLayoutPage = TryGetSelectedPageContentCache(out var selectedBefore) ? selectedBefore : null;
+            var hadSelectedHeight = TryMeasurePageContentHeight(selectedLayoutPage, out var selectedHeightBefore);
 
             RunRegistrations(_globalRefreshRegistrations.ToArray());
 
@@ -692,15 +703,26 @@ namespace STS2RitsuLib.Settings
 
             _refreshBindingTriggers.Clear();
 
-            ApplyDynamicVisibilityTargets(_globalDynamicVisibilityTargets);
+            var contentVisibilityChanged = ApplyDynamicVisibilityTargets(_globalDynamicVisibilityTargets);
             ApplyDynamicVisibilityTargets(_sidebarDynamicVisibilityTargets);
             if (includeAllPages)
                 foreach (var pageCache in _pageContentCaches.Values)
-                    ApplyDynamicVisibilityTargets(pageCache.VisibilityTargets);
+                    contentVisibilityChanged |= ApplyDynamicVisibilityTargets(pageCache.VisibilityTargets);
             else if (!string.IsNullOrWhiteSpace(_selectedPageId) && !string.IsNullOrWhiteSpace(_selectedModId) &&
                      _pageContentCaches.TryGetValue(CreatePageCacheKey(_selectedModId, _selectedPageId),
                          out var selectedVisibilityPage))
-                ApplyDynamicVisibilityTargets(selectedVisibilityPage.VisibilityTargets);
+                contentVisibilityChanged |= ApplyDynamicVisibilityTargets(selectedVisibilityPage.VisibilityTargets);
+
+            if (contentVisibilityChanged &&
+                !TryGetSelectedPageContentCache(out selectedLayoutPage))
+                selectedLayoutPage = null;
+
+            var heightChanged = selectedLayoutPage != null &&
+                                hadSelectedHeight &&
+                                TryMeasurePageContentHeight(selectedLayoutPage, out var selectedHeightAfter) &&
+                                Math.Abs(selectedHeightAfter - selectedHeightBefore) >= 0.5f;
+            if (selectedLayoutPage != null && (contentVisibilityChanged || heightChanged))
+                RefreshPageHostLayout(selectedLayoutPage);
             return;
 
             void RunRegistrations(ModSettingsRefreshRegistration[] registrations)
@@ -712,6 +734,16 @@ namespace STS2RitsuLib.Settings
                     registration.Action();
                 }
             }
+        }
+
+        private static bool TryMeasurePageContentHeight(PageContentCache? cache, out float height)
+        {
+            height = 0f;
+            if (cache == null || cache.State != PageBuildState.Ready || !IsInstanceValid(cache.Root))
+                return false;
+
+            height = cache.Root.GetCombinedMinimumSize().Y;
+            return true;
         }
 
         private void OnModSettingsGuiFocusChanged(Control node)
@@ -2258,7 +2290,7 @@ namespace STS2RitsuLib.Settings
                     return Task.CompletedTask;
                 case PageBuildState.Building when cache.BuildTask != null:
                 {
-                    if (showOverlay && string.Equals(_selectedPageId, page.Id, StringComparison.OrdinalIgnoreCase))
+                    if (showOverlay && IsPageCurrentlySelected(cache))
                         ShowContentBuildOverlay(ModSettingsLocalization.Get("entry.loading", "Loading settings…"));
                     return cache.BuildTask;
                 }
@@ -2288,8 +2320,7 @@ namespace STS2RitsuLib.Settings
 
             try
             {
-                if (showOverlay && Visible &&
-                    string.Equals(_selectedPageId, page.Id, StringComparison.OrdinalIgnoreCase))
+                if (showOverlay && Visible && IsPageCurrentlySelected(cache))
                 {
                     cache.Root.Visible = true;
                     cache.Root.Modulate = Colors.White;
@@ -2338,8 +2369,7 @@ namespace STS2RitsuLib.Settings
                         item.AfterAdded?.Invoke(item.Control);
                         if (!item.YieldAfter || Time.GetTicksMsec() - lastYieldMsec < PageBuildFrameBudgetMsec)
                             continue;
-                        if (showOverlay && Visible && string.Equals(_selectedPageId, page.Id,
-                                StringComparison.OrdinalIgnoreCase))
+                        if (showOverlay && Visible && IsPageCurrentlySelected(cache))
                             ShowContentBuildOverlay(ModSettingsLocalization.Get("entry.loading", "Loading settings…"));
                         layoutScope.Dispose();
                         RefreshPageHostLayout(cache);
@@ -2355,8 +2385,16 @@ namespace STS2RitsuLib.Settings
 
                 if (buildVersion != cache.BuildVersion || !IsInstanceValid(cache.Root)) return;
 
-                cache.Root.Visible = true;
-                cache.Root.Modulate = Colors.White;
+                if (IsPageCurrentlySelected(cache))
+                {
+                    cache.Root.Visible = true;
+                    cache.Root.Modulate = Colors.White;
+                }
+                else
+                {
+                    cache.Root.Visible = false;
+                }
+
                 RefreshPageHostLayout(cache);
                 CompletePageBuild(page, cache);
             }
@@ -2375,7 +2413,7 @@ namespace STS2RitsuLib.Settings
                     ModSettingsLocalization.Get("page.failed.title", "Page failed to load"),
                     string.Format(ModSettingsLocalization.Get("page.failed.body", "Failed to build page '{0}'."),
                         page.Id)));
-                if (string.Equals(_selectedPageId, page.Id, StringComparison.OrdinalIgnoreCase))
+                if (IsPageCurrentlySelected(cache))
                 {
                     cache.Root.Visible = true;
                     cache.Root.Modulate = Colors.White;
@@ -2386,6 +2424,8 @@ namespace STS2RitsuLib.Settings
                 }
                 else
                 {
+                    if (IsInstanceValid(cache.Root))
+                        cache.Root.Visible = false;
                     RefreshPageHostLayout(cache);
                 }
             }
@@ -2452,7 +2492,7 @@ namespace STS2RitsuLib.Settings
                 }, ModSettingsUiRefreshSpec.Always, cache.PageKey);
             }
 
-            if (!string.Equals(_selectedPageId, page.Id, StringComparison.OrdinalIgnoreCase))
+            if (!IsPageCurrentlySelected(cache))
                 return;
 
             HideContentBuildOverlay();
@@ -2539,6 +2579,13 @@ namespace STS2RitsuLib.Settings
                    string.IsNullOrWhiteSpace(_selectedSectionId)
                 ? null
                 : CreateSectionCacheKey(_selectedModId, _selectedPageId, _selectedSectionId);
+        }
+
+        private bool IsPageCurrentlySelected(PageContentCache cache)
+        {
+            var selectedPageKey = GetSelectedPageKey();
+            return !string.IsNullOrWhiteSpace(selectedPageKey) &&
+                   string.Equals(cache.PageKey, selectedPageKey, StringComparison.OrdinalIgnoreCase);
         }
 
         private static string CreatePageCacheKey(string modId, string pageId)

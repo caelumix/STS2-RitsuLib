@@ -111,7 +111,9 @@ namespace STS2RitsuLib.Networking.Sidecar
             var totalU = (uint)full.Length;
             if (totalU == 0)
             {
-                RitsuLibFramework.Logger.Warn("[Sidecar] Chunked send empty; ignored.");
+                RitsuLibSidecarRepeatedWarningLog.Warn(
+                    $"chunk-send-empty:peer={peerNetId?.ToString() ?? "broadcast"}:op={userOpcode}",
+                    "[Sidecar] Chunked send empty; ignored.");
                 return;
             }
 

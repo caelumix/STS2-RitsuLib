@@ -66,6 +66,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
                         return CustomTargetTypeResolver.TryIsAllowedSingleTarget(
                                    card.TargetType,
                                    selectedTarget,
+                                   card.Owner,
                                    out var allowed) &&
                                allowed
                             ? [selectedTarget]
@@ -78,6 +79,7 @@ namespace STS2RitsuLib.Combat.CardTargeting
                     return state?.Creatures
                                .Where(c =>
                                    CustomTargetTypeResolver.TryShouldIncludeMultiTarget(card.TargetType, c,
+                                       card.Owner,
                                        out var include) && include)
                                .ToList() ??
                            [];

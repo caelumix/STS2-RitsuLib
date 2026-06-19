@@ -138,7 +138,7 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
                 message.sessionState.ToString(),
                 payload?.GameplayMods.Count > 0
                     ? payload.GameplayMods
-                    : CreateFallbackModEntries(message.mods),
+                    : CreateFallbackModEntries(GetFallbackGameplayModKeys(message)),
                 CreateHostContentModEntries(message, payload));
         }
 
@@ -176,7 +176,38 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
         {
             return ContentModInventoryPayloadCodec.TryDecode(payload?.ContentMods, out var entries)
                 ? entries
-                : CreateFallbackContentModEntries(message.mods);
+                : CreateFallbackContentModEntries(GetFallbackContentModKeys(message));
+        }
+
+        private static IReadOnlyList<string>? GetFallbackGameplayModKeys(InitialGameInfoMessage message)
+        {
+#if STS2_AT_LEAST_0_107_1
+            return message.gameplayAffectingMods;
+#else
+            return message.mods;
+#endif
+        }
+
+        private static IReadOnlyList<string>? GetFallbackContentModKeys(InitialGameInfoMessage message)
+        {
+#if STS2_AT_LEAST_0_107_1
+            return MergeModKeys(message.gameplayAffectingMods, message.otherMods);
+#else
+            return message.mods;
+#endif
+        }
+
+        private static IReadOnlyList<string>? MergeModKeys(
+            IReadOnlyList<string>? gameplayAffectingMods,
+            IReadOnlyList<string>? otherMods)
+        {
+            if (gameplayAffectingMods is not { Count: > 0 })
+                return otherMods;
+
+            if (otherMods is not { Count: > 0 })
+                return gameplayAffectingMods;
+
+            return gameplayAffectingMods.Concat(otherMods).ToArray();
         }
 
         private static IReadOnlyList<JoinDiagnosticsModEntry> CreateFallbackModEntries(IReadOnlyList<string>? keys)

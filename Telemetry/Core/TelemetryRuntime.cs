@@ -30,7 +30,7 @@ namespace STS2RitsuLib.Telemetry
                     RunHistoryTelemetryCollector.BuildModInventoryList());
             }
 
-            RitsuLibFramework.Logger.Info("[Telemetry] Captured persistent startup telemetry snapshot.");
+            RitsuLibFramework.Logger.Debug("[Telemetry] Captured persistent startup telemetry snapshot.");
             RitsuLibFramework.PublishLifecycleEvent(
                 new TelemetryStartupSnapshotReadyEvent(_startupSnapshot.CapturedAtUtc, DateTimeOffset.UtcNow),
                 nameof(TelemetryStartupSnapshotReadyEvent));
@@ -63,7 +63,7 @@ namespace STS2RitsuLib.Telemetry
                 };
             }
 
-            RitsuLibFramework.Logger.Info($"[Telemetry] Refreshed startup mod inventory snapshot ({reason}).");
+            RitsuLibFramework.Logger.Debug($"[Telemetry] Refreshed startup mod inventory snapshot ({reason}).");
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace STS2RitsuLib.Telemetry
                     return;
             }
 
-            RitsuLibFramework.Logger.Info(
+            RitsuLibFramework.Logger.Debug(
                 $"[Telemetry] Replaying startup event '{eventName}' to applicant '{applicant.ApplicantId}'.");
             try
             {

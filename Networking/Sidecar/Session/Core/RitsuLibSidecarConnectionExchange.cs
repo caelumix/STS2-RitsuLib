@@ -232,7 +232,7 @@ namespace STS2RitsuLib.Networking.Sidecar
             }
 
             if (logDispatchQueued)
-                RitsuLibFramework.Logger.Info(
+                RitsuLibFramework.Logger.Debug(
                     $"[Sidecar] Handshake queued peer={peerNetId}, epoch={epochNow}, netType={netService.Type}");
 
             RitsuLibSidecarProtocol.EnsureDefaultHandlers();
@@ -321,7 +321,7 @@ namespace STS2RitsuLib.Networking.Sidecar
                     $"[Sidecar] Handshake send failed peer={peerNetId}, epoch={epochNow}, netType={netService.Type}; retrying with backoff (no further transport-failure logs until negotiation ends)");
 
             if (signalWireHandshakeSentLog)
-                RitsuLibFramework.Logger.Info(
+                RitsuLibFramework.Logger.Debug(
                     $"[Sidecar] Handshake sent peer={peerNetId}, epoch={epochNow}, netType={netService.Type}, opcode={RitsuLibSidecarControlOpcodes.Handshake}, payloadLen={buf.Length}");
         }
 

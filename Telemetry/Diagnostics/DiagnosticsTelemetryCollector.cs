@@ -86,7 +86,7 @@ namespace STS2RitsuLib.Telemetry.Diagnostics
                     capturedApplicants.Add(applicant.ApplicantId);
                 }
 
-                RitsuLibFramework.Logger.Info(
+                RitsuLibFramework.Logger.Debug(
                     $"[Telemetry] Captured exception diagnostics from '{source}' for {capturedApplicants.Count} authorized applicant(s): {exception.GetType().Name}.");
                 foreach (var applicantId in capturedApplicants)
                     TelemetryTaskRunner.Forget(

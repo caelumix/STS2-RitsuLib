@@ -159,8 +159,7 @@ namespace STS2RitsuLib.Settings
                             entry,
                             value => value is true,
                             value => value),
-                        description,
-                        DescriptionAsHoverTip: true);
+                        description);
 
                 if (uiName == "UIKeybindAttribute" || valueType == typeof(Key) ||
                     valueType?.FullName == JmcKeyBindingTypeName)
@@ -200,8 +199,7 @@ namespace STS2RitsuLib.Settings
                 label,
                 Description: description,
                 ButtonLabel: JmcText(() => ResolveJmcButtonText(entry)),
-                OnClick: () => invoke?.Invoke(entry, null),
-                DescriptionAsHoverTip: true);
+                OnClick: () => invoke?.Invoke(entry, null));
         }
 
         private static ModSettingsMirrorEntryDefinition CreateKeybindEntry(
@@ -226,8 +224,7 @@ namespace STS2RitsuLib.Settings
                         value => Enum.TryParse<Key>(StripActionBinding(value), true, out var key) ? key : Key.None),
                     description,
                     AllowModifierCombos: false,
-                    AllowModifierOnly: false,
-                    DescriptionAsHoverTip: true);
+                    AllowModifierOnly: false);
 
             return new(
                 id,
@@ -240,8 +237,7 @@ namespace STS2RitsuLib.Settings
                 description,
                 AllowModifierCombos: allowKeyboard,
                 AllowModifierOnly: false,
-                AllowActionBindings: allowController,
-                DescriptionAsHoverTip: true);
+                AllowActionBindings: allowController);
         }
 
         private static ModSettingsMirrorEntryDefinition CreateStringEntry(
@@ -259,8 +255,7 @@ namespace STS2RitsuLib.Settings
                 label,
                 CreateBinding(entry, value => value?.ToString() ?? string.Empty, value => value),
                 description,
-                MaxLength: maxLength > 0 ? maxLength : null,
-                DescriptionAsHoverTip: true);
+                MaxLength: maxLength > 0 ? maxLength : null);
         }
 
         private static ModSettingsMirrorEntryDefinition CreateColorEntry(
@@ -288,8 +283,7 @@ namespace STS2RitsuLib.Settings
                         return value;
                     }),
                 description,
-                EditAlpha: ReadBoolProperty(uiAttribute, "AllowAlpha", true),
-                DescriptionAsHoverTip: true);
+                EditAlpha: ReadBoolProperty(uiAttribute, "AllowAlpha", true));
         }
 
         private static ModSettingsMirrorEntryDefinition CreateSliderEntry(
@@ -314,8 +308,7 @@ namespace STS2RitsuLib.Settings
                         value => Convert.ToInt32(value ?? 0),
                         value => value),
                     description,
-                    new(min, max, step),
-                    DescriptionAsHoverTip: true);
+                    new(min, max, step));
 
             return new(
                 id,
@@ -326,8 +319,7 @@ namespace STS2RitsuLib.Settings
                     value => Convert.ToDouble(value ?? 0.0),
                     value => Convert.ChangeType(value, Nullable.GetUnderlyingType(valueType!) ?? valueType!)),
                 description,
-                new(min, max, step),
-                DescriptionAsHoverTip: true);
+                new(min, max, step));
         }
 
         private static ModSettingsMirrorEntryDefinition CreateChoiceEntry(
@@ -347,8 +339,7 @@ namespace STS2RitsuLib.Settings
                     CreateEnumBinding(entry, actualType),
                     description,
                     ChoicePresentation: ModSettingsChoicePresentation.Dropdown,
-                    EnumType: actualType,
-                    DescriptionAsHoverTip: true);
+                    EnumType: actualType);
 
             var options = ReadStringListProperty(uiAttribute, "Options");
             if (options.Count == 0)
@@ -364,8 +355,7 @@ namespace STS2RitsuLib.Settings
                     .Select(option => new ModSettingsMirrorChoiceOption(option,
                         JmcText(() => ResolveJmcOptionText(entry, option))))
                     .ToArray(),
-                ChoicePresentation: ModSettingsChoicePresentation.Dropdown,
-                DescriptionAsHoverTip: true);
+                ChoicePresentation: ModSettingsChoicePresentation.Dropdown);
         }
 
         private static ModSettingsMirrorEntryDefinition CreateFallbackEntry(
@@ -383,8 +373,7 @@ namespace STS2RitsuLib.Settings
                     CreateEnumBinding(entry, valueType),
                     description,
                     ChoicePresentation: ModSettingsChoicePresentation.Dropdown,
-                    EnumType: valueType,
-                    DescriptionAsHoverTip: true);
+                    EnumType: valueType);
 
             return CreateStringEntry(id, label, description, entry, null);
         }

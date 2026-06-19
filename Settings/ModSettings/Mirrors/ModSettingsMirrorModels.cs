@@ -100,8 +100,5 @@ namespace STS2RitsuLib.Settings
         Func<object, ModSettingsText>? EnumOptionLabel = null,
         Func<IModSettingsUiActionHost, Control>? CustomControlFactory = null,
         ModSettingsHostSurface ReadOnlyOnHostSurfaces = ModSettingsHostSurface.None,
-        Func<bool>? VisibleWhen = null,
-        bool DescriptionAsHoverTip = false,
-        ModSettingsText? HoverTipTitle = null,
-        ModSettingsText? HoverTipDescription = null);
+        Func<bool>? VisibleWhen = null);
 }

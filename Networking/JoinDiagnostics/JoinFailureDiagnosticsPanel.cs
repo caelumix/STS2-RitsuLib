@@ -1086,8 +1086,8 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
         private static string FormatModelDbHashMode(bool deterministic)
         {
             return deterministic
-                ? T("value.modelDbHashMode.deterministic", "Deterministic final-content")
-                : T("value.modelDbHashMode.existing", "Existing/unknown");
+                ? T("value.modelDbHashMode.deterministic", "Stable sorting")
+                : T("value.modelDbHashMode.notReported", "Stable sorting not reported");
         }
 
         private static string T(string key, string fallback)

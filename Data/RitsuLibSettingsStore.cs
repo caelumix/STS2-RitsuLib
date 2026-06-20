@@ -52,6 +52,7 @@ namespace STS2RitsuLib.Data
                             new RitsuLibSettingsV9ToV10Migration(),
                             new RitsuLibSettingsV10ToV11Migration(),
                             new RitsuLibSettingsV11ToV12Migration(),
+                            new RitsuLibSettingsV12ToV13Migration(),
                         ]);
                 }
 
@@ -307,6 +308,19 @@ namespace STS2RitsuLib.Data
         {
             Initialize();
             return GetSettings().UpdateCheckEnabled;
+        }
+
+        internal static TimeSpan GetUpdateCheckInterval()
+        {
+            Initialize();
+            var minutes = Math.Clamp(GetSettings().UpdateCheckIntervalMinutes, 5d, 1440d);
+            return TimeSpan.FromMinutes(minutes);
+        }
+
+        internal static bool ShouldDeferUpdateChecksInCombat()
+        {
+            Initialize();
+            return GetSettings().UpdateCheckSkipInCombat;
         }
 
         internal static bool IsSteamWorkshopUpdateCheckEnabled()

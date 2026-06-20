@@ -90,7 +90,23 @@ namespace STS2RitsuLib.Settings
                         T("ritsulib.updateCheck.enabled.label", "Check for RitsuLib updates"),
                         ui.UpdateCheckEnabled,
                         T("ritsulib.updateCheck.enabled.description",
-                            "Checks for RitsuLib updates once after the first main menu load."))
+                            "Checks for RitsuLib updates periodically. Update notifications are shown on the main menu."))
+                    .AddSlider(
+                        "update_check_interval_minutes",
+                        T("ritsulib.updateCheck.interval.label", "Automatic check interval (minutes)"),
+                        ui.UpdateCheckIntervalMinutes,
+                        5d,
+                        360d,
+                        5d,
+                        value => value.ToString("0"),
+                        T("ritsulib.updateCheck.interval.description",
+                            "Controls how often automatic RitsuLib, Workshop, and registered mod update checks run."))
+                    .AddToggle(
+                        "update_check_skip_in_combat",
+                        T("ritsulib.updateCheck.skipInCombat.label", "Defer automatic checks in combat"),
+                        ui.UpdateCheckSkipInCombat,
+                        T("ritsulib.updateCheck.skipInCombat.description",
+                            "When enabled, periodic automatic update checks that become due in combat run after combat ends."))
                     .AddToggle(
                         "main_menu_mod_settings_button_enabled",
                         T("ritsulib.mainMenuModSettingsButton.enabled.label", "Show main menu settings shortcut"),
@@ -178,7 +194,7 @@ namespace STS2RitsuLib.Settings
                         T("ritsulib.steamWorkshop.autoUpdateCheck.label", "Auto-check Workshop updates"),
                         ui.SteamWorkshopAutoUpdateCheckEnabled,
                         T("ritsulib.steamWorkshop.autoUpdateCheck.description",
-                            "Once after the first main menu load, checks subscribed Workshop items and asks Steam to download any items with available updates."))
+                            "Periodically checks subscribed Workshop items and asks Steam to download any items with available updates. Notifications are shown on the main menu."))
                     .AddButton(
                         "steam_workshop_check_now",
                         T("ritsulib.steamWorkshop.checkNow.label", "Check Workshop updates now"),

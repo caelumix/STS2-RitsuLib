@@ -1,4 +1,5 @@
 using System.Reflection;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Ascension;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
@@ -19,6 +20,9 @@ namespace STS2RitsuLib.Content
 
         private static readonly Action<RunState, IReadOnlyList<ActModel>> RunStateActsSetter =
             CreateRunStateActsSetter();
+
+        private static readonly AccessTools.FieldRef<ActModel, List<AncientEventModel>?> ActSharedAncientSubsetRef =
+            AccessTools.FieldRefAccess<ActModel, List<AncientEventModel>?>("_sharedAncientSubset");
 
         /// <summary>
         ///     True when any act-enter force or pool registration exists (cheap check before <see cref="RunManager" /> work).
@@ -271,30 +275,41 @@ namespace STS2RitsuLib.Content
 
         private static void ReplaceActAtSlot(RunManager runManager, RunState runState, int slotIndex, Type actType)
         {
-            var beforeId = runState.Acts[slotIndex].Id;
+            var beforeAct = runState.Acts[slotIndex];
             var list = runState.Acts.ToList();
             var replacement = ModelDb.GetById<ActModel>(ModelDb.GetId(actType)).ToMutable();
+            CopySharedAncientSubset(beforeAct, replacement);
             list[slotIndex] = replacement;
             RunStateActsSetter(runState, list);
-            InitializeRoomsForReplacedActIfNeeded(runManager, runState, slotIndex, beforeId);
+            InitializeRoomsForReplacedActIfNeeded(runManager, runState, slotIndex, beforeAct);
         }
 
         private static void ReplaceActAtSlot(RunManager runManager, RunState runState, int slotIndex,
             ActModel replacementMutable)
         {
-            var beforeId = runState.Acts[slotIndex].Id;
+            var beforeAct = runState.Acts[slotIndex];
             var list = runState.Acts.ToList();
+            CopySharedAncientSubset(beforeAct, replacementMutable);
             list[slotIndex] = replacementMutable;
             RunStateActsSetter(runState, list);
-            InitializeRoomsForReplacedActIfNeeded(runManager, runState, slotIndex, beforeId);
+            InitializeRoomsForReplacedActIfNeeded(runManager, runState, slotIndex, beforeAct);
+        }
+
+        private static void CopySharedAncientSubset(ActModel source, ActModel target)
+        {
+            if (ReferenceEquals(source, target))
+                return;
+
+            var sourceSubset = ActSharedAncientSubsetRef(source);
+            ActSharedAncientSubsetRef(target) = sourceSubset == null ? null : [.. sourceSubset];
         }
 
         private static void InitializeRoomsForReplacedActIfNeeded(RunManager runManager, RunState runState,
             int actIndex,
-            ModelId actIdBeforeReplace)
+            ActModel actBeforeReplace)
         {
             var act = runState.Acts[actIndex];
-            if (act.Id == actIdBeforeReplace)
+            if (ReferenceEquals(act, actBeforeReplace))
                 return;
 
             RequestActEnterPostMapUiMapSyncBump();

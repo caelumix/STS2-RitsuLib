@@ -3,16 +3,12 @@ using System.Text;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Daily;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
-using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Game.Lobby;
 using MegaCrit.Sts2.Core.Multiplayer.Messages.Lobby;
 using MegaCrit.Sts2.Core.Multiplayer.Replay;
 using MegaCrit.Sts2.Core.Multiplayer.Serialization;
-using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
@@ -161,43 +157,8 @@ namespace STS2RitsuLib.RunData.Patches
         {
             try
             {
-                var rng = new Rng((uint)StringHelper.GetDeterministicHashCode(seed));
-                var unlockState = RunSavedDataStartRunLobbyAccess.GetUnlockState(lobby);
-                var acts = ActModel.GetRandomList(rng, unlockState, lobby.NetService.Type.IsMultiplayer()).ToList();
-                if (RunSavedDataStartRunLobbyAccess.GetAct(lobby.Act1) is { } forcedAct)
-                    acts[0] = forcedAct;
-
-                var players = new List<Player>();
-                foreach (var lobbyPlayer in lobby.Players)
-                {
-                    var character = lobbyPlayer.character;
-                    if (character is RandomCharacter)
-                        character = rng.NextItem(ModelDb.AllCharacters);
-
-                    players.Add(Player.CreateForNewRun(
-                        character ?? throw new InvalidOperationException("Random character resolution produced null."),
-                        UnlockState.FromSerializable(lobbyPlayer.unlockState),
-                        lobbyPlayer.id));
-                }
-
                 RunSavedDataLobby.PublishStagingEvent(lobby, RunSavedDataLobbyStagingReason.Committing);
-
-                var runState = RunState.CreateForNewRun(
-                    players,
-                    acts.Select(act => act.ToMutable()).ToList(),
-                    modifiers,
-                    lobby.GameMode,
-                    lobby.Ascension,
-                    seed);
-
-                RunSavedDataLobby.CommitSession(lobby, runState);
-
-                RitsuLibFramework.PublishLifecycleEvent(
-                    new RunSavedDataPreparingEvent(runState, lobby.NetService.Type.IsMultiplayer(),
-                        DateTimeOffset.UtcNow),
-                    nameof(RunSavedDataPreparingEvent));
-
-                return RunSavedDataRegistry.BuildPayload(runState);
+                return RunSavedDataRegistry.BuildLobbyStagingPayload(lobby);
             }
             catch (Exception ex)
             {

@@ -21,6 +21,7 @@ namespace STS2RitsuLib.RunData
             bool isHostNetId,
             RunSavedDataDocument document);
 
+        bool TryExportLobbyStaging(RunSavedDataLobbySession session, RunSavedDataDocument document);
         void ImportLobbyContribution(RunSavedDataLobbySession session, ulong netId, bool isHostNetId, JsonObject entry);
         void CommitLobbyStaging(RunSavedDataLobbySession session, RunState runState);
     }
@@ -77,6 +78,11 @@ namespace STS2RitsuLib.RunData
             bool isHostNetId,
             JsonObject entry)
         {
+        }
+
+        public virtual bool TryExportLobbyStaging(RunSavedDataLobbySession session, RunSavedDataDocument document)
+        {
+            return false;
         }
 
         public virtual void CommitLobbyStaging(RunSavedDataLobbySession session, RunState runState)
@@ -299,6 +305,15 @@ namespace STS2RitsuLib.RunData
             session.SetRun(SlotKey, value);
         }
 
+        public override bool TryExportLobbyStaging(RunSavedDataLobbySession session, RunSavedDataDocument document)
+        {
+            if (!session.TryGetRun(SlotKey, out var raw) || raw is not T typed)
+                return false;
+
+            document.SetRaw(ModId, Key, CreateRunEntry(typed));
+            return true;
+        }
+
         public override void CommitLobbyStaging(RunSavedDataLobbySession session, RunState runState)
         {
             if (!session.TryGetRun(SlotKey, out var raw) || raw is not T typed)
@@ -428,6 +443,29 @@ namespace STS2RitsuLib.RunData
                 return;
 
             session.SetPlayer(SlotKey, netId, value);
+        }
+
+        public override bool TryExportLobbyStaging(RunSavedDataLobbySession session, RunSavedDataDocument document)
+        {
+            if (!session.HasPlayers(SlotKey))
+                return false;
+
+            var players = new JsonObject();
+            foreach (var (key, entries) in session.PlayerEntries())
+            {
+                if (key != SlotKey)
+                    continue;
+
+                foreach (var (netId, raw) in entries.OrderBy(pair => pair.Key))
+                    if (raw is T typed)
+                        players[PlayerKey(netId)] = JsonSerializer.SerializeToNode(typed, RunSavedDataJson.Options);
+            }
+
+            if (players.Count == 0)
+                return false;
+
+            document.SetRaw(ModId, Key, CreatePlayerEntry(players));
+            return true;
         }
 
         public override void CommitLobbyStaging(RunSavedDataLobbySession session, RunState runState)

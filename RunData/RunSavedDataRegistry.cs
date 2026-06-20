@@ -149,6 +149,18 @@ namespace STS2RitsuLib.RunData
             return document.IsEmpty ? null : document.ToRootObject().ToJsonString(new() { WriteIndented = false });
         }
 
+        public static string? BuildLobbyStagingPayload(StartRunLobby lobby)
+        {
+            if (!RunSavedDataLobbyRuntime.TryGetSession(lobby, out var session))
+                return null;
+
+            var document = new RunSavedDataDocument();
+            foreach (var slot in GetSlotsSnapshot())
+                slot.TryExportLobbyStaging(session, document);
+
+            return document.IsEmpty ? null : document.ToRootObject().ToJsonString(new() { WriteIndented = false });
+        }
+
         public static void MergeLobbyContribution(StartRunLobby lobby, ulong contributorNetId, string? payload)
         {
             if (string.IsNullOrWhiteSpace(payload))

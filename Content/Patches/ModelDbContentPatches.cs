@@ -106,7 +106,9 @@ namespace STS2RitsuLib.Content.Patches
         public static void Postfix(ref IReadOnlyList<IReadOnlyList<ActModel>> __result)
         {
             var registeredTypes = ModContentRegistry.GetRegisteredActTypes().ToHashSet();
-            if (registeredTypes.Count == 0)
+            var hasRegisteredActs = registeredTypes.Count > 0;
+            if (!hasRegisteredActs &&
+                !__result.Any(static acts => acts.Any(static act => act is IModActRandomListPolicy)))
                 return;
 
             var registeredActs = ModContentRegistry.AppendActs([])
@@ -116,7 +118,9 @@ namespace STS2RitsuLib.Content.Patches
 
             var buckets = __result
                 .Select(acts => acts
-                    .Where(act => !registeredTypes.Contains(act.GetType()) ||
+                    .Where(act => act is not IModActRandomListPolicy { AllowInRandomActList: false })
+                    .Where(act => !hasRegisteredActs ||
+                                  !registeredTypes.Contains(act.GetType()) ||
                                   act is IModActRandomListPolicy { AllowInRandomActList: true })
                     .ToList())
                 .ToList();
@@ -130,6 +134,9 @@ namespace STS2RitsuLib.Content.Patches
                 if (bucket.All(existing => existing.Id != act.Id))
                     bucket.Add(act);
             }
+
+            while (buckets.Count > 0 && buckets[^1].Count == 0)
+                buckets.RemoveAt(buckets.Count - 1);
 
             __result = buckets;
         }

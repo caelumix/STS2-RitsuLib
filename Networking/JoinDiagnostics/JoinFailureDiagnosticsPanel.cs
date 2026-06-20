@@ -1,7 +1,9 @@
 using System.Text;
 using Godot;
 using MegaCrit.Sts2.Core.ControllerInput;
+using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
+using MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen;
 using MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext;
 using STS2RitsuLib.Compat;
 using STS2RitsuLib.Settings;
@@ -14,6 +16,7 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
     internal sealed partial class JoinFailureDiagnosticsPanel : Control, IScreenContext
     {
         private const int ControllerScrollStep = 72;
+        private const float DetailItemColumnWidth = 520f;
         private const string FocusRefreshAttachedMeta = "ritsu_join_diagnostics_focus_refresh_attached";
         private readonly List<Control> _focusChain = [];
         private readonly JoinFailureDiagnosticReport _report = null!;
@@ -317,16 +320,25 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
 
         private Control BuildDetailHeaderRow()
         {
+            var margin = new MarginContainer
+            {
+                SizeFlagsHorizontal = SizeFlags.ExpandFill,
+                MouseFilter = MouseFilterEnum.Ignore,
+            };
+            margin.AddThemeConstantOverride("margin_left", 10);
+            margin.AddThemeConstantOverride("margin_right", 10);
+
             var row = new HBoxContainer
             {
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
                 MouseFilter = MouseFilterEnum.Ignore,
             };
             row.AddThemeConstantOverride("separation", 10);
-            row.AddChild(CreateFixedHeaderLabel(T("column.item", "Item"), 250));
+            row.AddChild(CreateFixedHeaderLabel(T("column.item", "Item"), DetailItemColumnWidth));
             row.AddChild(CreateHeaderLabel(T("column.host", "Host")));
             row.AddChild(CreateHeaderLabel(T("column.local", "Local")));
-            return row;
+            margin.AddChild(row);
+            return margin;
         }
 
         private Control BuildDetailRow(JoinFailureDetailRow detail)
@@ -335,7 +347,7 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             var panel = new PanelContainer
             {
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                CustomMinimumSize = new(0f, 44f),
+                CustomMinimumSize = new(0f, 38f),
                 MouseFilter = MouseFilterEnum.Ignore,
             };
             panel.AddThemeStyleboxOverride("panel", ModSettingsUiFactory.CreateListItemCardStyle(differs));
@@ -350,7 +362,11 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             row.AddThemeConstantOverride("separation", 10);
             panel.AddChild(row);
 
-            row.AddChild(CreateFixedValueLabel(detail.Label, 250, RitsuShellTheme.Current.Text.RichTitle, true));
+            row.AddChild(CreateFixedValueLabel(
+                detail.Label,
+                DetailItemColumnWidth,
+                RitsuShellTheme.Current.Text.RichTitle,
+                true));
             row.AddChild(CreateValueLabel(detail.HostValue, ValueColor(detail.HostValue, differs)));
             row.AddChild(CreateValueLabel(detail.LocalValue, ValueColor(detail.LocalValue, differs)));
             return panel;
@@ -499,15 +515,25 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             row.AddThemeConstantOverride("separation", 8);
             panel.AddChild(row);
 
+            row.AddChild(CreateDependencyRail(mod.IsDependency));
+            row.AddChild(CreateSourceIconSlot(mod.Source));
             row.AddChild(CreateFixedValueLabel("#" + (index + 1).ToString("00"), 46,
-                RitsuShellTheme.Current.Text.Number, false));
-            row.AddChild(CreateValueLabel(FormatContentModLine(mod),
-                matches ? RitsuShellTheme.Current.Text.RichBody : RitsuShellTheme.Current.Text.HoverHighlight));
+                RitsuShellTheme.Current.Text.Number, false, 15));
+            row.AddChild(CreateValueLabel(FormatContentModName(mod),
+                matches ? RitsuShellTheme.Current.Text.RichBody : RitsuShellTheme.Current.Text.HoverHighlight,
+                false,
+                15));
+            row.AddChild(CreateFixedValueLabel(FormatVersion(mod.Version), 88,
+                matches ? RitsuShellTheme.Current.Text.RichMuted : RitsuShellTheme.Current.Text.HoverHighlight,
+                false,
+                15));
+            row.AddChild(CreateDependencyPill(mod.IsDependency));
             row.AddChild(CreateFixedValueLabel(
                 matches ? T("value.same", "same") : T("value.differs", "differs"),
                 76,
                 matches ? RitsuShellTheme.Current.Text.RichMuted : RitsuShellTheme.Current.Text.HoverHighlight,
-                false));
+                false,
+                15));
             return panel;
         }
 
@@ -531,15 +557,23 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             row.AddThemeConstantOverride("separation", 8);
             panel.AddChild(row);
 
+            row.AddChild(CreateSourceIconSlot(mod.Source));
             row.AddChild(CreateFixedValueLabel("#" + (index + 1).ToString("00"), 46,
-                RitsuShellTheme.Current.Text.Number, false));
-            row.AddChild(CreateValueLabel(FormatModLine(mod),
-                matches ? RitsuShellTheme.Current.Text.RichBody : RitsuShellTheme.Current.Text.HoverHighlight));
+                RitsuShellTheme.Current.Text.Number, false, 15));
+            row.AddChild(CreateValueLabel(FormatModName(mod),
+                matches ? RitsuShellTheme.Current.Text.RichBody : RitsuShellTheme.Current.Text.HoverHighlight,
+                false,
+                15));
+            row.AddChild(CreateFixedValueLabel(FormatVersion(mod.Version), 88,
+                matches ? RitsuShellTheme.Current.Text.RichMuted : RitsuShellTheme.Current.Text.HoverHighlight,
+                false,
+                15));
             row.AddChild(CreateFixedValueLabel(
                 matches ? T("value.same", "same") : T("value.differs", "differs"),
                 76,
                 matches ? RitsuShellTheme.Current.Text.RichMuted : RitsuShellTheme.Current.Text.HoverHighlight,
-                false));
+                false,
+                15));
             return panel;
         }
 
@@ -578,7 +612,7 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
 
         private Label CreateHeaderLabel(string text)
         {
-            var label = CreateLabel(text, 15, RitsuShellTheme.Current.Text.RichTitle, true);
+            var label = CreateLabel(text, 16, RitsuShellTheme.Current.Text.RichTitle, true);
             label.SizeFlagsHorizontal = SizeFlags.ExpandFill;
             return label;
         }
@@ -593,7 +627,12 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
 
         private Label CreateValueLabel(string text, Color color, bool bold = false)
         {
-            var label = CreateLabel(text, 14, color, bold);
+            return CreateValueLabel(text, color, bold, 15);
+        }
+
+        private Label CreateValueLabel(string text, Color color, bool bold, int fontSize)
+        {
+            var label = CreateLabel(text, fontSize, color, bold);
             label.CustomMinimumSize = new(0f, 28f);
             label.SizeFlagsHorizontal = SizeFlags.ExpandFill;
             label.VerticalAlignment = VerticalAlignment.Center;
@@ -603,9 +642,66 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
 
         private Label CreateFixedValueLabel(string text, float width, Color color, bool bold)
         {
-            var label = CreateValueLabel(text, color, bold);
+            return CreateFixedValueLabel(text, width, color, bold, 15);
+        }
+
+        private Label CreateFixedValueLabel(string text, float width, Color color, bool bold, int fontSize)
+        {
+            var label = CreateValueLabel(text, color, bold, fontSize);
             label.CustomMinimumSize = new(width, 28f);
             label.SizeFlagsHorizontal = SizeFlags.ShrinkBegin;
+            return label;
+        }
+
+        private static Control CreateSourceIconSlot(string source)
+        {
+            var slot = new CenterContainer
+            {
+                CustomMinimumSize = new(24f, 24f),
+                SizeFlagsHorizontal = SizeFlags.ShrinkBegin,
+                SizeFlagsVertical = SizeFlags.ShrinkCenter,
+                MouseFilter = MouseFilterEnum.Ignore,
+            };
+
+            if (TryParseModSource(source, out var modSource))
+                slot.AddChild(new TextureRect
+                {
+                    Texture = NModMenuRow.GetPlatformIcon(modSource),
+                    CustomMinimumSize = new(22f, 22f),
+                    ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+                    StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                    MouseFilter = MouseFilterEnum.Ignore,
+                });
+
+            return slot;
+        }
+
+        private static bool TryParseModSource(string source, out ModSource modSource)
+        {
+            return Enum.TryParse(source, out modSource) && Enum.IsDefined(modSource);
+        }
+
+        private static ColorRect CreateDependencyRail(bool dependency)
+        {
+            return new()
+            {
+                Color = dependency ? RitsuShellTheme.Current.Text.Number : RitsuShellTheme.Current.Color.Transparent,
+                CustomMinimumSize = new(4f, 24f),
+                SizeFlagsHorizontal = SizeFlags.ShrinkBegin,
+                SizeFlagsVertical = SizeFlags.ShrinkCenter,
+                MouseFilter = MouseFilterEnum.Ignore,
+            };
+        }
+
+        private Label CreateDependencyPill(bool dependency)
+        {
+            var label = CreateFixedValueLabel(
+                dependency ? T("value.dependency", "dep") : string.Empty,
+                52,
+                RitsuShellTheme.Current.Text.Number,
+                false,
+                15);
+            label.HorizontalAlignment = HorizontalAlignment.Center;
             return label;
         }
 
@@ -929,11 +1025,14 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
 
         private static string FormatModLine(JoinDiagnosticsModEntry mod)
         {
-            if (!string.IsNullOrWhiteSpace(mod.Name) &&
-                !string.Equals(mod.Name, mod.Id, StringComparison.Ordinal))
-                return mod.Name + " (" + mod.Key + ")";
+            return FormatModName(mod) + " version=" + FormatVersion(mod.Version);
+        }
 
-            return mod.Key;
+        private static string FormatModName(JoinDiagnosticsModEntry mod)
+        {
+            return string.IsNullOrWhiteSpace(mod.Name) || string.Equals(mod.Name, mod.Id, StringComparison.Ordinal)
+                ? mod.Id
+                : mod.Name + " (" + mod.Id + ")";
         }
 
         private static string FormatGameplayModInventoryLine(JoinDiagnosticsModEntry mod)
@@ -941,28 +1040,33 @@ namespace STS2RitsuLib.Networking.JoinDiagnostics
             var name = string.IsNullOrWhiteSpace(mod.Name) || string.Equals(mod.Name, mod.Id, StringComparison.Ordinal)
                 ? mod.Id
                 : mod.Name + " (" + mod.Id + ")";
-            var version = string.IsNullOrWhiteSpace(mod.Version) ? T("value.noVersion", "No version") : mod.Version;
             var source = string.IsNullOrWhiteSpace(mod.Source) ? "" : " source=" + mod.Source;
-            return $"#{mod.Index + 1:00} {name} version={version} key={mod.Key}{source}";
+            return $"#{mod.Index + 1:00} {name} version={FormatVersion(mod.Version)}{source}";
         }
 
         private static string FormatContentModInventoryLine(ContentModInventoryEntry mod)
         {
-            return FormatContentModLine(mod);
+            var role = mod.IsDependency ? " dep" : "";
+            var source = string.IsNullOrWhiteSpace(mod.Source) ? "" : " source=" + mod.Source;
+            return
+                $"#{mod.Index + 1:00}{role} {FormatContentModName(mod)} version={FormatVersion(mod.Version)}{source}";
         }
 
         private static string FormatContentModLine(ContentModInventoryEntry mod)
         {
-            var name = string.IsNullOrWhiteSpace(mod.Name) || string.Equals(mod.Name, mod.Id, StringComparison.Ordinal)
+            return FormatContentModName(mod) + " version=" + FormatVersion(mod.Version);
+        }
+
+        private static string FormatContentModName(ContentModInventoryEntry mod)
+        {
+            return string.IsNullOrWhiteSpace(mod.Name) || string.Equals(mod.Name, mod.Id, StringComparison.Ordinal)
                 ? mod.Id
                 : mod.Name + " (" + mod.Id + ")";
-            var version = string.IsNullOrWhiteSpace(mod.Version) ? T("value.noVersion", "No version") : mod.Version;
-            var role = mod.IsDependency
-                ? T("value.dependency", "dependency")
-                : T("value.content", "content");
-            var enabled = mod.IsEnabled ? T("value.enabled", "enabled") : T("value.disabled", "disabled");
-            return
-                $"#{mod.Index + 1:00} [{role}, {enabled}] {name} version={version} source={mod.Source}";
+        }
+
+        private static string FormatVersion(string version)
+        {
+            return string.IsNullOrWhiteSpace(version) ? T("value.noVersion", "No version") : version;
         }
 
         private static string T(string key, string fallback)

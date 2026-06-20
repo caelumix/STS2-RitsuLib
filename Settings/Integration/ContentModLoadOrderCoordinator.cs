@@ -239,9 +239,18 @@ namespace STS2RitsuLib.Settings
         {
             var settings = SaveManager.Instance.SettingsSave;
             settings.ModSettings ??= new();
+            var hiddenKeys = BuildHiddenDuplicateWorkshopKeys(currentOrder);
+            var sortableOrder = currentOrder
+                .Where(entry => !hiddenKeys.Contains(entry.Key))
+                .ToArray();
+            var hiddenOrder = currentOrder
+                .Where(entry => hiddenKeys.Contains(entry.Key))
+                .ToArray();
 
             var ordered =
-                ContentModLoadOrderInventory.BuildDependencyValidPriorityOrder(currentOrder, priorityById, LogPrefix);
+                ContentModLoadOrderInventory.BuildDependencyValidPriorityOrder(sortableOrder, priorityById, LogPrefix)
+                    .Concat(hiddenOrder)
+                    .ToArray();
 
             settings.ModSettings.ModList = ordered
                 .Select(entry => new SettingsSaveMod

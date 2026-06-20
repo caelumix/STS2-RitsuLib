@@ -32,10 +32,10 @@ namespace STS2RitsuLib.Platform.Steam
                     "steam-workshop",
                     "Steam Workshop updates",
                     RitsuLibSettingsStore.IsSteamWorkshopUpdateCheckEnabled,
-                    _ =>
+                    cancellationToken =>
                     {
                         RitsuLibFramework.Logger.Info("[SteamWorkshopUpdate] Auto check requested.");
-                        return CheckAsync(CheckSource.Auto, true);
+                        return CheckAsync(CheckSource.Auto, true, cancellationToken);
                     });
             }
         }
@@ -46,10 +46,16 @@ namespace STS2RitsuLib.Platform.Steam
             _ = CheckAsync(CheckSource.Manual, false);
         }
 
-        private static Task CheckAsync(CheckSource source, bool deferToastToMainMenu)
+        private static Task CheckAsync(
+            CheckSource source,
+            bool deferToastToMainMenu,
+            CancellationToken cancellationToken = default)
         {
             if (Interlocked.Exchange(ref _checkRunning, 1) == 0)
-                return Task.Run(() =>
+                // ReSharper disable once MethodSupportsCancellation
+#pragma warning disable CA2016
+                return Task.Run(async () =>
+#pragma warning restore CA2016
                 {
                     try
                     {
@@ -68,7 +74,9 @@ namespace STS2RitsuLib.Platform.Steam
                             return;
                         }
 
-                        var result = RitsuSteamWorkshopUpdates.TriggerMissingUpdates();
+                        var result = await RitsuSteamWorkshopUpdates
+                            .TriggerMissingUpdatesAsync(cancellationToken)
+                            .ConfigureAwait(false);
                         RitsuLibFramework.Logger.Info(
                             $"[SteamWorkshopUpdate] {source} check result: Available={result.Available}, " +
                             $"Inspected={result.InspectedCount}, NeedsUpdate={result.NeedsUpdateCount}, " +

@@ -176,7 +176,7 @@
   "ritsulib.modSourceHoverTips.group.events": "Events",
   "ritsulib.modSourceHoverTips.group.creatures": "Creatures",
   "ritsulib.modSourceHoverTips.group.gameTerms": "Game terms",
-  "ritsulib.modSourceHoverTip.title": "what mod is this from?",
+  "ritsulib.modSourceHoverTip.title": "What mod is this from?",
   "ritsulib.updateCheck.now.label": "Check now",
   "ritsulib.updateCheck.now.button": "Check for updates",
   "ritsulib.updateCheck.now.description": "Checks the bundled RitsuLib update source immediately and shows a toast with the result.",

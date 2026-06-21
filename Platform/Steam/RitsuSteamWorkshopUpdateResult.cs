@@ -8,7 +8,7 @@ namespace STS2RitsuLib.Platform.Steam
         int AlreadyQueuedCount,
         int FailedCount,
         string? ErrorMessage = null,
-        IReadOnlyList<ulong>? TriggeredItemIds = null)
+        IReadOnlyList<RitsuSteamWorkshopDownloadItem>? TriggeredItems = null)
     {
         internal static RitsuSteamWorkshopUpdateResult Unavailable(string? errorMessage = null)
         {
@@ -37,5 +37,8 @@ namespace STS2RitsuLib.Platform.Steam
         int CompletedCount,
         int TotalCount,
         ulong BytesDownloaded,
-        ulong BytesTotal);
+        ulong BytesTotal,
+        string? CurrentItemName = null);
+
+    internal sealed record RitsuSteamWorkshopDownloadItem(ulong Id, string DisplayName);
 }

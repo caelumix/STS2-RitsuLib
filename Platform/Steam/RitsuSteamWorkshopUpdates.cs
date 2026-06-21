@@ -26,14 +26,14 @@ namespace STS2RitsuLib.Platform.Steam
         }
 
         internal static Task<bool> MonitorDownloadsAsync(
-            IReadOnlyCollection<ulong> itemIds,
+            IReadOnlyCollection<RitsuSteamWorkshopDownloadItem> items,
             IProgress<RitsuSteamWorkshopDownloadProgress>? progress = null,
             CancellationToken cancellationToken = default)
         {
             var bindings = LazyBindings.Value;
-            return bindings == null || itemIds.Count == 0
+            return bindings == null || items.Count == 0
                 ? Task.FromResult(false)
-                : bindings.MonitorDownloadsAsync(itemIds, progress, cancellationToken);
+                : bindings.MonitorDownloadsAsync(items, progress, cancellationToken);
         }
 
         private static Bindings? CreateBindings()
@@ -156,6 +156,9 @@ namespace STS2RitsuLib.Platform.Steam
                 var steamUgcDetailsItemId = steamUgcDetailsType.GetField(
                     "m_nPublishedFileId",
                     BindingFlags.Public | BindingFlags.Instance);
+                var steamUgcDetailsTitle = steamUgcDetailsType.GetField(
+                    "m_rgchTitle",
+                    BindingFlags.Public | BindingFlags.Instance);
                 var steamUgcDetailsUpdated = steamUgcDetailsType.GetField(
                     "m_rtimeUpdated",
                     BindingFlags.Public | BindingFlags.Instance);
@@ -206,6 +209,7 @@ namespace STS2RitsuLib.Platform.Steam
                     releaseQueryUgcRequest == null ||
                     setAllowCachedResponse == null ||
                     steamUgcDetailsItemId == null ||
+                    steamUgcDetailsTitle == null ||
                     steamUgcDetailsUpdated == null ||
                     queryCompletedResult == null ||
                     queryCompletedReturned == null ||
@@ -240,6 +244,7 @@ namespace STS2RitsuLib.Platform.Steam
                     setAllowCachedResponse,
                     steamUgcDetailsType,
                     steamUgcDetailsItemId,
+                    steamUgcDetailsTitle,
                     steamUgcDetailsUpdated,
                     queryCompletedResult,
                     queryCompletedReturned,
@@ -316,6 +321,7 @@ namespace STS2RitsuLib.Platform.Steam
             MethodInfo setAllowCachedResponse,
             Type steamUgcDetailsType,
             FieldInfo steamUgcDetailsItemId,
+            FieldInfo steamUgcDetailsTitle,
             FieldInfo steamUgcDetailsUpdated,
             FieldInfo queryCompletedResult,
             FieldInfo queryCompletedReturned,
@@ -371,7 +377,7 @@ namespace STS2RitsuLib.Platform.Steam
                     var alreadyQueued = 0;
                     var failed = 0;
                     var downloadsSuspended = false;
-                    List<ulong> triggeredItemIds = [];
+                    List<RitsuSteamWorkshopDownloadItem> triggeredItems = [];
                     progress?.Report(new(
                         RitsuSteamWorkshopUpdateProgressStage.InspectingItems,
                         0,
@@ -380,11 +386,11 @@ namespace STS2RitsuLib.Platform.Steam
                     foreach (var item in items)
                     {
                         inspected++;
-                        var hasRemoteUpdated = remoteUpdateTimes.TryGetValue(item.Id, out var remoteUpdated);
+                        var hasRemoteDetails = remoteUpdateTimes.TryGetValue(item.Id, out var remoteDetails);
                         var stateNeedsUpdate = HasFlag(item.State, itemStateFlags.NeedsUpdate);
-                        var remoteNeedsUpdate = hasRemoteUpdated &&
+                        var remoteNeedsUpdate = hasRemoteDetails &&
                                                 item.LocalTimestamp is { } localTimestamp &&
-                                                remoteUpdated > localTimestamp;
+                                                remoteDetails.Updated > localTimestamp;
                         if (!stateNeedsUpdate && !remoteNeedsUpdate)
                         {
                             ReportInspectionProgress();
@@ -393,7 +399,7 @@ namespace STS2RitsuLib.Platform.Steam
 
                         needsUpdate++;
                         RitsuLibFramework.Logger.Info(
-                            $"[SteamWorkshopUpdate] Workshop item {item.Id} needs update. State={item.State}, LocalTimestamp={item.LocalTimestamp?.ToString() ?? "<unknown>"}, RemoteUpdated={(hasRemoteUpdated ? remoteUpdated.ToString() : "<unknown>")}.");
+                            $"[SteamWorkshopUpdate] Workshop item {item.Id} needs update. State={item.State}, LocalTimestamp={item.LocalTimestamp?.ToString() ?? "<unknown>"}, RemoteUpdated={(hasRemoteDetails ? remoteDetails.Updated.ToString() : "<unknown>")}.");
                         if (HasFlag(item.State, itemStateFlags.Downloading) ||
                             HasFlag(item.State, itemStateFlags.DownloadPending))
                         {
@@ -415,7 +421,7 @@ namespace STS2RitsuLib.Platform.Steam
                         if (InvokeDownloadItem(item.Handle, mode))
                         {
                             triggered++;
-                            triggeredItemIds.Add(item.Id);
+                            triggeredItems.Add(new(item.Id, ResolveItemDisplayName(item, remoteDetails)));
                             RitsuLibFramework.Logger.Info(
                                 suspendDownloadsUntilGameExit
                                     ? $"[SteamWorkshopUpdate] Queued Steam Workshop update for item {item.Id}; downloads remain suspended until game exit."
@@ -440,7 +446,7 @@ namespace STS2RitsuLib.Platform.Steam
 
                     RitsuLibFramework.Logger.Info(
                         $"[SteamWorkshopUpdate] Scan complete. Inspected={inspected}, NeedsUpdate={needsUpdate}, Triggered={triggered}, AlreadyQueued={alreadyQueued}, Failed={failed}.");
-                    return new(true, inspected, needsUpdate, triggered, alreadyQueued, failed, null, triggeredItemIds);
+                    return new(true, inspected, needsUpdate, triggered, alreadyQueued, failed, null, triggeredItems);
 
                     void ReportInspectionProgress()
                     {
@@ -463,14 +469,15 @@ namespace STS2RitsuLib.Platform.Steam
 
             // ReSharper disable once MemberHidesStaticFromOuterClass
             internal async Task<bool> MonitorDownloadsAsync(
-                IReadOnlyCollection<ulong> itemIds,
+                IReadOnlyCollection<RitsuSteamWorkshopDownloadItem> downloadItems,
                 IProgress<RitsuSteamWorkshopDownloadProgress>? progress,
                 CancellationToken cancellationToken)
             {
-                Dictionary<ulong, object> items = [];
-                foreach (var itemId in itemIds.Where(static id => id != 0).Distinct())
-                    if (CreatePublishedFileId(itemId) is { } item)
-                        items[itemId] = item;
+                Dictionary<ulong, DownloadMonitorItem> items = [];
+                foreach (var downloadItem in downloadItems.Where(static item => item.Id != 0)
+                             .DistinctBy(static item => item.Id))
+                    if (CreatePublishedFileId(downloadItem.Id) is { } item)
+                        items[downloadItem.Id] = new(item, downloadItem.DisplayName);
 
                 if (items.Count == 0)
                     return false;
@@ -483,9 +490,10 @@ namespace STS2RitsuLib.Platform.Steam
                     var bytesTotal = 0UL;
                     var active = false;
 
+                    string? currentItemName = null;
                     foreach (var (itemId, item) in items)
                     {
-                        var state = Convert.ToUInt32(getItemState.Invoke(null, [item]));
+                        var state = Convert.ToUInt32(getItemState.Invoke(null, [item.Handle]));
                         if (!HasFlag(state, itemStateFlags.NeedsUpdate) &&
                             !HasFlag(state, itemStateFlags.Downloading) &&
                             !HasFlag(state, itemStateFlags.DownloadPending))
@@ -494,7 +502,8 @@ namespace STS2RitsuLib.Platform.Steam
                             continue;
                         }
 
-                        if (TryGetDownloadInfo(item, out var itemDownloaded, out var itemTotal))
+                        currentItemName ??= item.DisplayName;
+                        if (TryGetDownloadInfo(item.Handle, out var itemDownloaded, out var itemTotal))
                         {
                             bytesDownloaded += itemDownloaded;
                             bytesTotal += itemTotal;
@@ -509,7 +518,7 @@ namespace STS2RitsuLib.Platform.Steam
                         }
                     }
 
-                    progress?.Report(new(completed, items.Count, bytesDownloaded, bytesTotal));
+                    progress?.Report(new(completed, items.Count, bytesDownloaded, bytesTotal, currentItemName));
                     if (completed >= items.Count)
                         return true;
 
@@ -555,15 +564,15 @@ namespace STS2RitsuLib.Platform.Steam
                 return items;
             }
 
-            private async Task<IReadOnlyDictionary<ulong, uint>> QueryRemoteUpdateTimesAsync(
+            private async Task<IReadOnlyDictionary<ulong, RemoteItemDetails>> QueryRemoteUpdateTimesAsync(
                 IReadOnlyList<ItemSnapshot> items,
                 IProgress<RitsuSteamWorkshopUpdateProgress>? progress,
                 CancellationToken cancellationToken)
             {
                 if (items.Count == 0)
-                    return new Dictionary<ulong, uint>();
+                    return new Dictionary<ulong, RemoteItemDetails>();
 
-                Dictionary<ulong, uint> updateTimes = [];
+                Dictionary<ulong, RemoteItemDetails> details = [];
                 for (var offset = 0; offset < items.Count; offset += QueryBatchSize)
                 {
                     var batch = items
@@ -572,18 +581,18 @@ namespace STS2RitsuLib.Platform.Steam
                         .ToArray();
                     var batchTimes = await QueryRemoteUpdateTimesBatchAsync(batch, cancellationToken)
                         .ConfigureAwait(false);
-                    foreach (var (itemId, updated) in batchTimes)
-                        updateTimes[itemId] = updated;
+                    foreach (var (itemId, itemDetails) in batchTimes)
+                        details[itemId] = itemDetails;
                     progress?.Report(new(
                         RitsuSteamWorkshopUpdateProgressStage.RefreshingDetails,
                         Math.Min(items.Count, offset + batch.Length),
                         Math.Max(1, items.Count)));
                 }
 
-                return updateTimes;
+                return details;
             }
 
-            private async Task<IReadOnlyDictionary<ulong, uint>> QueryRemoteUpdateTimesBatchAsync(
+            private async Task<IReadOnlyDictionary<ulong, RemoteItemDetails>> QueryRemoteUpdateTimesBatchAsync(
                 IReadOnlyList<ItemSnapshot> items,
                 CancellationToken cancellationToken)
             {
@@ -593,7 +602,7 @@ namespace STS2RitsuLib.Platform.Steam
 
                 var queryHandle = createQueryUgcDetailsRequest.Invoke(null, [itemArray, (uint)items.Count]);
                 if (queryHandle == null)
-                    return new Dictionary<ulong, uint>();
+                    return new Dictionary<ulong, RemoteItemDetails>();
 
                 try
                 {
@@ -603,19 +612,19 @@ namespace STS2RitsuLib.Platform.Steam
                     {
                         RitsuLibFramework.Logger.Warn(
                             "[SteamWorkshopUpdate] Steam rejected Workshop details query.");
-                        return new Dictionary<ulong, uint>();
+                        return new Dictionary<ulong, RemoteItemDetails>();
                     }
 
                     var queryCompleted = await WaitForQueryAsync(apiCall, cancellationToken)
                         .ConfigureAwait(false);
                     if (queryCompleted == null)
-                        return new Dictionary<ulong, uint>();
+                        return new Dictionary<ulong, RemoteItemDetails>();
 
                     if (IsResultOk(queryCompleted))
                         return ReadQueryResults(queryHandle, GetReturnedCount(queryCompleted));
                     RitsuLibFramework.Logger.Warn(
                         $"[SteamWorkshopUpdate] Workshop details query failed: {queryCompletedResult.GetValue(queryCompleted)}.");
-                    return new Dictionary<ulong, uint>();
+                    return new Dictionary<ulong, RemoteItemDetails>();
                 }
                 finally
                 {
@@ -673,9 +682,10 @@ namespace STS2RitsuLib.Platform.Steam
                 return Expression.Lambda(callResultDelegateType, body, result, ioFailure).Compile();
             }
 
-            private IReadOnlyDictionary<ulong, uint> ReadQueryResults(object queryHandle, uint returnedCount)
+            private IReadOnlyDictionary<ulong, RemoteItemDetails> ReadQueryResults(object queryHandle,
+                uint returnedCount)
             {
-                Dictionary<ulong, uint> updateTimes = [];
+                Dictionary<ulong, RemoteItemDetails> detailsByItem = [];
                 for (var i = 0u; i < returnedCount; i++)
                 {
                     var details = Activator.CreateInstance(steamUgcDetailsType);
@@ -688,12 +698,13 @@ namespace STS2RitsuLib.Platform.Steam
                         continue;
 
                     var itemId = GetItemId(item);
-                    var updated = Convert.ToUInt32(steamUgcDetailsUpdated.GetValue(args[2]));
+                    var detail = args[2]!;
+                    var updated = Convert.ToUInt32(steamUgcDetailsUpdated.GetValue(detail));
                     if (itemId != 0 && updated != 0)
-                        updateTimes[itemId] = updated;
+                        detailsByItem[itemId] = new(updated, ReadItemTitle(detail));
                 }
 
-                return updateTimes;
+                return detailsByItem;
             }
 
             private bool IsResultOk(object queryCompleted)
@@ -737,6 +748,30 @@ namespace STS2RitsuLib.Platform.Steam
                 catch
                 {
                     return false;
+                }
+            }
+
+            private string ResolveItemDisplayName(ItemSnapshot item, RemoteItemDetails remoteDetails)
+            {
+                return string.IsNullOrWhiteSpace(remoteDetails.Title)
+                    ? $"Workshop item {item.Id}"
+                    : remoteDetails.Title;
+            }
+
+            private string? ReadItemTitle(object details)
+            {
+                try
+                {
+                    return steamUgcDetailsTitle.GetValue(details) switch
+                    {
+                        string title when !string.IsNullOrWhiteSpace(title) => title.Trim(),
+                        char[] chars => new string(chars).TrimEnd('\0').Trim(),
+                        _ => null,
+                    };
+                }
+                catch
+                {
+                    return null;
                 }
             }
 
@@ -810,6 +845,10 @@ namespace STS2RitsuLib.Platform.Steam
             ulong Id,
             uint State,
             uint? LocalTimestamp);
+
+        private readonly record struct RemoteItemDetails(uint Updated, string? Title);
+
+        private sealed record DownloadMonitorItem(object Handle, string DisplayName);
     }
 
     internal enum SteamWorkshopDownloadTriggerMode

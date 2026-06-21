@@ -285,11 +285,11 @@ namespace STS2RitsuLib.Platform.Steam
         {
             if (downloadMode != SteamWorkshopDownloadTriggerMode.HighPriorityImmediate ||
                 progressToast == null ||
-                result.TriggeredItemIds is not { Count: > 0 })
+                result.TriggeredItems is not { Count: > 0 })
                 return false;
 
             return await RitsuSteamWorkshopUpdates
-                .MonitorDownloadsAsync(result.TriggeredItemIds, progressToast, cancellationToken)
+                .MonitorDownloadsAsync(result.TriggeredItems, progressToast, cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -484,16 +484,20 @@ namespace STS2RitsuLib.Platform.Steam
                 var body = progress.BytesTotal > 0
                     ? Format(
                         "ritsulib.steamWorkshop.toast.progress.download",
-                        "Downloading Workshop updates: {0}/{1} item(s), {2}/{3}.",
+                        "Downloading Workshop updates: {0}/{1} item(s), {2}/{3}.\nCurrent: {4}",
                         progress.CompletedCount,
                         progress.TotalCount,
                         FormatBytes(progress.BytesDownloaded),
-                        FormatBytes(progress.BytesTotal))
+                        FormatBytes(progress.BytesTotal),
+                        progress.CurrentItemName ?? L("ritsulib.steamWorkshop.toast.progress.downloadUnknownItem",
+                            "unknown item"))
                     : Format(
                         "ritsulib.steamWorkshop.toast.progress.downloadWaiting",
-                        "Downloading Workshop updates: {0}/{1} item(s). Waiting for Steam download size...",
+                        "Downloading Workshop updates: {0}/{1} item(s). Waiting for Steam download size...\nCurrent: {2}",
                         progress.CompletedCount,
-                        progress.TotalCount);
+                        progress.TotalCount,
+                        progress.CurrentItemName ?? L("ritsulib.steamWorkshop.toast.progress.downloadUnknownItem",
+                            "unknown item"));
 
                 var fraction = progress.BytesTotal > 0
                     ? Mathf.Clamp((float)progress.BytesDownloaded / progress.BytesTotal, 0f, 1f)

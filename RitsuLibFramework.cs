@@ -1303,9 +1303,15 @@ namespace STS2RitsuLib
                     [typeof(Assembly)],
                     null);
 
-                if (lookupMethod == null)
+                if (bridgeType == null || lookupMethod == null)
                 {
                     logger?.Warn($"Godot script registration bridge not found for assembly {assemblyName}.");
+                    return;
+                }
+
+                if (AreGodotScriptPathsAlreadyRegistered(assembly, bridgeType, logger))
+                {
+                    logger?.Debug($"Godot C# scripts already registered for assembly: {assemblyName}");
                     return;
                 }
 
@@ -1320,6 +1326,79 @@ namespace STS2RitsuLib
                 DiagnosticsTelemetryCollector.CaptureExceptionForAuthorizedApplicants(
                     ex,
                     "ritsulib_godot_script_registration");
+            }
+        }
+
+        private static bool AreGodotScriptPathsAlreadyRegistered(Assembly assembly, Type bridgeType, Logger? logger)
+        {
+            try
+            {
+                var scriptPaths = EnumerateGodotScriptPaths(assembly).ToArray();
+                if (scriptPaths.Length == 0)
+                    return true;
+
+                var pathTypeBiMap = bridgeType.GetField(
+                    "_pathTypeBiMap",
+                    BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null);
+                if (pathTypeBiMap == null)
+                    return false;
+
+                var tryGetScriptType = pathTypeBiMap.GetType().GetMethod(
+                    "TryGetScriptType",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                    null,
+                    [typeof(string), typeof(Type).MakeByRefType()],
+                    null);
+                if (tryGetScriptType == null)
+                    return false;
+
+                var scriptTypeBiMap = bridgeType.GetField(
+                    "_scriptTypeBiMap",
+                    BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null);
+                var readWriteLock = scriptTypeBiMap?.GetType()
+                    .GetField("ReadWriteLock", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    ?.GetValue(scriptTypeBiMap) as ReaderWriterLockSlim;
+
+                readWriteLock?.EnterReadLock();
+                try
+                {
+                    if (scriptPaths.Select(scriptPath => (object?[])[scriptPath, null]).Any(args =>
+                            tryGetScriptType.Invoke(pathTypeBiMap, args) is not true)) return false;
+                }
+                finally
+                {
+                    readWriteLock?.ExitReadLock();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger?.Debug($"Could not inspect Godot script registration cache: {ex.Message}");
+                return false;
+            }
+        }
+
+        private static IEnumerable<string> EnumerateGodotScriptPaths(Assembly assembly)
+        {
+            var scriptsAttribute = assembly.GetCustomAttributes(false)
+                .OfType<AssemblyHasScriptsAttribute>()
+                .FirstOrDefault();
+            if (scriptsAttribute == null)
+                yield break;
+
+            var candidateTypes = scriptsAttribute.RequiresLookup
+                ? assembly.GetTypes().Where(type => !type.IsNested && typeof(GodotObject).IsAssignableFrom(type))
+                : scriptsAttribute.ScriptTypes ?? [];
+
+            foreach (var type in candidateTypes)
+            {
+                var scriptPath = type.GetCustomAttributes(false)
+                    .OfType<ScriptPathAttribute>()
+                    .FirstOrDefault()
+                    ?.Path;
+                if (!string.IsNullOrWhiteSpace(scriptPath))
+                    yield return scriptPath;
             }
         }
 

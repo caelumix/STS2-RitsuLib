@@ -333,12 +333,13 @@ namespace STS2RitsuLib.Settings
             try
             {
                 var runManager = RunManager.Instance;
-                return runManager is
+                if (runManager == null)
+                    return true;
+
+                return runManager is not
                 {
-                    IsInProgress: false,
-                    RunLobby: null,
-                    NetService.IsConnected: false,
-                };
+                    IsInProgress: true,
+                } && runManager.RunLobby == null && runManager.NetService?.IsConnected != true;
             }
             catch
             {

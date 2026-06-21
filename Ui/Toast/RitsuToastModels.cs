@@ -220,11 +220,13 @@ namespace STS2RitsuLib.Ui.Toast
         double DurationSeconds,
         RitsuToastAnimationPreset AnimationPreset)
     {
+        internal const double DefaultDurationSeconds = 6d;
+
         public static readonly RitsuToastSettings Default = new(
             true,
             RitsuToastPlacement.Default,
             RitsuToastQueuePolicy.Default,
-            3.5d,
+            DefaultDurationSeconds,
             RitsuToastAnimationPreset.FadeSlide);
     }
 

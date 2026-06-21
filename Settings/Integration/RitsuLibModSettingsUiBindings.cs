@@ -414,7 +414,7 @@ namespace STS2RitsuLib.Settings
                             settings.ToastDurationSeconds = Math.Clamp(value, 0.5d, 30d);
                             RitsuToastService.RefreshSettingsFromStore();
                         }),
-                    () => 3.5d),
+                    () => RitsuLibSettings.DefaultToastDurationSeconds),
                 ToastAnimation = ModSettingsBindings.WithDefault(
                     ModSettingsBindings.Global<RitsuLibSettings, string>(
                         Const.ModId,

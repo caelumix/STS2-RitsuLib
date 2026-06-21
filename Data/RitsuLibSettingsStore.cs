@@ -53,6 +53,7 @@ namespace STS2RitsuLib.Data
                             new RitsuLibSettingsV10ToV11Migration(),
                             new RitsuLibSettingsV11ToV12Migration(),
                             new RitsuLibSettingsV12ToV13Migration(),
+                            new RitsuLibSettingsV13ToV14Migration(),
                         ]);
                 }
 

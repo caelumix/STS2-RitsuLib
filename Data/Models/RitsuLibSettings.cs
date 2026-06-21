@@ -13,7 +13,9 @@ namespace STS2RitsuLib.Data.Models
         ///     Current schema version written by the library when creating or normalizing settings.
         ///     库在创建或规范化设置时写入的当前 schema 版本。
         /// </summary>
-        public const int CurrentSchemaVersion = 13;
+        public const int CurrentSchemaVersion = 14;
+
+        internal const double DefaultToastDurationSeconds = 6d;
 
         /// <summary>
         ///     Persisted schema version used by the migration pipeline
@@ -470,7 +472,7 @@ namespace STS2RitsuLib.Data.Models
         ///     请求未覆盖时的默认 toast 显示时长（秒）。
         /// </summary>
         [JsonPropertyName("toast_duration_seconds")]
-        public double ToastDurationSeconds { get; set; } = 3.5d;
+        public double ToastDurationSeconds { get; set; } = DefaultToastDurationSeconds;
 
         /// <summary>
         ///     Default animation preset id (<c>fade</c>, <c>fadeslide</c>, <c>fadescale</c>).

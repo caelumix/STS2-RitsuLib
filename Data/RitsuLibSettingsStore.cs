@@ -53,6 +53,7 @@ namespace STS2RitsuLib.Data
                             new RitsuLibSettingsV10ToV11Migration(),
                             new RitsuLibSettingsV11ToV12Migration(),
                             new RitsuLibSettingsV12ToV13Migration(),
+                            new RitsuLibSettingsV13ToV14Migration(),
                         ]);
                 }
 
@@ -327,6 +328,12 @@ namespace STS2RitsuLib.Data
         {
             Initialize();
             return GetSettings().SteamWorkshopAutoUpdateCheckEnabled;
+        }
+
+        internal static bool IsSteamWorkshopAutoUpdateHighPriorityDownloadEnabled()
+        {
+            Initialize();
+            return GetSettings().SteamWorkshopAutoUpdateHighPriorityDownloadEnabled;
         }
 
         internal static bool IsMainMenuModSettingsButtonEnabled()

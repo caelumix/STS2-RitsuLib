@@ -7,11 +7,38 @@ namespace STS2RitsuLib.Platform.Steam
         int TriggeredCount,
         int AlreadyQueuedCount,
         int FailedCount,
-        string? ErrorMessage = null)
+        string? ErrorMessage = null,
+        IReadOnlyList<RitsuSteamWorkshopDownloadItem>? TriggeredItems = null)
     {
         internal static RitsuSteamWorkshopUpdateResult Unavailable(string? errorMessage = null)
         {
             return new(false, 0, 0, 0, 0, 0, errorMessage);
         }
     }
+
+    internal sealed record RitsuSteamWorkshopUpdateProgress(
+        RitsuSteamWorkshopUpdateProgressStage Stage,
+        int CompletedCount,
+        int TotalCount,
+        int NeedsUpdateCount = 0,
+        int QueuedCount = 0,
+        int AlreadyQueuedCount = 0,
+        int FailedCount = 0);
+
+    internal enum RitsuSteamWorkshopUpdateProgressStage
+    {
+        Starting,
+        ReadingSubscriptions,
+        RefreshingDetails,
+        InspectingItems,
+    }
+
+    internal sealed record RitsuSteamWorkshopDownloadProgress(
+        int CompletedCount,
+        int TotalCount,
+        ulong BytesDownloaded,
+        ulong BytesTotal,
+        string? CurrentItemName = null);
+
+    internal sealed record RitsuSteamWorkshopDownloadItem(ulong Id, string DisplayName);
 }

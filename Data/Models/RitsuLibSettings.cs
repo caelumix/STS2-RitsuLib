@@ -13,7 +13,9 @@ namespace STS2RitsuLib.Data.Models
         ///     Current schema version written by the library when creating or normalizing settings.
         ///     库在创建或规范化设置时写入的当前 schema 版本。
         /// </summary>
-        public const int CurrentSchemaVersion = 13;
+        public const int CurrentSchemaVersion = 14;
+
+        internal const double DefaultToastDurationSeconds = 6d;
 
         /// <summary>
         ///     Persisted schema version used by the migration pipeline
@@ -407,12 +409,22 @@ namespace STS2RitsuLib.Data.Models
         public bool UpdateCheckSkipInCombat { get; set; } = true;
 
         /// <summary>
-        ///     When true and Steam Workshop is active, RitsuLib asks Steam to download subscribed workshop items whose
-        ///     state is installed but still marked as needing an update.
-        ///     为 true 且 Steam Workshop 可用时，RitsuLib 会请求 Steam 下载已订阅且仍标记为需要更新的 Workshop 项。
+        ///     When true and Steam Workshop is active, RitsuLib queues subscribed workshop items whose state is installed
+        ///     but still marked as needing an update. Automatic checks leave Workshop downloads suspended until the game
+        ///     exits.
+        ///     为 true 且 Steam Workshop 可用时，RitsuLib 会将已订阅且仍标记为需要更新的 Workshop 项加入队列。
+        ///     自动检查会让 Workshop 下载保持暂停直到游戏退出。
         /// </summary>
         [JsonPropertyName("steam_workshop_auto_update_check_enabled")]
         public bool SteamWorkshopAutoUpdateCheckEnabled { get; set; } = true;
+
+        /// <summary>
+        ///     When true, automatic Steam Workshop update checks start high-priority downloads immediately instead of
+        ///     queueing downloads for after the game exits.
+        ///     为 true 时，Steam Workshop 自动更新检查会立即启动高优先级下载，而不是等游戏退出后再下载。
+        /// </summary>
+        [JsonPropertyName("steam_workshop_auto_update_high_priority_download_enabled")]
+        public bool SteamWorkshopAutoUpdateHighPriorityDownloadEnabled { get; set; }
 
         /// <summary>
         ///     When true, shows the RitsuLib mod settings shortcut under the vanilla patch notes button on the main menu.
@@ -470,7 +482,7 @@ namespace STS2RitsuLib.Data.Models
         ///     请求未覆盖时的默认 toast 显示时长（秒）。
         /// </summary>
         [JsonPropertyName("toast_duration_seconds")]
-        public double ToastDurationSeconds { get; set; } = 3.5d;
+        public double ToastDurationSeconds { get; set; } = DefaultToastDurationSeconds;
 
         /// <summary>
         ///     Default animation preset id (<c>fade</c>, <c>fadeslide</c>, <c>fadescale</c>).

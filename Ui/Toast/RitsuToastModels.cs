@@ -220,11 +220,13 @@ namespace STS2RitsuLib.Ui.Toast
         double DurationSeconds,
         RitsuToastAnimationPreset AnimationPreset)
     {
+        internal const double DefaultDurationSeconds = 6d;
+
         public static readonly RitsuToastSettings Default = new(
             true,
             RitsuToastPlacement.Default,
             RitsuToastQueuePolicy.Default,
-            3.5d,
+            DefaultDurationSeconds,
             RitsuToastAnimationPreset.FadeSlide);
     }
 
@@ -343,6 +345,19 @@ namespace STS2RitsuLib.Ui.Toast
         /// </summary>
         public bool IsPersistent { get; init; }
 
+        /// <summary>
+        ///     Optional explicit progress value rendered in the toast progress bar. When unset, timed toasts use the
+        ///     progress bar as a remaining-duration indicator.
+        ///     可选显式进度值，用 toast 进度条渲染。未设置时，限时 toast 使用进度条表示剩余显示时间。
+        /// </summary>
+        public float? ProgressFraction { get; init; }
+
+        /// <summary>
+        ///     Whether clicking the toast dismisses it. Defaults to true to preserve normal toast behavior.
+        ///     点击 toast 是否关闭它。默认为 true，以保持普通 toast 的既有行为。
+        /// </summary>
+        public bool DismissOnClick { get; init; } = true;
+
         internal RitsuToastVisualStyle? StyleOverride { get; init; }
 
         /// <summary>
@@ -451,6 +466,25 @@ namespace STS2RitsuLib.Ui.Toast
         public RitsuToastRequest Persistent(bool isPersistent = true)
         {
             return this with { IsPersistent = isPersistent };
+        }
+
+        /// <summary>
+        ///     Returns a copy with an explicit progress value. Pass <see langword="null" /> to return to duration-based
+        ///     progress.
+        ///     返回设置显式进度值后的副本。传入 <see langword="null" /> 可恢复为基于持续时间的进度。
+        /// </summary>
+        public RitsuToastRequest WithProgress(float? progressFraction)
+        {
+            return this with { ProgressFraction = progressFraction };
+        }
+
+        /// <summary>
+        ///     Returns a copy with click-to-dismiss behavior configured.
+        ///     返回设置点击关闭行为后的副本。
+        /// </summary>
+        public RitsuToastRequest WithDismissOnClick(bool dismissOnClick)
+        {
+            return this with { DismissOnClick = dismissOnClick };
         }
     }
 }

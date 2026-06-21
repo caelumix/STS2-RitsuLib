@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using STS2RitsuLib.Data.Models;
 using STS2RitsuLib.Utils.Persistence.Migration;
 
 namespace STS2RitsuLib.Data.Migrations
@@ -16,7 +17,7 @@ namespace STS2RitsuLib.Data.Migrations
             data["toast_offset_x"] ??= -24d;
             data["toast_offset_y"] ??= 24d;
             data["toast_max_visible"] ??= 3;
-            data["toast_duration_seconds"] ??= 3.5d;
+            data["toast_duration_seconds"] ??= RitsuLibSettings.DefaultToastDurationSeconds;
             data["toast_animation"] ??= "fadeslide";
             return true;
         }

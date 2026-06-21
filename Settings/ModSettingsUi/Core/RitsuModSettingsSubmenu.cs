@@ -117,6 +117,7 @@ namespace STS2RitsuLib.Settings
         private bool _pendingScrollResetToTop;
         private Timer? _refreshDebounceTimer;
         private bool _refreshNextFlushAsFullPass;
+        private bool _resizeLayoutRefreshQueued;
         private TextureRect? _rightPaneHotkeyIcon;
         private double _saveTimer = -1;
         private ScrollContainer _scrollContainer = null!;
@@ -222,6 +223,14 @@ namespace STS2RitsuLib.Settings
             RitsuShellTooltipTheme.ApplyToTreeRoot(this);
             ProcessMode = ProcessModeEnum.Disabled;
             FocusMode = FocusModeEnum.None;
+        }
+
+        /// <inheritdoc />
+        public override void _Notification(int what)
+        {
+            base._Notification(what);
+            if (what == NotificationResized)
+                QueueResizeLayoutRefresh();
         }
 
         /// <inheritdoc />
@@ -2690,6 +2699,49 @@ namespace STS2RitsuLib.Settings
             RebuildFocusChainsOnly();
             GrabControlDeferred(ResolveSidebarTargetMatchingContent() ?? ResolveInitialSidebarFocus() ??
                 _sidebarFocusChain.FirstOrDefault());
+        }
+
+        private void QueueResizeLayoutRefresh()
+        {
+            if (!IsInsideTree())
+                return;
+
+            RefreshLayoutAfterResize();
+            if (_resizeLayoutRefreshQueued)
+                return;
+
+            _resizeLayoutRefreshQueued = true;
+            CallDeferredIfAlive(FlushResizeLayoutRefresh);
+        }
+
+        private void FlushResizeLayoutRefresh()
+        {
+            _resizeLayoutRefreshQueued = false;
+            RefreshLayoutAfterResize();
+        }
+
+        private void RefreshLayoutAfterResize()
+        {
+            if (!IsInsideTree())
+                return;
+
+            if (_sidebarPanelRoot != null && IsInstanceValid(_sidebarPanelRoot))
+                _sidebarPanelRoot.UpdateMinimumSize();
+            if (_sidebarScrollContainer != null && IsInstanceValid(_sidebarScrollContainer))
+                _sidebarScrollContainer.QueueSort();
+            if (_modButtonList != null && IsInstanceValid(_modButtonList))
+            {
+                _modButtonList.UpdateMinimumSize();
+                _modButtonList.QueueSort();
+            }
+
+            if (!IsInstanceValid(_contentList) || !IsInstanceValid(_scrollContainer))
+                return;
+
+            if (TryGetSelectedPageContentCache(out var cache))
+                RefreshPageHostLayout(cache);
+            else
+                RefreshContentLayout();
         }
 
         private void RefreshContentLayout()

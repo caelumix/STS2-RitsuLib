@@ -214,6 +214,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
                 Name = $"MOD_FILTER_{character.Id.Entry}",
                 CustomMinimumSize = new(size, size),
                 Size = new(size, size),
+                FocusMode = Control.FocusModeEnum.All,
             };
 
             var mat = (ShaderMaterial?)referenceMat?.Duplicate();
@@ -237,8 +238,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
             var reticlePath = SceneHelper.GetScenePath("ui/selection_reticle");
             var reticle = PreloadManager.Cache.GetScene(reticlePath).Instantiate<NSelectionReticle>();
-            reticle.Name = "SelectionReticle";
-            reticle.UniqueNameInOwner = true;
+            ConfigureFilterReticle(reticle);
             filter.AddChild(reticle);
             reticle.Owner = filter;
 
@@ -274,6 +274,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
                 Name = $"MOD_FILTER_SHARED_{registration.StableId}",
                 CustomMinimumSize = new(size, size),
                 Size = new(size, size),
+                FocusMode = Control.FocusModeEnum.All,
             };
 
             var mat = (ShaderMaterial?)referenceMat?.Duplicate();
@@ -297,8 +298,7 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
 
             var reticlePath = SceneHelper.GetScenePath("ui/selection_reticle");
             var reticle = PreloadManager.Cache.GetScene(reticlePath).Instantiate<NSelectionReticle>();
-            reticle.Name = "SelectionReticle";
-            reticle.UniqueNameInOwner = true;
+            ConfigureFilterReticle(reticle);
             filter.AddChild(reticle);
             reticle.Owner = filter;
 
@@ -307,6 +307,15 @@ namespace STS2RitsuLib.Scaffolding.Characters.Patches
                 filter.Loc = new("card_library", id);
 
             return filter;
+        }
+
+        private static void ConfigureFilterReticle(NSelectionReticle reticle)
+        {
+            reticle.Name = "SelectionReticle";
+            reticle.UniqueNameInOwner = true;
+            reticle.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+            reticle.PivotOffset = reticle.Size / 2.0f;
+            reticle.ZIndex = 10;
         }
 
         private static Texture2D? ResolveSharedPoolFilterIcon(

@@ -40,6 +40,9 @@ namespace STS2RitsuLib.Settings
 
         public static string? ResolvePageDescription(ModSettingsPage page)
         {
+            if (page.HideDescription)
+                return null;
+
             var resolved = page.Description?.Resolve();
             if (!string.IsNullOrWhiteSpace(resolved))
                 return resolved;

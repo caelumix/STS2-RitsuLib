@@ -10,6 +10,7 @@ namespace STS2RitsuLib.Settings
     {
         private readonly HashSet<string> _sectionIds = new(StringComparer.OrdinalIgnoreCase);
         private readonly List<ModSettingsSection> _sections = [];
+        private bool _hideDescription;
 
         private ModSettingsMenuCapabilities _menuCapabilities = ModSettingsMenuCapabilities.All;
 
@@ -102,6 +103,16 @@ namespace STS2RitsuLib.Settings
         public ModSettingsPageBuilder WithDescription(ModSettingsText description)
         {
             Description = description;
+            return this;
+        }
+
+        /// <summary>
+        ///     Hides this page's header description and disables the manifest description fallback.
+        ///     隐藏此页面的标题栏描述，并禁用 manifest 描述回退。
+        /// </summary>
+        public ModSettingsPageBuilder WithDescriptionHidden(bool hidden = true)
+        {
+            _hideDescription = hidden;
             return this;
         }
 
@@ -249,7 +260,8 @@ namespace STS2RitsuLib.Settings
                 _menuCapabilities,
                 _pageVisibleOnHostSurfaces,
                 _pageReadOnlyOnHostSurfaces,
-                _sidebarVisibleOnlyWhenActive
+                _sidebarVisibleOnlyWhenActive,
+                _hideDescription
             );
         }
     }

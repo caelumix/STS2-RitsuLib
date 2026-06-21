@@ -186,6 +186,10 @@
         "description": {
           "$ref": "#/$defs/text"
         },
+        "hideDescription": {
+          "type": "boolean",
+          "description": "When true, hides the page header description and disables fallback to the mod manifest description."
+        },
         "sortOrder": {
           "type": "integer",
           "description": "Defaults to 10040 when omitted."

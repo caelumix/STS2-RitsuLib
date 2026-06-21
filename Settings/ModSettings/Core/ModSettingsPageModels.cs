@@ -57,7 +57,8 @@ namespace STS2RitsuLib.Settings
             ModSettingsMenuCapabilities menuCapabilities = ModSettingsMenuCapabilities.All,
             ModSettingsHostSurface visibleOnHostSurfaces = ModSettingsHostSurface.All,
             ModSettingsHostSurface readOnlyOnHostSurfaces = ModSettingsHostSurface.None,
-            bool sidebarVisibleOnlyWhenActive = false)
+            bool sidebarVisibleOnlyWhenActive = false,
+            bool hideDescription = false)
         {
             ModId = modId;
             Id = id;
@@ -72,6 +73,7 @@ namespace STS2RitsuLib.Settings
             VisibleOnHostSurfaces = visibleOnHostSurfaces;
             ReadOnlyOnHostSurfaces = readOnlyOnHostSurfaces;
             SidebarVisibleOnlyWhenActive = sidebarVisibleOnlyWhenActive;
+            HideDescription = hideDescription;
         }
 
         /// <summary>
@@ -103,6 +105,12 @@ namespace STS2RitsuLib.Settings
         ///     显示在第一个 section 上方的可选概览。
         /// </summary>
         public ModSettingsText? Description { get; }
+
+        /// <summary>
+        ///     When true, the page header suppresses both explicit page text and manifest description fallback.
+        ///     为 true 时，页面标题栏会隐藏显式页面描述和 manifest 描述回退。
+        /// </summary>
+        public bool HideDescription { get; }
 
         /// <summary>
         ///     Lower values appear earlier among sibling pages (same <see cref="ModId" /> and

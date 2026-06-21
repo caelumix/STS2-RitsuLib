@@ -297,6 +297,8 @@ namespace STS2RitsuLib.Settings
                         page.WithSortOrder(pageSchema.SortOrder);
                         if (!string.IsNullOrWhiteSpace(pageSchema.ParentPageId))
                             page.AsChildOf(pageSchema.ParentPageId);
+                        if (pageSchema.HideDescription)
+                            page.WithDescriptionHidden();
                         if (schema.ModDisplayName != null)
                             page.WithModDisplayName(schema.ModDisplayName);
                         if (schema.ModSidebarOrder is { } sidebarOrder)
@@ -1187,6 +1189,7 @@ namespace STS2RitsuLib.Settings
                 : "interop";
             var title = ReadTextOrDefault(root, "title", "Settings", i18N);
             var description = ReadTextOrNull(root, "description", "", i18N);
+            var hideDescription = TryGetBool(root, "hideDescription", out var hide) && hide;
             var sortOrder = TryGetInt(root, "sortOrder", out var so) ? so ?? 10_040 : 10_040;
 
             if (!TryGetEnumerable(root, "sections", out var sectionsRaw))
@@ -1206,7 +1209,7 @@ namespace STS2RitsuLib.Settings
             if (sections.Count == 0)
                 return false;
 
-            page = new(pageId, null, title, description, sortOrder, sections);
+            page = new(pageId, null, title, description, sortOrder, sections, hideDescription);
             return true;
         }
 
@@ -1223,6 +1226,7 @@ namespace STS2RitsuLib.Settings
                 : "interop";
             var title = ReadTextOrDefault(map, "title", "Settings", i18N);
             var description = ReadTextOrNull(map, "description", "", i18N);
+            var hideDescription = TryGetBool(map, "hideDescription", out var hide) && hide;
             var parentPageId = TryGetString(map, "parentPageId", out var parent) && !string.IsNullOrWhiteSpace(parent)
                 ? parent
                 : null;
@@ -1245,7 +1249,7 @@ namespace STS2RitsuLib.Settings
             if (sections.Count == 0)
                 return false;
 
-            page = new(pageId, parentPageId, title, description, sortOrder, sections);
+            page = new(pageId, parentPageId, title, description, sortOrder, sections, hideDescription);
             return true;
         }
 
@@ -1782,6 +1786,28 @@ namespace STS2RitsuLib.Settings
             }
         }
 
+        private static bool TryGetBool(IDictionary<string, object?> map, string key, out bool value)
+        {
+            value = false;
+            if (!map.TryGetValue(key, out var raw) || raw == null)
+                return false;
+
+            try
+            {
+                value = raw switch
+                {
+                    bool b => b,
+                    string s when bool.TryParse(s, out var parsed) => parsed,
+                    _ => Convert.ToBoolean(raw),
+                };
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static bool TryGetDouble(IDictionary<string, object?> map, string key, out double value)
         {
             value = 0d;
@@ -1819,7 +1845,8 @@ namespace STS2RitsuLib.Settings
             ModSettingsText Title,
             ModSettingsText? Description,
             int SortOrder,
-            List<InteropSection> Sections);
+            List<InteropSection> Sections,
+            bool HideDescription);
 
         private sealed record InteropSection(
             string Id,

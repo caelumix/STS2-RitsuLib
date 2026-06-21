@@ -330,6 +330,12 @@ namespace STS2RitsuLib.Data
             return GetSettings().SteamWorkshopAutoUpdateCheckEnabled;
         }
 
+        internal static bool IsSteamWorkshopAutoUpdateHighPriorityDownloadEnabled()
+        {
+            Initialize();
+            return GetSettings().SteamWorkshopAutoUpdateHighPriorityDownloadEnabled;
+        }
+
         internal static bool IsMainMenuModSettingsButtonEnabled()
         {
             Initialize();

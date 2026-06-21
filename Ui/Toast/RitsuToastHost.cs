@@ -285,6 +285,12 @@ namespace STS2RitsuLib.Ui.Toast
 
         private static void UpdateProgress(VisibleToast item)
         {
+            if (item.Request.ProgressFraction is { } explicitProgress)
+            {
+                item.Entry.SetProgress(true, explicitProgress);
+                return;
+            }
+
             var show = !item.Request.IsPersistent && item.TotalSeconds > 0d;
             var fraction = show ? (float)(item.RemainingSeconds / item.TotalSeconds) : 1f;
             item.Entry.SetProgress(show, fraction);
@@ -383,7 +389,8 @@ namespace STS2RitsuLib.Ui.Toast
             if (item == null || item.IsClosing)
                 return;
 
-            RequestClose(item, false);
+            if (item.Request.DismissOnClick)
+                RequestClose(item, false);
             var callback = item.Request.OnClick;
 
             try

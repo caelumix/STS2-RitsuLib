@@ -474,10 +474,10 @@ namespace STS2RitsuLib.Platform.Steam
                 CancellationToken cancellationToken)
             {
                 Dictionary<ulong, DownloadMonitorItem> items = [];
-                foreach (var downloadItem in downloadItems.Where(static item => item.Id != 0)
+                foreach (var workshopDownloadItem in downloadItems.Where(static item => item.Id != 0)
                              .DistinctBy(static item => item.Id))
-                    if (CreatePublishedFileId(downloadItem.Id) is { } item)
-                        items[downloadItem.Id] = new(item, downloadItem.DisplayName);
+                    if (CreatePublishedFileId(workshopDownloadItem.Id) is { } item)
+                        items[workshopDownloadItem.Id] = new(item, workshopDownloadItem.DisplayName);
 
                 if (items.Count == 0)
                     return false;

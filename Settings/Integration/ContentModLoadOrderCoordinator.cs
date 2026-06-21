@@ -125,18 +125,16 @@ namespace STS2RitsuLib.Settings
         internal static ContentModLoadOrderPreview BuildPreview()
         {
             var currentOrder = ContentModLoadOrderInventory.BuildCurrentOrder();
-            var relevantKeys = ContentModLoadOrderInventory.BuildRelevantKeys(currentOrder);
+            var relevantKeys = BuildVisibleRelevantKeys(currentOrder);
             var relevantDependencyIds =
                 ContentModLoadOrderInventory.BuildRelevantDependencyIds(currentOrder, relevantKeys);
-            var hiddenKeys = BuildHiddenDuplicateWorkshopKeys(currentOrder);
             var currentEntries = currentOrder
-                .Where(entry => relevantKeys.Contains(entry.Key) && !hiddenKeys.Contains(entry.Key))
+                .Where(entry => relevantKeys.Contains(entry.Key))
                 .ToArray();
             var currentByKey = currentEntries
                 .Select((entry, index) => (entry, position: index + 1))
                 .ToDictionary(item => item.entry.Key, item => item, StringComparer.Ordinal);
             var targetEntries = BuildRelevantTargetOrder(currentOrder)
-                .Where(entry => !hiddenKeys.Contains(entry.Key))
                 .ToArray();
             var targetByKey = targetEntries
                 .Select((entry, index) => (entry.Key, position: index + 1))
@@ -192,16 +190,36 @@ namespace STS2RitsuLib.Settings
         {
             var relevantKeys = BuildVisibleRelevantKeys(currentOrder);
             var priorityById = BuildDeterministicPriorityById(currentOrder, relevantKeys);
-            return ContentModLoadOrderInventory.BuildDependencyValidPriorityOrder(currentOrder, priorityById, LogPrefix)
+            var sortableOrder = BuildSortableOrder(currentOrder);
+            return ContentModLoadOrderInventory
+                .BuildDependencyValidPriorityOrder(sortableOrder, priorityById, LogPrefix)
                 .Where(entry => relevantKeys.Contains(entry.Key))
                 .ToArray();
         }
 
         private static IReadOnlySet<string> BuildVisibleRelevantKeys(IReadOnlyList<CurrentModEntry> currentOrder)
         {
-            var hiddenKeys = BuildHiddenDuplicateWorkshopKeys(currentOrder);
+            var trailingKeys = BuildTrailingKeys(currentOrder);
+
             return ContentModLoadOrderInventory.BuildRelevantKeys(currentOrder)
-                .Where(key => !hiddenKeys.Contains(key))
+                .Where(key => !trailingKeys.Contains(key))
+                .ToHashSet(StringComparer.Ordinal);
+        }
+
+        private static IReadOnlyList<CurrentModEntry> BuildSortableOrder(IReadOnlyList<CurrentModEntry> currentOrder)
+        {
+            var trailingKeys = BuildTrailingKeys(currentOrder);
+            return currentOrder
+                .Where(entry => !trailingKeys.Contains(entry.Key))
+                .ToArray();
+        }
+
+        private static IReadOnlySet<string> BuildTrailingKeys(IReadOnlyList<CurrentModEntry> currentOrder)
+        {
+            var hiddenKeys = BuildHiddenDuplicateWorkshopKeys(currentOrder);
+            return currentOrder
+                .Where(entry => !entry.IsEnabled || hiddenKeys.Contains(entry.Key))
+                .Select(entry => entry.Key)
                 .ToHashSet(StringComparer.Ordinal);
         }
 
@@ -239,17 +257,17 @@ namespace STS2RitsuLib.Settings
         {
             var settings = SaveManager.Instance.SettingsSave;
             settings.ModSettings ??= new();
-            var hiddenKeys = BuildHiddenDuplicateWorkshopKeys(currentOrder);
+            var trailingKeys = BuildTrailingKeys(currentOrder);
             var sortableOrder = currentOrder
-                .Where(entry => !hiddenKeys.Contains(entry.Key))
+                .Where(entry => !trailingKeys.Contains(entry.Key))
                 .ToArray();
-            var hiddenOrder = currentOrder
-                .Where(entry => hiddenKeys.Contains(entry.Key))
+            var trailingOrder = currentOrder
+                .Where(entry => trailingKeys.Contains(entry.Key))
                 .ToArray();
 
             var ordered =
                 ContentModLoadOrderInventory.BuildDependencyValidPriorityOrder(sortableOrder, priorityById, LogPrefix)
-                    .Concat(hiddenOrder)
+                    .Concat(trailingOrder)
                     .ToArray();
 
             settings.ModSettings.ModList = ordered

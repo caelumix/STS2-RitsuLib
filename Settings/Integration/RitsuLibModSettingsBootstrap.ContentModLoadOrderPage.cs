@@ -19,7 +19,7 @@ namespace STS2RitsuLib.Settings
                     .WithSortOrder(-875)
                     .WithTitle(T("ritsulib.page.contentModLoadOrder.title", "Content mod load order"))
                     .WithDescription(T("ritsulib.page.contentModLoadOrder.description",
-                        "Save, copy, and apply deterministic ordering for relevant content mods, framework libraries, and installed dependencies."))
+                        "Save, copy, and apply deterministic ordering for enabled content mods, framework libraries, and dependencies."))
                     .AddSection("content_mod_load_order_actions", section => section
                         .WithTitle(T("ritsulib.section.contentModLoadOrder.actions.title", "Actions"))
                         .WithDescription(T("ritsulib.section.contentModLoadOrder.actions.description",
@@ -59,7 +59,7 @@ namespace STS2RitsuLib.Settings
                     .AddSection("content_mod_load_order_preview", section => section
                         .WithTitle(T("ritsulib.section.contentModLoadOrder.preview.title", "Preview"))
                         .WithDescription(T("ritsulib.section.contentModLoadOrder.preview.description",
-                            "Shows content-affecting mods, framework libraries, and installed dependencies. Other mods keep their relative slots."))
+                            "Shows enabled content-affecting mods, framework libraries, and dependencies. Other mods keep their relative slots."))
                         .AddCustom(
                             "content_mod_load_order_compare",
                             T("ritsulib.contentModLoadOrder.compare.label", "Order comparison"),

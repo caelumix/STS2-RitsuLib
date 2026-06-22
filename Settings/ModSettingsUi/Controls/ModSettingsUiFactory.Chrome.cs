@@ -286,8 +286,25 @@ namespace STS2RitsuLib.Settings
             IModSettingsValueBinding<TValue> binding,
             ModSettingsMenuCapabilities capabilities = ModSettingsMenuCapabilities.All)
         {
-            var actions = BuildBindingActions(context, binding, capabilities);
-            return actions.Count == 0 ? null : new ModSettingsActionsButton(actions, context.RequestRefresh);
+            if (!HasBindingActions(binding, capabilities))
+                return null;
+
+            return new ModSettingsActionsButton(() => BuildBindingActions(context, binding, capabilities),
+                context.RequestRefresh);
+        }
+
+        private static bool HasBindingActions<TValue>(IModSettingsValueBinding<TValue> binding,
+            ModSettingsMenuCapabilities capabilities)
+        {
+            if (capabilities.HasFlag(ModSettingsMenuCapabilities.Copy) ||
+                capabilities.HasFlag(ModSettingsMenuCapabilities.Paste))
+                return true;
+
+            if (capabilities.HasFlag(ModSettingsMenuCapabilities.ResetToDefault) &&
+                binding is IDefaultModSettingsValueBinding<TValue>)
+                return true;
+
+            return ModSettingsUiActionRegistry.HasBindingActionAppender<TValue>();
         }
 
         private static List<ModSettingsMenuAction> BuildBindingActions<TValue>(ModSettingsUiContext context,
@@ -686,7 +703,7 @@ namespace STS2RitsuLib.Settings
                 context.EndSectionSurfaceScope();
             }
 
-            return new(control, true, sectionPlan.EntryHost, added =>
+            return new(control, sectionPlan.EntryHost, added =>
             {
                 context.RegisterEntryAnchor(page, section, entry, added);
                 if (sectionPlan.SectionActionsButton != null)

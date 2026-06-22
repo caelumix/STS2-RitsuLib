@@ -401,6 +401,7 @@ namespace STS2RitsuLib
                     SubscribeLifecycleOnce<MainMenuReadyEvent>(_ =>
                     {
                         RitsuLibStartupAudit.LogReport("launch to main menu");
+                        Callable.From(PrewarmModSettingsMirrorsForMainMenu).CallDeferred();
                         HarmonyPatchDumpCoordinator.TryAutoDumpOnFirstMainMenu();
                         SelfCheckBundleCoordinator.TryAutoRunOnFirstMainMenu();
                     });
@@ -452,6 +453,21 @@ namespace STS2RitsuLib
             BaseLibVisualGraftBridge.TryRegister();
             BaseLibMaxHandSizeBridge.TryInitialize();
             MaxHandSizePatchInstaller.EnsurePatched();
+        }
+
+        private static void PrewarmModSettingsMirrorsForMainMenu()
+        {
+            try
+            {
+                RitsuLibModSettingsBootstrap.EnsureFrameworkPagesRegistered();
+                var added = ModSettingsMirrorRegistrarBootstrap.PrewarmMirroredPagesForMainMenu();
+                RitsuLibModSettingsBootstrap.RefreshDynamicPages();
+                Logger.Debug($"Mod settings mirror prewarm complete. Added {added} mirrored page(s).");
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn($"Mod settings mirror prewarm failed: {ex.Message}");
+            }
         }
 
         internal static string GetCompatBranchLabel()

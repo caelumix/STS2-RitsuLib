@@ -5,6 +5,7 @@ using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.ControllerInput;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using STS2RitsuLib.RuntimeInput;
+using STS2RitsuLib.Ui.Shell;
 using STS2RitsuLib.Ui.Shell.Theme;
 using Array = System.Array;
 
@@ -1338,7 +1339,6 @@ namespace STS2RitsuLib.Settings
         /// <inheritdoc />
         public override void _Ready()
         {
-            BuildDropdownShell();
             ApplyFaceDropdownChrome();
             RefreshFaceLabel();
         }
@@ -1556,7 +1556,11 @@ namespace STS2RitsuLib.Settings
 
         private void OpenDropdown()
         {
-            if (_dropPanel == null || _virtualContent == null || _backdrop == null || _optionsWithValues.Length == 0)
+            if (_optionsWithValues.Length == 0)
+                return;
+
+            EnsureDropdownShell();
+            if (_dropPanel == null || _virtualContent == null || _backdrop == null)
                 return;
 
             _dropPanel.AddThemeStyleboxOverride("panel", ModSettingsUiFactory.CreateListShellStyle());
@@ -1575,6 +1579,17 @@ namespace STS2RitsuLib.Settings
             WireRowFocusNeighbors();
             Callable.From(GrabSelectedRowFocus).CallDeferred();
             Callable.From(TryFinalizeDropdownLayoutAfterScrollResolved).CallDeferred();
+        }
+
+        private void EnsureDropdownShell()
+        {
+            if (_backdrop != null && IsInstanceValid(_backdrop) &&
+                _dropPanel != null && IsInstanceValid(_dropPanel) &&
+                _dropScroll != null && IsInstanceValid(_dropScroll) &&
+                _virtualContent != null && IsInstanceValid(_virtualContent))
+                return;
+
+            BuildDropdownShell();
         }
 
         private void CloseDropdown()
@@ -2114,6 +2129,11 @@ namespace STS2RitsuLib.Settings
 
         private static StyleBoxFlat CreateDropdownCurrentRowNormal()
         {
+            return RitsuShellStyleCache.GetOrBuild("settings.dropdown.current.normal", BuildDropdownCurrentRowNormal);
+        }
+
+        private static StyleBoxFlat BuildDropdownCurrentRowNormal()
+        {
             var border =
                 RitsuShellThemeLayoutResolver.ResolveEdges("components.dropdown.layout.currentRow.borderWidth", 2);
             var cornerRadii =
@@ -2149,19 +2169,30 @@ namespace STS2RitsuLib.Settings
 
         private static StyleBoxFlat CreateDropdownCurrentRowHover()
         {
-            var s = CreateDropdownCurrentRowNormal();
-            s.BgColor = RitsuShellTheme.Current.Component.Dropdown.Hover.Bg;
-            return s;
+            return RitsuShellStyleCache.GetOrBuild("settings.dropdown.current.hover", () =>
+            {
+                var s = BuildDropdownCurrentRowNormal();
+                s.BgColor = RitsuShellTheme.Current.Component.Dropdown.Hover.Bg;
+                return s;
+            });
         }
 
         private static StyleBoxFlat CreateDropdownCurrentRowPressed()
         {
-            var s = CreateDropdownCurrentRowNormal();
-            s.BgColor = RitsuShellTheme.Current.Component.Dropdown.Pressed.Bg;
-            return s;
+            return RitsuShellStyleCache.GetOrBuild("settings.dropdown.current.pressed", () =>
+            {
+                var s = BuildDropdownCurrentRowNormal();
+                s.BgColor = RitsuShellTheme.Current.Component.Dropdown.Pressed.Bg;
+                return s;
+            });
         }
 
         private static StyleBoxFlat CreateDropdownCurrentRowFocus()
+        {
+            return RitsuShellStyleCache.GetOrBuild("settings.dropdown.current.focus", BuildDropdownCurrentRowFocus);
+        }
+
+        private static StyleBoxFlat BuildDropdownCurrentRowFocus()
         {
             var border =
                 RitsuShellThemeLayoutResolver.ResolveEdges("components.dropdown.layout.currentRow.borderWidthFocus", 3);
@@ -3037,10 +3068,12 @@ namespace STS2RitsuLib.Settings
         private const float RowHeight = 38f;
 
         private static readonly SharedActionsDropdown SharedDropdown = new();
-
         private readonly IReadOnlyList<ModSettingsMenuAction> _actions;
+        private readonly Func<IReadOnlyList<ModSettingsMenuAction>>? _actionsProvider;
+
         private readonly Action? _afterAction;
         private bool _dropOpen;
+        private bool _hovered;
         private Vector2I? _preferredPopupPosition;
 
         public ModSettingsActionsButton(IReadOnlyList<ModSettingsMenuAction> actions, Action? afterAction = null)
@@ -3050,23 +3083,25 @@ namespace STS2RitsuLib.Settings
             FocusMode = FocusModeEnum.All;
             MouseFilter = MouseFilterEnum.Stop;
             Flat = false;
-            Text = ModSettingsLocalization.Get("button.actionsGlyph", "\u22ee");
+            Text = string.Empty;
             TooltipText = ModSettingsLocalization.Get("button.actionsShort", "Actions");
             CustomMinimumSize = RitsuShellThemeLayoutResolver.ResolveMinSize(
                 "components.chromeMenu.layout.trigger.minSize",
                 new(36f, 32f));
             SizeFlagsHorizontal = SizeFlags.ShrinkBegin;
             SizeFlagsVertical = SizeFlags.ShrinkCenter;
-            AddThemeFontOverride("font", RitsuShellTheme.Current.Font.BodyBold);
-            AddThemeFontSizeOverride("font_size", RitsuShellTheme.Current.Metric.FontSize.Button);
-            AddThemeColorOverride("font_color", RitsuShellTheme.Current.Text.RichSecondary);
-            AddThemeColorOverride("font_hover_color", RitsuShellTheme.Current.Text.HoverHighlight);
-            AddThemeColorOverride("font_pressed_color", RitsuShellTheme.Current.Color.White);
             AddThemeStyleboxOverride("normal", ModSettingsUiFactory.CreateChromeActionsMenuStyle(false));
             AddThemeStyleboxOverride("hover", ModSettingsUiFactory.CreateChromeActionsMenuStyle(true));
             AddThemeStyleboxOverride("pressed", ModSettingsUiFactory.CreateChromeActionsMenuStyle(true));
             AddThemeStyleboxOverride("focus", ModSettingsUiFactory.CreateChromeActionsMenuStyle(true));
             Pressed += OnEllipsisPressed;
+        }
+
+        public ModSettingsActionsButton(Func<IReadOnlyList<ModSettingsMenuAction>> actionsProvider,
+            Action? afterAction = null)
+            : this([], afterAction)
+        {
+            _actionsProvider = actionsProvider;
         }
 
         public ModSettingsActionsButton()
@@ -3080,6 +3115,45 @@ namespace STS2RitsuLib.Settings
         void IModSettingsTransientPopupOwner.ForceCloseTransientUi()
         {
             CloseDropdown();
+        }
+
+        public override void _Notification(int what)
+        {
+            base._Notification(what);
+            switch (what)
+            {
+                case (int)NotificationMouseEnter:
+                    _hovered = true;
+                    QueueRedraw();
+                    break;
+                case (int)NotificationMouseExit:
+                    _hovered = false;
+                    QueueRedraw();
+                    break;
+                case (int)NotificationFocusEnter:
+                case (int)NotificationFocusExit:
+                case (int)NotificationThemeChanged:
+                    QueueRedraw();
+                    break;
+            }
+        }
+
+        public override void _Draw()
+        {
+            base._Draw();
+            var color = Disabled
+                ? RitsuShellTheme.Current.Text.LabelSecondary
+                : _dropOpen || _hovered || HasFocus()
+                    ? RitsuShellTheme.Current.Text.HoverHighlight
+                    : RitsuShellTheme.Current.Text.RichSecondary;
+            var radius = RitsuShellThemeLayoutResolver.ResolveFloat("components.chromeMenu.layout.trigger.dotRadius",
+                2.2f);
+            var gap = RitsuShellThemeLayoutResolver.ResolveFloat("components.chromeMenu.layout.trigger.dotGap",
+                5.5f);
+            var center = Size * 0.5f;
+            DrawCircle(new(center.X, center.Y - gap), radius, color);
+            DrawCircle(center, radius, color);
+            DrawCircle(new(center.X, center.Y + gap), radius, color);
         }
 
         public override void _ExitTree()
@@ -3144,7 +3218,7 @@ namespace STS2RitsuLib.Settings
 
         private void OpenDropdown()
         {
-            if (_actions.Count == 0)
+            if (GetActions().Count == 0)
                 return;
 
             SharedDropdown.Open(this);
@@ -3161,6 +3235,7 @@ namespace STS2RitsuLib.Settings
         private void OnSharedDropdownOpened()
         {
             _dropOpen = true;
+            QueueRedraw();
             SetProcessInput(true);
             SetProcessUnhandledInput(true);
         }
@@ -3168,6 +3243,7 @@ namespace STS2RitsuLib.Settings
         private void OnSharedDropdownClosed(bool restoreFocus)
         {
             _dropOpen = false;
+            QueueRedraw();
             SetProcessInput(false);
             SetProcessUnhandledInput(false);
             _preferredPopupPosition = null;
@@ -3176,7 +3252,19 @@ namespace STS2RitsuLib.Settings
                 GrabFocus();
         }
 
+        private IReadOnlyList<ModSettingsMenuAction> GetActions()
+        {
+            return _actionsProvider?.Invoke() ?? _actions;
+        }
+
         private static StyleBoxFlat CreateActionsRowStyle(bool highlighted)
+        {
+            return RitsuShellStyleCache.GetOrBuild(
+                highlighted ? "settings.actionsRow.highlighted" : "settings.actionsRow",
+                () => BuildActionsRowStyle(highlighted));
+        }
+
+        private static StyleBoxFlat BuildActionsRowStyle(bool highlighted)
         {
             var border =
                 RitsuShellThemeLayoutResolver.ResolveEdges("components.dropdown.layout.actionsRow.borderWidth", 1);
@@ -3217,6 +3305,11 @@ namespace STS2RitsuLib.Settings
 
         private static StyleBoxFlat CreateActionsRowPressedStyle()
         {
+            return RitsuShellStyleCache.GetOrBuild("settings.actionsRow.pressed", BuildActionsRowPressedStyle);
+        }
+
+        private static StyleBoxFlat BuildActionsRowPressedStyle()
+        {
             var border =
                 RitsuShellThemeLayoutResolver.ResolveEdges("components.dropdown.layout.actionsRow.borderWidth", 1);
             var padding =
@@ -3252,6 +3345,11 @@ namespace STS2RitsuLib.Settings
 
         private static StyleBoxFlat CreateActionsRowFocusStyle()
         {
+            return RitsuShellStyleCache.GetOrBuild("settings.actionsRow.focus", BuildActionsRowFocusStyle);
+        }
+
+        private static StyleBoxFlat BuildActionsRowFocusStyle()
+        {
             var border =
                 RitsuShellThemeLayoutResolver.ResolveEdges("components.dropdown.layout.actionsRow.borderWidth", 1);
             var padding =
@@ -3286,6 +3384,11 @@ namespace STS2RitsuLib.Settings
         }
 
         private static StyleBoxFlat CreateActionsRowDisabledStyle()
+        {
+            return RitsuShellStyleCache.GetOrBuild("settings.actionsRow.disabled", BuildActionsRowDisabledStyle);
+        }
+
+        private static StyleBoxFlat BuildActionsRowDisabledStyle()
         {
             var border =
                 RitsuShellThemeLayoutResolver.ResolveEdges("components.dropdown.layout.actionsRow.borderWidth", 1);
@@ -3327,10 +3430,11 @@ namespace STS2RitsuLib.Settings
 
         private void ActivateRow(int index)
         {
-            if (index < 0 || index >= _actions.Count)
+            var actions = GetActions();
+            if (index < 0 || index >= actions.Count)
                 return;
 
-            var def = _actions[index];
+            var def = actions[index];
             if (!def.IsEnabled())
                 return;
 
@@ -3519,8 +3623,9 @@ namespace STS2RitsuLib.Settings
                 if (_dropList == null)
                     return;
 
+                var actions = owner.GetActions();
                 _rowButtons.Clear();
-                var liveIndexes = Enumerable.Range(0, owner._actions.Count).ToHashSet();
+                var liveIndexes = Enumerable.Range(0, actions.Count).ToHashSet();
                 foreach (var staleIndex in _rowButtonCache.Keys.Where(index => !liveIndexes.Contains(index)).ToArray())
                 {
                     if (_rowButtonCache.TryGetValue(staleIndex, out var staleRow) &&
@@ -3534,10 +3639,10 @@ namespace STS2RitsuLib.Settings
                     _rowButtonCache.Remove(staleIndex);
                 }
 
-                for (var i = 0; i < owner._actions.Count; i++)
+                for (var i = 0; i < actions.Count; i++)
                 {
                     var index = i;
-                    var def = owner._actions[i];
+                    var def = actions[i];
                     if (!_rowButtonCache.TryGetValue(index, out var row) || !IsInstanceValid(row))
                     {
                         row = new(def.Label, () => _owner?.ActivateRow(index))
@@ -4085,6 +4190,16 @@ namespace STS2RitsuLib.Settings
         /// </summary>
         public static StyleBoxFlat CreateStyle(bool highlighted, bool disabled = false)
         {
+            var key = disabled
+                ? "settings.miniButton.disabled"
+                : highlighted
+                    ? "settings.miniButton.highlighted"
+                    : "settings.miniButton";
+            return RitsuShellStyleCache.GetOrBuild(key, () => BuildStyle(highlighted, disabled));
+        }
+
+        private static StyleBoxFlat BuildStyle(bool highlighted, bool disabled)
+        {
             var border = RitsuShellThemeLayoutResolver.ResolveEdges("components.stepper.layout.borderWidth", 1);
             var padding = RitsuShellThemeLayoutResolver.ResolveEdges("components.stepper.layout.padding", 10);
             padding = new(
@@ -4288,6 +4403,13 @@ namespace STS2RitsuLib.Settings
         }
 
         private static StyleBoxFlat CreateRailStyle(bool highlighted)
+        {
+            return RitsuShellStyleCache.GetOrBuild(
+                highlighted ? "settings.dragHandle.highlighted" : "settings.dragHandle",
+                () => BuildRailStyle(highlighted));
+        }
+
+        private static StyleBoxFlat BuildRailStyle(bool highlighted)
         {
             var border = RitsuShellThemeLayoutResolver.ResolveEdges("components.dragHandle.layout.borderWidth", 0);
             border = new(
@@ -6215,6 +6337,14 @@ namespace STS2RitsuLib.Settings
             ModSettingsSidebarItemKind kind = ModSettingsSidebarItemKind.Page,
             int indentLevel = 0)
         {
+            var key = $"settings.sidebar.{kind}.{indentLevel}.{selected}.{hovered}";
+            return RitsuShellStyleCache.GetOrBuild(key, () => BuildStyle(selected, hovered, kind, indentLevel));
+        }
+
+        private static StyleBoxFlat BuildStyle(bool selected, bool hovered,
+            ModSettingsSidebarItemKind kind,
+            int indentLevel)
+        {
             var bg = kind switch
             {
                 ModSettingsSidebarItemKind.ModGroup => selected
@@ -6308,6 +6438,11 @@ namespace STS2RitsuLib.Settings
         }
 
         internal static StyleBoxFlat CreateDisabledStyle()
+        {
+            return RitsuShellStyleCache.GetOrBuild("settings.sidebar.disabled", BuildDisabledStyle);
+        }
+
+        private static StyleBoxFlat BuildDisabledStyle()
         {
             var border =
                 RitsuShellThemeLayoutResolver.ResolveEdges("components.sidebar.layout.disabled.borderWidth", 2);
@@ -6488,6 +6623,12 @@ namespace STS2RitsuLib.Settings
         }
 
         private static StyleBoxFlat CreateStyle(bool selected, bool hovered, ModSettingsButtonTone tone)
+        {
+            var key = $"settings.textButton.{tone}.{selected}.{hovered}";
+            return RitsuShellStyleCache.GetOrBuild(key, () => BuildStyle(selected, hovered, tone));
+        }
+
+        private static StyleBoxFlat BuildStyle(bool selected, bool hovered, ModSettingsButtonTone tone)
         {
             var borderColor = tone switch
             {

@@ -135,8 +135,17 @@ namespace STS2RitsuLib.Settings
             internal static void RequestAncestorLayouts(Control node)
             {
                 for (var current = node; current != null; current = current.GetParent() as Control)
-                    if (current is FastVerticalStack stack)
-                        stack.RequestLayout();
+                {
+                    switch (current)
+                    {
+                        case FastVerticalStack stack:
+                            stack.RequestLayout();
+                            continue;
+                        case FixedWidthScrollContent scrollContent:
+                            scrollContent.RequestLayout();
+                            break;
+                    }
+                }
             }
 
             internal static IDisposable DeferLayoutRequests()
@@ -361,11 +370,32 @@ namespace STS2RitsuLib.Settings
                 ReplaceActionControl(null);
                 if (GetParent() is { } parent)
                     parent.RemoveChild(this);
+                ClearChildLayoutState();
+            }
+
+            internal void RefreshLayoutAfterAdded()
+            {
+                RequestLayout();
+                CallDeferred(MethodName.DeferredRefreshLayoutAfterAdded);
+            }
+
+            private void DeferredRefreshLayoutAfterAdded()
+            {
+                if (!IsInsideTree())
+                    return;
+
+                RequestLayout();
             }
 
             public override void _Notification(int what)
             {
                 base._Notification(what);
+                if (what == NotificationEnterTree)
+                {
+                    RequestLayout();
+                    return;
+                }
+
                 if (what == (int)NotificationResized)
                 {
                     LayoutChildren();
@@ -599,6 +629,25 @@ namespace STS2RitsuLib.Settings
 
                 label.Size = new(width, Math.Max(label.Size.Y, label.CustomMinimumSize.Y));
                 label.UpdateMinimumSize();
+            }
+
+            private void ClearChildLayoutState()
+            {
+                ClearControlLayout(_label);
+                ClearControlLayout(_descriptionLabel);
+                ClearControlLayout(_valueControl);
+                ClearControlLayout(_actionControl);
+                Size = Vector2.Zero;
+                CustomMinimumSize = Vector2.Zero;
+            }
+
+            private static void ClearControlLayout(Control? control)
+            {
+                if (control == null || !IsInstanceValid(control))
+                    return;
+
+                control.Position = Vector2.Zero;
+                control.Size = Vector2.Zero;
             }
 
             private Vector2 ComputeTextColumnMinSize()

@@ -706,6 +706,8 @@ namespace STS2RitsuLib.Settings
             return new(control, sectionPlan.EntryHost, added =>
             {
                 context.RegisterEntryAnchor(page, section, entry, added);
+                if (added is ReusableSettingLine reusable)
+                    reusable.RefreshLayoutAfterAdded();
                 if (sectionPlan.SectionActionsButton != null)
                     AttachContextMenuTargets(added, added, sectionPlan.SectionActionsButton, false);
             });
@@ -937,6 +939,7 @@ namespace STS2RitsuLib.Settings
                 IsHorizontallyBound = true,
                 Modulate = textModulate ?? Colors.White,
             };
+            label.AddThemeStyleboxOverride("normal", CreateZeroMarginRichTextStyle());
 
             if (boundedScroll)
                 label.CustomMinimumSize = new(0f, scrollViewportHeight!.Value);
@@ -952,6 +955,19 @@ namespace STS2RitsuLib.Settings
             label.MaxFontSize = fontSize;
             label.SetTextAutoSize(text);
             return label;
+        }
+
+        private static StyleBoxFlat CreateZeroMarginRichTextStyle()
+        {
+            return new()
+            {
+                BgColor = Colors.Transparent,
+                DrawCenter = false,
+                ContentMarginLeft = 0f,
+                ContentMarginTop = 0f,
+                ContentMarginRight = 0f,
+                ContentMarginBottom = 0f,
+            };
         }
 
         private static MegaRichTextLabel CreatePageToolbarTitleLabel(string primaryTitle, string fallbackId)

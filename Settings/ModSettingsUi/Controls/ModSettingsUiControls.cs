@@ -6067,6 +6067,7 @@ namespace STS2RitsuLib.Settings
 
             _toggle?.SetSelected(!_collapsed);
             RequestLayout();
+            Callable.From(RequestLayout).CallDeferred();
         }
 
         internal void SetContentEnabled(bool enabled)

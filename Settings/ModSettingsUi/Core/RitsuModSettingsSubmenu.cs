@@ -262,6 +262,7 @@ namespace STS2RitsuLib.Settings
             }
 
             EnsureUiUpToDate(false, true);
+            QueueResizeLayoutRefresh();
         }
 
         /// <inheritdoc />
@@ -287,7 +288,7 @@ namespace STS2RitsuLib.Settings
             PushPaneHotkeys();
             UpdatePaneHotkeyHintIcons();
             RequestMirrorVisibilitySyncRefreshIfNeeded();
-            CallDeferredIfAlive(RefreshContentLayout);
+            QueueResizeLayoutRefresh();
         }
 
         /// <inheritdoc />
@@ -1311,6 +1312,7 @@ namespace STS2RitsuLib.Settings
             RefreshSelectionState();
             RefreshVisibleContent(includeAllPagesRefresh);
             IsInitialUiReady = true;
+            QueueDeferredContentLayoutRefresh();
         }
 
         private async Task EnsureOpenContentReadyAsync()
@@ -1322,6 +1324,7 @@ namespace STS2RitsuLib.Settings
             EnsureSelectedPageContentStructure();
             RefreshSelectionState();
             RefreshVisibleContent(true);
+            QueueResizeLayoutRefresh();
         }
 
         private Task WaitForSelectedPageContentReadyAsync()
@@ -2241,7 +2244,7 @@ namespace STS2RitsuLib.Settings
                 return;
 
             var contentWidth = Mathf.Max(0f, viewportWidth - ResolveScrollbarContentRightGutter());
-            _contentScrollContent.SetViewportSize(new(viewportWidth, _scrollContainer.Size.Y));
+            _contentScrollContent.SetViewportSize(new(viewportWidth, ResolveStableContentViewportHeight()));
             _contentList.SetLayoutWidth(contentWidth);
         }
 
@@ -2256,6 +2259,21 @@ namespace STS2RitsuLib.Settings
 
             if (_contentPanelRoot is { } panel && IsInstanceValid(panel) && panel.Size.X > 28f)
                 return Math.Max(0f, panel.Size.X - 28f);
+
+            return 0f;
+        }
+
+        private float ResolveStableContentViewportHeight()
+        {
+            if (_scrollContainer is { } scroll && IsInstanceValid(scroll) && scroll.Size.Y > 1f)
+                return scroll.Size.Y;
+
+            if (_scrollContainer.GetParent() is Control scrollParent && IsInstanceValid(scrollParent) &&
+                scrollParent.Size.Y > 1f)
+                return scrollParent.Size.Y;
+
+            if (_contentPanelRoot is { } panel && IsInstanceValid(panel) && panel.Size.Y > 28f)
+                return Math.Max(0f, panel.Size.Y - 28f);
 
             return 0f;
         }

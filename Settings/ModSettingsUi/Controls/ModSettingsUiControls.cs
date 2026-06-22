@@ -8,6 +8,7 @@ using STS2RitsuLib.RuntimeInput;
 using STS2RitsuLib.Ui.Shell;
 using STS2RitsuLib.Ui.Shell.Theme;
 using Array = System.Array;
+using Environment = System.Environment;
 
 namespace STS2RitsuLib.Settings
 {
@@ -2094,13 +2095,19 @@ namespace STS2RitsuLib.Settings
             if (_faceButton == null)
                 return;
 
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STEAM_COMPAT_DATA_PATH")))
+            {
+                _faceButton.Icon = null;
+                _faceButton.ExpandIcon = false;
+                return;
+            }
+
             var arrow = _faceButton.GetThemeIcon("arrow", "OptionButton")
                         ?? _faceButton.GetThemeIcon("select_arrow", "Tree");
             if (arrow == null)
-                return;
-            if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("STEAM_COMPAT_DATA_PATH")))
             {
                 _faceButton.Icon = null;
+                _faceButton.ExpandIcon = false;
                 return;
             }
 

@@ -297,6 +297,8 @@ namespace STS2RitsuLib.Settings
                         page.WithSortOrder(pageSchema.SortOrder);
                         if (!string.IsNullOrWhiteSpace(pageSchema.ParentPageId))
                             page.AsChildOf(pageSchema.ParentPageId);
+                        if (pageSchema.HideDescription)
+                            page.WithDescriptionHidden();
                         if (schema.ModDisplayName != null)
                             page.WithModDisplayName(schema.ModDisplayName);
                         if (schema.ModSidebarOrder is { } sidebarOrder)
@@ -365,33 +367,36 @@ namespace STS2RitsuLib.Settings
                     return;
                 case InteropEntryType.Toggle:
                 {
-                    var binding = ModSettingsBindings.Callback(modId, dataKey,
+                    IModSettingsValueBinding<bool> binding = ModSettingsBindings.Callback(modId, dataKey,
                         () => ReadBoolWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteBool(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
+                    binding = WithDefaultIfPresent(binding, entry);
                     section.AddToggle(entry.Id, label, binding, description);
                     ApplyEntryVisibilityHook(section, entry, access);
                     return;
                 }
                 case InteropEntryType.Slider:
                 {
-                    var binding = ModSettingsBindings.Callback(modId, dataKey,
+                    IModSettingsValueBinding<double> binding = ModSettingsBindings.Callback(modId, dataKey,
                         () => ReadDoubleWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteDouble(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
+                    binding = WithDefaultIfPresent(binding, entry);
                     section.AddSlider(entry.Id, label, binding, entry.Min, entry.Max, entry.Step, null, description);
                     ApplyEntryVisibilityHook(section, entry, access);
                     return;
                 }
                 case InteropEntryType.IntSlider:
                 {
-                    var binding = ModSettingsBindings.Callback(modId, dataKey,
+                    IModSettingsValueBinding<int> binding = ModSettingsBindings.Callback(modId, dataKey,
                         () => ReadIntWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteInt(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
+                    binding = WithDefaultIfPresent(binding, entry);
                     section.AddIntSlider(entry.Id, label, binding, (int)Math.Round(entry.Min),
                         (int)Math.Round(entry.Max),
                         Math.Max(1, (int)Math.Round(entry.Step)), null, description);
@@ -400,11 +405,12 @@ namespace STS2RitsuLib.Settings
                 }
                 case InteropEntryType.String:
                 {
-                    var binding = ModSettingsBindings.Callback(modId, dataKey,
+                    IModSettingsValueBinding<string> binding = ModSettingsBindings.Callback(modId, dataKey,
                         () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
+                    binding = WithDefaultIfPresent(binding, entry);
                     section.AddString(entry.Id, label, binding, entry.Placeholder, NormalizeMaxLength(entry.MaxLength),
                         description);
                     ApplyEntryVisibilityHook(section, entry, access);
@@ -412,11 +418,12 @@ namespace STS2RitsuLib.Settings
                 }
                 case InteropEntryType.MultilineString:
                 {
-                    var binding = ModSettingsBindings.Callback(modId, dataKey,
+                    IModSettingsValueBinding<string> binding = ModSettingsBindings.Callback(modId, dataKey,
                         () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
+                    binding = WithDefaultIfPresent(binding, entry);
                     section.AddMultilineString(entry.Id, label, binding, entry.Placeholder,
                         NormalizeMaxLength(entry.MaxLength), description);
                     ApplyEntryVisibilityHook(section, entry, access);
@@ -424,11 +431,12 @@ namespace STS2RitsuLib.Settings
                 }
                 case InteropEntryType.Color:
                 {
-                    var binding = ModSettingsBindings.Callback(modId, dataKey,
+                    IModSettingsValueBinding<string> binding = ModSettingsBindings.Callback(modId, dataKey,
                         () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
+                    binding = WithDefaultIfPresent(binding, entry);
                     var editAlpha = entry.EditAlpha ?? true;
                     var editIntensity = entry.EditIntensity ?? false;
                     section.AddColor(entry.Id, label, binding, description, editAlpha, editIntensity);
@@ -437,11 +445,12 @@ namespace STS2RitsuLib.Settings
                 }
                 case InteropEntryType.KeyBinding:
                 {
-                    var binding = ModSettingsBindings.Callback(modId, dataKey,
+                    IModSettingsValueBinding<string> binding = ModSettingsBindings.Callback(modId, dataKey,
                         () => ReadStringWithDefault(defaultWriteKey, entry, access, saveAction),
                         value => WriteString(entry.Key, value, access),
                         saveAction,
                         entry.Scope);
+                    binding = WithDefaultIfPresent(binding, entry);
                     var allowModifierCombos = entry.AllowModifierCombos ?? true;
                     var allowModifierOnly = entry.AllowModifierOnly ?? true;
                     var distinguishSides = entry.DistinguishModifierSides ?? false;
@@ -482,12 +491,14 @@ namespace STS2RitsuLib.Settings
                         .Select(o => new ModSettingsChoiceOption<string>(o.Value, o.Label))
                         .ToArray();
                     var firstValue = options[0].Value;
-                    var binding = ModSettingsBindings.Callback(modId, dataKey,
+                    IModSettingsValueBinding<string> binding = ModSettingsBindings.Callback(modId, dataKey,
                         () => ReadChoiceWithDefault(defaultWriteKey, entry, options, firstValue, access,
                             saveAction),
                         value => WriteString(entry.Key, string.IsNullOrWhiteSpace(value) ? firstValue : value, access),
                         saveAction,
                         entry.Scope);
+                    if (TryResolveChoiceDefault(entry, options, out var defaultChoice))
+                        binding = ModSettingsBindings.WithDefault(binding, () => defaultChoice);
                     section.AddChoice(entry.Id, label, binding, options, description,
                         entry.ChoicePresentation == "dropdown"
                             ? ModSettingsChoicePresentation.Dropdown
@@ -504,6 +515,42 @@ namespace STS2RitsuLib.Settings
                     return;
                 }
             }
+        }
+
+        private static IModSettingsValueBinding<bool> WithDefaultIfPresent(
+            IModSettingsValueBinding<bool> binding,
+            InteropEntry entry)
+        {
+            return TryCoerceDefaultBool(entry.DefaultValue, out var defaultValue)
+                ? ModSettingsBindings.WithDefault(binding, () => defaultValue)
+                : binding;
+        }
+
+        private static IModSettingsValueBinding<double> WithDefaultIfPresent(
+            IModSettingsValueBinding<double> binding,
+            InteropEntry entry)
+        {
+            return TryCoerceDefaultDouble(entry.DefaultValue, out var defaultValue)
+                ? ModSettingsBindings.WithDefault(binding, () => defaultValue)
+                : binding;
+        }
+
+        private static IModSettingsValueBinding<int> WithDefaultIfPresent(
+            IModSettingsValueBinding<int> binding,
+            InteropEntry entry)
+        {
+            return TryCoerceDefaultInt(entry.DefaultValue, out var defaultValue)
+                ? ModSettingsBindings.WithDefault(binding, () => defaultValue)
+                : binding;
+        }
+
+        private static IModSettingsValueBinding<string> WithDefaultIfPresent(
+            IModSettingsValueBinding<string> binding,
+            InteropEntry entry)
+        {
+            return TryCoerceDefaultString(entry.DefaultValue, out var defaultValue)
+                ? ModSettingsBindings.WithDefault(binding, () => defaultValue)
+                : binding;
         }
 
         private static void ApplyEntryVisibilityHook(
@@ -857,12 +904,32 @@ namespace STS2RitsuLib.Settings
             }
 
             var chosen = firstValue;
-            if (TryCoerceDefaultString(entry.DefaultValue, out var dv) &&
-                options.Any(o => string.Equals(o.Value, dv, StringComparison.OrdinalIgnoreCase)))
-                chosen = dv;
+            if (TryResolveChoiceDefault(entry, options, out var defaultValue))
+                chosen = defaultValue;
 
             EnsureDefaultWritten(defaultWriteKey, () => WriteString(entry.Key, chosen, access), saveAction);
             return chosen;
+        }
+
+        private static bool TryResolveChoiceDefault(
+            InteropEntry entry,
+            ModSettingsChoiceOption<string>[] options,
+            out string value)
+        {
+            value = "";
+            if (!TryCoerceDefaultString(entry.DefaultValue, out var defaultValue))
+                return false;
+
+            foreach (var option in options)
+            {
+                if (!string.Equals(option.Value, defaultValue, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                value = option.Value;
+                return true;
+            }
+
+            return false;
         }
 
         private static bool IsMissing(string key, InteropAccessor access)
@@ -1187,6 +1254,7 @@ namespace STS2RitsuLib.Settings
                 : "interop";
             var title = ReadTextOrDefault(root, "title", "Settings", i18N);
             var description = ReadTextOrNull(root, "description", "", i18N);
+            var hideDescription = TryGetBool(root, "hideDescription", out var hide) && hide;
             var sortOrder = TryGetInt(root, "sortOrder", out var so) ? so ?? 10_040 : 10_040;
 
             if (!TryGetEnumerable(root, "sections", out var sectionsRaw))
@@ -1206,7 +1274,7 @@ namespace STS2RitsuLib.Settings
             if (sections.Count == 0)
                 return false;
 
-            page = new(pageId, null, title, description, sortOrder, sections);
+            page = new(pageId, null, title, description, sortOrder, sections, hideDescription);
             return true;
         }
 
@@ -1223,6 +1291,7 @@ namespace STS2RitsuLib.Settings
                 : "interop";
             var title = ReadTextOrDefault(map, "title", "Settings", i18N);
             var description = ReadTextOrNull(map, "description", "", i18N);
+            var hideDescription = TryGetBool(map, "hideDescription", out var hide) && hide;
             var parentPageId = TryGetString(map, "parentPageId", out var parent) && !string.IsNullOrWhiteSpace(parent)
                 ? parent
                 : null;
@@ -1245,7 +1314,7 @@ namespace STS2RitsuLib.Settings
             if (sections.Count == 0)
                 return false;
 
-            page = new(pageId, parentPageId, title, description, sortOrder, sections);
+            page = new(pageId, parentPageId, title, description, sortOrder, sections, hideDescription);
             return true;
         }
 
@@ -1782,6 +1851,28 @@ namespace STS2RitsuLib.Settings
             }
         }
 
+        private static bool TryGetBool(IDictionary<string, object?> map, string key, out bool value)
+        {
+            value = false;
+            if (!map.TryGetValue(key, out var raw) || raw == null)
+                return false;
+
+            try
+            {
+                value = raw switch
+                {
+                    bool b => b,
+                    string s when bool.TryParse(s, out var parsed) => parsed,
+                    _ => Convert.ToBoolean(raw),
+                };
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static bool TryGetDouble(IDictionary<string, object?> map, string key, out double value)
         {
             value = 0d;
@@ -1819,7 +1910,8 @@ namespace STS2RitsuLib.Settings
             ModSettingsText Title,
             ModSettingsText? Description,
             int SortOrder,
-            List<InteropSection> Sections);
+            List<InteropSection> Sections,
+            bool HideDescription);
 
         private sealed record InteropSection(
             string Id,
